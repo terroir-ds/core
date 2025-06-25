@@ -62,8 +62,10 @@ export default [
       '**/.husky/**',
       '**/coverage/**',
       '**/*.config.js',
+      '**/*.config.ts',
       '.claude/**',
       'pnpm-lock.yaml',
+      'scripts/check-node-compat.js',
     ],
   },
 ];

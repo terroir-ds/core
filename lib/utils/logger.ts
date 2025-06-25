@@ -14,17 +14,7 @@ import pino from 'pino';
 import type { Logger, LoggerOptions, TransportTargetOptions } from 'pino';
 import path from 'node:path';
 import { env, isDevelopment, isTest, isCI } from '@lib/config/index.js';
-
-// Type definitions
-export interface LogContext {
-  [key: string]: unknown;
-}
-
-export interface PerformanceMetrics {
-  operation: string;
-  duration: number;
-  durationUnit: 'ms';
-}
+import type { LogContext, PerformanceMetrics } from './types/logger.types.js';
 
 // Performance: Limit log message size to prevent memory issues
 const MAX_MESSAGE_LENGTH = 10000; // 10KB
@@ -66,10 +56,10 @@ const serializers: LoggerOptions['serializers'] = {
   },
   // Limit request/response sizes
   req: (req: unknown) => {
-    const serialized = pino.stdSerializers.req(req as any) as any;
+    const serialized = pino.stdSerializers.req(req as Parameters<typeof pino.stdSerializers.req>[0]);
     // Truncate large bodies
-    if (serialized.body && JSON.stringify(serialized.body).length > MAX_MESSAGE_LENGTH) {
-      serialized.body = '[TRUNCATED - EXCEEDS SIZE LIMIT]';
+    if ('body' in serialized && serialized.body && JSON.stringify((serialized as Record<string, unknown>)['body']).length > MAX_MESSAGE_LENGTH) {
+      (serialized as Record<string, unknown>)['body'] = '[TRUNCATED - EXCEEDS SIZE LIMIT]';
     }
     return serialized;
   },
@@ -79,7 +69,7 @@ const serializers: LoggerOptions['serializers'] = {
 /**
  * Deep redaction of sensitive fields
  */
-function deepRedact(obj: any, patterns: string[], depth = 0): any {
+function deepRedact(obj: unknown, patterns: string[], depth = 0): unknown {
   if (depth > MAX_OBJECT_DEPTH) {
     return '[MAX DEPTH EXCEEDED]';
   }
@@ -96,7 +86,7 @@ function deepRedact(obj: any, patterns: string[], depth = 0): any {
     return obj.map(item => deepRedact(item, patterns, depth + 1));
   }
   
-  const result: Record<string, any> = {};
+  const result: Record<string, unknown> = {};
   
   for (const [key, value] of Object.entries(obj)) {
     const lowerKey = key.toLowerCase();
@@ -166,7 +156,7 @@ const prodConfig: LoggerOptions = {
   // Add request ID support for tracing
   mixin() {
     return {
-      requestId: (globalThis as any).__requestId,
+      requestId: globalThis.__requestId,
       version: env.npm_package_version
     };
   },
@@ -281,24 +271,25 @@ export const generateRequestId = (): string => {
  * Use this at the start of each request/operation
  */
 export const setRequestId = (requestId: string): void => {
-  (globalThis as any).__requestId = requestId;
+  globalThis.__requestId = requestId;
 };
 
 /**
  * Get current request ID
  */
 export const getRequestId = (): string | undefined => {
-  return (globalThis as any).__requestId;
+  return globalThis.__requestId;
 };
 
 /**
  * Clear request ID (use at end of request)
  */
 export const clearRequestId = (): void => {
-  delete (globalThis as any).__requestId;
+  globalThis.__requestId = undefined;
 };
 
 // Export logger instance and utility functions
 export default logger;
 export { logger };
-export type { Logger };
+export type { Logger } from 'pino';
+export type { LogContext, PerformanceMetrics } from './types/logger.types.js';

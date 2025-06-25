@@ -8,13 +8,13 @@ export default defineConfig({
   fullyParallel: true,
   
   // Fail the build on CI if you accidentally left test.only
-  forbidOnly: !!process.env.CI,
+  forbidOnly: !!process.env['CI'],
   
   // Retry on CI only
-  retries: process.env.CI ? 2 : 0,
+  retries: process.env['CI'] ? 2 : 0,
   
   // Opt out of parallel tests on CI
-  workers: process.env.CI ? 1 : undefined,
+  workers: process.env['CI'] ? 1 : undefined,
   
   // Reporter to use
   reporter: [
@@ -73,6 +73,6 @@ export default defineConfig({
   webServer: {
     command: 'pnpm storybook:dev',
     port: 6006,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: !process.env['CI'],
   },
 });
