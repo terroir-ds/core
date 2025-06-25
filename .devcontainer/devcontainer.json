@@ -35,7 +35,7 @@
   "forwardPorts": [],
 
   // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "bash .devcontainer/post-create.sh && pnpm install && pnpm exec playwright install chromium firefox webkit",
+  "postCreateCommand": "bash scripts/utils/post-create.sh && pnpm install && pnpm exec playwright install chromium firefox webkit",
 
   // Configure tool-specific properties.
   "customizations": {

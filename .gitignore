@@ -7,7 +7,7 @@ pnpm-lock.yaml
 # Build outputs
 dist/
 build/
-lib/
+/lib-build/
 es/
 .cache/
 .parcel-cache/

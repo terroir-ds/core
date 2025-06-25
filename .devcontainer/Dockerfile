@@ -81,10 +81,9 @@ ENV SHELL=/bin/bash
 ENV PNPM_HOME=/home/${USERNAME}/.local/share/pnpm
 ENV PATH=${PNPM_HOME}:$PATH
 
-# Prepare pnpm and install global tools as node user
+# Prepare pnpm as node user
 RUN corepack prepare pnpm@10.12.3 --activate \
-  && pnpm setup \
-  && pnpm add -g typescript ts-node tsx @types/node npm-check-updates
+  && pnpm setup
 
 WORKDIR /workspaces/core
 

@@ -1,116 +1,147 @@
 #!/usr/bin/env node
 
-import { 
-  argbFromHex,
-  hexFromArgb,
-  TonalPalette,
-  CorePalette,
-  Contrast,
-  themeFromSourceColor
-} from '@material/material-color-utilities';
+/**
+ * Build script to generate color tokens from brand colors
+ * Uses the public color generation API
+ */
+
+import { generateColorSystem } from '../lib/colors/index.js';
+import { logger, logStart, logSuccess, measureTime } from '../lib/utils/logger.js';
 import fs from 'fs/promises';
 import path from 'path';
 
+/** @typedef {import('../lib/colors/index.js').ColorSystem} ColorSystem */
+
 // Read brand color from tokens
 async function getBrandColor() {
-  const colorTokens = await fs.readFile(
-    path.join(process.cwd(), 'tokens/base/color.json'),
-    'utf-8'
-  );
-  const tokens = JSON.parse(colorTokens);
-  return tokens.color.brand.primary.value;
+  try {
+    const colorTokens = await fs.readFile(
+      path.join(process.cwd(), 'tokens/base/color.json'),
+      'utf-8'
+    );
+    const tokens = JSON.parse(colorTokens);
+    return tokens.color.brand.primary.value;
+  } catch (error) {
+    logger.warn('No brand color found in tokens, using default #1976d2');
+    return '#1976d2';
+  }
 }
 
-// Generate color system
-async function generateColors() {
-  console.log('🎨 Generating color system...');
-  
-  const brandColor = await getBrandColor();
-  const sourceColor = argbFromHex(brandColor);
-  
-  // Generate palettes
-  const palette = CorePalette.of(sourceColor);
-  const theme = themeFromSourceColor(sourceColor);
-  
-  // Create token structure
-  const colorTokens = {
+/**
+ * Convert color system to Style Dictionary format
+ * @param {ColorSystem} colorSystem - Generated color system
+ * @returns {Object} Style Dictionary formatted tokens
+ */
+function toStyleDictionaryFormat(colorSystem) {
+  /** @type {any} */
+  const tokens = {
     color: {
-      // Primary palette
-      primary: generateTonalScale(palette.a1, 'Primary color family'),
-      
-      // Secondary palette
-      secondary: generateTonalScale(palette.a2, 'Secondary color family'),
-      
-      // Tertiary palette
-      tertiary: generateTonalScale(palette.a3, 'Tertiary color family'),
-      
-      // Neutral palette
-      neutral: generateTonalScale(palette.n1, 'Neutral color family'),
-      
-      // Neutral variant palette
-      neutralVariant: generateTonalScale(palette.n2, 'Neutral variant color family'),
-      
-      // Error palette
-      error: generateTonalScale(palette.error, 'Error color family'),
-      
-      // Surface colors (from theme)
-      surface: {
-        default: {
-          value: hexFromArgb(theme.schemes.light.surface),
-          description: 'Default surface color',
-          type: 'color'
-        },
-        variant: {
-          value: hexFromArgb(theme.schemes.light.surfaceVariant),
-          description: 'Surface variant color',
-          type: 'color'
-        },
-        inverse: {
-          value: hexFromArgb(theme.schemes.light.inverseSurface),
-          description: 'Inverse surface color',
-          type: 'color'
-        }
-      }
+      // Convert palettes to token format
+      primary: {},
+      secondary: {},
+      tertiary: {},
+      neutral: {},
+      neutralVariant: {},
+      error: {}
     }
   };
   
-  // Write generated colors
-  await fs.writeFile(
-    path.join(process.cwd(), 'tokens/generated/colors.json'),
-    JSON.stringify(colorTokens, null, 2)
-  );
+  // Process each palette
+  for (const [paletteName, palette] of Object.entries(colorSystem.palettes)) {
+    const tokenKey = paletteName === 'neutralVariant' ? 'neutralVariant' : paletteName;
+    
+    for (const [tone, data] of Object.entries(palette.tones)) {
+      // @ts-ignore - dynamic key access
+      tokens.color[tokenKey][tone] = {
+        value: data.hex,
+        type: 'color',
+        description: `${palette.name} - Tone ${tone}`,
+        attributes: {
+          tone: parseInt(tone),
+          contrastWhite: data.contrast.white,
+          contrastBlack: data.contrast.black
+        }
+      };
+    }
+  }
   
-  console.log('✅ Color system generated successfully!');
-}
-
-// Generate tonal scale for a palette
-function generateTonalScale(tonalPalette, description) {
-  const scale = {};
-  const tones = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 99, 100];
-  
-  tones.forEach(tone => {
-    scale[tone] = {
-      value: hexFromArgb(tonalPalette.tone(tone)),
-      description: `${description} - Tone ${tone}`,
-      type: 'color',
-      attributes: {
-        tone,
-        contrastOnWhite: Contrast.ratio(tonalPalette.tone(tone), 0xFFFFFFFF),
-        contrastOnBlack: Contrast.ratio(tonalPalette.tone(tone), 0xFF000000)
-      }
+  // Add theme tokens if available
+  if (colorSystem.themes) {
+    tokens.schemes = {
+      light: {},
+      dark: {}
     };
-  });
+    
+    for (const [mode, theme] of Object.entries(colorSystem.themes)) {
+      for (const [key, data] of Object.entries(theme)) {
+        tokens.schemes[mode][key] = {
+          value: data.hex,
+          type: 'color',
+          description: `${mode} theme - ${key}`
+        };
+      }
+    }
+  }
   
-  return scale;
+  return tokens;
 }
 
-// Ensure output directory exists
-async function ensureOutputDir() {
-  const dir = path.join(process.cwd(), 'tokens/generated');
-  await fs.mkdir(dir, { recursive: true });
+// Main generation function
+async function main() {
+  await measureTime(
+    'color generation pipeline',
+    async () => {
+      logStart('color token generation');
+      
+      // Get brand color
+      const brandColor = await getBrandColor();
+      logger.info({ brandColor }, 'Using brand color');
+      
+      // Generate color system
+      const colorSystem = await generateColorSystem({
+        source: brandColor,
+        contrastLevel: 0.5, // Slightly higher contrast for accessibility
+        variant: 'tonalSpot'
+      });
+      
+      // Convert to Style Dictionary format
+      const tokens = toStyleDictionaryFormat(colorSystem);
+      
+      // Ensure output directory exists
+      const outputDir = path.join(process.cwd(), 'tokens/generated');
+      await fs.mkdir(outputDir, { recursive: true });
+      
+      // Write tokens
+      const outputPath = path.join(outputDir, 'colors.json');
+      await fs.writeFile(
+        outputPath,
+        JSON.stringify(tokens, null, 2)
+      );
+      
+      logger.info({ outputPath }, 'Wrote color tokens');
+      
+      // Validate contrast ratios
+      const { validateColorContrast } = await import('../lib/colors/index.js');
+      const validation = validateColorContrast(colorSystem);
+      
+      if (validation.failed.length > 0) {
+        logger.warn(
+          { failed: validation.failed },
+          `${validation.failed.length} color combinations failed WCAG AA contrast requirements`
+        );
+      } else {
+        logger.info('All color combinations pass WCAG AA contrast requirements');
+      }
+      
+      logSuccess('color token generation');
+    }
+  );
 }
 
-// Run generation
-ensureOutputDir()
-  .then(() => generateColors())
-  .catch(console.error);
+// Run if called directly
+if (import.meta.url === `file://${process.argv[1]}`) {
+  main().catch((error) => {
+    logger.error({ err: error }, 'Failed to generate color tokens');
+    process.exit(1);
+  });
+}
