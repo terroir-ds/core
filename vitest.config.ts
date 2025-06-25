@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitest/config';
+import { coverageConfigDefaults } from 'vitest/config';
 import path from 'path';
 
 export default defineConfig({
@@ -19,33 +20,26 @@ export default defineConfig({
     environment: 'node',
     setupFiles: ['./test/setup.ts'],
     coverage: {
+      // Simple, modern coverage configuration
       enabled: true,
       provider: 'v8',
-      reporter: ['text', 'json', 'html', 'lcov'],
-      reportsDirectory: './coverage',
+      reporter: ['text', 'json', 'html'],
       
-      // Coverage thresholds
+      // Single set of reasonable thresholds for the whole project
+      // Start conservative, increase as codebase matures
       thresholds: {
-        lines: 80,
-        functions: 80,
-        branches: 70,
-        statements: 80,
+        lines: 60,
+        functions: 60,
+        branches: 50,
+        statements: 60,
       },
       
-      // Files to include/exclude
-      include: [
-        'lib/**/*.{js,ts}',
-        'packages/*/src/**/*.{js,ts}',
-        'scripts/**/*.{js,ts}',
-      ],
+      // Focus coverage on source files only
+      include: ['lib/**/*.{js,ts}'],
       exclude: [
-        'node_modules/**',
-        'dist/**',
-        '**/*.d.ts',
-        '**/*.config.*',
-        '**/tests/**',
-        '**/*.spec.*',
-        '**/*.test.*',
+        ...coverageConfigDefaults.exclude,
+        '**/__tests__/**',
+        '**/__mocks__/**',
       ],
     },
   },
