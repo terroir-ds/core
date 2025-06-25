@@ -1,6 +1,3 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
 # Run lint-staged but don't block commits
 echo "🔍 Running quick fixes on staged files..."
 pnpm exec lint-staged --quiet --concurrent false || {

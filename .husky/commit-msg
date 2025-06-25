@@ -1,6 +1,3 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
 # Only lint commit messages, don't block commits
 pnpm exec commitlint --edit "$1" || {
   echo ""

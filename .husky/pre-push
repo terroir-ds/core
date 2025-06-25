@@ -1,6 +1,3 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
 # Get the branch being pushed to
 protected_branch='main'
 current_branch=$(git symbolic-ref HEAD | sed -e 's,.*/\(.*\),\1,')
@@ -17,7 +14,7 @@ do
     
     # Run all quality checks for main branch
     echo "📋 Running linters..."
-    pnpm lint || {
+    pnpm test:lint || {
       echo "❌ Linting failed. Please fix errors before pushing to $protected_branch"
       exit 1
     }
@@ -43,7 +40,7 @@ do
     
     # Optional: Run minimal checks for feature branches
     echo "📋 Running quick lint check..."
-    pnpm lint --quiet 2>/dev/null || {
+    pnpm test:lint --quiet 2>/dev/null || {
       echo "⚠️  Some linting issues detected. Consider fixing before merging to main."
     }
   fi
