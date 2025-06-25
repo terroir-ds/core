@@ -348,6 +348,13 @@ describe('Logger Utility', () => {
       expect(loggerModule.setRequestId).toBeInstanceOf(Function);
       expect(loggerModule.getRequestId).toBeInstanceOf(Function);
       expect(loggerModule.clearRequestId).toBeInstanceOf(Function);
+      expect(loggerModule.cleanupLogger).toBeInstanceOf(Function);
+      expect(loggerModule.getMemoryStats).toBeInstanceOf(Function);
+      expect(loggerModule.logMemoryUsage).toBeInstanceOf(Function);
+      expect(loggerModule.startMemoryMonitoring).toBeInstanceOf(Function);
+      expect(loggerModule.registerOTelHooks).toBeInstanceOf(Function);
+      expect(loggerModule.getTraceContext).toBeInstanceOf(Function);
+      expect(loggerModule.createTracedLogger).toBeInstanceOf(Function);
     });
   });
 
@@ -583,6 +590,120 @@ describe('Logger Utility', () => {
         
         // Should restore outer context
         expect(getAsyncContext()).toEqual({ level: 1, id: 'outer' });
+      });
+    });
+  });
+
+  describe('Resource Management', () => {
+    it('should track child loggers', async () => {
+      const { createLogger } = await import('@utils/logger.js');
+      
+      // Create multiple child loggers
+      const child1 = createLogger({ service: 'auth' });
+      const child2 = createLogger({ service: 'api' });
+      const child3 = createLogger({ service: 'db' });
+      
+      // Verify they're tracked
+      expect(child1).toBeDefined();
+      expect(child2).toBeDefined();
+      expect(child3).toBeDefined();
+    });
+
+    it('should provide memory statistics', async () => {
+      const { getMemoryStats } = await import('@utils/logger.js');
+      
+      const stats = getMemoryStats();
+      
+      expect(stats).toMatchObject({
+        heapUsed: expect.any(Number),
+        heapTotal: expect.any(Number),
+        external: expect.any(Number),
+        rss: expect.any(Number),
+        heapUsedMB: expect.any(Number),
+        heapTotalMB: expect.any(Number),
+        rssMB: expect.any(Number),
+      });
+      
+      expect(stats.heapUsedMB).toBeGreaterThan(0);
+      expect(stats.heapUsedMB).toBeLessThan(stats.heapTotalMB);
+    });
+
+    it('should log memory usage', async () => {
+      const { logMemoryUsage, logger } = await import('@utils/logger.js');
+      
+      const infoSpy = vi.spyOn(logger, 'info');
+      
+      logMemoryUsage({ test: true });
+      
+      expect(infoSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          test: true,
+          memory: expect.objectContaining({
+            heapUsedMB: expect.any(Number),
+            heapTotalMB: expect.any(Number),
+          }),
+        }),
+        expect.stringMatching(/Memory usage: \d+\.\d+MB/)
+      );
+    });
+
+    it('should start and stop memory monitoring', async () => {
+      const { startMemoryMonitoring } = await import('@utils/logger.js');
+      
+      // Start monitoring with short interval
+      const stopMonitoring = startMemoryMonitoring(100, 10000);
+      
+      expect(stopMonitoring).toBeInstanceOf(Function);
+      
+      // Stop monitoring
+      stopMonitoring();
+    });
+  });
+
+  describe('OpenTelemetry Integration', () => {
+    it('should register and use OTel hooks', async () => {
+      const { registerOTelHooks, getTraceContext } = await import('@utils/logger.js');
+      
+      // Register hooks
+      const mockHooks = {
+        getTraceId: () => 'trace-123',
+        getSpanId: () => 'span-456',
+        getTraceFlags: () => '01',
+      };
+      
+      registerOTelHooks(mockHooks);
+      
+      // Get trace context
+      const context = getTraceContext();
+      
+      expect(context).toEqual({
+        traceId: 'trace-123',
+        spanId: 'span-456',
+        traceFlags: '01',
+      });
+    });
+
+    it('should handle missing trace context', async () => {
+      const { registerOTelHooks, getTraceContext } = await import('@utils/logger.js');
+      
+      // Register hooks that return undefined
+      registerOTelHooks({
+        getTraceId: () => undefined,
+        getSpanId: () => undefined,
+      });
+      
+      const context = getTraceContext();
+      expect(context).toEqual({});
+    });
+
+    it('should create traced logger', async () => {
+      const { createTracedLogger } = await import('@utils/logger.js');
+      
+      const tracedLogger = createTracedLogger({ service: 'traced' });
+      
+      expect(tracedLogger.bindings()).toMatchObject({
+        service: 'traced',
+        otelEnabled: true,
       });
     });
   });

@@ -396,4 +396,64 @@ describe('Logger Edge Cases', () => {
       }
     });
   });
+
+  describe('Memory and Performance Tests', () => {
+    it('should not leak memory with repeated child logger creation', () => {
+      const initialMemory = process.memoryUsage().heapUsed;
+      
+      // Create and discard many child loggers
+      for (let i = 0; i < 1000; i++) {
+        const child = createLogger({ iteration: i, data: 'x'.repeat(100) });
+        child.info('Test log');
+      }
+      
+      // Force garbage collection if available
+      if (global.gc) {
+        global.gc();
+      }
+      
+      const finalMemory = process.memoryUsage().heapUsed;
+      const memoryGrowth = finalMemory - initialMemory;
+      
+      // Memory growth should be reasonable (less than 10MB)
+      expect(memoryGrowth).toBeLessThan(10 * 1024 * 1024);
+    });
+
+    it('should handle high-frequency logging without performance degradation', async () => {
+      const iterations = 1000;
+      const startTime = performance.now();
+      
+      for (let i = 0; i < iterations; i++) {
+        logger.debug({ index: i }, `Performance test ${i}`);
+      }
+      
+      const duration = performance.now() - startTime;
+      const avgTimePerLog = duration / iterations;
+      
+      // Average time per log should be very low (less than 1ms)
+      expect(avgTimePerLog).toBeLessThan(1);
+    });
+
+    it('should handle redaction performance with large objects', () => {
+      const largeObject = {
+        users: Array.from({ length: 100 }, (_, i) => ({
+          id: i,
+          email: `user${i}@example.com`,
+          password: 'secret123',
+          profile: {
+            phone: '555-123-4567',
+            address: '123 Main St',
+            creditCard: '4532-0151-1283-0366'
+          }
+        }))
+      };
+      
+      const startTime = performance.now();
+      logger.info(largeObject, 'Large object redaction test');
+      const duration = performance.now() - startTime;
+      
+      // Redaction should complete quickly (less than 50ms)
+      expect(duration).toBeLessThan(50);
+    });
+  });
 });
