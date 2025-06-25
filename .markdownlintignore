@@ -1,0 +1,10 @@
+# Temporary planning documents
+.claude/
+
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+coverage/
