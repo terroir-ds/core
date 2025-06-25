@@ -1,0 +1,27 @@
+[
+  {
+    "name": "Core Package",
+    "path": "packages/core/dist/index.js",
+    "limit": "50 KB"
+  },
+  {
+    "name": "React Components",
+    "path": "packages/react/dist/index.js",
+    "limit": "100 KB"
+  },
+  {
+    "name": "Web Components",
+    "path": "packages/web-components/dist/index.js",
+    "limit": "75 KB"
+  },
+  {
+    "name": "CSS Output",
+    "path": "dist/css/terroir.min.css",
+    "limit": "30 KB"
+  },
+  {
+    "name": "Icon Library",
+    "path": "dist/icons/*.svg",
+    "limit": "2 KB"
+  }
+]
