@@ -8,7 +8,7 @@
  * - Performance in realistic conditions
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { 
   logger,
   createLogger,
@@ -138,7 +138,7 @@ describe('Logger Integration Tests', () => {
 
       // Override logger to capture metrics
       const originalInfo = logger.info.bind(logger);
-      logger.info = vi.fn((obj, msg) => {
+      logger.info = vi.fn((obj: Record<string, unknown>, msg?: string) => {
         if (obj && typeof obj === 'object' && 'performance' in obj) {
           const perf = (obj as Record<string, unknown>)['performance'] as { operation: string; duration: number };
           metrics.push({ 
@@ -147,7 +147,7 @@ describe('Logger Integration Tests', () => {
           });
         }
         return originalInfo(obj, msg);
-      });
+      }) as unknown as typeof logger.info;
 
       // Run multiple timed operations
       await measureTime('fast-op', async () => {
@@ -167,9 +167,9 @@ describe('Logger Integration Tests', () => {
 
       // Verify metrics collected
       expect(metrics).toHaveLength(3);
-      expect(metrics[0].operation).toBe('fast-op');
-      expect(metrics[0].duration).toBeLessThan(metrics[1].duration);
-      expect(metrics[1].duration).toBeLessThan(metrics[2].duration);
+      expect(metrics[0]?.operation).toBe('fast-op');
+      expect(metrics[0]?.duration ?? 0).toBeLessThan(metrics[1]?.duration ?? 0);
+      expect(metrics[1]?.duration ?? 0).toBeLessThan(metrics[2]?.duration ?? 0);
     });
   });
 
@@ -191,7 +191,7 @@ describe('Logger Integration Tests', () => {
 });
 
 // Helper functions
-async function simulateDbQuery(table: string): Promise<{ data: string; requestId?: string }> {
+async function simulateDbQuery(table: string): Promise<{ data: string; requestId?: string | undefined }> {
   const childLogger = createLogger({ component: 'database', table });
   childLogger.debug(`Querying ${table}`);
   
@@ -203,7 +203,7 @@ async function simulateDbQuery(table: string): Promise<{ data: string; requestId
   };
 }
 
-async function simulateApiCall(endpoint: string): Promise<{ response: string; requestId?: string }> {
+async function simulateApiCall(endpoint: string): Promise<{ response: string; requestId?: string | undefined }> {
   const childLogger = createLogger({ component: 'api', endpoint });
   childLogger.info(`Calling ${endpoint}`);
   
@@ -215,7 +215,7 @@ async function simulateApiCall(endpoint: string): Promise<{ response: string; re
   };
 }
 
-async function simulateFileOperation(operation: string): Promise<{ result: string; requestId?: string }> {
+async function simulateFileOperation(operation: string): Promise<{ result: string; requestId?: string | undefined }> {
   const childLogger = createLogger({ component: 'filesystem', operation });
   childLogger.debug(`File operation: ${operation}`);
   

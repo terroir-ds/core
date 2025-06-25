@@ -156,7 +156,7 @@ describe('Logger Stress Tests', () => {
           throw new Error('Simulated logging failure');
         }
         return originalInfo(obj, msg);
-      }) as typeof flakyLogger.info;
+      }) as unknown as typeof flakyLogger.info;
       
       // Attempt many logs
       for (let i = 0; i < 1000; i++) {

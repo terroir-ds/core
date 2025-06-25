@@ -455,7 +455,7 @@ describe('Logger Utility', () => {
       sampledLogger.info = vi.fn((...args: Parameters<typeof originalInfo>) => {
         logCount++;
         return originalInfo(...args);
-      });
+      }) as typeof originalInfo;
       
       const iterations = 1000;
       for (let i = 0; i < iterations; i++) {

@@ -161,7 +161,7 @@ const prodConfig: LoggerOptions = {
   mixin() {
     const asyncContext = asyncLocalStorage.getStore();
     return {
-      requestId: globalThis.__terroir?.requestId || asyncContext?.requestId,
+      requestId: globalThis.__terroir?.requestId || asyncContext?.['requestId'],
       ...asyncContext,
       version: env.npm_package_version
     };
