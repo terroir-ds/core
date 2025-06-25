@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Only lint commit messages, don't block commits
+pnpm exec commitlint --edit "$1" || {
+  echo ""
+  echo "⚠️  Commit message doesn't follow conventional format."
+  echo "   Example: feat(tokens): add new color tokens"
+  echo "   See: https://www.conventionalcommits.org"
+  echo ""
+  echo "   Proceeding anyway for rapid development..."
+  echo ""
+}
+
+# Always exit 0 to allow the commit
+exit 0

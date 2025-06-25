@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Run lint-staged but don't block commits
+echo "🔍 Running quick fixes on staged files..."
+pnpm exec lint-staged --quiet --concurrent false || {
+  echo ""
+  echo "⚠️  Some linting issues couldn't be auto-fixed."
+  echo "   Consider running 'pnpm lint' to see all issues."
+  echo ""
+  echo "   Proceeding with commit for rapid development..."
+  echo ""
+}
+
+# Always exit 0 to allow commits
+exit 0

@@ -1,0 +1,52 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Get the branch being pushed to
+protected_branch='main'
+current_branch=$(git symbolic-ref HEAD | sed -e 's,.*/\(.*\),\1,')
+
+# Parse remote branch being pushed to
+while read local_ref local_sha remote_ref remote_sha
+do
+  remote_branch=$(echo $remote_ref | sed -e 's,.*/\(.*\),\1,')
+  
+  if [ "$remote_branch" = "$protected_branch" ]
+  then
+    echo "🛡️  Pushing to protected branch '$protected_branch' - running full validation..."
+    echo ""
+    
+    # Run all quality checks for main branch
+    echo "📋 Running linters..."
+    pnpm lint || {
+      echo "❌ Linting failed. Please fix errors before pushing to $protected_branch"
+      exit 1
+    }
+    
+    echo ""
+    echo "🧪 Running tests..."
+    pnpm test || {
+      echo "❌ Tests failed. Please fix failing tests before pushing to $protected_branch"
+      exit 1
+    }
+    
+    echo ""
+    echo "📦 Running build..."
+    pnpm build || {
+      echo "❌ Build failed. Please fix build errors before pushing to $protected_branch"
+      exit 1
+    }
+    
+    echo ""
+    echo "✅ All checks passed! Pushing to $protected_branch..."
+  else
+    echo "🚀 Pushing to branch '$remote_branch' - skipping full validation for rapid development"
+    
+    # Optional: Run minimal checks for feature branches
+    echo "📋 Running quick lint check..."
+    pnpm lint --quiet 2>/dev/null || {
+      echo "⚠️  Some linting issues detected. Consider fixing before merging to main."
+    }
+  fi
+done
+
+exit 0
