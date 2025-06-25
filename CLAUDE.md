@@ -3,6 +3,7 @@
 ## Project Overview
 
 A comprehensive, open-source design system built with modern web standards, featuring:
+
 - Material Color Utilities for perceptually uniform color generation
 - Continuous tone scales (0-100) for precise control
 - SVGO-based token replacement in SVG assets
@@ -35,6 +36,7 @@ terroir-core/
 ## Technology Stack
 
 ### Core Technologies
+
 - **Style Dictionary**: Token management and transformation
 - **Material Color Utilities**: Advanced color system generation
 - **SVGO**: SVG optimization and token replacement
@@ -42,12 +44,14 @@ terroir-core/
 - **TypeScript**: Type safety throughout
 
 ### Documentation & Testing
+
 - **Storybook**: Component documentation and playground
 - **Playwright**: Visual regression and accessibility testing
 - **Axe-core**: Automated accessibility validation
 - **Pixelmatch**: Visual diff detection
 
 ### Build Tools
+
 - **npm workspaces**: Monorepo management
 - **Rollup**: Package bundling
 - **Chokidar**: File watching for development
@@ -62,8 +66,8 @@ Uses Google's Material Color Utilities for scientifically-derived color palettes
 import { MaterialColorSystemGenerator } from './scripts/color-generator';
 
 const generator = new MaterialColorSystemGenerator('#0066cc', {
-  contrastLevel: 0.5,    // Increased contrast for accessibility
-  variant: 'tonalSpot'   // Material You variant
+  contrastLevel: 0.5, // Increased contrast for accessibility
+  variant: 'tonalSpot', // Material You variant
 });
 
 const colors = generator.generateSystem();
@@ -154,24 +158,28 @@ pnpm docs:generate  # API documentation
 ## Design Principles
 
 ### 1. **Accessibility First**
+
 - Every color tested for WCAG compliance
 - Focus indicators on all interactive elements
 - Semantic HTML structure
 - ARIA attributes where needed
 
 ### 2. **Performance Focused**
+
 - Minimal runtime overhead
 - Build-time token resolution
 - Optimized asset delivery
 - Progressive enhancement
 
 ### 3. **Developer Experience**
+
 - TypeScript definitions for all tokens
 - Comprehensive documentation
 - Visual regression testing
 - Automated releases
 
 ### 4. **Flexibility**
+
 - Framework agnostic core
 - Multiple output formats
 - Themeable architecture
@@ -180,29 +188,34 @@ pnpm docs:generate  # API documentation
 ## Token Categories
 
 ### Color Tokens
+
 - Generated via Material Color Utilities
 - Continuous tone scale (0-100)
 - Automatic contrast compliance
 - Theme variations (light/dark/high-contrast)
 
 ### Typography Tokens
+
 - System font stacks
 - Variable font support
 - Responsive sizing
 - Optimal line heights
 
 ### Spacing Tokens
+
 - Consistent scale (4px base)
 - Responsive spacing
 - Component-specific overrides
 
 ### Motion Tokens
+
 - Duration scales
 - Easing functions
 - Spring animations
 - Reduced motion support
 
 ### Elevation Tokens
+
 - Shadow definitions
 - Layering system
 - Focus rings
@@ -211,6 +224,7 @@ pnpm docs:generate  # API documentation
 ## Component Architecture
 
 ### Core Components (Planned)
+
 - Button
 - Card
 - Input
@@ -222,6 +236,7 @@ pnpm docs:generate  # API documentation
 - Navigation
 
 ### Component Features
+
 - Full keyboard navigation
 - ARIA compliance
 - Touch-friendly targets
@@ -232,18 +247,21 @@ pnpm docs:generate  # API documentation
 ## Build Pipeline
 
 ### Token Processing
+
 1. Source tokens (JSON) → Style Dictionary
 2. Platform transforms (CSS, JS, Swift, Android)
 3. Theme generation (light, dark, high-contrast)
 4. Documentation generation
 
 ### Asset Processing
+
 1. SVG templates → Token replacement
 2. SVGO optimization
 3. Sharp rasterization
 4. Format generation (PNG, WebP, ICO)
 
 ### Quality Checks
+
 1. Token linting
 2. Contrast validation
 3. Visual regression
@@ -252,12 +270,14 @@ pnpm docs:generate  # API documentation
 ## Release Process
 
 ### Versioning
+
 - Semantic versioning (major.minor.patch)
 - Automated changelog generation
 - Breaking change detection
 - Migration guides
 
 ### Publishing
+
 - NPM packages for each workspace
 - GitHub releases with assets
 - Documentation deployment
@@ -266,12 +286,14 @@ pnpm docs:generate  # API documentation
 ## Contributing
 
 ### Development Guidelines
+
 1. All tokens must have descriptions
 2. Colors must pass WCAG AA
 3. Components need Storybook stories
 4. Changes require visual regression tests
 
 ### PR Requirements
+
 - Token linting passes
 - Contrast tests pass
 - Visual tests pass
@@ -280,11 +302,13 @@ pnpm docs:generate  # API documentation
 ## Node.js Compatibility
 
 ### Development Environment
+
 - **Local Development**: Node.js 22 (latest features, best DX)
 - **CI/CD Testing**: Matrix testing against Node.js 18, 20, and 22
 - **Minimum Support**: Node.js 18+ (current LTS)
 
 ### Compatibility Guidelines
+
 When adding dependencies or features, ensure compatibility with Node.js 18+:
 
 1. **Check before adding dependencies**:
@@ -306,10 +330,11 @@ When adding dependencies or features, ensure compatibility with Node.js 18+:
    - `AggregateError` for multiple errors
 
 4. **Dependency compatibility checks**:
+
    ```bash
    # Check a dependency's Node.js requirements
    npm view [package-name] engines
-   
+
    # Run CI locally against different Node versions
    nvm use 18 && pnpm test
    nvm use 20 && pnpm test
@@ -323,6 +348,7 @@ When adding dependencies or features, ensure compatibility with Node.js 18+:
 ## Current Status
 
 ### ✅ Completed Planning
+
 - Token architecture
 - Color generation system
 - SVG processing pipeline
@@ -330,6 +356,7 @@ When adding dependencies or features, ensure compatibility with Node.js 18+:
 - Documentation approach
 
 ### 🚧 Next Steps
+
 1. Implement Material Color Utilities integration
 2. Set up Style Dictionary configuration
 3. Create SVGO token replacement plugin
@@ -337,6 +364,7 @@ When adding dependencies or features, ensure compatibility with Node.js 18+:
 5. Implement core components
 
 ### 🎯 Roadmap
+
 - v0.1.0: Core tokens and color system
 - v0.2.0: Icon system and assets
 - v0.3.0: Basic React components
@@ -346,6 +374,7 @@ When adding dependencies or features, ensure compatibility with Node.js 18+:
 ## Configuration
 
 ### Environment Variables
+
 ```bash
 # Build configuration
 NODE_ENV=development
@@ -361,7 +390,9 @@ VISUAL_REGRESSION_THRESHOLD=0.1
 ```
 
 ### Token Configuration
+
 See `tokens/config.js` for:
+
 - Brand colors
 - Theme variants
 - Contrast levels
@@ -394,12 +425,14 @@ pnpm upgrade:deps   # Update dependencies
 ## Resources
 
 ### Documentation
+
 - [Token Architecture](./docs/token-architecture.md)
 - [Color System](./docs/color-system.md)
 - [Testing Strategy](./docs/testing.md)
 - [Contributing Guide](./CONTRIBUTING.md)
 
 ### External Links
+
 - [Material Color Utilities](https://github.com/material-foundation/material-color-utilities)
 - [Style Dictionary](https://amzn.github.io/style-dictionary/)
 - [SVGO](https://github.com/svg/svgo)
@@ -414,6 +447,104 @@ MIT - Feel free to use in your own projects!
 - GitHub: [your-username/terroir-core]
 - Issues: [Report bugs or request features]
 - Discussions: [Ask questions or share ideas]
+
+---
+
+## Claude AI Development Workflow
+
+### Task-Commit Workflow
+
+Follow this workflow for consistent, high-quality development:
+
+1. **Start Task**
+
+   ```bash
+   # Create task plan in .claude/tasks/
+   # Define scope, success criteria, and tests
+   ```
+
+2. **Implement Feature**
+   - Write code/configuration
+   - Follow existing patterns
+   - Ensure type safety
+
+3. **Test Implementation**
+   - Run relevant tests locally
+   - Verify no regressions
+   - Check performance impact
+
+4. **Commit Changes**
+
+   ```bash
+   # After completing each logical task
+   git add .
+   git commit -m "type(scope): description
+
+   - Implementation details
+   - Tests added
+   - Closes #issue"
+   ```
+
+5. **Move to Next Task**
+   - Update task list
+   - Repeat process
+
+### Working Directory Structure
+
+```
+.claude/                  # AI session working directory (gitignored)
+├── tasks/               # Task planning and tracking
+├── sessions/            # Session context and notes
+└── README.md           # Directory documentation
+```
+
+### Definition of Done
+
+A task is complete when:
+
+- ✅ All code implemented
+- ✅ Tests written and passing
+- ✅ Documentation updated
+- ✅ No linting/type errors
+- ✅ Performance verified
+- ✅ Committed with conventional message
+
+### Testing Requirements
+
+For each feature, ensure:
+
+**Code Testing**
+
+- Unit tests for logic
+- Integration tests for interactions
+- Visual tests for UI changes
+- Performance tests for critical paths
+
+**Documentation Testing**
+
+- API docs accurate
+- Examples working
+- Migration guides complete
+
+**Manual Verification**
+
+- Works in development
+- Works in container
+- No console errors
+- Accessibility verified
+
+### Quick Commands
+
+```bash
+# Start new task
+mkdir -p .claude/tasks && echo "# Task: [Name]" > .claude/tasks/current-task.md
+
+# Run all checks before commit
+pnpm test:lint && pnpm test && pnpm build
+
+# Commit with conventional format
+git commit -m "feat(tokens): add new color system"
+```
 
 ---
 
