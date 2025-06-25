@@ -10,6 +10,7 @@
  * - Follows OpenTelemetry conventions
  */
 
+import { AsyncLocalStorage } from 'node:async_hooks';
 import pino from 'pino';
 import type { Logger, LoggerOptions, TransportTargetOptions } from 'pino';
 import path from 'node:path';
@@ -19,6 +20,9 @@ import type { LogContext, PerformanceMetrics } from './types/logger.types.js';
 // Performance: Limit log message size to prevent memory issues
 const MAX_MESSAGE_LENGTH = 10000; // 10KB
 const MAX_OBJECT_DEPTH = 5;
+
+// AsyncLocalStorage for request context propagation
+const asyncLocalStorage = new AsyncLocalStorage<LogContext>();
 
 // Get script name for context
 const getScriptName = (): string => {
@@ -153,10 +157,12 @@ const devTransport: TransportTargetOptions = {
 // Production configuration - structured JSON
 const prodConfig: LoggerOptions = {
   ...baseConfig,
-  // Add request ID support for tracing
+  // Add request ID and async context support for tracing
   mixin() {
+    const asyncContext = asyncLocalStorage.getStore();
     return {
-      requestId: globalThis.__requestId,
+      requestId: globalThis.__terroir?.requestId || asyncContext?.requestId,
+      ...asyncContext,
       version: env.npm_package_version
     };
   },
@@ -186,7 +192,7 @@ const testConfig: LoggerOptions = {
 // This is safe as we're only creating a limited number of loggers
 // pino-pretty transport adds an exit listener for each instance
 if (isTest()) {
-  process.setMaxListeners(30);
+  process.setMaxListeners(50);
 }
 
 // Create logger instance based on environment
@@ -306,6 +312,149 @@ export const cleanupLogger = (): void => {
   if (logger && typeof logger.flush === 'function') {
     logger.flush();
   }
+};
+
+/**
+ * Sampling options for high-volume scenarios
+ */
+export interface SamplingOptions {
+  /** Sampling rate from 0 to 1 (0 = no logs, 1 = all logs) */
+  rate: number;
+  /** Optional key to group logs for consistent sampling */
+  key?: string;
+  /** Minimum log level to always include (regardless of sampling) */
+  minLevel?: 'fatal' | 'error' | 'warn';
+}
+
+/**
+ * Create a sampled logger for high-volume scenarios
+ * This reduces log volume while maintaining statistical accuracy
+ * 
+ * @param options - Sampling configuration
+ * @param context - Additional context to include in all logs
+ * @returns A logger that samples logs based on the provided rate
+ */
+export const createSampledLogger = (
+  options: SamplingOptions,
+  context?: LogContext
+): Logger => {
+  const { rate, key, minLevel = 'error' } = options;
+  
+  // Validate sampling rate
+  if (rate < 0 || rate > 1) {
+    throw new Error('Sampling rate must be between 0 and 1');
+  }
+  
+  // Always log if rate is 1
+  if (rate === 1) {
+    return createLogger(context || {});
+  }
+  
+  // Create a child logger with sampling context
+  const sampledLogger = createLogger({
+    ...context,
+    sampled: true,
+    samplingRate: rate
+  });
+  
+  // Determine if we should log based on the key or random sampling
+  const shouldLog = (level: string): boolean => {
+    // Always log critical levels
+    if (minLevel) {
+      const levels = ['fatal', 'error', 'warn', 'info', 'debug', 'trace'];
+      const minLevelIndex = levels.indexOf(minLevel);
+      const currentLevelIndex = levels.indexOf(level);
+      if (currentLevelIndex <= minLevelIndex) {
+        return true;
+      }
+    }
+    
+    if (key) {
+      // Use consistent hashing for the same key
+      let hash = 0;
+      for (let i = 0; i < key.length; i++) {
+        const char = key.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // Convert to 32-bit integer
+      }
+      return (Math.abs(hash) % 100) / 100 < rate;
+    }
+    
+    // Random sampling
+    return Math.random() < rate;
+  };
+  
+  // Create a proxy to intercept log calls
+  return new Proxy(sampledLogger, {
+    get(target, prop: string | symbol) {
+      const value = target[prop as keyof Logger];
+      
+      // Only intercept logging methods
+      const loggingMethods = ['fatal', 'error', 'warn', 'info', 'debug', 'trace'];
+      if (typeof prop === 'string' && loggingMethods.includes(prop)) {
+        return (...args: unknown[]) => {
+          if (shouldLog(prop)) {
+            return (value as Function).apply(target, args);
+          }
+          // Silently skip the log
+          return undefined;
+        };
+      }
+      
+      return value;
+    }
+  });
+};
+
+/**
+ * Run a function with a specific logging context
+ * This context will be automatically included in all logs within the async boundary
+ * 
+ * @param context - The logging context to apply
+ * @param fn - The async function to run with the context
+ * @returns The result of the function
+ */
+export const runWithContext = async <T>(
+  context: LogContext,
+  fn: () => Promise<T>
+): Promise<T> => {
+  return asyncLocalStorage.run(context, fn);
+};
+
+/**
+ * Get the current async context
+ * Returns undefined if not running within a context
+ */
+export const getAsyncContext = (): LogContext | undefined => {
+  return asyncLocalStorage.getStore();
+};
+
+/**
+ * Update the current async context with additional fields
+ * This merges the new fields with the existing context
+ * 
+ * @param updates - Fields to add or update in the context
+ */
+export const updateAsyncContext = (updates: LogContext): void => {
+  const currentContext = asyncLocalStorage.getStore();
+  if (currentContext) {
+    Object.assign(currentContext, updates);
+  }
+};
+
+/**
+ * Create a logger with async context support
+ * This logger will automatically include context from AsyncLocalStorage
+ * 
+ * @param staticContext - Static context that's always included
+ * @returns A logger instance
+ */
+export const createAsyncLogger = (staticContext?: LogContext): Logger => {
+  return createLogger({
+    ...staticContext,
+    // This will be merged at log time via the mixin
+    asyncContextEnabled: true
+  });
 };
 
 // Export logger instance and utility functions

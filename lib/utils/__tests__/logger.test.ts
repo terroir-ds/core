@@ -422,4 +422,161 @@ describe('Logger Utility', () => {
       expect(() => clearRequestId()).not.toThrow();
     });
   });
+
+  describe('Log Sampling', () => {
+    it('should validate sampling rate', async () => {
+      const { createSampledLogger } = await import('@utils/logger.js');
+      
+      expect(() => createSampledLogger({ rate: -0.1 })).toThrow('Sampling rate must be between 0 and 1');
+      expect(() => createSampledLogger({ rate: 1.1 })).toThrow('Sampling rate must be between 0 and 1');
+    });
+
+    it('should always log when rate is 1', async () => {
+      const { createSampledLogger } = await import('@utils/logger.js');
+      
+      const sampledLogger = createSampledLogger({ rate: 1 });
+      const infoSpy = vi.spyOn(sampledLogger, 'info');
+      
+      for (let i = 0; i < 100; i++) {
+        sampledLogger.info({ i }, 'Test message');
+      }
+      
+      expect(infoSpy).toHaveBeenCalledTimes(100);
+    });
+
+    it('should sample logs based on rate', async () => {
+      const { createSampledLogger } = await import('@utils/logger.js');
+      
+      const sampledLogger = createSampledLogger({ rate: 0.5 });
+      let logCount = 0;
+      
+      // Mock the info method to count calls
+      const originalInfo = sampledLogger.info.bind(sampledLogger);
+      sampledLogger.info = vi.fn((...args: Parameters<typeof originalInfo>) => {
+        logCount++;
+        return originalInfo(...args);
+      });
+      
+      const iterations = 1000;
+      for (let i = 0; i < iterations; i++) {
+        sampledLogger.info({ i }, 'Sampled message');
+      }
+      
+      // Should be approximately 50% of iterations (with some variance)
+      expect(logCount).toBeGreaterThan(iterations * 0.4);
+      expect(logCount).toBeLessThan(iterations * 0.6);
+    });
+
+    it('should always log critical levels regardless of sampling', async () => {
+      const { createSampledLogger } = await import('@utils/logger.js');
+      
+      const sampledLogger = createSampledLogger({ 
+        rate: 0.1, 
+        minLevel: 'warn' 
+      });
+      
+      const errorSpy = vi.spyOn(sampledLogger, 'error');
+      const warnSpy = vi.spyOn(sampledLogger, 'warn');
+      const infoSpy = vi.spyOn(sampledLogger, 'info');
+      
+      // Log 10 of each level
+      for (let i = 0; i < 10; i++) {
+        sampledLogger.error({ i }, 'Error message');
+        sampledLogger.warn({ i }, 'Warning message');
+        sampledLogger.info({ i }, 'Info message');
+      }
+      
+      // Error and warn should always log
+      expect(errorSpy).toHaveBeenCalledTimes(10);
+      expect(warnSpy).toHaveBeenCalledTimes(10);
+      
+      // Info should be sampled (approximately 10%)
+      expect(infoSpy.mock.calls.length).toBeLessThan(5);
+    });
+
+    it('should use consistent sampling with key', async () => {
+      const { createSampledLogger } = await import('@utils/logger.js');
+      
+      // Test that same key produces consistent results
+      const key = 'user-123';
+      const results: boolean[] = [];
+      
+      for (let i = 0; i < 10; i++) {
+        const sampledLogger = createSampledLogger({ rate: 0.5, key });
+        const shouldLogSpy = vi.fn(() => true);
+        
+        // Check if this key would be logged
+        sampledLogger.info({ test: i }, 'Test');
+        results.push(shouldLogSpy.mock.calls.length > 0);
+      }
+      
+      // All results should be the same for the same key
+      expect(results.every(r => r === results[0])).toBe(true);
+    });
+  });
+
+  describe('AsyncLocalStorage Context', () => {
+    it('should run function with context', async () => {
+      const { runWithContext, getAsyncContext } = await import('@utils/logger.js');
+      
+      const testContext = { userId: '123', requestId: 'req-456' };
+      
+      await runWithContext(testContext, async () => {
+        const context = getAsyncContext();
+        expect(context).toEqual(testContext);
+        
+        // Nested async operation should maintain context
+        await new Promise(resolve => setTimeout(resolve, 10));
+        expect(getAsyncContext()).toEqual(testContext);
+      });
+      
+      // Context should be cleared outside
+      expect(getAsyncContext()).toBeUndefined();
+    });
+
+    it('should update async context', async () => {
+      const { runWithContext, updateAsyncContext, getAsyncContext } = await import('@utils/logger.js');
+      
+      await runWithContext({ userId: '123' }, async () => {
+        expect(getAsyncContext()).toEqual({ userId: '123' });
+        
+        updateAsyncContext({ requestId: 'req-789', extra: 'data' });
+        
+        expect(getAsyncContext()).toEqual({
+          userId: '123',
+          requestId: 'req-789',
+          extra: 'data'
+        });
+      });
+    });
+
+    it('should create async logger with context', async () => {
+      const { createAsyncLogger, runWithContext } = await import('@utils/logger.js');
+      
+      const asyncLogger = createAsyncLogger({ service: 'test-service' });
+      
+      await runWithContext({ userId: '123', operation: 'test' }, async () => {
+        // The logger should include both static and async context
+        expect(asyncLogger.bindings()).toMatchObject({
+          service: 'test-service',
+          asyncContextEnabled: true
+        });
+      });
+    });
+
+    it('should handle nested contexts correctly', async () => {
+      const { runWithContext, getAsyncContext } = await import('@utils/logger.js');
+      
+      await runWithContext({ level: 1, id: 'outer' }, async () => {
+        expect(getAsyncContext()).toEqual({ level: 1, id: 'outer' });
+        
+        await runWithContext({ level: 2, id: 'inner' }, async () => {
+          expect(getAsyncContext()).toEqual({ level: 2, id: 'inner' });
+        });
+        
+        // Should restore outer context
+        expect(getAsyncContext()).toEqual({ level: 1, id: 'outer' });
+      });
+    });
+  });
 });

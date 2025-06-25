@@ -18,7 +18,9 @@ import {
   clearRequestId,
   generateRequestId,
   logStart,
-  logSuccess
+  logSuccess,
+  runWithContext,
+  getAsyncContext
 } from '@utils/logger.js';
 
 describe('Logger Integration Tests', () => {
@@ -172,7 +174,7 @@ describe('Logger Integration Tests', () => {
   });
 
   describe('Concurrent Request Isolation', () => {
-    it.skip('should not mix request IDs between concurrent requests (requires AsyncLocalStorage)', async () => {
+    it('should not mix request IDs between concurrent requests with AsyncLocalStorage', async () => {
       const results = await Promise.all([
         simulateRequest('request-1'),
         simulateRequest('request-2'),
@@ -226,22 +228,19 @@ async function simulateFileOperation(operation: string): Promise<{ result: strin
 }
 
 async function simulateRequest(requestName: string) {
-  // Save current request ID
-  const previousId = getRequestId();
-  
-  // Set new request ID for this simulated request
   const requestId = `${requestName}-${generateRequestId()}`;
-  setRequestId(requestId);
   
-  const operations = [];
-  
-  try {
+  // Use AsyncLocalStorage to isolate request context
+  return runWithContext({ requestId, requestName }, async () => {
+    const operations = [];
+    
     // Simulate various operations within the request
     for (let i = 0; i < 3; i++) {
       await new Promise(resolve => setTimeout(resolve, Math.random() * 5));
+      const context = getAsyncContext();
       operations.push({
         operation: `${requestName}-op-${i}`,
-        requestId: getRequestId()
+        requestId: context?.['requestId'] as string | undefined
       });
     }
     
@@ -249,12 +248,5 @@ async function simulateRequest(requestName: string) {
       requestId,
       operations
     };
-  } finally {
-    // Restore previous request ID
-    if (previousId) {
-      setRequestId(previousId);
-    } else {
-      clearRequestId();
-    }
-  }
+  });
 }
