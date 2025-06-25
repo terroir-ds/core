@@ -1,0 +1,11 @@
+{
+  "color": {
+    "brand": {
+      "primary": {
+        "value": "#0066cc",
+        "description": "Primary brand color - will be used to generate full palette",
+        "type": "color"
+      }
+    }
+  }
+}
