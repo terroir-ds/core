@@ -13,6 +13,10 @@
     "react",
     "typescript"
   ],
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
   "homepage": "https://github.com/terroir-ds/core#readme",
   "bugs": {
     "url": "https://github.com/terroir-ds/core/issues"
@@ -88,7 +92,9 @@
     ]
   },
   "dependencies": {
-    "husky": "^9.1.7"
+    "@t3-oss/env-core": "^0.13.8",
+    "husky": "^9.1.7",
+    "zod": "^3.25.67"
   },
   "devDependencies": {
     "@anthropic-ai/claude-code": "^1.0.34",
@@ -119,10 +125,6 @@
   },
   "type": "module",
   "packageManager": "pnpm@10.12.3",
-  "engines": {
-    "node": ">=18.0.0",
-    "pnpm": ">=8.0.0"
-  },
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"

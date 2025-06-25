@@ -8,6 +8,7 @@ export default defineConfig({
       '@lib': path.resolve(__dirname, './lib'),
       '@utils': path.resolve(__dirname, './lib/utils'),
       '@colors': path.resolve(__dirname, './lib/colors'),
+      '@config': path.resolve(__dirname, './lib/config'),
       '@scripts': path.resolve(__dirname, './scripts'),
       '@packages': path.resolve(__dirname, './packages'),
       '@test': path.resolve(__dirname, './test'),

@@ -51,6 +51,7 @@
       "@lib/*": ["./lib/*"],
       "@utils/*": ["./lib/utils/*"],
       "@colors/*": ["./lib/colors/*"],
+      "@config/*": ["./lib/config/*"],
       "@scripts/*": ["./scripts/*"],
       "@packages/*": ["./packages/*"],
       "@test/*": ["./test/*"]

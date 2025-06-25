@@ -13,26 +13,18 @@
 import pino from 'pino';
 import type { Logger, LoggerOptions, TransportTargetOptions } from 'pino';
 import path from 'node:path';
+import { env, isDevelopment, isTest, isCI } from '@lib/config/index.js';
 
 // Type definitions
-type LogLevel = 'fatal' | 'error' | 'warn' | 'info' | 'debug' | 'trace';
-type Environment = 'development' | 'production' | 'test';
-
-interface LogContext {
+export interface LogContext {
   [key: string]: unknown;
 }
 
-interface PerformanceMetrics {
+export interface PerformanceMetrics {
   operation: string;
   duration: number;
   durationUnit: 'ms';
 }
-
-// Environment detection
-const NODE_ENV = (process.env['NODE_ENV'] || 'development') as Environment;
-const LOG_LEVEL = (process.env['LOG_LEVEL'] || (NODE_ENV === 'production' ? 'info' : 'debug')) as LogLevel;
-const IS_CI = process.env['CI'] === 'true';
-const IS_TEST = process.env['NODE_ENV'] === 'test' || process.argv.includes('--test');
 
 // Performance: Limit log message size to prevent memory issues
 const MAX_MESSAGE_LENGTH = 10000; // 10KB
@@ -73,8 +65,8 @@ const serializers: LoggerOptions['serializers'] = {
     return deepRedact(config, SENSITIVE_PATTERNS);
   },
   // Limit request/response sizes
-  req: (req: any) => {
-    const serialized = pino.stdSerializers.req(req);
+  req: (req: unknown) => {
+    const serialized = pino.stdSerializers.req(req as any) as any;
     // Truncate large bodies
     if (serialized.body && JSON.stringify(serialized.body).length > MAX_MESSAGE_LENGTH) {
       serialized.body = '[TRUNCATED - EXCEEDS SIZE LIMIT]';
@@ -126,13 +118,13 @@ function deepRedact(obj: any, patterns: string[], depth = 0): any {
 
 // Base configuration
 const baseConfig: LoggerOptions = {
-  level: LOG_LEVEL,
+  level: env.LOG_LEVEL,
   // Base context for all logs
   base: {
     pid: process.pid,
     hostname: undefined, // Remove hostname for security
     script: getScriptName(),
-    env: NODE_ENV,
+    env: env.NODE_ENV,
   },
   // Consistent timestamp format
   timestamp: pino.stdTimeFunctions.isoTime,
@@ -142,7 +134,7 @@ const baseConfig: LoggerOptions = {
   hooks: {
     logMethod(inputArgs: unknown[], method) {
       // Add stack trace for errors in development
-      if (NODE_ENV === 'development' && inputArgs[0] instanceof Error) {
+      if (isDevelopment() && inputArgs[0] instanceof Error) {
         inputArgs[0] = {
           ...inputArgs[0],
           stack: inputArgs[0].stack
@@ -175,7 +167,7 @@ const prodConfig: LoggerOptions = {
   mixin() {
     return {
       requestId: (globalThis as any).__requestId,
-      version: process.env['npm_package_version']
+      version: env.npm_package_version
     };
   },
   // Redact sensitive paths
@@ -203,9 +195,9 @@ const testConfig: LoggerOptions = {
 // Create logger instance based on environment
 let logger: Logger;
 
-if (IS_TEST) {
+if (isTest()) {
   logger = pino(testConfig);
-} else if (NODE_ENV === 'development' && !IS_CI) {
+} else if (isDevelopment() && !isCI()) {
   logger = pino({
     ...baseConfig,
     transport: devTransport
@@ -309,4 +301,4 @@ export const clearRequestId = (): void => {
 // Export logger instance and utility functions
 export default logger;
 export { logger };
-export type { Logger, LogContext, PerformanceMetrics };
+export type { Logger };
