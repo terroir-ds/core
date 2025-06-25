@@ -3,8 +3,11 @@
  */
 
 declare global {
-  // Extend globalThis to include our custom properties
-  var __requestId: string | undefined;
+  // Namespaced global state to prevent collisions
+  var __terroir: {
+    requestId?: string;
+    // Reserved for future global state
+  };
 }
 
 export {};

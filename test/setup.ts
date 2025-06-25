@@ -21,7 +21,7 @@ beforeEach(() => {
 });
 
 // Global cleanup after each test
-afterEach(() => {
+afterEach(async () => {
   // Restore original environment
   process.env = originalEnv;
   
@@ -30,6 +30,16 @@ afterEach(() => {
   
   // Restore all mocks
   vi.restoreAllMocks();
+  
+  // Clean up logger if it was imported
+  try {
+    const loggerModule = await vi.importActual('@utils/logger.js') as { cleanupLogger?: () => void };
+    if (loggerModule.cleanupLogger) {
+      loggerModule.cleanupLogger();
+    }
+  } catch {
+    // Ignore errors if logger wasn't imported
+  }
 });
 
 // Make test utilities globally available
@@ -46,13 +56,24 @@ declare global {
 }
 
 // Implement global test utilities
-(globalThis as any).resetTestEnvironment = () => {
+interface GlobalTestUtils {
+  resetTestEnvironment: () => void;
+  setTestEnv: (vars: Record<string, string | undefined>) => void;
+}
+
+const globalWithUtils = globalThis as typeof globalThis & GlobalTestUtils;
+
+globalWithUtils.resetTestEnvironment = () => {
   vi.resetModules();
   vi.clearAllMocks();
   process.env = { ...originalEnv };
+  
+  // Clean up any global state
+  delete (globalThis as { __requestId?: unknown }).__requestId;
+  delete (globalThis as { __terroir?: unknown }).__terroir;
 };
 
-(globalThis as any).setTestEnv = (vars: Record<string, string | undefined>) => {
+globalWithUtils.setTestEnv = (vars: Record<string, string | undefined>) => {
   Object.entries(vars).forEach(([key, value]) => {
     if (value === undefined) {
       delete process.env[key];

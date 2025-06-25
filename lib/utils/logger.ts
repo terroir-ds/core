@@ -182,6 +182,13 @@ const testConfig: LoggerOptions = {
   }
 };
 
+// Increase max listeners to prevent warnings in tests
+// This is safe as we're only creating a limited number of loggers
+// pino-pretty transport adds an exit listener for each instance
+if (isTest()) {
+  process.setMaxListeners(30);
+}
+
 // Create logger instance based on environment
 let logger: Logger;
 
@@ -271,21 +278,34 @@ export const generateRequestId = (): string => {
  * Use this at the start of each request/operation
  */
 export const setRequestId = (requestId: string): void => {
-  globalThis.__requestId = requestId;
+  globalThis.__terroir = globalThis.__terroir || {};
+  globalThis.__terroir.requestId = requestId;
 };
 
 /**
  * Get current request ID
  */
 export const getRequestId = (): string | undefined => {
-  return globalThis.__requestId;
+  return globalThis.__terroir?.requestId;
 };
 
 /**
  * Clear request ID (use at end of request)
  */
 export const clearRequestId = (): void => {
-  globalThis.__requestId = undefined;
+  if (globalThis.__terroir) {
+    delete globalThis.__terroir.requestId;
+  }
+};
+
+/**
+ * Clean up logger resources (for testing)
+ * This is primarily used to clean up transport workers
+ */
+export const cleanupLogger = (): void => {
+  if (logger && typeof logger.flush === 'function') {
+    logger.flush();
+  }
 };
 
 // Export logger instance and utility functions

@@ -344,6 +344,82 @@ describe('Logger Utility', () => {
       expect(loggerModule.logPerformance).toBeInstanceOf(Function);
       expect(loggerModule.createLogger).toBeInstanceOf(Function);
       expect(loggerModule.measureTime).toBeInstanceOf(Function);
+      expect(loggerModule.generateRequestId).toBeInstanceOf(Function);
+      expect(loggerModule.setRequestId).toBeInstanceOf(Function);
+      expect(loggerModule.getRequestId).toBeInstanceOf(Function);
+      expect(loggerModule.clearRequestId).toBeInstanceOf(Function);
+    });
+  });
+
+  describe('Request ID Management', () => {
+    beforeEach(() => {
+      // Ensure clean state
+      if (globalThis.__terroir) {
+        delete globalThis.__terroir.requestId;
+      }
+    });
+
+    it('should generate unique request IDs', async () => {
+      const { generateRequestId } = await import('@utils/logger.js');
+      
+      const id1 = generateRequestId();
+      const id2 = generateRequestId();
+      
+      expect(id1).not.toBe(id2);
+      expect(id1).toMatch(/^\d{13}-[a-z0-9]{7}$/);
+      expect(id2).toMatch(/^\d{13}-[a-z0-9]{7}$/);
+    });
+
+    it('should set and get request ID globally', async () => {
+      const { setRequestId, getRequestId } = await import('@utils/logger.js');
+      
+      const testId = 'test-request-123';
+      setRequestId(testId);
+      
+      expect(getRequestId()).toBe(testId);
+    });
+
+    it('should clear request ID', async () => {
+      const { setRequestId, getRequestId, clearRequestId } = await import('@utils/logger.js');
+      
+      setRequestId('test-id');
+      expect(getRequestId()).toBe('test-id');
+      
+      clearRequestId();
+      expect(getRequestId()).toBeUndefined();
+    });
+
+    it('should handle multiple request ID operations', async () => {
+      const { setRequestId, getRequestId, clearRequestId } = await import('@utils/logger.js');
+      
+      // Set first ID
+      setRequestId('request-1');
+      expect(getRequestId()).toBe('request-1');
+      
+      // Override with second ID
+      setRequestId('request-2');
+      expect(getRequestId()).toBe('request-2');
+      
+      // Clear and verify
+      clearRequestId();
+      expect(getRequestId()).toBeUndefined();
+      
+      // Set again after clear
+      setRequestId('request-3');
+      expect(getRequestId()).toBe('request-3');
+    });
+
+    it('should handle request ID when global namespace does not exist', async () => {
+      const { getRequestId, clearRequestId } = await import('@utils/logger.js');
+      
+      // Delete the entire namespace
+      delete (globalThis as { __terroir?: unknown }).__terroir;
+      
+      // Should handle gracefully
+      expect(getRequestId()).toBeUndefined();
+      
+      // Should not throw when clearing non-existent
+      expect(() => clearRequestId()).not.toThrow();
     });
   });
 });
