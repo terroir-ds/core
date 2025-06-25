@@ -43,7 +43,7 @@ interface LoggerState {
 }
 
 // Extend globalThis to include our symbol-based state
-interface GlobalWithLoggerState extends GlobalThis {
+interface GlobalWithLoggerState {
   [key: symbol]: LoggerState | undefined;
 }
 

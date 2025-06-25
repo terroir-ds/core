@@ -107,7 +107,7 @@ describe('Logger Edge Cases', () => {
     });
 
     it('should handle Map and Set objects', () => {
-      const map = new Map<any, any>([
+      const map = new Map<unknown, unknown>([
         ['key1', 'value1'],
         ['key2', { nested: true }],
         [Symbol('key3'), 'symbol key'],
@@ -298,7 +298,7 @@ describe('Logger Edge Cases', () => {
 
     it('should handle deeply nested contexts', async () => {
       const depths = 10;
-      let finalContext: any;
+      let finalContext: LogContext | undefined;
       
       const runNested = async (depth: number): Promise<void> => {
         if (depth === 0) {
@@ -321,14 +321,19 @@ describe('Logger Edge Cases', () => {
     });
 
     it('should handle createAsyncLogger with various contexts', () => {
-      const circularContext: any = { circular: {} };
+      interface CircularContext {
+        circular: {
+          self?: CircularContext['circular'];
+        };
+      }
+      const circularContext: CircularContext = { circular: {} };
       circularContext.circular.self = circularContext.circular;
       
-      const contexts = [
+      const contexts: Array<LogContext | undefined> = [
         undefined,
         {},
         { nested: { deep: { value: true } } },
-        circularContext,
+        circularContext as unknown as LogContext,
       ];
       
       contexts.forEach(context => {

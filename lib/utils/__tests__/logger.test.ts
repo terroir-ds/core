@@ -417,9 +417,9 @@ describe('Logger Utility', () => {
       
       // Also clear the secure state
       const stateSymbol = Symbol.for('terroir.logger.state');
-      const state = (globalThis as Record<symbol, any>)[stateSymbol];
-      if (state) {
-        delete state.requestId;
+      const state = (globalThis as Record<symbol, unknown>)[stateSymbol];
+      if (state && typeof state === 'object') {
+        delete (state as Record<string, unknown>)['requestId'];
       }
       
       // Should handle gracefully
