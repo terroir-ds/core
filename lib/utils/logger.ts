@@ -24,6 +24,103 @@ const MAX_OBJECT_DEPTH = 5;
 // AsyncLocalStorage for request context propagation
 const asyncLocalStorage = new AsyncLocalStorage<LogContext>();
 
+// Secure request ID storage using Symbols
+const LOGGER_STATE_SYMBOL = Symbol.for('terroir.logger.state');
+
+// Type for rate limiter
+interface RateLimiter {
+  tokens: number;
+  maxTokens: number;
+  lastRefill: number;
+  refillRate: number;
+}
+
+// Type for logger state
+interface LoggerState {
+  requestId?: string;
+  contextMap: WeakMap<object, LogContext>;
+  rateLimiter: RateLimiter;
+}
+
+// Extend globalThis to include our symbol-based state
+interface GlobalWithLoggerState extends GlobalThis {
+  [key: symbol]: LoggerState | undefined;
+}
+
+// Cast globalThis for our usage
+const globalWithState = globalThis as GlobalWithLoggerState;
+
+// Initialize secure global state
+if (!globalWithState[LOGGER_STATE_SYMBOL]) {
+  Object.defineProperty(globalWithState, LOGGER_STATE_SYMBOL, {
+    value: {
+      requestId: undefined,
+      contextMap: new WeakMap<object, LogContext>(),
+      rateLimiter: {
+        tokens: 1000,
+        maxTokens: 1000,
+        lastRefill: Date.now(),
+        refillRate: 100, // tokens per second
+      },
+    },
+    writable: false,
+    enumerable: false,
+    configurable: false,
+  });
+}
+
+/**
+ * Check if rate limit allows logging
+ */
+function checkRateLimit(): boolean {
+  const state = globalWithState[LOGGER_STATE_SYMBOL];
+  if (!state?.rateLimiter) return true;
+  
+  const limiter = state.rateLimiter;
+  const now = Date.now();
+  const elapsed = (now - limiter.lastRefill) / 1000; // seconds
+  
+  // Refill tokens
+  const tokensToAdd = Math.floor(elapsed * limiter.refillRate);
+  if (tokensToAdd > 0) {
+    limiter.tokens = Math.min(limiter.maxTokens, limiter.tokens + tokensToAdd);
+    limiter.lastRefill = now;
+  }
+  
+  // Check if we have tokens
+  if (limiter.tokens > 0) {
+    limiter.tokens--;
+    return true;
+  }
+  
+  return false;
+}
+
+/**
+ * Validate and sanitize log input
+ */
+function validateLogInput(obj: unknown): unknown {
+  if (obj === null || obj === undefined) {
+    return obj;
+  }
+  
+  // Check object size
+  try {
+    const size = JSON.stringify(obj).length;
+    if (size > MAX_MESSAGE_LENGTH * 10) { // 100KB limit for objects
+      return { 
+        error: 'Log object too large', 
+        size, 
+        truncated: true 
+      };
+    }
+  } catch {
+    return { error: 'Failed to serialize log object' };
+  }
+  
+  return obj;
+}
+
 // Get script name for context
 const getScriptName = (): string => {
   try {
@@ -51,6 +148,17 @@ const SENSITIVE_PATTERNS = [
   'pin', 'cvv', 'cvc'
 ];
 
+// Content patterns for sensitive data detection
+const SENSITIVE_CONTENT_PATTERNS = [
+  /\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b/g, // Credit card numbers
+  /\beyJ[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\b/g, // JWT tokens
+  /\b\d{3}-\d{2}-\d{4}\b/g, // SSN format
+  /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, // Email addresses
+  /-----BEGIN (?:RSA |EC )?PRIVATE KEY-----/g, // Private keys
+  /sk_(?:test|live)_[a-zA-Z0-9]{24,}/g, // Stripe keys
+  /ghp_[a-zA-Z0-9]{36}/g, // GitHub personal access tokens
+];
+
 const serializers: LoggerOptions['serializers'] = {
   err: pino.stdSerializers.err,
   error: pino.stdSerializers.err,
@@ -71,39 +179,168 @@ const serializers: LoggerOptions['serializers'] = {
 };
 
 /**
- * Deep redaction of sensitive fields
+ * Check if a string contains sensitive content
  */
-function deepRedact(obj: unknown, patterns: string[], depth = 0): unknown {
-  if (depth > MAX_OBJECT_DEPTH) {
-    return '[MAX DEPTH EXCEEDED]';
+function containsSensitiveContent(value: string): boolean {
+  // Check if string is too long (potential data dump)
+  if (value.length > MAX_MESSAGE_LENGTH) {
+    return true;
   }
   
+  // Check against content patterns
+  for (const pattern of SENSITIVE_CONTENT_PATTERNS) {
+    pattern.lastIndex = 0; // Reset regex state
+    if (pattern.test(value)) {
+      return true;
+    }
+  }
+  
+  return false;
+}
+
+/**
+ * Deep redaction of sensitive fields with content inspection
+ * Uses iterative approach to prevent stack overflow
+ */
+function deepRedact(obj: unknown, patterns: string[], depth = 0): unknown {
+  // Handle primitives
   if (obj === null || obj === undefined) {
     return obj;
   }
   
+  // Check depth limit
+  if (depth > MAX_OBJECT_DEPTH) {
+    return '[MAX DEPTH EXCEEDED]';
+  }
+  
+  // Redact sensitive string content
+  if (typeof obj === 'string') {
+    if (containsSensitiveContent(obj)) {
+      return '[REDACTED - SENSITIVE CONTENT]';
+    }
+    // Truncate long strings
+    if (obj.length > MAX_MESSAGE_LENGTH) {
+      return obj.substring(0, MAX_MESSAGE_LENGTH) + '[TRUNCATED]';
+    }
+    return obj;
+  }
+  
+  // Non-objects pass through
   if (typeof obj !== 'object') {
     return obj;
   }
   
+  // Use iterative approach for better performance
+  const stack: Array<{
+    source: Record<string, unknown> | unknown[];
+    target: Record<string, unknown> | unknown[];
+    key?: string | number;
+    depth: number;
+  }> = [];
+  
+  // Handle arrays
   if (Array.isArray(obj)) {
-    return obj.map(item => deepRedact(item, patterns, depth + 1));
+    const result: unknown[] = [];
+    stack.push({ source: obj, target: result, depth });
+    
+    while (stack.length > 0) {
+      const current = stack.pop();
+      if (!current) continue;
+      const { source, target, depth: currentDepth } = current;
+      
+      if (Array.isArray(source) && Array.isArray(target)) {
+        for (let i = 0; i < source.length; i++) {
+          const value = source[i];
+          if (value === null || value === undefined) {
+            target[i] = value;
+          } else if (typeof value === 'string') {
+            target[i] = containsSensitiveContent(value) ? '[REDACTED - SENSITIVE CONTENT]' : value;
+          } else if (typeof value === 'object') {
+            if (currentDepth >= MAX_OBJECT_DEPTH) {
+              target[i] = '[MAX DEPTH EXCEEDED]';
+            } else if (Array.isArray(value)) {
+              target[i] = [];
+              stack.push({ source: value, target: target[i] as unknown[], depth: currentDepth + 1 });
+            } else {
+              target[i] = {};
+              stack.push({ source: value as Record<string, unknown>, target: target[i] as Record<string, unknown>, depth: currentDepth + 1 });
+            }
+          } else {
+            target[i] = value;
+          }
+        }
+      } else {
+        // Handle objects
+        if (!Array.isArray(source) && !Array.isArray(target)) {
+          for (const [key, value] of Object.entries(source)) {
+            const lowerKey = key.toLowerCase();
+            const shouldRedactKey = patterns.some(pattern => 
+              lowerKey.includes(pattern.toLowerCase())
+            );
+            
+            if (shouldRedactKey) {
+              target[key] = '[REDACTED]';
+            } else if (value === null || value === undefined) {
+              target[key] = value;
+            } else if (typeof value === 'string') {
+              target[key] = containsSensitiveContent(value) ? '[REDACTED - SENSITIVE CONTENT]' : value;
+            } else if (typeof value === 'object') {
+              if (currentDepth >= MAX_OBJECT_DEPTH) {
+                target[key] = '[MAX DEPTH EXCEEDED]';
+              } else if (Array.isArray(value)) {
+                target[key] = [];
+                stack.push({ source: value, target: target[key] as unknown[], depth: currentDepth + 1 });
+              } else {
+                target[key] = {};
+                stack.push({ source: value as Record<string, unknown>, target: target[key] as Record<string, unknown>, depth: currentDepth + 1 });
+              }
+            } else {
+              target[key] = value;
+            }
+          }
+        }
+      }
+    }
+    
+    return result;
   }
   
+  // Handle objects
   const result: Record<string, unknown> = {};
+  stack.push({ source: obj as Record<string, unknown>, target: result, depth });
   
-  for (const [key, value] of Object.entries(obj)) {
-    const lowerKey = key.toLowerCase();
-    const shouldRedact = patterns.some(pattern => 
-      lowerKey.includes(pattern.toLowerCase())
-    );
+  while (stack.length > 0) {
+    const current = stack.pop();
+    if (!current) continue;
+    const { source, target, depth: currentDepth } = current;
     
-    if (shouldRedact) {
-      result[key] = '[REDACTED]';
-    } else if (typeof value === 'object' && value !== null) {
-      result[key] = deepRedact(value, patterns, depth + 1);
-    } else {
-      result[key] = value;
+    if (!Array.isArray(source) && !Array.isArray(target)) {
+      for (const [key, value] of Object.entries(source)) {
+        const lowerKey = key.toLowerCase();
+        const shouldRedactKey = patterns.some(pattern => 
+          lowerKey.includes(pattern.toLowerCase())
+        );
+        
+        if (shouldRedactKey) {
+          target[key] = '[REDACTED]';
+        } else if (value === null || value === undefined) {
+          target[key] = value;
+        } else if (typeof value === 'string') {
+          target[key] = containsSensitiveContent(value) ? '[REDACTED - SENSITIVE CONTENT]' : value;
+        } else if (typeof value === 'object') {
+          if (currentDepth >= MAX_OBJECT_DEPTH) {
+            target[key] = '[MAX DEPTH EXCEEDED]';
+          } else if (Array.isArray(value)) {
+            target[key] = [];
+            stack.push({ source: value, target: target[key] as unknown[], depth: currentDepth + 1 });
+          } else {
+            target[key] = {};
+            stack.push({ source: value as Record<string, unknown>, target: target[key] as Record<string, unknown>, depth: currentDepth + 1 });
+          }
+        } else {
+          target[key] = value;
+        }
+      }
     }
   }
   
@@ -127,6 +364,17 @@ const baseConfig: LoggerOptions = {
   // Custom error hook for additional error context
   hooks: {
     logMethod(inputArgs: unknown[], method) {
+      // Check rate limit before logging
+      if (!checkRateLimit()) {
+        // Silently drop the log if rate limit exceeded
+        return;
+      }
+      
+      // Validate input
+      if (inputArgs[0] && typeof inputArgs[0] === 'object') {
+        inputArgs[0] = validateLogInput(inputArgs[0]);
+      }
+      
       // Add stack trace for errors in development
       if (isDevelopment() && inputArgs[0] instanceof Error) {
         inputArgs[0] = {
@@ -160,8 +408,9 @@ const prodConfig: LoggerOptions = {
   // Add request ID and async context support for tracing
   mixin() {
     const asyncContext = asyncLocalStorage.getStore();
+    const state = globalWithState[LOGGER_STATE_SYMBOL];
     return {
-      requestId: globalThis.__terroir?.requestId || asyncContext?.['requestId'],
+      requestId: state?.requestId || globalThis.__terroir?.requestId || asyncContext?.['requestId'],
       ...asyncContext,
       version: env.npm_package_version
     };
@@ -184,6 +433,18 @@ const testConfig: LoggerOptions = {
       ignore: 'time,pid,hostname,script',
       messageFormat: '{msg}',
       singleLine: true,
+    }
+  },
+  // Override hooks to bypass rate limiting in tests
+  hooks: {
+    logMethod(inputArgs: unknown[], method) {
+      // In test mode, skip rate limiting to avoid test interference
+      // but keep input validation
+      if (inputArgs[0] && typeof inputArgs[0] === 'object') {
+        inputArgs[0] = validateLogInput(inputArgs[0]);
+      }
+      
+      return method.apply(this, inputArgs as Parameters<typeof method>);
     }
   }
 };
@@ -280,10 +541,30 @@ export const generateRequestId = (): string => {
 };
 
 /**
+ * Validate request ID format
+ */
+function isValidRequestId(id: string): boolean {
+  // Request ID should match our format: timestamp-randomstring
+  return /^\d{13}-[a-z0-9]{7}$/.test(id) || 
+         // Allow custom formats but with reasonable constraints
+         (id.length > 0 && id.length <= 100 && /^[\w-]+$/.test(id));
+}
+
+/**
  * Set global request ID for correlation
  * Use this at the start of each request/operation
  */
 export const setRequestId = (requestId: string): void => {
+  if (!isValidRequestId(requestId)) {
+    throw new Error('Invalid request ID format');
+  }
+  
+  const state = globalWithState[LOGGER_STATE_SYMBOL];
+  if (state) {
+    state.requestId = requestId;
+  }
+  
+  // Also maintain backward compatibility
   globalThis.__terroir = globalThis.__terroir || {};
   globalThis.__terroir.requestId = requestId;
 };
@@ -292,13 +573,19 @@ export const setRequestId = (requestId: string): void => {
  * Get current request ID
  */
 export const getRequestId = (): string | undefined => {
-  return globalThis.__terroir?.requestId;
+  const state = globalWithState[LOGGER_STATE_SYMBOL];
+  return state?.requestId || globalThis.__terroir?.requestId;
 };
 
 /**
  * Clear request ID (use at end of request)
  */
 export const clearRequestId = (): void => {
+  const state = globalWithState[LOGGER_STATE_SYMBOL];
+  if (state) {
+    delete state.requestId;
+  }
+  
   if (globalThis.__terroir) {
     delete globalThis.__terroir.requestId;
   }
@@ -311,6 +598,32 @@ export const clearRequestId = (): void => {
 export const cleanupLogger = (): void => {
   if (logger && typeof logger.flush === 'function') {
     logger.flush();
+  }
+};
+
+/**
+ * Get rate limiter statistics
+ * Useful for monitoring and debugging
+ */
+export const getRateLimiterStats = (): { tokens: number; maxTokens: number; refillRate: number } | undefined => {
+  const state = globalWithState[LOGGER_STATE_SYMBOL];
+  if (!state?.rateLimiter) return undefined;
+  
+  return {
+    tokens: state.rateLimiter.tokens,
+    maxTokens: state.rateLimiter.maxTokens,
+    refillRate: state.rateLimiter.refillRate,
+  };
+};
+
+/**
+ * Reset rate limiter (for testing)
+ */
+export const resetRateLimiter = (): void => {
+  const state = globalWithState[LOGGER_STATE_SYMBOL];
+  if (state?.rateLimiter) {
+    state.rateLimiter.tokens = state.rateLimiter.maxTokens;
+    state.rateLimiter.lastRefill = Date.now();
   }
 };
 
@@ -341,7 +654,7 @@ export const createSampledLogger = (
   const { rate, key, minLevel = 'error' } = options;
   
   // Validate sampling rate
-  if (rate < 0 || rate > 1) {
+  if (rate < 0 || rate > 1 || isNaN(rate)) {
     throw new Error('Sampling rate must be between 0 and 1');
   }
   

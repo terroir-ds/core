@@ -415,6 +415,13 @@ describe('Logger Utility', () => {
       // Delete the entire namespace
       delete (globalThis as { __terroir?: unknown }).__terroir;
       
+      // Also clear the secure state
+      const stateSymbol = Symbol.for('terroir.logger.state');
+      const state = (globalThis as Record<symbol, any>)[stateSymbol];
+      if (state) {
+        delete state.requestId;
+      }
+      
       // Should handle gracefully
       expect(getRequestId()).toBeUndefined();
       
