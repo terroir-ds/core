@@ -14,7 +14,7 @@ A comprehensive, open-source design system built with modern web standards, feat
 
 ## Architecture
 
-```
+```text
 terroir-core/
 ├── lib/                       # Core library code (TypeScript)
 │   ├── colors/               # Color generation utilities
@@ -431,7 +431,7 @@ pnpm upgrade:deps   # Update dependencies
 
 ## Resources
 
-### Documentation
+### Project Documentation
 
 - [Token Architecture](./docs/token-architecture.md)
 - [Color System](./docs/color-system.md)
@@ -498,7 +498,7 @@ Follow this workflow for consistent, high-quality development:
 
 ### Working Directory Structure
 
-```
+```text
 .claude/                  # AI session working directory (gitignored)
 ├── tasks/               # Task planning and tracking
 ├── sessions/            # Session context and notes
@@ -521,20 +521,20 @@ A task is complete when:
 
 For each feature, ensure:
 
-**Code Testing**
+#### Code Testing
 
 - Unit tests for logic
 - Integration tests for interactions
 - Visual tests for UI changes
 - Performance tests for critical paths
 
-**Documentation Testing**
+#### Documentation Testing
 
 - API docs accurate
 - Examples working
 - Migration guides complete
 
-**Manual Verification**
+#### Manual Verification
 
 - Works in development
 - Works in container
