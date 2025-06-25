@@ -20,6 +20,48 @@ import type { LogContext, PerformanceMetrics } from './types/logger.types.js';
 // Performance: Limit log message size to prevent memory issues
 const MAX_MESSAGE_LENGTH = 10000; // 10KB
 const MAX_OBJECT_DEPTH = 5;
+const MAX_STACK_SIZE = 1000; // Maximum stack size for iterative processing
+
+// Object pooling for performance
+const POOL_SIZE = 50;
+const stackPool: Array<Array<{
+  source: Record<string, unknown> | unknown[];
+  target: Record<string, unknown> | unknown[];
+  key?: string | number;
+  depth: number;
+}>> = [];
+
+// Initialize the pool
+for (let i = 0; i < POOL_SIZE; i++) {
+  stackPool.push([]);
+}
+
+/**
+ * Get a stack array from the pool or create a new one
+ */
+function getStackFromPool(): Array<{
+  source: Record<string, unknown> | unknown[];
+  target: Record<string, unknown> | unknown[];
+  key?: string | number;
+  depth: number;
+}> {
+  return stackPool.pop() || [];
+}
+
+/**
+ * Return a stack array to the pool after clearing it
+ */
+function returnStackToPool(stack: Array<{
+  source: Record<string, unknown> | unknown[];
+  target: Record<string, unknown> | unknown[];
+  key?: string | number;
+  depth: number;
+}>): void {
+  if (stackPool.length < POOL_SIZE) {
+    stack.length = 0; // Clear the array
+    stackPool.push(stack);
+  }
+}
 
 // AsyncLocalStorage for request context propagation
 const asyncLocalStorage = new AsyncLocalStorage<LogContext>();
@@ -31,8 +73,16 @@ const LOGGER_STATE_SYMBOL = Symbol.for('terroir.logger.state');
 interface RateLimiter {
   tokens: number;
   maxTokens: number;
-  lastRefill: number;
+  lastRefillNs: bigint;
   refillRate: number;
+}
+
+// Type for OpenTelemetry integration
+interface OTelHooks {
+  getTraceId?: () => string | undefined;
+  getSpanId?: () => string | undefined;
+  getTraceFlags?: () => string | undefined;
+  injectContext?: (context: LogContext) => LogContext;
 }
 
 // Type for logger state
@@ -40,6 +90,9 @@ interface LoggerState {
   requestId?: string;
   contextMap: WeakMap<object, LogContext>;
   rateLimiter: RateLimiter;
+  childLoggers: WeakSet<Logger>;
+  activeContexts: WeakSet<LogContext>;
+  otelHooks?: OTelHooks;
 }
 
 // Extend globalThis to include our symbol-based state
@@ -59,9 +112,11 @@ if (!globalWithState[LOGGER_STATE_SYMBOL]) {
       rateLimiter: {
         tokens: 1000,
         maxTokens: 1000,
-        lastRefill: Date.now(),
+        lastRefillNs: process.hrtime.bigint(),
         refillRate: 100, // tokens per second
       },
+      childLoggers: new WeakSet<Logger>(),
+      activeContexts: new WeakSet<LogContext>(),
     },
     writable: false,
     enumerable: false,
@@ -77,14 +132,15 @@ function checkRateLimit(): boolean {
   if (!state?.rateLimiter) return true;
   
   const limiter = state.rateLimiter;
-  const now = Date.now();
-  const elapsed = (now - limiter.lastRefill) / 1000; // seconds
+  const nowNs = process.hrtime.bigint();
+  const elapsedNs = nowNs - limiter.lastRefillNs;
+  const elapsed = Number(elapsedNs) / 1e9; // Convert to seconds
   
   // Refill tokens
   const tokensToAdd = Math.floor(elapsed * limiter.refillRate);
   if (tokensToAdd > 0) {
     limiter.tokens = Math.min(limiter.maxTokens, limiter.tokens + tokensToAdd);
-    limiter.lastRefill = now;
+    limiter.lastRefillNs = nowNs;
   }
   
   // Check if we have tokens
@@ -157,7 +213,16 @@ const SENSITIVE_CONTENT_PATTERNS = [
   /-----BEGIN (?:RSA |EC )?PRIVATE KEY-----/g, // Private keys
   /sk_(?:test|live)_[a-zA-Z0-9]{24,}/g, // Stripe keys
   /ghp_[a-zA-Z0-9]{36}/g, // GitHub personal access tokens
+  /\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/g, // IPv4 addresses
+  /\b(?:[A-Fa-f0-9]{1,4}:){7}[A-Fa-f0-9]{1,4}\b/g, // IPv6 addresses (simplified)
+  /\b\+?1?\s*\(?[0-9]{3}\)?[-.\s]?[0-9]{3}[-.\s]?[0-9]{4}\b/g, // US phone numbers
+  /\b\+[1-9]\d{1,14}\b/g, // International E.164 phone format
 ];
+
+// Pre-compiled non-global versions for better performance
+const SENSITIVE_CONTENT_TESTERS = SENSITIVE_CONTENT_PATTERNS.map(pattern => 
+  new RegExp(pattern.source, pattern.flags.replace('g', ''))
+);
 
 const serializers: LoggerOptions['serializers'] = {
   err: pino.stdSerializers.err,
@@ -187,15 +252,29 @@ function containsSensitiveContent(value: string): boolean {
     return true;
   }
   
-  // Check against content patterns
-  for (const pattern of SENSITIVE_CONTENT_PATTERNS) {
-    pattern.lastIndex = 0; // Reset regex state
-    if (pattern.test(value)) {
+  // Check for binary content
+  if (isBinaryContent(value)) {
+    return true;
+  }
+  
+  // Check against content patterns using pre-compiled testers
+  for (const tester of SENSITIVE_CONTENT_TESTERS) {
+    if (tester.test(value)) {
       return true;
     }
   }
   
   return false;
+}
+
+/**
+ * Check if string content appears to be binary data
+ */
+function isBinaryContent(str: string): boolean {
+  // Check for null bytes or high concentration of non-printable characters
+  // eslint-disable-next-line no-control-regex
+  const nonPrintable = str.match(/[\x00-\x08\x0E-\x1F\x7F-\x9F]/g);
+  return nonPrintable ? nonPrintable.length / str.length > 0.3 : false;
 }
 
 /**
@@ -230,121 +309,131 @@ function deepRedact(obj: unknown, patterns: string[], depth = 0): unknown {
     return obj;
   }
   
-  // Use iterative approach for better performance
-  const stack: Array<{
-    source: Record<string, unknown> | unknown[];
-    target: Record<string, unknown> | unknown[];
-    key?: string | number;
-    depth: number;
-  }> = [];
+  // Use iterative approach with object pooling for better performance
+  const stack = getStackFromPool();
   
-  // Handle arrays
-  if (Array.isArray(obj)) {
-    const result: unknown[] = [];
-    stack.push({ source: obj, target: result, depth });
+  try {
+    // Handle arrays
+    if (Array.isArray(obj)) {
+      const result: unknown[] = [];
+      stack.push({ source: obj, target: result, depth });
+      
+      while (stack.length > 0) {
+        // Prevent stack exhaustion attacks
+        if (stack.length > MAX_STACK_SIZE) {
+          return '[REDACTION STACK LIMIT EXCEEDED]';
+        }
+        
+        const current = stack.pop();
+        if (!current) continue;
+        const { source, target, depth: currentDepth } = current;
+        
+        if (Array.isArray(source) && Array.isArray(target)) {
+          for (let i = 0; i < source.length; i++) {
+            const value = source[i];
+            if (value === null || value === undefined) {
+              target[i] = value;
+            } else if (typeof value === 'string') {
+              target[i] = containsSensitiveContent(value) ? '[REDACTED - SENSITIVE CONTENT]' : value;
+            } else if (typeof value === 'object') {
+              if (currentDepth >= MAX_OBJECT_DEPTH) {
+                target[i] = '[MAX DEPTH EXCEEDED]';
+              } else if (Array.isArray(value)) {
+                target[i] = [];
+                stack.push({ source: value, target: target[i] as unknown[], depth: currentDepth + 1 });
+              } else {
+                target[i] = {};
+                stack.push({ source: value as Record<string, unknown>, target: target[i] as Record<string, unknown>, depth: currentDepth + 1 });
+              }
+            } else {
+              target[i] = value;
+            }
+          }
+        } else {
+          // Handle objects
+          if (!Array.isArray(source) && !Array.isArray(target)) {
+            for (const [key, value] of Object.entries(source)) {
+              const lowerKey = key.toLowerCase();
+              const shouldRedactKey = patterns.some(pattern => 
+                lowerKey.includes(pattern.toLowerCase())
+              );
+              
+              if (shouldRedactKey) {
+                target[key] = '[REDACTED]';
+              } else if (value === null || value === undefined) {
+                target[key] = value;
+              } else if (typeof value === 'string') {
+                target[key] = containsSensitiveContent(value) ? '[REDACTED - SENSITIVE CONTENT]' : value;
+              } else if (typeof value === 'object') {
+                if (currentDepth >= MAX_OBJECT_DEPTH) {
+                  target[key] = '[MAX DEPTH EXCEEDED]';
+                } else if (Array.isArray(value)) {
+                  target[key] = [];
+                  stack.push({ source: value, target: target[key] as unknown[], depth: currentDepth + 1 });
+                } else {
+                  target[key] = {};
+                  stack.push({ source: value as Record<string, unknown>, target: target[key] as Record<string, unknown>, depth: currentDepth + 1 });
+                }
+              } else {
+                target[key] = value;
+              }
+            }
+          }
+        }
+      }
+      
+      return result;
+    }
+    
+    // Handle objects
+    const result: Record<string, unknown> = {};
+    stack.push({ source: obj as Record<string, unknown>, target: result, depth });
     
     while (stack.length > 0) {
+      // Prevent stack exhaustion attacks
+      if (stack.length > MAX_STACK_SIZE) {
+        return '[REDACTION STACK LIMIT EXCEEDED]';
+      }
+      
       const current = stack.pop();
       if (!current) continue;
       const { source, target, depth: currentDepth } = current;
       
-      if (Array.isArray(source) && Array.isArray(target)) {
-        for (let i = 0; i < source.length; i++) {
-          const value = source[i];
-          if (value === null || value === undefined) {
-            target[i] = value;
+      if (!Array.isArray(source) && !Array.isArray(target)) {
+        for (const [key, value] of Object.entries(source)) {
+          const lowerKey = key.toLowerCase();
+          const shouldRedactKey = patterns.some(pattern => 
+            lowerKey.includes(pattern.toLowerCase())
+          );
+          
+          if (shouldRedactKey) {
+            target[key] = '[REDACTED]';
+          } else if (value === null || value === undefined) {
+            target[key] = value;
           } else if (typeof value === 'string') {
-            target[i] = containsSensitiveContent(value) ? '[REDACTED - SENSITIVE CONTENT]' : value;
+            target[key] = containsSensitiveContent(value) ? '[REDACTED - SENSITIVE CONTENT]' : value;
           } else if (typeof value === 'object') {
             if (currentDepth >= MAX_OBJECT_DEPTH) {
-              target[i] = '[MAX DEPTH EXCEEDED]';
+              target[key] = '[MAX DEPTH EXCEEDED]';
             } else if (Array.isArray(value)) {
-              target[i] = [];
-              stack.push({ source: value, target: target[i] as unknown[], depth: currentDepth + 1 });
+              target[key] = [];
+              stack.push({ source: value, target: target[key] as unknown[], depth: currentDepth + 1 });
             } else {
-              target[i] = {};
-              stack.push({ source: value as Record<string, unknown>, target: target[i] as Record<string, unknown>, depth: currentDepth + 1 });
+              target[key] = {};
+              stack.push({ source: value as Record<string, unknown>, target: target[key] as Record<string, unknown>, depth: currentDepth + 1 });
             }
           } else {
-            target[i] = value;
-          }
-        }
-      } else {
-        // Handle objects
-        if (!Array.isArray(source) && !Array.isArray(target)) {
-          for (const [key, value] of Object.entries(source)) {
-            const lowerKey = key.toLowerCase();
-            const shouldRedactKey = patterns.some(pattern => 
-              lowerKey.includes(pattern.toLowerCase())
-            );
-            
-            if (shouldRedactKey) {
-              target[key] = '[REDACTED]';
-            } else if (value === null || value === undefined) {
-              target[key] = value;
-            } else if (typeof value === 'string') {
-              target[key] = containsSensitiveContent(value) ? '[REDACTED - SENSITIVE CONTENT]' : value;
-            } else if (typeof value === 'object') {
-              if (currentDepth >= MAX_OBJECT_DEPTH) {
-                target[key] = '[MAX DEPTH EXCEEDED]';
-              } else if (Array.isArray(value)) {
-                target[key] = [];
-                stack.push({ source: value, target: target[key] as unknown[], depth: currentDepth + 1 });
-              } else {
-                target[key] = {};
-                stack.push({ source: value as Record<string, unknown>, target: target[key] as Record<string, unknown>, depth: currentDepth + 1 });
-              }
-            } else {
-              target[key] = value;
-            }
+            target[key] = value;
           }
         }
       }
     }
     
     return result;
+  } finally {
+    // Return stack to pool
+    returnStackToPool(stack);
   }
-  
-  // Handle objects
-  const result: Record<string, unknown> = {};
-  stack.push({ source: obj as Record<string, unknown>, target: result, depth });
-  
-  while (stack.length > 0) {
-    const current = stack.pop();
-    if (!current) continue;
-    const { source, target, depth: currentDepth } = current;
-    
-    if (!Array.isArray(source) && !Array.isArray(target)) {
-      for (const [key, value] of Object.entries(source)) {
-        const lowerKey = key.toLowerCase();
-        const shouldRedactKey = patterns.some(pattern => 
-          lowerKey.includes(pattern.toLowerCase())
-        );
-        
-        if (shouldRedactKey) {
-          target[key] = '[REDACTED]';
-        } else if (value === null || value === undefined) {
-          target[key] = value;
-        } else if (typeof value === 'string') {
-          target[key] = containsSensitiveContent(value) ? '[REDACTED - SENSITIVE CONTENT]' : value;
-        } else if (typeof value === 'object') {
-          if (currentDepth >= MAX_OBJECT_DEPTH) {
-            target[key] = '[MAX DEPTH EXCEEDED]';
-          } else if (Array.isArray(value)) {
-            target[key] = [];
-            stack.push({ source: value, target: target[key] as unknown[], depth: currentDepth + 1 });
-          } else {
-            target[key] = {};
-            stack.push({ source: value as Record<string, unknown>, target: target[key] as Record<string, unknown>, depth: currentDepth + 1 });
-          }
-        } else {
-          target[key] = value;
-        }
-      }
-    }
-  }
-  
-  return result;
 }
 
 // Base configuration
@@ -405,15 +494,36 @@ const devTransport: TransportTargetOptions = {
 // Production configuration - structured JSON
 const prodConfig: LoggerOptions = {
   ...baseConfig,
-  // Add request ID and async context support for tracing
+  // Add request ID, async context, and OpenTelemetry trace support
   mixin() {
     const asyncContext = asyncLocalStorage.getStore();
     const state = globalWithState[LOGGER_STATE_SYMBOL];
-    return {
+    const baseContext = {
       requestId: state?.requestId || globalThis.__terroir?.requestId || asyncContext?.['requestId'],
       ...asyncContext,
       version: env.npm_package_version
     };
+    
+    // Add OpenTelemetry trace context if available
+    if (state?.otelHooks) {
+      const traceContext = getTraceContext();
+      if (traceContext?.traceId) {
+        Object.assign(baseContext, {
+          trace: {
+            id: traceContext.traceId,
+            spanId: traceContext.spanId,
+            flags: traceContext.traceFlags,
+          }
+        });
+      }
+      
+      // Allow custom context injection
+      if (state.otelHooks.injectContext) {
+        return state.otelHooks.injectContext(baseContext);
+      }
+    }
+    
+    return baseContext;
   },
   // Redact sensitive paths
   redact: {
@@ -502,9 +612,18 @@ export const logPerformance = (operation: string, duration: number, context: Log
 
 /**
  * Create a child logger with additional context
+ * Tracks child loggers for resource management
  */
 export const createLogger = (context: LogContext): Logger => {
-  return logger.child(context);
+  const childLogger = logger.child(context);
+  
+  // Track child logger for cleanup
+  const state = globalWithState[LOGGER_STATE_SYMBOL];
+  if (state) {
+    state.childLoggers.add(childLogger);
+  }
+  
+  return childLogger;
 };
 
 /**
@@ -592,12 +711,35 @@ export const clearRequestId = (): void => {
 };
 
 /**
- * Clean up logger resources (for testing)
- * This is primarily used to clean up transport workers
+ * Clean up logger resources
+ * Comprehensive cleanup including child loggers, contexts, and transports
  */
 export const cleanupLogger = (): void => {
+  const state = globalWithState[LOGGER_STATE_SYMBOL];
+  
+  // Flush main logger
   if (logger && typeof logger.flush === 'function') {
     logger.flush();
+  }
+  
+  // Clear global state
+  if (state) {
+    delete state.requestId;
+    state.contextMap = new WeakMap();
+    // Don't reset rate limiter to maintain rate limiting across cleanups
+    state.childLoggers = new WeakSet();
+    state.activeContexts = new WeakSet();
+  }
+  
+  // AsyncLocalStorage doesn't have a disable method in Node.js
+  // It will be garbage collected when no longer referenced
+  
+  // Clear object pools
+  stackPool.forEach(stack => stack.length = 0);
+  
+  // Force garbage collection if available (Node.js with --expose-gc)
+  if (global.gc) {
+    global.gc();
   }
 };
 
@@ -623,7 +765,7 @@ export const resetRateLimiter = (): void => {
   const state = globalWithState[LOGGER_STATE_SYMBOL];
   if (state?.rateLimiter) {
     state.rateLimiter.tokens = state.rateLimiter.maxTokens;
-    state.rateLimiter.lastRefill = Date.now();
+    state.rateLimiter.lastRefillNs = process.hrtime.bigint();
   }
 };
 
@@ -731,7 +873,18 @@ export const runWithContext = async <T>(
   context: LogContext,
   fn: () => Promise<T>
 ): Promise<T> => {
-  return asyncLocalStorage.run(context, fn);
+  // Track active context for resource management
+  const state = globalWithState[LOGGER_STATE_SYMBOL];
+  if (state) {
+    state.activeContexts.add(context);
+  }
+  
+  try {
+    return await asyncLocalStorage.run(context, fn);
+  } finally {
+    // Context will be garbage collected when no longer referenced
+    // WeakSet ensures no memory leak
+  }
 };
 
 /**
@@ -770,8 +923,113 @@ export const createAsyncLogger = (staticContext?: LogContext): Logger => {
   });
 };
 
+/**
+ * Get memory usage statistics
+ * Useful for monitoring resource usage and detecting leaks
+ */
+export const getMemoryStats = (): {
+  heapUsed: number;
+  heapTotal: number;
+  external: number;
+  rss: number;
+  heapUsedMB: number;
+  heapTotalMB: number;
+  rssMB: number;
+} => {
+  const memUsage = process.memoryUsage();
+  return {
+    heapUsed: memUsage.heapUsed,
+    heapTotal: memUsage.heapTotal,
+    external: memUsage.external,
+    rss: memUsage.rss,
+    heapUsedMB: Math.round(memUsage.heapUsed / 1024 / 1024 * 100) / 100,
+    heapTotalMB: Math.round(memUsage.heapTotal / 1024 / 1024 * 100) / 100,
+    rssMB: Math.round(memUsage.rss / 1024 / 1024 * 100) / 100,
+  };
+};
+
+/**
+ * Log memory usage with optional warning threshold
+ */
+export const logMemoryUsage = (context?: LogContext, warnThresholdMB = 500): void => {
+  const stats = getMemoryStats();
+  const logContext = {
+    ...context,
+    memory: stats,
+  };
+  
+  if (stats.heapUsedMB > warnThresholdMB) {
+    logger.warn(logContext, `High memory usage detected: ${stats.heapUsedMB}MB`);
+  } else {
+    logger.info(logContext, `Memory usage: ${stats.heapUsedMB}MB / ${stats.heapTotalMB}MB`);
+  }
+};
+
+/**
+ * Set up automatic memory monitoring
+ * Returns a function to stop monitoring
+ */
+export const startMemoryMonitoring = (intervalMs = 60000, warnThresholdMB = 500): (() => void) => {
+  const intervalId = setInterval(() => {
+    logMemoryUsage({ monitoring: 'automatic' }, warnThresholdMB);
+  }, intervalMs);
+  
+  return () => clearInterval(intervalId);
+};
+
+/**
+ * Register OpenTelemetry hooks for trace correlation
+ * This allows the logger to automatically include trace context
+ * 
+ * @param hooks - OpenTelemetry integration hooks
+ */
+export const registerOTelHooks = (hooks: OTelHooks): void => {
+  const state = globalWithState[LOGGER_STATE_SYMBOL];
+  if (state) {
+    state.otelHooks = hooks;
+  }
+};
+
+/**
+ * Get current trace context from OpenTelemetry
+ * Returns undefined if no hooks are registered or no active trace
+ */
+export const getTraceContext = (): { traceId?: string; spanId?: string; traceFlags?: string } | undefined => {
+  const state = globalWithState[LOGGER_STATE_SYMBOL];
+  if (!state?.otelHooks) return undefined;
+  
+  const { getTraceId, getSpanId, getTraceFlags } = state.otelHooks;
+  
+  const traceId = getTraceId?.();
+  const spanId = getSpanId?.();
+  const traceFlags = getTraceFlags?.();
+  
+  const context: { traceId?: string; spanId?: string; traceFlags?: string } = {};
+  
+  if (traceId !== undefined) context.traceId = traceId;
+  if (spanId !== undefined) context.spanId = spanId;
+  if (traceFlags !== undefined) context.traceFlags = traceFlags;
+  
+  return context;
+};
+
+/**
+ * Create a logger that automatically includes OpenTelemetry trace context
+ * 
+ * @param staticContext - Static context to include in all logs
+ * @returns A logger with automatic trace context injection
+ */
+export const createTracedLogger = (staticContext?: LogContext): Logger => {
+  return createLogger({
+    ...staticContext,
+    // This will be resolved via mixin
+    otelEnabled: true,
+  });
+};
+
 // Export logger instance and utility functions
 export default logger;
 export { logger };
 export type { Logger } from 'pino';
 export type { LogContext, PerformanceMetrics } from './types/logger.types.js';
+export type { GlobalWithLoggerState };
