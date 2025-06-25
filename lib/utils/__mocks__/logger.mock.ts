@@ -37,8 +37,8 @@ export function createLoggerUtilsMock() {
   return {
     logger: mockLogger,
     default: mockLogger,
-    logStart: vi.fn((processName: string, context?: LogContext) => {
-      mockLogger.info({ ...context, phase: 'start' }, `Starting ${processName}`);
+    logStart: vi.fn((processName: string, _context?: LogContext) => {
+      mockLogger.info({ phase: 'start' }, `Starting ${processName}`);
     }),
     logSuccess: vi.fn((processName: string, context?: LogContext) => {
       mockLogger.info({ ...context, phase: 'complete', status: 'success' }, `✓ ${processName} completed successfully`);
@@ -77,7 +77,7 @@ export function createTestLogStream() {
       write: (data: string) => {
         try {
           output.push(JSON.parse(data));
-        } catch (e) {
+        } catch {
           // If not JSON, store as-is
           output.push({ raw: data });
         }

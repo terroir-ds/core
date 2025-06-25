@@ -541,6 +541,69 @@ For each feature, ensure:
 - No console errors
 - Accessibility verified
 
+### Test Organization Pattern
+
+**IMPORTANT**: This project uses **co-located tests** where test files live alongside the source code they test.
+
+#### Directory Structure
+
+```text
+lib/
+  utils/
+    logger.ts                 # Source file
+    __tests__/               # Tests for this module
+      logger.test.ts
+    __mocks__/               # Mock implementations
+      logger.mock.ts
+  config/
+    env.ts
+    __tests__/
+      env.test.ts
+    __mocks__/
+      config.mock.ts
+
+test/                        # ONLY shared test infrastructure
+  setup.ts                   # Global test setup
+  helpers/                   # Shared test utilities
+  README.md                  # Test documentation
+```
+
+#### Test File Conventions
+
+- **Test files**: `__tests__/[name].test.ts` (co-located with source)
+- **Mock files**: `__mocks__/[name].mock.ts` (co-located with source)
+- **Test data**: `__fixtures__/[data].json` (co-located with tests)
+- **Shared utilities**: `test/helpers/` (only truly shared utilities)
+
+#### What Goes Where
+
+**Co-located (with source code)**:
+
+- Unit tests specific to a module
+- Mocks for that module
+- Test fixtures for that module
+
+**Centralized (/test directory)**:
+
+- Global test setup/configuration
+- Shared test utilities used by multiple modules
+- Integration test suites
+- E2E test suites
+- Performance benchmarks
+
+#### Import Examples
+
+```typescript
+// From within the same module
+import { createMockLogger } from '../__mocks__/logger.mock.js';
+
+// From other modules (use path aliases)
+import { createConfigMock } from '@lib/config/__mocks__/config.mock.js';
+
+// From shared test helpers
+import { setupTestDB, cleanupTestDB } from '@test/helpers';
+```
+
 ### Quick Commands
 
 ```bash
