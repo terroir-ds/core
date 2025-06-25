@@ -55,7 +55,8 @@
         "DavidAnson.vscode-markdownlint",
         "streetsidesoftware.code-spell-checker",
         "christian-kohler.npm-intellisense",
-        "mikestead.dotenv"
+        "mikestead.dotenv",
+        "github.vscode-github-actions"
       ],
       "settings": {
         "terminal.integrated.defaultProfile.linux": "zsh",

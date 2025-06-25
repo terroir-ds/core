@@ -1,0 +1,86 @@
+{
+  "name": "@terroir/core",
+  "version": "0.1.0",
+  "description": "A comprehensive, accessible design system built with Material Color Utilities",
+  "keywords": [
+    "design-system",
+    "design-tokens",
+    "style-dictionary",
+    "material-design",
+    "accessibility",
+    "wcag",
+    "react",
+    "typescript"
+  ],
+  "homepage": "https://github.com/terroir-ds/core#readme",
+  "bugs": {
+    "url": "https://github.com/terroir-ds/core/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/terroir-ds/core.git"
+  },
+  "license": "MIT",
+  "author": "Terroir Core Contributors",
+  "maintainers": [
+    "Joshua Hall <josh@yaplabs.com>"
+  ],
+  "private": false,
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "files": [
+    "packages/*/dist",
+    "packages/*/README.md",
+    "packages/*/LICENSE",
+    "packages/*/package.json"
+  ],
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "setup": "pnpm install && pnpm tokens:build",
+    "dev": "concurrently \"pnpm:tokens:watch\" \"pnpm:assets:watch\" \"pnpm:storybook:dev\"",
+    "build": "pnpm clean && pnpm tokens:build && pnpm assets:build && pnpm packages:build",
+    "clean": "rimraf dist packages/*/dist",
+    "tokens:build": "style-dictionary build && node scripts/generate-colors.js",
+    "tokens:watch": "nodemon -w tokens -e json,js -x 'pnpm tokens:build'",
+    "tokens:lint": "node scripts/lint-tokens.js",
+    "assets:build": "pnpm assets:icons && pnpm assets:images && pnpm assets:fonts",
+    "assets:icons": "node scripts/build-svg-assets.js",
+    "assets:images": "node scripts/generate-images.js",
+    "assets:fonts": "node scripts/optimize-fonts.js",
+    "assets:watch": "nodemon -w assets -e svg,png,jpg -x 'pnpm assets:build'",
+    "test": "pnpm test:lint && pnpm test:contrast && pnpm test:unit && pnpm test:visual",
+    "test:lint": "pnpm tokens:lint && eslint . --ext .ts,.tsx,.js,.jsx",
+    "test:contrast": "node scripts/test-contrast.js",
+    "test:unit": "vitest",
+    "test:visual": "playwright test",
+    "test:a11y": "node scripts/test-accessibility.js",
+    "test:watch": "vitest watch",
+    "test:coverage": "vitest run --coverage",
+    "storybook:dev": "storybook dev -p 6006",
+    "storybook:build": "storybook build -o dist/storybook",
+    "docs:generate": "node scripts/generate-docs.js",
+    "docs:serve": "npx serve dist/storybook",
+    "packages:build": "pnpm -r build --filter './packages/*'",
+    "packages:test": "pnpm -r test --filter './packages/*'",
+    "release": "pnpm build && node scripts/release.js",
+    "release:patch": "pnpm release -- --patch",
+    "release:minor": "pnpm release -- --minor",
+    "release:major": "pnpm release -- --major",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "@anthropic-ai/claude-code": "^1.0.34"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@10.12.3",
+  "dependencies": {
+    "husky": "^9.1.7"
+  }
+}
