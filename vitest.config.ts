@@ -20,6 +20,7 @@ export default defineConfig({
       
       // Files to include/exclude
       include: [
+        'lib/**/*.{js,ts}',
         'packages/*/src/**/*.{js,ts}',
         'scripts/**/*.{js,ts}',
       ],

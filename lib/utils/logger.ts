@@ -34,6 +34,10 @@ const LOG_LEVEL = (process.env['LOG_LEVEL'] || (NODE_ENV === 'production' ? 'inf
 const IS_CI = process.env['CI'] === 'true';
 const IS_TEST = process.env['NODE_ENV'] === 'test' || process.argv.includes('--test');
 
+// Performance: Limit log message size to prevent memory issues
+const MAX_MESSAGE_LENGTH = 10000; // 10KB
+const MAX_OBJECT_DEPTH = 5;
+
 // Get script name for context
 const getScriptName = (): string => {
   try {
@@ -48,22 +52,77 @@ const getScriptName = (): string => {
 };
 
 // Custom serializers
+// Comprehensive list of sensitive field patterns
+const SENSITIVE_PATTERNS = [
+  'password', 'passwd', 'pwd',
+  'token', 'api_key', 'apikey', 'api-key',
+  'secret', 'private', 'priv',
+  'key', 'auth', 'authorization',
+  'session', 'cookie',
+  'credit_card', 'creditcard', 'cc_number',
+  'ssn', 'social_security',
+  'bank_account', 'account_number',
+  'pin', 'cvv', 'cvc'
+];
+
 const serializers: LoggerOptions['serializers'] = {
   err: pino.stdSerializers.err,
   error: pino.stdSerializers.err,
-  // Custom serializer to redact sensitive fields
+  // Enhanced serializer with deep redaction
   config: (config: Record<string, unknown>) => {
-    const safe = { ...config };
-    // Redact sensitive fields
-    const sensitiveFields = ['token', 'password', 'secret', 'key', 'auth'];
-    for (const field of sensitiveFields) {
-      if (safe[field]) {
-        safe[field] = '[REDACTED]';
-      }
+    return deepRedact(config, SENSITIVE_PATTERNS);
+  },
+  // Limit request/response sizes
+  req: (req: any) => {
+    const serialized = pino.stdSerializers.req(req);
+    // Truncate large bodies
+    if (serialized.body && JSON.stringify(serialized.body).length > MAX_MESSAGE_LENGTH) {
+      serialized.body = '[TRUNCATED - EXCEEDS SIZE LIMIT]';
     }
-    return safe;
-  }
+    return serialized;
+  },
+  res: pino.stdSerializers.res
 };
+
+/**
+ * Deep redaction of sensitive fields
+ */
+function deepRedact(obj: any, patterns: string[], depth = 0): any {
+  if (depth > MAX_OBJECT_DEPTH) {
+    return '[MAX DEPTH EXCEEDED]';
+  }
+  
+  if (obj === null || obj === undefined) {
+    return obj;
+  }
+  
+  if (typeof obj !== 'object') {
+    return obj;
+  }
+  
+  if (Array.isArray(obj)) {
+    return obj.map(item => deepRedact(item, patterns, depth + 1));
+  }
+  
+  const result: Record<string, any> = {};
+  
+  for (const [key, value] of Object.entries(obj)) {
+    const lowerKey = key.toLowerCase();
+    const shouldRedact = patterns.some(pattern => 
+      lowerKey.includes(pattern.toLowerCase())
+    );
+    
+    if (shouldRedact) {
+      result[key] = '[REDACTED]';
+    } else if (typeof value === 'object' && value !== null) {
+      result[key] = deepRedact(value, patterns, depth + 1);
+    } else {
+      result[key] = value;
+    }
+  }
+  
+  return result;
+}
 
 // Base configuration
 const baseConfig: LoggerOptions = {
@@ -216,6 +275,35 @@ export const measureTime = async <T>(
     }, `${operation} failed after ${duration}ms`);
     throw error;
   }
+};
+
+/**
+ * Generate a unique request ID for correlation
+ */
+export const generateRequestId = (): string => {
+  return `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+};
+
+/**
+ * Set global request ID for correlation
+ * Use this at the start of each request/operation
+ */
+export const setRequestId = (requestId: string): void => {
+  (globalThis as any).__requestId = requestId;
+};
+
+/**
+ * Get current request ID
+ */
+export const getRequestId = (): string | undefined => {
+  return (globalThis as any).__requestId;
+};
+
+/**
+ * Clear request ID (use at end of request)
+ */
+export const clearRequestId = (): void => {
+  delete (globalThis as any).__requestId;
 };
 
 // Export logger instance and utility functions
