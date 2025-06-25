@@ -21,7 +21,7 @@ async function getBrandColor() {
     );
     const tokens = JSON.parse(colorTokens);
     return tokens.color.brand.primary.value;
-  } catch (error) {
+  } catch {
     logger.warn('No brand color found in tokens, using default #1976d2');
     return '#1976d2';
   }
