@@ -1,10 +1,51 @@
 FROM mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm
 
-# Install additional dependencies for Playwright and Chrome
-# RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-#   && apt-get -y install --no-install-recommends \
-#     # Additional tools for development
-#   && apt-get clean -y && rm -rf /var/lib/apt/lists/*
+# Install dependencies for Playwright and browsers
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+  && apt-get -y install --no-install-recommends \
+    # Dependencies for Chromium
+    libnss3 \
+    libnspr4 \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libcups2 \
+    libdrm2 \
+    libxkbcommon0 \
+    libatspi2.0-0 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxfixes3 \
+    libxrandr2 \
+    libgbm1 \
+    libasound2 \
+    # Dependencies for Firefox
+    libgtk-3-0 \
+    libxtst6 \
+    # Dependencies for WebKit
+    libwoff1 \
+    libopus0 \
+    libwebp7 \
+    libwebpdemux2 \
+    libenchant-2-2 \
+    libgudev-1.0-0 \
+    libsecret-1-0 \
+    libhyphen0 \
+    libmanette-0.2-0 \
+    libgdk-pixbuf2.0-0 \
+    libegl1 \
+    libnotify4 \
+    libxslt1.1 \
+    libevent-2.1-7 \
+    libgles2 \
+    libvpx8 \
+    libepoxy0 \
+    libgstreamer1.0-0 \
+    libgstreamer-gl1.0-0 \
+    libgstreamer-plugins-base1.0-0 \
+    libgstreamer-plugins-bad1.0-0 \
+    # Additional tools for development
+    jq \
+  && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 # Install 1Password CLI
 RUN curl -sS https://downloads.1password.com/linux/keys/1password.asc | \
@@ -39,3 +80,6 @@ RUN corepack prepare pnpm@10.12.3 --activate \
   && pnpm add -g typescript ts-node tsx @types/node npm-check-updates
 
 WORKDIR /workspaces/core
+
+# Note: Playwright browsers will be installed via postCreateCommand
+# to avoid bloating the image size

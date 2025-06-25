@@ -7,7 +7,7 @@
     "dockerfile": "Dockerfile"
   },
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
-  
+
   // Mount the .env file if it exists
   "mounts": [
     "source=${localWorkspaceFolder}/.env,target=/workspaces/${localWorkspaceFolderBasename}/.env,type=bind,consistency=cached"
@@ -35,7 +35,7 @@
   "forwardPorts": [],
 
   // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "bash .devcontainer/post-create.sh && pnpm install",
+  "postCreateCommand": "bash .devcontainer/post-create.sh && pnpm install && pnpm exec playwright install chromium firefox webkit",
 
   // Configure tool-specific properties.
   "customizations": {
