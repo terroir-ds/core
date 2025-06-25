@@ -1,3 +1,13 @@
 {
-  "recommendations": ["github.vscode-github-actions"]
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "usernamehw.errorlens",
+    "mikestead.dotenv",
+    "yoavbls.pretty-ts-errors",
+    "eamodio.gitlens",
+    "vscode-icons-team.vscode-icons",
+    "DavidAnson.vscode-markdownlint"
+  ],
+  "unwantedRecommendations": []
 }
