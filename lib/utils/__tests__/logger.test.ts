@@ -9,55 +9,30 @@
  * - Child logger creation
  */
 
-import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { LoggerOptions } from 'pino';
+import { 
+  createConfigMock, 
+  mockConfigDevelopment, 
+  mockConfigProduction,
+  createTestLogStream 
+} from '@test/__mocks__/index.js';
 
-// Mock environment variables
-const originalEnv = process.env;
-
-// Mock the env module
-vi.mock('@lib/config/index.js', () => ({
-  env: {
-    NODE_ENV: 'test',
-    LOG_LEVEL: 'error',
-    CI: false,
-    npm_package_version: '1.0.0'
-  },
-  isDevelopment: vi.fn(() => false),
-  isProduction: vi.fn(() => false),
-  isTest: vi.fn(() => true),
-  isCI: vi.fn(() => false)
-}));
+// Mock the env module with default test configuration
+const mockConfig = createConfigMock();
+vi.mock('@lib/config/index.js', () => mockConfig);
 
 describe('Logger Utility', () => {
+  // Global setup/teardown is handled by test/setup.ts
+  // Just need to reset modules for logger-specific tests
   beforeEach(() => {
-    // Reset modules and mocks
     vi.resetModules();
-    vi.clearAllMocks();
-    
-    // Reset environment
-    process.env = { ...originalEnv };
-  });
-
-  afterEach(() => {
-    process.env = originalEnv;
   });
 
   describe('Environment Configuration', () => {
     it('should use debug level in development', async () => {
-      const { isDevelopment, isTest, isCI } = await import('@lib/config/index.js');
-      vi.mocked(isDevelopment).mockReturnValue(true);
-      vi.mocked(isTest).mockReturnValue(false);
-      vi.mocked(isCI).mockReturnValue(false);
-      
-      // Re-import to get fresh instance
       vi.resetModules();
-      vi.doMock('@lib/config/index.js', () => ({
-        env: { NODE_ENV: 'development', LOG_LEVEL: 'debug', CI: false },
-        isDevelopment: () => true,
-        isTest: () => false,
-        isCI: () => false
-      }));
+      mockConfigDevelopment();
       
       const { logger } = await import('@utils/logger.js');
       expect(logger.level).toBe('debug');
@@ -65,12 +40,7 @@ describe('Logger Utility', () => {
 
     it('should use info level in production', async () => {
       vi.resetModules();
-      vi.doMock('@lib/config/index.js', () => ({
-        env: { NODE_ENV: 'production', LOG_LEVEL: 'info', CI: false },
-        isDevelopment: () => false,
-        isTest: () => false,
-        isCI: () => false
-      }));
+      mockConfigProduction();
       
       const { logger } = await import('@utils/logger.js');
       expect(logger.level).toBe('info');
@@ -78,11 +48,9 @@ describe('Logger Utility', () => {
 
     it('should use error level in test', async () => {
       vi.resetModules();
-      vi.doMock('@lib/config/index.js', () => ({
-        env: { NODE_ENV: 'test', LOG_LEVEL: 'error', CI: false },
-        isDevelopment: () => false,
-        isTest: () => true,
-        isCI: () => false
+      vi.doMock('@lib/config/index.js', () => createConfigMock({
+        NODE_ENV: 'test',
+        LOG_LEVEL: 'error'
       }));
       
       const { logger } = await import('@utils/logger.js');
@@ -91,11 +59,9 @@ describe('Logger Utility', () => {
 
     it('should respect LOG_LEVEL environment variable', async () => {
       vi.resetModules();
-      vi.doMock('@lib/config/index.js', () => ({
-        env: { NODE_ENV: 'development', LOG_LEVEL: 'warn', CI: false },
-        isDevelopment: () => true,
-        isTest: () => false,
-        isCI: () => false
+      vi.doMock('@lib/config/index.js', () => createConfigMock({
+        NODE_ENV: 'development',
+        LOG_LEVEL: 'warn'
       }));
       
       const { logger } = await import('@utils/logger.js');
@@ -186,12 +152,7 @@ describe('Logger Utility', () => {
       
       // Also test with actual log output
       const pino = (await import('pino')).default;
-      const output: Array<Record<string, unknown>> = [];
-      const stream = {
-        write: (data: string) => {
-          output.push(JSON.parse(data));
-        }
-      };
+      const { output, stream } = createTestLogStream();
       
       const testLogger = pino({} as LoggerOptions, stream);
       testLogger.info('Test message');
@@ -339,12 +300,7 @@ describe('Logger Utility', () => {
     it('should properly serialize errors', async () => {
       process.env['NODE_ENV'] = 'production';
       
-      const output: Array<Record<string, unknown>> = [];
-      const stream = {
-        write: (data: string) => {
-          output.push(JSON.parse(data));
-        }
-      };
+      const { output, stream } = createTestLogStream();
       
       const pino = (await import('pino')).default;
       const testLogger = pino({} as LoggerOptions, stream);
@@ -366,14 +322,8 @@ describe('Logger Utility', () => {
     });
 
     it('should include stack trace in development', async () => {
-      // Reset modules and mock for development
       vi.resetModules();
-      vi.doMock('@lib/config/index.js', () => ({
-        env: { NODE_ENV: 'development', LOG_LEVEL: 'debug', CI: false },
-        isDevelopment: () => true,
-        isTest: () => false,
-        isCI: () => false
-      }));
+      mockConfigDevelopment();
       
       const { logger } = await import('@utils/logger.js');
       
