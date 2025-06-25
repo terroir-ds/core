@@ -16,6 +16,10 @@ A comprehensive, open-source design system built with modern web standards, feat
 
 ```
 terroir-core/
+├── lib/                       # Core library code (TypeScript)
+│   ├── colors/               # Color generation utilities
+│   ├── utils/                # Shared utilities (logger, etc.)
+│   └── index.ts             # Main entry point
 ├── tokens/                    # Design token definitions
 │   ├── base/                 # Core tokens (colors, spacing, etc.)
 │   ├── themes/               # Theme variations (light, dark)
@@ -29,6 +33,7 @@ terroir-core/
 │   ├── react/                # React component library
 │   └── web-components/       # Framework-agnostic components
 ├── scripts/                  # Build and automation scripts
+│   └── utils/                # Reusable script utilities
 ├── docs/                     # Documentation and Storybook
 └── tests/                    # Visual regression and unit tests
 ```
@@ -42,6 +47,7 @@ terroir-core/
 - **SVGO**: SVG optimization and token replacement
 - **Sharp**: High-performance image processing
 - **TypeScript**: Type safety throughout
+- **Pino**: High-performance structured logging
 
 ### Documentation & Testing
 
@@ -62,15 +68,14 @@ terroir-core/
 
 Uses Google's Material Color Utilities for scientifically-derived color palettes:
 
-```javascript
-import { MaterialColorSystemGenerator } from './scripts/color-generator';
+```typescript
+import { generateColorSystem } from '@terroir/core/lib/colors';
 
-const generator = new MaterialColorSystemGenerator('#0066cc', {
+const colors = await generateColorSystem({
+  source: '#0066cc',
   contrastLevel: 0.5, // Increased contrast for accessibility
   variant: 'tonalSpot', // Material You variant
 });
-
-const colors = generator.generateSystem();
 // Generates primary, secondary, tertiary, neutral, and error palettes
 // Each with continuous tone access (0-100)
 ```
@@ -407,6 +412,8 @@ pnpm build          # Production build
 pnpm clean          # Clean all outputs
 
 # Testing
+pnpm test:lint      # Run ESLint
+pnpm test:type      # TypeScript type checking
 pnpm test:watch     # Test in watch mode
 pnpm test:coverage  # Coverage report
 pnpm test:ci        # CI test suite
@@ -508,6 +515,7 @@ A task is complete when:
 - ✅ No linting/type errors
 - ✅ Performance verified
 - ✅ Committed with conventional message
+- ✅ Uses structured logging (no console.log)
 
 ### Testing Requirements
 
@@ -540,11 +548,50 @@ For each feature, ensure:
 mkdir -p .claude/tasks && echo "# Task: [Name]" > .claude/tasks/current-task.md
 
 # Run all checks before commit
-pnpm test:lint && pnpm test && pnpm build
+pnpm test:lint && pnpm test:type && pnpm test && pnpm build
 
 # Commit with conventional format
 git commit -m "feat(tokens): add new color system"
 ```
+
+### Logging Standards
+
+**IMPORTANT**: Always use the structured logger instead of console.log:
+
+```typescript
+// ❌ Don't use console
+console.log('Processing colors...');
+console.error('Failed to process', error);
+
+// ✅ Use the logger
+import { logger, logStart, logSuccess, measureTime } from '@terroir/core/lib/utils/logger';
+
+logStart('color processing');
+logger.info({ colorCount: 5 }, 'Processing colors');
+logger.error({ err: error }, 'Failed to process colors');
+logSuccess('color processing');
+
+// ✅ Use performance tracking
+await measureTime('color generation', async () => {
+  await generateColors();
+});
+```
+
+**Logger Features**:
+
+- Environment-aware (pretty in dev, JSON in prod)
+- Security features (redacts sensitive data)
+- Performance tracking utilities
+- TypeScript types for safety
+- Child loggers for context
+
+**When to log**:
+
+- Start/end of major operations
+- Errors with full context
+- Performance metrics
+- Important state changes
+- Never log sensitive data (tokens, passwords, etc.)
 
 ---
 
