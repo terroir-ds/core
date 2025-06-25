@@ -47,7 +47,13 @@
     "baseUrl": ".",
     "paths": {
       "@terroir/core": ["./lib/index.ts"],
-      "@terroir/core/*": ["./lib/*"]
+      "@terroir/core/*": ["./lib/*"],
+      "@lib/*": ["./lib/*"],
+      "@utils/*": ["./lib/utils/*"],
+      "@colors/*": ["./lib/colors/*"],
+      "@scripts/*": ["./scripts/*"],
+      "@packages/*": ["./packages/*"],
+      "@test/*": ["./test/*"]
     }
   },
   
@@ -62,9 +68,7 @@
     "node_modules",
     "dist",
     "build",
-    "coverage",
-    "**/*.spec.ts",
-    "**/*.test.ts"
+    "coverage"
   ],
   
   "ts-node": {

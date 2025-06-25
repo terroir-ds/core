@@ -1,6 +1,18 @@
 import { defineConfig } from 'vitest/config';
+import path from 'path';
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      '@terroir/core': path.resolve(__dirname, './lib/index.ts'),
+      '@lib': path.resolve(__dirname, './lib'),
+      '@utils': path.resolve(__dirname, './lib/utils'),
+      '@colors': path.resolve(__dirname, './lib/colors'),
+      '@scripts': path.resolve(__dirname, './scripts'),
+      '@packages': path.resolve(__dirname, './packages'),
+      '@test': path.resolve(__dirname, './test'),
+    },
+  },
   test: {
     globals: true,
     environment: 'node',

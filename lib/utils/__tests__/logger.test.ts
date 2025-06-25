@@ -32,21 +32,21 @@ describe('Logger Utility', () => {
   describe('Environment Configuration', () => {
     it('should use debug level in development', async () => {
       process.env.NODE_ENV = 'development';
-      const { logger } = await import('./logger.js');
+      const { logger } = await import('@utils/logger.js');
       
       expect(logger.level).toBe('debug');
     });
 
     it('should use info level in production', async () => {
       process.env.NODE_ENV = 'production';
-      const { logger } = await import('./logger.js');
+      const { logger } = await import('@utils/logger.js');
       
       expect(logger.level).toBe('info');
     });
 
     it('should use error level in test', async () => {
       process.env.NODE_ENV = 'test';
-      const { logger } = await import('./logger.js');
+      const { logger } = await import('@utils/logger.js');
       
       expect(logger.level).toBe('error');
     });
@@ -54,7 +54,7 @@ describe('Logger Utility', () => {
     it('should respect LOG_LEVEL environment variable', async () => {
       process.env.LOG_LEVEL = 'warn';
       process.env.NODE_ENV = 'development'; // Not test mode
-      const { logger } = await import('./logger.js');
+      const { logger } = await import('@utils/logger.js');
       
       expect(logger.level).toBe('warn');
     });
@@ -63,7 +63,7 @@ describe('Logger Utility', () => {
   describe('Redaction Function', () => {
     it('should deep redact sensitive fields', async () => {
       // Import the actual logger module to test deepRedact
-      const loggerModule = await import('./logger.js');
+      const loggerModule = await import('@utils/logger.js');
       
       // Test data with nested sensitive fields
       const _testData = {
@@ -102,7 +102,7 @@ describe('Logger Utility', () => {
   describe('Security Features', () => {
     it('should redact sensitive fields', async () => {
       process.env.NODE_ENV = 'production';
-      const { logger } = await import('./logger.js');
+      const { logger } = await import('@utils/logger.js');
       
       // Create a spy on the logger
       const output: any[] = [];
@@ -138,7 +138,7 @@ describe('Logger Utility', () => {
     });
 
     it('should not include hostname in logs', async () => {
-      const { logger } = await import('./logger.js');
+      const { logger } = await import('@utils/logger.js');
       
       const output: any[] = [];
       const stream = {
@@ -160,7 +160,7 @@ describe('Logger Utility', () => {
 
   describe('Utility Functions', () => {
     it('should log start of process', async () => {
-      const { logStart, logger } = await import('./logger.js');
+      const { logStart, logger } = await import('@utils/logger.js');
       
       const infoSpy = vi.spyOn(logger, 'info');
       
@@ -173,7 +173,7 @@ describe('Logger Utility', () => {
     });
 
     it('should log successful completion', async () => {
-      const { logSuccess, logger } = await import('./logger.js');
+      const { logSuccess, logger } = await import('@utils/logger.js');
       
       const infoSpy = vi.spyOn(logger, 'info');
       
@@ -186,7 +186,7 @@ describe('Logger Utility', () => {
     });
 
     it('should log performance metrics', async () => {
-      const { logPerformance, logger } = await import('./logger.js');
+      const { logPerformance, logger } = await import('@utils/logger.js');
       
       const infoSpy = vi.spyOn(logger, 'info');
       
@@ -208,7 +208,7 @@ describe('Logger Utility', () => {
 
   describe('Child Logger', () => {
     it('should create child logger with additional context', async () => {
-      const { createLogger } = await import('./logger.js');
+      const { createLogger } = await import('@utils/logger.js');
       
       const childLogger = createLogger({ 
         module: 'test-module',
@@ -222,7 +222,7 @@ describe('Logger Utility', () => {
     });
 
     it('should inherit parent logger configuration', async () => {
-      const { createLogger, logger } = await import('./logger.js');
+      const { createLogger, logger } = await import('@utils/logger.js');
       
       const childLogger = createLogger({ module: 'child' });
       
@@ -232,7 +232,7 @@ describe('Logger Utility', () => {
 
   describe('Performance Measurement', () => {
     it('should measure successful async operations', async () => {
-      const { measureTime, logger } = await import('./logger.js');
+      const { measureTime, logger } = await import('@utils/logger.js');
       
       const infoSpy = vi.spyOn(logger, 'info');
       
@@ -261,7 +261,7 @@ describe('Logger Utility', () => {
     });
 
     it('should log failed operations with error', async () => {
-      const { measureTime, logger } = await import('./logger.js');
+      const { measureTime, logger } = await import('@utils/logger.js');
       
       const errorSpy = vi.spyOn(logger, 'error');
       const testError = new Error('Test error');
@@ -295,7 +295,7 @@ describe('Logger Utility', () => {
   describe('Error Serialization', () => {
     it('should properly serialize errors', async () => {
       process.env.NODE_ENV = 'production';
-      const { logger } = await import('./logger.js');
+      const { logger } = await import('@utils/logger.js');
       
       const output: any[] = [];
       const stream = {
@@ -321,7 +321,7 @@ describe('Logger Utility', () => {
 
     it('should include stack trace in development', async () => {
       process.env.NODE_ENV = 'development';
-      const { logger } = await import('./logger.js');
+      const { logger } = await import('@utils/logger.js');
       
       // The logger should enhance errors with stack traces in development
       const _error = new Error('Dev error');
@@ -334,7 +334,7 @@ describe('Logger Utility', () => {
 
   describe('Type Safety', () => {
     it('should export proper TypeScript types', async () => {
-      const loggerModule = await import('./logger.js');
+      const loggerModule = await import('@utils/logger.js');
       
       // Check that all expected exports exist
       expect(loggerModule.logger).toBeDefined();

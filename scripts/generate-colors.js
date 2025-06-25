@@ -5,12 +5,12 @@
  * Uses the public color generation API
  */
 
-import { generateColorSystem } from '../lib/colors/index.js';
-import { logger, logStart, logSuccess, measureTime } from '../lib/utils/logger.js';
+import { generateColorSystem } from '@colors/index.js';
+import { logger, logStart, logSuccess, measureTime } from '@utils/logger.js';
 import fs from 'fs/promises';
 import path from 'path';
 
-/** @typedef {import('../lib/colors/index.js').ColorSystem} ColorSystem */
+/** @typedef {import('@colors/index.js').ColorSystem} ColorSystem */
 
 // Read brand color from tokens
 async function getBrandColor() {
@@ -121,7 +121,7 @@ async function main() {
       logger.info({ outputPath }, 'Wrote color tokens');
       
       // Validate contrast ratios
-      const { validateColorContrast } = await import('../lib/colors/index.js');
+      const { validateColorContrast } = await import('@colors/index.js');
       const validation = validateColorContrast(colorSystem);
       
       if (validation.failed.length > 0) {

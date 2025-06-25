@@ -593,6 +593,88 @@ await measureTime('color generation', async () => {
 - Important state changes
 - Never log sensitive data (tokens, passwords, etc.)
 
+### File Organization Standards
+
+**Documentation Pattern**:
+
+Always place documentation close to the code it describes:
+
+```text
+lib/utils/
+├── logger.ts                 # Implementation
+├── __tests__/
+│   └── logger.test.ts       # Tests
+├── docs/
+│   └── logging.md           # Detailed guide
+└── README.md                # Overview of all utils in this directory
+
+scripts/utils/
+├── post-create.sh           # Implementation
+├── __tests__/
+│   └── post-create.test.sh  # Tests (if applicable)
+├── docs/
+│   ├── setup/              # Setup guides
+│   └── troubleshooting.md  # Troubleshooting
+└── README.md               # Overview
+```
+
+**Testing Pattern**:
+
+Use `__tests__` subdirectories for all test files:
+
+```typescript
+// Place tests in __tests__ subdirectory
+lib/utils/__tests__/logger.test.ts
+lib/colors/__tests__/generator.test.ts
+packages/core/src/__tests__/index.test.ts
+```
+
+**Documentation Requirements**:
+
+1. **README.md** - Overview at each major directory level
+2. **docs/** - Detailed guides in subdirectory
+3. **Inline** - JSDoc comments for all public APIs
+4. **Examples** - Working code examples in docs
+
+**Naming Conventions**:
+
+- Test files: `*.test.ts` or `*.spec.ts`
+- Documentation: `*.md` with kebab-case
+- Utilities: Singular nouns (`logger.ts`, not `logging.ts`)
+- Directories: Plural when containing multiple items (`utils/`, `docs/`)
+
+**Import Path Aliases**:
+
+Always use path aliases instead of relative imports:
+
+```typescript
+// ❌ Don't use relative imports
+import { logger } from '../../../lib/utils/logger';
+import { generateColors } from './colors/generator';
+
+// ✅ Use path aliases
+import { logger } from '@utils/logger';
+import { generateColors } from '@colors/generator';
+import { Button } from '@packages/react/src/Button';
+```
+
+Available aliases:
+
+- `@terroir/core` - Main library entry (lib/index.ts)
+- `@lib/*` - Library modules (lib/*)
+- `@utils/*` - Utility modules (lib/utils/*)
+- `@colors/*` - Color modules (lib/colors/*)
+- `@scripts/*` - Build scripts (scripts/*)
+- `@packages/*` - Package sources (packages/*)
+- `@test/*` - Test utilities (test/*)
+
+This makes imports:
+
+- Easier to read and understand
+- Resilient to file moves
+- Consistent across the codebase
+- Searchable and replaceable
+
 ---
 
 Built with ❤️ for the open-source community
