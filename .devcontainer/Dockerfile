@@ -20,16 +20,22 @@ RUN curl -sS https://downloads.1password.com/linux/keys/1password.asc | \
   && apt-get update && apt-get install 1password-cli \
   && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
-# Update NPM
-RUN npm install -g npm
-
-# Install global TypeScript and development tools
-RUN npm install -g typescript ts-node tsx @types/node npm-check-updates
-
-# Create a non-root user if not exists
 ARG USERNAME=node
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
-# Set the default working directory
+# Enable corepack as root (needed for symlinks in /usr/local/bin)
+RUN corepack enable
+
+USER $USERNAME
+
+ENV SHELL=/bin/bash
+ENV PNPM_HOME=/home/${USERNAME}/.local/share/pnpm
+ENV PATH=${PNPM_HOME}:$PATH
+
+# Prepare pnpm and install global tools as node user
+RUN corepack prepare pnpm@10.12.3 --activate \
+  && pnpm setup \
+  && pnpm add -g typescript ts-node tsx @types/node npm-check-updates
+
 WORKDIR /workspaces/core

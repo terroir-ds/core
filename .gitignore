@@ -12,6 +12,8 @@ es/
 .cache/
 .parcel-cache/
 .turbo/
+*.tsbuildinfo
+.rollup.cache/
 
 # Generated files
 tokens/generated/
@@ -21,6 +23,20 @@ coverage/
 *.pid
 *.seed
 
+# Style Dictionary / Token outputs
+tokens/build/
+tokens/dist/
+*.tokens.json
+*.tokens.js
+*.tokens.css
+*.tokens.scss
+
+# Asset processing
+assets/optimized/
+assets/icons/optimized/
+*.min.svg
+*.webp
+
 # IDE
 .vscode/
 .idea/
@@ -28,6 +44,9 @@ coverage/
 *.swo
 *~
 .DS_Store
+
+# Claude
+.claude
 
 # Environment
 .env
@@ -44,6 +63,8 @@ test-results/
 docs/generated/
 .docusaurus/
 storybook-static/
+.storybook/build-info.json
+.storybook/cache/
 
 # Temporary
 tmp/
@@ -65,3 +86,22 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
+pnpm-debug.log*
+
+# Package manager
+.pnpm-store/
+.pnpm-debug.log
+.yarn/cache/
+.yarn/unplugged/
+.yarn/install-state.gz
+
+# OS generated files
+Thumbs.db
+Desktop.ini
+._*
+.Spotlight-V100
+.Trashes
+
+# NPM package files (for publishing)
+*.tgz
+terroir-core-*.tgz

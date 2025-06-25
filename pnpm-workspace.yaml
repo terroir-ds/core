@@ -1,0 +1,8 @@
+packages:
+  - packages/*
+  - .
+  - '!**/test/**'
+  - '!**/*.test.*'
+
+onlyBuiltDependencies:
+  - '@anthropic-ai/claude-code'
