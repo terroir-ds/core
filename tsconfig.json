@@ -63,6 +63,7 @@
     "scripts/**/*",
     "packages/*/src/**/*",
     "types/**/*",
+    "test/**/*",
     "vitest.config.ts",
     "*.config.ts"
   ],

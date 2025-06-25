@@ -113,5 +113,5 @@
   ],
   "editor.fontFamily": "'Intel One Mono', 'Roboto Mono for Powerline', monospace",
   "editor.fontSize": 13,
-  "cSpell.ignoreWords": ["foobarwoo", "sannysoft"]
+  "cSpell.ignoreWords": ["foobarwoo", "sannysoft", "testuser", "sess"]
 }

@@ -14,9 +14,9 @@ import type { LoggerOptions } from 'pino';
 import { 
   createConfigMock, 
   mockConfigDevelopment, 
-  mockConfigProduction,
-  createTestLogStream 
-} from '@test/__mocks__/index.js';
+  mockConfigProduction
+} from '@lib/config/__mocks__/config.mock.js';
+import { createTestLogStream } from '../__mocks__/logger.mock.js';
 
 // Mock the env module with default test configuration
 const mockConfig = createConfigMock();
@@ -107,15 +107,9 @@ describe('Logger Utility', () => {
   describe('Security Features', () => {
     it('should redact sensitive fields', async () => {
       process.env['NODE_ENV'] = 'production';
-      const { logger } = await import('@utils/logger.js');
       
-      // Create a spy on the logger
-      const output: Array<Record<string, unknown>> = [];
-      const stream = {
-        write: (data: string) => {
-          output.push(JSON.parse(data));
-        }
-      };
+      // Create a test logger instance
+      const { output, stream } = createTestLogStream();
       
       // Create a test logger with our custom stream
       const pino = (await import('pino')).default;
