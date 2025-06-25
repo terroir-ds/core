@@ -40,14 +40,14 @@ export function createLoggerUtilsMock() {
     logStart: vi.fn((processName: string, _context?: LogContext) => {
       mockLogger.info({ phase: 'start' }, `Starting ${processName}`);
     }),
-    logSuccess: vi.fn((processName: string, context?: LogContext) => {
-      mockLogger.info({ ...context, phase: 'complete', status: 'success' }, `✓ ${processName} completed successfully`);
+    logSuccess: vi.fn((processName: string, _context?: LogContext) => {
+      mockLogger.info({ phase: 'complete', status: 'success' }, `✓ ${processName} completed successfully`);
     }),
-    logPerformance: vi.fn((operation: string, duration: number, context?: LogContext) => {
-      mockLogger.info({ ...context, performance: { operation, duration, durationUnit: 'ms' } }, `${operation} took ${duration}ms`);
+    logPerformance: vi.fn((operation: string, duration: number, _context?: LogContext) => {
+      mockLogger.info({ performance: { operation, duration, durationUnit: 'ms' } }, `${operation} took ${duration}ms`);
     }),
-    createLogger: vi.fn((context: LogContext) => mockLogger),
-    measureTime: vi.fn(async <T>(operation: string, fn: () => Promise<T>): Promise<T> => {
+    createLogger: vi.fn((_context: LogContext) => mockLogger),
+    measureTime: vi.fn(async <T>(_operation: string, fn: () => Promise<T>): Promise<T> => {
       const result = await fn();
       return result;
     }),
