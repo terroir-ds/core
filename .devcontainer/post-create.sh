@@ -476,12 +476,21 @@ validate_email() {
     local email_regex='^[a-zA-Z0-9][a-zA-Z0-9._%+-]{0,63}@[a-zA-Z0-9][a-zA-Z0-9.-]{0,62}\.[a-zA-Z]{2,}$'
     
     # Additional checks
+    if [[ ${#email} -lt $MIN_EMAIL_LENGTH ]]; then
+        return 1  # Email too short
+    fi
+    
     if [[ ${#email} -gt $MAX_EMAIL_LENGTH ]]; then
         return 1  # Email too long
     fi
     
     if [[ "$email" =~ \.\.  ]] || [[ "$email" =~ ^\. ]] || [[ "$email" =~ \.$  ]]; then
         return 1  # Invalid dot placement
+    fi
+    
+    # Check for common typos and suspicious patterns
+    if [[ "$email" =~ @.*@ ]] || [[ "$email" =~ ^@ ]] || [[ "$email" =~ @$ ]]; then
+        return 1  # Multiple @ or @ at start/end
     fi
     
     [[ "$email" =~ $email_regex ]]
@@ -825,6 +834,182 @@ op_get_item() {
 # GIT CONFIGURATION
 # ============================================================================
 
+# Extract name from 1Password item with multiple pattern support
+extract_name_from_item() {
+    local item_json="$1"
+    local name=""
+    
+    # Pattern 1: Try first_name + last_name combination
+    local first_name last_name
+    first_name=$(extract_json_field "$item_json" '.fields[] | select(.label | ascii_downcase | test("^first[ _-]?name$")).value' "" 100)
+    last_name=$(extract_json_field "$item_json" '.fields[] | select(.label | ascii_downcase | test("^last[ _-]?name$")).value' "" 100)
+    
+    if [ -n "$first_name" ] && [ -n "$last_name" ]; then
+        name="$first_name $last_name"
+        log_debug "Found name from first/last fields: $name"
+        echo "$name"
+        return 0
+    fi
+    
+    # Pattern 2: Look for various full name field patterns
+    local name_patterns=(
+        "name"
+        "full_name"
+        "fullname"
+        "full-name"
+        "display_name"
+        "displayname"
+        "user_name"
+        "username"
+        "real_name"
+        "realname"
+    )
+    
+    for pattern in "${name_patterns[@]}"; do
+        # Use case-insensitive matching with spaces/underscores/hyphens
+        local found_name
+        found_name=$(extract_json_field "$item_json" ".fields[] | select(.label | ascii_downcase | test(\"^${pattern//_/[ _-]?}\$\")).value" "" 200)
+        if [ -n "$found_name" ]; then
+            name="$found_name"
+            log_debug "Found name from field pattern '$pattern': $name"
+            echo "$name"
+            return 0
+        fi
+    done
+    
+    # Pattern 3: Try to extract from title if it looks like a name
+    local title
+    title=$(extract_json_field "$item_json" '.title' "" 200)
+    if [ -n "$title" ] && [[ "$title" =~ ^[A-Za-z][A-Za-z\'\ \-\.]+$ ]] && [ ${#title} -le 100 ]; then
+        name="$title"
+        log_debug "Using title as name: $name"
+        echo "$name"
+        return 0
+    fi
+    
+    # No name found
+    echo ""
+    return 1
+}
+
+# Extract email from 1Password item with multiple pattern support
+extract_email_from_item() {
+    local item_json="$1"
+    local email=""
+    
+    # Pattern 1: Look for EMAIL type field
+    email=$(extract_json_field "$item_json" '.fields[] | select(.type == "EMAIL").value' "" 254)
+    if [ -n "$email" ]; then
+        log_debug "Found email from EMAIL type field: $email"
+        echo "$email"
+        return 0
+    fi
+    
+    # Pattern 2: Look for various email field label patterns
+    local email_patterns=(
+        "email"
+        "e-mail"
+        "email_address"
+        "email-address"
+        "emailaddress"
+        "mail"
+        "email_addr"
+        "primary_email"
+        "work_email"
+        "user_email"
+    )
+    
+    for pattern in "${email_patterns[@]}"; do
+        # Use case-insensitive matching with spaces/underscores/hyphens
+        local found_email
+        found_email=$(extract_json_field "$item_json" ".fields[] | select(.label | ascii_downcase | test(\"^${pattern//_/[ _-]?}\$\")).value" "" 254)
+        if [ -n "$found_email" ]; then
+            email="$found_email"
+            log_debug "Found email from field pattern '$pattern': $email"
+            echo "$email"
+            return 0
+        fi
+    done
+    
+    # Pattern 3: Look for any field value that looks like an email
+    local all_values
+    all_values=$(echo "$item_json" | jq -r '.fields[].value // empty' 2>/dev/null || true)
+    while IFS= read -r value; do
+        # Basic email pattern check
+        if [[ "$value" =~ ^[^@[:space:]]+@[^@[:space:]]+\.[^@[:space:]]+$ ]] && [ ${#value} -le 254 ]; then
+            email="$value"
+            log_debug "Found email from field value scan: $email"
+            echo "$email"
+            return 0
+        fi
+    done <<< "$all_values"
+    
+    # No email found
+    echo ""
+    return 1
+}
+
+# Sanitize Git user name
+sanitize_git_name() {
+    local name="$1"
+    
+    # Remove leading/trailing whitespace
+    name=$(echo "$name" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+    
+    # Remove control characters and non-printable characters
+    name=$(echo "$name" | tr -d '[:cntrl:]')
+    
+    # Replace multiple spaces with single space
+    name=$(echo "$name" | tr -s ' ')
+    
+    # Limit length to reasonable maximum (128 characters)
+    if [ ${#name} -gt 128 ]; then
+        name="${name:0:128}"
+    fi
+    
+    # Ensure name contains at least one letter
+    if ! [[ "$name" =~ [A-Za-z] ]]; then
+        log_warn "Name contains no letters: '$name'"
+        echo ""
+        return 1
+    fi
+    
+    # Remove dangerous characters that could cause issues
+    name=$(echo "$name" | sed 's/[<>|;&$`\\]//g')
+    
+    echo "$name"
+}
+
+# Sanitize email address
+sanitize_email() {
+    local email="$1"
+    
+    # Remove leading/trailing whitespace
+    email=$(echo "$email" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+    
+    # Remove mailto: prefix if present
+    email="${email#mailto:}"
+    
+    # Convert to lowercase for consistency
+    email=$(echo "$email" | tr '[:upper:]' '[:lower:]')
+    
+    # Remove control characters
+    email=$(echo "$email" | tr -d '[:cntrl:]')
+    
+    # Remove dangerous characters but keep valid email chars
+    email=$(echo "$email" | sed 's/[^a-zA-Z0-9._%+-@]//g')
+    
+    # Ensure single @ symbol
+    local at_count=$(echo "$email" | tr -cd '@' | wc -c)
+    if [ "$at_count" -ne 1 ]; then
+        log_warn "Email has $at_count @ symbols: '$email'"
+        echo ""
+        return 1
+    fi
+    
+    echo "$email"
+}
+
 configure_git_user() {
     log_info "Configuring Git user..."
     
@@ -840,40 +1025,40 @@ configure_git_user() {
     fi
     
     # Extract user information using secure extraction
-    local name email first_name last_name
+    local name email
     
-    # Try to get first_name and last_name separately
-    first_name=$(extract_json_field "$item_json" '.fields[] | select(.label == "first name" or .label == "First Name").value' "" 100)
-    last_name=$(extract_json_field "$item_json" '.fields[] | select(.label == "last name" or .label == "Last Name").value' "" 100)
+    # Enhanced name extraction with multiple patterns
+    name=$(extract_name_from_item "$item_json")
     
-    # Combine them if both exist
-    if [ -n "$first_name" ] && [ -n "$last_name" ]; then
-        name="$first_name $last_name"
-    else
-        # Fallback to single name field for backward compatibility
-        name=$(extract_json_field "$item_json" '.fields[] | select(.label == "name" or .label == "Name").value' "" 200)
-    fi
-    email=$(extract_json_field "$item_json" '.fields[] | select(.type == "EMAIL" or .label == "email").value' "" 254)
+    # Enhanced email extraction with multiple patterns
+    email=$(extract_email_from_item "$item_json")
     
-    # Clean email
-    email="${email#mailto:}"
-    email=$(echo "$email" | xargs)  # Trim whitespace
-    
-    # Validate
+    # Validate and set name
     if [ -z "$name" ]; then
         log_warn "No name found in Git config item"
     else
-        git config --global user.name "$name"
-        log_info "Set Git user.name: $name"
+        # Sanitize name (remove control characters, limit length)
+        name=$(sanitize_git_name "$name")
+        if [ -n "$name" ]; then
+            git config --global user.name "$name"
+            log_info "Set Git user.name: $name"
+        else
+            log_warn "Name sanitization resulted in empty value"
+        fi
     fi
     
+    # Validate and set email
     if [ -z "$email" ]; then
         log_warn "No email found in Git config item"
-    elif ! validate_email "$email"; then
-        log_error "Invalid email format: '$email'. Email must be in format: user@domain.com"
     else
-        git config --global user.email "$email"
-        log_info "Set Git user.email: $email"
+        # Sanitize email
+        email=$(sanitize_email "$email")
+        if [ -n "$email" ] && validate_email "$email"; then
+            git config --global user.email "$email"
+            log_info "Set Git user.email: $email"
+        else
+            log_error "Invalid email format after sanitization: '$email'"
+        fi
     fi
     
     return 0
@@ -1108,6 +1293,7 @@ load_ssh_keys() {
     
     local key_count=0
     local loaded_count=0
+    local failed_count=0
     
     # Get all key IDs with validation
     local key_ids=()
@@ -1122,18 +1308,28 @@ load_ssh_keys() {
         fi
     done < <(echo "$keys_json" | jq -r '.[].id // empty' 2>/dev/null || true)
     
-    # Process keys with progress indicator
+    # Process keys with progress indicator and batch optimization
     if [ "$key_count" -gt 0 ]; then
         log_info "Found $key_count SSH keys to process"
         
         local i=0
+        local batch_count=0
+        
         for key_id in "${key_ids[@]}"; do
             i=$((i + 1))
             show_progress "Loading SSH keys" "$i" "$key_count"
             
+            # Batch processing optimization
+            if [ $batch_count -ge $SSH_KEY_BATCH_SIZE ] && [ $batch_count -gt 0 ]; then
+                log_debug "Pausing between batches to avoid rate limits"
+                sleep $SSH_KEY_BATCH_DELAY
+                batch_count=0
+            fi
+            
             local key_json
             if ! key_json=$(op_get_item "$key_id"); then
                 log_warn "Failed to get key: $key_id"
+                failed_count=$((failed_count + 1))
                 continue
             fi
             
@@ -1142,14 +1338,21 @@ load_ssh_keys() {
             
             if process_ssh_key "$key_json" "$key_title"; then
                 loaded_count=$((loaded_count + 1))
+            else
+                failed_count=$((failed_count + 1))
             fi
+            
+            batch_count=$((batch_count + 1))
         done
         
         show_progress "Loading SSH keys" "$key_count" "$key_count"  # Complete
     fi
     
-    log_info "Loaded $loaded_count of $key_count SSH keys"
-    return 0
+    # Report summary
+    log_info "SSH key loading complete: $loaded_count loaded, $failed_count failed, $key_count total"
+    
+    # Return success if at least one key was loaded
+    [ $loaded_count -gt 0 ]
 }
 
 # ============================================================================
@@ -1408,15 +1611,25 @@ main() {
         log_warn "OP_SERVICE_ACCOUNT_TOKEN not set, skipping 1Password integration"
     fi
     
-    # Fallback Git configuration
+    # Fallback Git configuration with enhanced defaults
     if [ -z "$(git config --global user.name)" ]; then
-        git config --global user.name "Developer"
-        log_info "Set default Git user.name"
+        # Try to use system username as fallback
+        local fallback_name="${USER:-${USERNAME:-Developer}}"
+        # Capitalize first letter if it's lowercase
+        fallback_name="$(echo "$fallback_name" | sed 's/^./\U&/')"
+        git config --global user.name "$fallback_name"
+        log_info "Set fallback Git user.name: $fallback_name"
     fi
     
     if [ -z "$(git config --global user.email)" ]; then
-        git config --global user.email "developer@localhost"
-        log_info "Set default Git user.email"
+        # Try to construct a more meaningful default email
+        local username="${USER:-${USERNAME:-developer}}"
+        local hostname="${HOSTNAME:-${HOST:-localhost}}"
+        # Remove any .local or .localdomain suffix for cleaner email
+        hostname="${hostname%.local}"
+        hostname="${hostname%.localdomain}"
+        git config --global user.email "${username}@${hostname}"
+        log_info "Set fallback Git user.email: ${username}@${hostname}"
     fi
     
     # Perform health checks
