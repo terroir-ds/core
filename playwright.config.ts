@@ -2,6 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './test/visual',
+  testMatch: '**/*.playwright.ts',
   outputDir: './test/visual/results',
   
   // Run tests in parallel
