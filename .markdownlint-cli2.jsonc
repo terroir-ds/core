@@ -1,0 +1,25 @@
+{
+  // Files to lint
+  "globs": ["**/*.md", "**/*.markdown"],
+  
+  // Files to ignore
+  "ignores": [
+    ".claude/**",
+    "node_modules/**",
+    "dist/**",
+    "build/**",
+    "coverage/**"
+  ],
+  
+  // Import .gitignore patterns
+  "gitignore": true,
+  
+  // markdownlint configuration
+  "config": {
+    "default": true,
+    "MD013": false,  // line length
+    "MD033": false,  // inline HTML
+    "MD041": false,  // first line in file should be a top level heading
+    "no-hard-tabs": false
+  }
+}

@@ -22,15 +22,6 @@
   "eslint.format.enable": true,
   "npm.packageManager": "npm",
   "search-node-modules.path": "node_modules",
-  "markdown.extension.toc.updateOnSave": false,
-  "markdownlint.config": {
-    "default": true,
-    "MD013": false,
-    "MD033": false,
-    "MD041": false,
-    "no-hard-tabs": false
-  },
-  "markdownlint.ignore": [".claude/**/*.md", "node_modules/**/*.md"],
   "javascript.format.enable": true,
   "javascript.format.semicolons": "insert",
   "javascript.preferences.quoteStyle": "single",
