@@ -18,9 +18,11 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     libxrandr2 \
     libgbm1 \
     libasound2 \
+    libx264-164 \
     # Dependencies for Firefox
     libgtk-3-0 \
     libxtst6 \
+    libavif15 \
     # Dependencies for WebKit
     libwoff1 \
     libopus0 \
@@ -37,12 +39,17 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     libxslt1.1 \
     libevent-2.1-7 \
     libgles2 \
-    libvpx8 \
+    libvpx7 \
     libepoxy0 \
     libgstreamer1.0-0 \
     libgstreamer-gl1.0-0 \
     libgstreamer-plugins-base1.0-0 \
     libgstreamer-plugins-bad1.0-0 \
+    libgtk-4-1 \
+    libgraphene-1.0-0 \
+    libharfbuzz-icu0 \
+    flite1-dev \
+    libflite1 \
     # Additional tools for development
     jq \
   && apt-get clean -y && rm -rf /var/lib/apt/lists/*
