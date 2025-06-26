@@ -42,6 +42,19 @@ Utilities for testing event-based APIs:
 - **`createTrackedAbortController()`** - AbortController with tracking
 - **`assertEventListenersCleanedUp()`** - Verify proper cleanup
 
+### Error Handling (`error-handling.ts`)
+
+Utilities for testing expected errors and promise rejections without unhandled rejection warnings:
+
+- **`expectRejection(promise, expectedError?)`** - Clean promise rejection testing
+- **`verifyRejection(promise, expectations)`** - Detailed error verification
+- **`captureExpectedError(fn)`** - Capture and examine thrown errors
+- **`expectErrors()`** - Suppress unhandled rejection warnings
+- **`cleanupErrorHandling()`** - Clean up error handlers
+- **`suppressConsoleErrors()`** - Mock console errors for expected logs
+- **`createDelayedRejection(error, delayMs)`** - Create promises that reject after delay
+- **`createDelayedResolution(value, delayMs)`** - Create promises that resolve after delay
+
 ## Usage Examples
 
 ### Testing Async Operations
@@ -106,6 +119,40 @@ it('should emit events', async () => {
   expect(handler).toHaveBeenCalledWith(
     expect.objectContaining({ type: 'custom', detail: 'test' })
   );
+});
+```
+
+### Testing Expected Errors
+
+```typescript
+import { expectRejection, verifyRejection, captureExpectedError } from '@test/helpers';
+
+it('should handle promise rejections cleanly', async () => {
+  // Instead of: await expect(promise).rejects.toThrow('error');
+  await expectRejection(functionThatShouldReject(), 'Expected error message');
+});
+
+it('should verify detailed error properties', async () => {
+  const controller = new AbortController();
+  controller.abort();
+  
+  await verifyRejection(
+    operationWithAbortSignal({ signal: controller.signal }),
+    {
+      message: 'Operation aborted',
+      name: 'AbortError',
+      customCheck: (error) => error instanceof DOMException
+    }
+  );
+});
+
+it('should capture and examine errors', async () => {
+  const error = await captureExpectedError(async () => {
+    await functionThatThrows();
+  });
+  
+  expect(error.message).toBe('Expected error');
+  expect(error.cause).toBeDefined();
 });
 ```
 

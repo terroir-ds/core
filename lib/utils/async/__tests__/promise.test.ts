@@ -11,6 +11,7 @@ import {
   firstSuccessful
 } from '../promise.js';
 import { getMessage } from '@utils/errors/messages.js';
+import { expectRejection, verifyRejection, expectErrors, cleanupErrorHandling } from '@test/helpers/error-handling.js';
 
 describe('promise utilities', () => {
   beforeEach(() => {
@@ -44,7 +45,7 @@ describe('promise utilities', () => {
       
       deferred.reject(new Error('failure'));
       
-      await expect(deferred.promise).rejects.toThrow('failure');
+      await expectRejection(deferred.promise, 'failure');
     });
 
     it('should handle promise-like values', async () => {
@@ -89,6 +90,7 @@ describe('promise utilities', () => {
 
     it('should fail after max attempts', async () => {
       vi.useFakeTimers();
+      expectErrors(); // Suppress expected unhandled rejections
       
       const fn = vi.fn().mockRejectedValue(new Error('persistent failure'));
       
@@ -96,14 +98,16 @@ describe('promise utilities', () => {
       
       await vi.runAllTimersAsync();
       
-      await expect(promise).rejects.toThrow('persistent failure');
+      await expectRejection(promise, 'persistent failure');
       expect(fn).toHaveBeenCalledTimes(3);
       
       vi.useRealTimers();
+      cleanupErrorHandling();
     }, 10000);
 
     it('should use exponential backoff', async () => {
       vi.useFakeTimers();
+      expectErrors(); // Suppress expected unhandled rejections
       
       const fn = vi.fn().mockRejectedValue(new Error('fail'));
       const delays: number[] = [];
@@ -121,11 +125,12 @@ describe('promise utilities', () => {
       
       await vi.runAllTimersAsync();
       
-      await expect(promise).rejects.toThrow('fail');
+      await expectRejection(promise, 'fail');
       
       expect(delays).toEqual([100, 200, 400]);
       
       vi.useRealTimers();
+      cleanupErrorHandling();
     });
 
     it('should respect shouldRetry predicate', async () => {
@@ -144,7 +149,7 @@ describe('promise utilities', () => {
         shouldRetry 
       });
       
-      await expect(promise).rejects.toThrow('fatal');
+      await expectRejection(promise, 'fatal');
       expect(fn).toHaveBeenCalledTimes(2);
     });
 
@@ -154,9 +159,14 @@ describe('promise utilities', () => {
       
       controller.abort();
       
-      await expect(
-        retry(fn, { signal: controller.signal })
-      ).rejects.toThrow('Operation aborted');
+      await verifyRejection(
+        retry(fn, { signal: controller.signal }),
+        { 
+          message: 'Operation aborted',
+          name: 'AbortError',
+          customCheck: (error) => error instanceof DOMException || error.name === 'AbortError'
+        }
+      );
       
       expect(fn).not.toHaveBeenCalled();
     });

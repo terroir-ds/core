@@ -36,6 +36,14 @@ afterEach(async () => {
   // Restore all mocks
   vi.restoreAllMocks();
   
+  // Clean up error handling
+  try {
+    const { globalErrorCleanup } = await import('@test/helpers/error-handling.js');
+    globalErrorCleanup();
+  } catch {
+    // Ignore if error handling helper not available
+  }
+  
   // Clean up logger if it was imported
   try {
     const loggerModule = await vi.importActual('@utils/logger/index.js') as { cleanupLogger?: () => void };
