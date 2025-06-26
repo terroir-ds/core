@@ -97,6 +97,7 @@
       "eslint --fix --max-warnings 0"
     ],
     "*.{md,markdown}": [
+      "markdownlint-cli2 --fix --no-globs",
       "prettier --write"
     ],
     "*.{json,yml,yaml}": [
