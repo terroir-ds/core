@@ -4,6 +4,10 @@
  */
 
 import type { CancellableOptions } from '@utils/types/async.types.js';
+import { checkAborted, createAbortError } from './helpers/abort.js';
+import { createManagedTimer } from './helpers/timers.js';
+import { createCleanupManager } from './helpers/cleanup.js';
+import { AsyncErrorMessages } from './helpers/messages.js';
 
 export interface DelayOptions extends CancellableOptions {
   unref?: boolean;
@@ -24,29 +28,17 @@ export async function delay(
 ): Promise<void> {
   const { signal, unref = false } = options ?? {};
 
-  // Check if already aborted
-  if (signal?.aborted) {
-    throw new DOMException('Operation aborted', 'AbortError');
+  // Validate input
+  if (ms < 0) {
+    throw new Error(AsyncErrorMessages.INVALID_DELAY);
   }
 
-  return new Promise<void>((resolve, reject) => {
-    const timeoutId = setTimeout(resolve, ms);
+  // Check if already aborted
+  checkAborted(signal);
 
-    // Allow process to exit if requested
-    if (unref && typeof timeoutId === 'object' && 'unref' in timeoutId) {
-      timeoutId.unref();
-    }
-
-    // Handle abort signal
-    if (signal) {
-      const handleAbort = () => {
-        clearTimeout(timeoutId);
-        reject(new DOMException('Operation aborted', 'AbortError'));
-      };
-      
-      signal.addEventListener('abort', handleAbort, { once: true });
-    }
-  });
+  const timerOptions = signal ? { signal, unref } : { unref };
+  const timer = createManagedTimer(ms, timerOptions);
+  return timer.promise;
 }
 
 /**
@@ -76,7 +68,7 @@ export async function randomDelay(
   options?: DelayOptions
 ): Promise<void> {
   if (min < 0 || max < 0) {
-    throw new Error('Delay values must be non-negative');
+    throw new Error(AsyncErrorMessages.INVALID_DELAY);
   }
   
   if (min > max) {
@@ -102,22 +94,20 @@ export function debouncedDelay(
 } {
   const { signal, maxWait } = options ?? {};
   
-  let timeoutId: NodeJS.Timeout | null = null;
-  let maxTimeoutId: NodeJS.Timeout | null = null;
+  let timer: ReturnType<typeof createManagedTimer> | null = null;
+  let maxTimer: ReturnType<typeof createManagedTimer> | null = null;
   let resolve: (() => void) | null = null;
   let reject: ((reason: unknown) => void) | null = null;
   let promise: Promise<void> | null = null;
   let startTime: number | null = null;
 
-  const cleanup = () => {
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-      timeoutId = null;
-    }
-    if (maxTimeoutId) {
-      clearTimeout(maxTimeoutId);
-      maxTimeoutId = null;
-    }
+  const cleanup = createCleanupManager();
+
+  const reset = () => {
+    timer?.clear();
+    maxTimer?.clear();
+    timer = null;
+    maxTimer = null;
     resolve = null;
     reject = null;
     promise = null;
@@ -127,32 +117,31 @@ export function debouncedDelay(
   const flush = () => {
     if (resolve) {
       const currentResolve = resolve;
-      cleanup();
+      reset();
       currentResolve();
     }
   };
 
   const cancel = () => {
     if (reject) {
-      const error = new DOMException('Debounced delay cancelled', 'AbortError');
+      const error = createAbortError('Debounced delay cancelled');
       const currentReject = reject;
-      cleanup();
+      reset();
       currentReject(error);
     } else {
-      cleanup();
+      reset();
     }
   };
 
   // Handle abort signal
   if (signal) {
+    cleanup.add(() => signal.removeEventListener('abort', cancel));
     signal.addEventListener('abort', cancel, { once: true });
   }
 
   const delay = (): Promise<void> => {
     // Cancel any existing timeout
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-    }
+    timer?.clear();
 
     // Initialize promise if needed
     if (!promise) {
@@ -164,14 +153,16 @@ export function debouncedDelay(
       // Set start time for maxWait
       if (maxWait && !startTime) {
         startTime = Date.now();
-        maxTimeoutId = setTimeout(flush, maxWait);
+        const maxTimerOptions = signal ? { signal } : undefined;
+        maxTimer = createManagedTimer(maxWait, maxTimerOptions);
+        maxTimer.promise.then(flush, () => {});
       }
     }
 
     // Set new timeout
-    timeoutId = setTimeout(() => {
-      flush();
-    }, ms);
+    const timerOptions = signal ? { signal } : undefined;
+    timer = createManagedTimer(ms, timerOptions);
+    timer.promise.then(flush, () => {});
 
     return promise;
   };
