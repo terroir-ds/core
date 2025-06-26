@@ -1,48 +1,48 @@
 {
   "compilerOptions": {
     // Language and Environment
-    "target": "ES2022",                      // Modern JavaScript features
-    "lib": ["ES2022"],                       // Available libraries
-    "module": "ESNext",                      // ES modules
-    "moduleResolution": "bundler",           // Modern resolution for bundlers
-    
+    "target": "ES2022", // Modern JavaScript features
+    "lib": ["ES2022"], // Available libraries
+    "module": "ESNext", // ES modules
+    "moduleResolution": "bundler", // Modern resolution for bundlers
+
     // Emit
-    "declaration": true,                     // Generate .d.ts files
-    "declarationMap": true,                  // Generate sourcemaps for .d.ts
-    "sourceMap": true,                       // Generate sourcemaps
-    "outDir": "./dist",                      // Output directory
-    "rootDir": "./",                         // Root directory
-    "removeComments": false,                 // Keep JSDoc comments
-    "emitDeclarationOnly": false,            // Emit JS and .d.ts files
-    
+    "declaration": true, // Generate .d.ts files
+    "declarationMap": true, // Generate sourcemaps for .d.ts
+    "sourceMap": true, // Generate sourcemaps
+    "outDir": "./dist", // Output directory
+    "rootDir": "./", // Root directory
+    "removeComments": false, // Keep JSDoc comments
+    "emitDeclarationOnly": false, // Emit JS and .d.ts files
+
     // Type Checking
-    "strict": true,                          // Enable all strict type checks
-    "noUnusedLocals": true,                  // Error on unused locals
-    "noUnusedParameters": true,              // Error on unused parameters
-    "exactOptionalPropertyTypes": true,      // Exact optional property types
-    "noImplicitReturns": true,              // Error on missing returns
-    "noFallthroughCasesInSwitch": true,    // Error on switch fallthrough
-    "noUncheckedIndexedAccess": true,       // Add undefined to index signatures
-    "noImplicitOverride": true,             // Require override keyword
+    "strict": true, // Enable all strict type checks
+    "noUnusedLocals": true, // Error on unused locals
+    "noUnusedParameters": true, // Error on unused parameters
+    "exactOptionalPropertyTypes": true, // Exact optional property types
+    "noImplicitReturns": true, // Error on missing returns
+    "noFallthroughCasesInSwitch": true, // Error on switch fallthrough
+    "noUncheckedIndexedAccess": true, // Add undefined to index signatures
+    "noImplicitOverride": true, // Require override keyword
     "noPropertyAccessFromIndexSignature": true, // Require indexed access
-    
+
     // JavaScript Support
-    "allowJs": true,                         // Allow JavaScript files
-    "checkJs": true,                         // Type check JavaScript files
-    
+    "allowJs": true, // Allow JavaScript files
+    "checkJs": true, // Type check JavaScript files
+
     // Interop Constraints
-    "esModuleInterop": true,                 // CommonJS/ES module interop
-    "allowSyntheticDefaultImports": true,    // Allow default imports
+    "esModuleInterop": true, // CommonJS/ES module interop
+    "allowSyntheticDefaultImports": true, // Allow default imports
     "forceConsistentCasingInFileNames": true, // Consistent file naming
-    "isolatedModules": true,                 // Ensure files can be transpiled
-    
+    "isolatedModules": true, // Ensure files can be transpiled
+
     // Skip Lib Check
-    "skipLibCheck": true,                    // Skip type checking of .d.ts files
-    
+    "skipLibCheck": true, // Skip type checking of .d.ts files
+
     // Advanced
-    "resolveJsonModule": true,               // Import JSON files
-    "verbatimModuleSyntax": true,           // Preserve import/export syntax
-    
+    "resolveJsonModule": true, // Import JSON files
+    "verbatimModuleSyntax": true, // Preserve import/export syntax
+
     // Paths
     "baseUrl": ".",
     "paths": {
@@ -57,7 +57,7 @@
       "@test/*": ["./test/*"]
     }
   },
-  
+
   "include": [
     "lib/**/*",
     "scripts/**/*",
@@ -67,14 +67,9 @@
     "vitest.config.ts",
     "*.config.ts"
   ],
-  
-  "exclude": [
-    "node_modules",
-    "dist",
-    "build",
-    "coverage"
-  ],
-  
+
+  "exclude": ["node_modules", "dist", "build", "coverage"],
+
   "ts-node": {
     "esm": true,
     "experimentalSpecifierResolution": "node"
