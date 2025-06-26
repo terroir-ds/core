@@ -68,6 +68,13 @@ storybook-static/
 .storybook/build-info.json
 .storybook/cache/
 
+# Astro/Starlight
+.astro/
+
+# Deployment
+.netlify/
+.vercel/
+
 # Temporary
 tmp/
 temp/
