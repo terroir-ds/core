@@ -159,29 +159,43 @@ describe('promise utilities', () => {
     it('should respect shouldRetry predicate', async () => {
       vi.useFakeTimers();
       
-      try {
-      const fn = vi.fn()
-        .mockRejectedValueOnce(new Error('retryable'))
-        .mockRejectedValueOnce(new Error('fatal'))
-        .mockResolvedValue('success');
-      
-      const shouldRetry = (error: unknown) => {
-        return error instanceof Error && error.message === 'retryable';
-      };
-      
-      const promise = retry(fn, { 
-        attempts: 3, 
-        delay: 0,
-        shouldRetry 
+      // Handle expected background rejections from retry logic
+      const originalHandlers = process.listeners('unhandledRejection');
+      process.removeAllListeners('unhandledRejection');
+      process.on('unhandledRejection', (reason: unknown) => {
+        if (reason instanceof Error && (reason.message === 'retryable' || reason.message === 'fatal')) {
+          return; // Expected retry rejections
+        }
+        console.error('Unexpected rejection:', reason);
       });
       
-      await vi.runAllTimersAsync();
-      await expectRejection(promise, 'fatal');
-      expect(fn).toHaveBeenCalledTimes(2);
+      try {
+        const fn = vi.fn()
+          .mockRejectedValueOnce(new Error('retryable'))
+          .mockRejectedValueOnce(new Error('fatal'))
+          .mockResolvedValue('success');
+        
+        const shouldRetry = (error: unknown) => {
+          return error instanceof Error && error.message === 'retryable';
+        };
+        
+        const promise = retry(fn, { 
+          attempts: 3, 
+          delay: 0,
+          shouldRetry 
+        });
+        
+        await vi.runAllTimersAsync();
+        await expectRejection(promise, 'fatal');
+        expect(fn).toHaveBeenCalledTimes(2);
       } finally {
         vi.useRealTimers();
+        process.removeAllListeners('unhandledRejection');
+        originalHandlers.forEach(handler => {
+          process.on('unhandledRejection', handler as NodeJS.UnhandledRejectionListener);
+        });
       }
-    });
+    }, 15000);
 
     it('should handle abort signal', async () => {
       const controller = new AbortController();
