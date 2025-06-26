@@ -17,7 +17,7 @@ import {
   assert,
   assertDefined,
 } from '../handlers.js';
-import { ValidationError } from '../base-error.js';
+import { ValidationError, ErrorSeverity } from '../base-error.js';
 import { logger } from '../../logger.js';
 import { suppressWarningsInErrorTests } from './test-utils.js';
 
@@ -96,25 +96,25 @@ describe('Error Handlers', () => {
   describe('handleError()', () => {
     it('should log based on error severity', async () => {
       const criticalError = new ValidationError('Critical', {
-        severity: 'critical',
+        severity: ErrorSeverity.CRITICAL,
       });
       await handleError(criticalError);
       expect(logger.fatal).toHaveBeenCalled();
       
       const highError = new ValidationError('High', {
-        severity: 'high',
+        severity: ErrorSeverity.HIGH,
       });
       await handleError(highError);
       expect(logger.error).toHaveBeenCalled();
       
       const mediumError = new ValidationError('Medium', {
-        severity: 'medium',
+        severity: ErrorSeverity.MEDIUM,
       });
       await handleError(mediumError);
       expect(logger.warn).toHaveBeenCalled();
       
       const lowError = new ValidationError('Low', {
-        severity: 'low',
+        severity: ErrorSeverity.LOW,
       });
       await handleError(lowError);
       expect(logger.info).toHaveBeenCalled();
@@ -294,7 +294,7 @@ describe('Error Handlers', () => {
       const recoveryValue = 'recovered';
       const fallback = 'fallback';
       
-      registerRecoveryStrategy('RECOVERABLE', () => recoveryValue);
+      registerRecoveryStrategy('RECOVERABLE', () => recoveryValue as unknown as void);
       
       const result = await errorBoundary(operation, { fallback });
       
@@ -327,7 +327,7 @@ describe('Error Handlers', () => {
   });
 
   describe('Global Error Handlers', () => {
-    let processListeners: Record<string, Function[]>;
+    let processListeners: Record<string | symbol, Function[]>;
 
     beforeEach(() => {
       processListeners = {};
@@ -362,10 +362,10 @@ describe('Error Handlers', () => {
       vi.useFakeTimers();
       
       const error = new Error('Uncaught error');
-      const handler = processListeners['uncaughtException'][0];
+      const handler = processListeners['uncaughtException']?.[0];
       
       expect(() => {
-        handler(error);
+        handler?.(error);
         vi.advanceTimersByTime(1000);
       }).toThrow('Process exit');
       
@@ -388,9 +388,9 @@ describe('Error Handlers', () => {
       const promise = Promise.reject(reason);
       promise.catch(() => {}); // Suppress the actual rejection
       
-      const handler = processListeners['unhandledRejection'][0];
+      const handler = processListeners['unhandledRejection']?.[0];
       
-      handler(reason, promise);
+      handler?.(reason, promise);
       
       expect(logger.error).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -407,9 +407,9 @@ describe('Error Handlers', () => {
       
       const warning = new Error('Warning');
       warning.name = 'Warning';
-      const handler = processListeners['warning'][0];
+      const handler = processListeners['warning']?.[0];
       
-      handler(warning);
+      handler?.(warning);
       
       expect(logger.warn).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -429,11 +429,11 @@ describe('Error Handlers', () => {
       // Mock process.exit to prevent actual exit
       const originalExit = process.exit;
       const mockExit = vi.fn();
-      process.exit = mockExit as any;
+      process.exit = mockExit as unknown as typeof process.exit;
       
       try {
         // Call the handler
-        handler!();
+        handler?.();
         
         // Use setImmediate to wait for promises to resolve
         await new Promise(resolve => setImmediate(resolve));
