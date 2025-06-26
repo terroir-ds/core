@@ -98,8 +98,8 @@ describe('BaseError', () => {
       const netError = new NetworkError('Network failed');
       const validError = new ValidationError('Validation failed', { cause: netError });
       
-      expect(validError.hasErrorType(NetworkError)).toBe(true);
-      expect(validError.hasErrorType(ConfigurationError)).toBe(false);
+      expect(validError.hasErrorType(NetworkError as new (...args: unknown[]) => NetworkError)).toBe(true);
+      expect(validError.hasErrorType(ConfigurationError as new (...args: unknown[]) => ConfigurationError)).toBe(false);
     });
 
     it('should handle non-Error causes', () => {
@@ -136,8 +136,8 @@ describe('BaseError', () => {
           userId: 'user123',
         },
       });
-      expect(json.stack).toBeDefined();
-      expect(json.cause).toMatchObject({
+      expect(json['stack']).toBeDefined();
+      expect(json['cause']).toMatchObject({
         name: 'Error',
         message: 'Cause',
       });
@@ -162,8 +162,8 @@ describe('BaseError', () => {
         statusCode: 400,
         retryable: false,
       });
-      expect(publicJson.stack).toBeUndefined();
-      expect(publicJson.context).toBeUndefined();
+      expect(publicJson['stack']).toBeUndefined();
+      expect(publicJson['context']).toBeUndefined();
     });
 
     it('should format for logging with context', () => {
@@ -270,7 +270,7 @@ describe('BaseError', () => {
       expect(multiError.message).toBe('Multiple errors occurred');
       expect(multiError.errors).toHaveLength(3);
       expect(multiError.errorId).toMatch(/^[a-f0-9-]{36}$/);
-      expect(multiError.context.errorCount).toBe(3);
+      expect(multiError.context['errorCount']).toBe(3);
     });
 
     it('should get unique error types', () => {
@@ -296,7 +296,7 @@ describe('BaseError', () => {
       ];
       
       const multiError = new MultiError(errors, 'Multiple errors');
-      const validationErrors = multiError.getErrorsByType(ValidationError);
+      const validationErrors = multiError.getErrorsByType(ValidationError as new (...args: unknown[]) => ValidationError);
       
       expect(validationErrors).toHaveLength(2);
       expect(validationErrors[0]).toBeInstanceOf(ValidationError);
@@ -310,8 +310,8 @@ describe('BaseError', () => {
       
       const multiError = new MultiError(errors, 'Multiple errors');
       
-      expect(multiError.hasErrorType(ValidationError)).toBe(true);
-      expect(multiError.hasErrorType(ConfigurationError)).toBe(false);
+      expect(multiError.hasErrorType(ValidationError as new (...args: unknown[]) => ValidationError)).toBe(true);
+      expect(multiError.hasErrorType(ConfigurationError as new (...args: unknown[]) => ConfigurationError)).toBe(false);
     });
 
     it('should serialize to JSON', () => {
@@ -329,8 +329,8 @@ describe('BaseError', () => {
         errorId: multiError.errorId,
         timestamp: multiError.timestamp,
       });
-      expect(json.errors).toHaveLength(2);
-      expect(json.errors[0]).toMatchObject({
+      expect(json['errors']).toHaveLength(2);
+      expect((json['errors'] as unknown[])[0]).toMatchObject({
         name: 'ValidationError',
         message: 'Error 1',
       });
@@ -402,7 +402,7 @@ describe('BaseError', () => {
       
       expect(wrapped.code).toBe('CUSTOM_CODE');
       expect(wrapped.severity).toBe(ErrorSeverity.HIGH);
-      expect(wrapped.context.custom).toBe(true);
+      expect(wrapped.context['custom']).toBe(true);
     });
   });
 
@@ -489,7 +489,7 @@ describe('BaseError', () => {
       const error = await createErrorFromResponse(response);
       
       expect(error.message).toBe('Custom error message');
-      expect(error.context.details).toEqual({ field: 'value' });
+      expect(error.context['details']).toEqual({ field: 'value' });
     });
 
     it('should handle non-JSON responses', async () => {
@@ -512,10 +512,10 @@ describe('BaseError', () => {
       const context = { userId: 'user123' };
       const error = await createErrorFromResponse(response, context);
       
-      expect(error.context.userId).toBe('user123');
-      expect(error.context.url).toBeDefined();
-      expect(error.context.status).toBe(500);
-      expect(error.context.headers).toMatchObject({
+      expect(error.context['userId']).toBe('user123');
+      expect(error.context['url']).toBeDefined();
+      expect(error.context['status']).toBe(500);
+      expect(error.context['headers']).toMatchObject({
         'x-request-id': 'req-123',
       });
     });
