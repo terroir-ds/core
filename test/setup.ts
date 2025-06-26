@@ -16,8 +16,13 @@ beforeEach(() => {
   // Clear all mocks
   vi.clearAllMocks();
   
-  // Reset environment to clean state
-  process.env = { ...originalEnv };
+  // Reset environment to clean state and set required test variables
+  process.env = { 
+    ...originalEnv,
+    NODE_ENV: 'test',
+    LOG_LEVEL: 'debug',
+    LOG_PRETTY: 'false'
+  };
 });
 
 // Global cleanup after each test

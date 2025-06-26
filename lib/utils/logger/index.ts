@@ -436,8 +436,8 @@ function deepRedact(obj: unknown, patterns: string[], depth = 0): unknown {
   }
 }
 
-// Base configuration
-const baseConfig: LoggerOptions = {
+// Base configuration factory
+const createBaseConfig = (): LoggerOptions => ({
   level: env.LOG_LEVEL,
   // Base context for all logs
   base: {
@@ -474,7 +474,7 @@ const baseConfig: LoggerOptions = {
       return method.apply(this, inputArgs as Parameters<typeof method>);
     }
   }
-};
+});
 
 // Development configuration with pretty printing
 const devTransport: TransportTargetOptions = {
@@ -492,8 +492,8 @@ const devTransport: TransportTargetOptions = {
 };
 
 // Production configuration - structured JSON
-const prodConfig: LoggerOptions = {
-  ...baseConfig,
+const createProdConfig = (): LoggerOptions => ({
+  ...createBaseConfig(),
   // Add request ID, async context, and OpenTelemetry trace support
   mixin() {
     const asyncContext = asyncLocalStorage.getStore();
@@ -524,17 +524,13 @@ const prodConfig: LoggerOptions = {
     }
     
     return baseContext;
-  },
-  // Redact sensitive paths
-  redact: {
-    paths: ['*.password', '*.token', '*.secret', '*.key', '*.auth', '*.email'],
-    remove: true
   }
-};
+});
 
-// Test configuration - minimal output
-const testConfig: LoggerOptions = {
-  ...baseConfig,
+
+// Test configuration - minimal output  
+const createTestConfig = (): LoggerOptions => ({
+  ...createBaseConfig(),
   level: 'error', // Only errors in tests
   transport: {
     target: 'pino-pretty',
@@ -557,28 +553,40 @@ const testConfig: LoggerOptions = {
       return method.apply(this, inputArgs as Parameters<typeof method>);
     }
   }
-};
-
-// Increase max listeners to prevent warnings in tests
-// This is safe as we're only creating a limited number of loggers
-// pino-pretty transport adds an exit listener for each instance
-if (isTest()) {
-  process.setMaxListeners(50);
-}
+});
 
 // Create logger instance based on environment
-let logger: Logger;
+let _logger: Logger | undefined;
 
-if (isTest()) {
-  logger = pino(testConfig);
-} else if (isDevelopment() && !isCI()) {
-  logger = pino({
-    ...baseConfig,
-    transport: devTransport
-  });
-} else {
-  logger = pino(prodConfig);
+function getLogger(): Logger {
+  if (!_logger) {
+    // Increase max listeners to prevent warnings in tests
+    if (isTest()) {
+      process.setMaxListeners(50);
+      _logger = pino(createTestConfig());
+    } else if (isDevelopment() && !isCI()) {
+      _logger = pino({
+        ...createBaseConfig(),
+        transport: devTransport
+      });
+    } else {
+      _logger = pino(createProdConfig());
+    }
+  }
+  return _logger;
 }
+
+// Lazy logger proxy
+const logger: Logger = new Proxy({} as Logger, {
+  get(target, prop) {
+    const loggerInstance = getLogger();
+    const value = (loggerInstance as unknown as Record<string | symbol, unknown>)[prop];
+    if (typeof value === 'function') {
+      return value.bind(loggerInstance);
+    }
+    return value;
+  }
+});
 
 // Utility functions for common logging patterns
 

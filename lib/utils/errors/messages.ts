@@ -15,6 +15,7 @@ export const ERROR_MESSAGES = {
   // Retry/Network errors
   OPERATION_FAILED: (attempts: number) => `Operation failed after ${attempts} attempt(s)`,
   OPERATION_CANCELLED: 'Operation cancelled',
+  OPERATION_ABORTED: 'Operation aborted',
   OPERATION_TIMEOUT: (ms: number) => `Operation timed out after ${ms}ms`,
   
   // Circuit breaker errors  

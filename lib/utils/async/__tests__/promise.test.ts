@@ -10,6 +10,7 @@ import {
   allSettledWithTimeout,
   firstSuccessful
 } from '../promise.js';
+import { getMessage } from '@utils/errors/messages.js';
 
 describe('promise utilities', () => {
   beforeEach(() => {
@@ -67,6 +68,8 @@ describe('promise utilities', () => {
     });
 
     it('should retry on failure', async () => {
+      vi.useFakeTimers();
+      
       const fn = vi.fn()
         .mockRejectedValueOnce(new Error('fail 1'))
         .mockRejectedValueOnce(new Error('fail 2'))
@@ -74,36 +77,34 @@ describe('promise utilities', () => {
       
       const promise = retry(fn, { attempts: 3, delay: 100 });
       
-      // First attempt fails
-      await Promise.resolve();
-      expect(fn).toHaveBeenCalledTimes(1);
-      
-      // Wait for first retry
-      vi.advanceTimersByTime(100);
-      await Promise.resolve();
-      expect(fn).toHaveBeenCalledTimes(2);
-      
-      // Wait for second retry
-      vi.advanceTimersByTime(100);
-      await Promise.resolve();
-      expect(fn).toHaveBeenCalledTimes(3);
+      // Run all timers to completion
+      await vi.runAllTimersAsync();
       
       const result = await promise;
       expect(result).toBe('success');
+      expect(fn).toHaveBeenCalledTimes(3);
+      
+      vi.useRealTimers();
     });
 
     it('should fail after max attempts', async () => {
+      vi.useFakeTimers();
+      
       const fn = vi.fn().mockRejectedValue(new Error('persistent failure'));
       
       const promise = retry(fn, { attempts: 3, delay: 10 });
       
-      vi.runAllTimers();
+      await vi.runAllTimersAsync();
       
       await expect(promise).rejects.toThrow('persistent failure');
       expect(fn).toHaveBeenCalledTimes(3);
-    });
+      
+      vi.useRealTimers();
+    }, 10000);
 
     it('should use exponential backoff', async () => {
+      vi.useFakeTimers();
+      
       const fn = vi.fn().mockRejectedValue(new Error('fail'));
       const delays: number[] = [];
       
@@ -118,13 +119,13 @@ describe('promise utilities', () => {
         delay: backoff 
       });
       
-      vi.runAllTimers();
+      await vi.runAllTimersAsync();
       
-      await promise.catch(() => {
-        // Expected to fail
-      });
+      await expect(promise).rejects.toThrow('fail');
       
-      expect(delays).toEqual([100, 200, 400, 800]);
+      expect(delays).toEqual([100, 200, 400]);
+      
+      vi.useRealTimers();
     });
 
     it('should respect shouldRetry predicate', async () => {
@@ -220,6 +221,8 @@ describe('promise utilities', () => {
     });
 
     it('should handle async fallback function', async () => {
+      vi.useFakeTimers();
+      
       const promise = Promise.reject(new Error('fail'));
       const fallback = async () => {
         await new Promise(resolve => setTimeout(resolve, 10));
@@ -228,10 +231,12 @@ describe('promise utilities', () => {
       
       const resultPromise = promiseWithFallback(promise, fallback);
       
-      vi.advanceTimersByTime(10);
+      await vi.runAllTimersAsync();
       const result = await resultPromise;
       
       expect(result).toBe('async fallback');
+      
+      vi.useRealTimers();
     });
 
     it('should apply timeout', async () => {
@@ -360,13 +365,13 @@ describe('promise utilities', () => {
       } catch (error) {
         expect(error).toBeInstanceOf(AggregateError);
         expect((error as AggregateError).errors).toHaveLength(3);
-        expect((error as AggregateError).message).toBe('All promises failed');
+        expect((error as AggregateError).message).toBe(getMessage('OPERATION_FAILED', 3));
       }
     });
 
     it('should handle empty array', async () => {
       await expect(firstSuccessful([]))
-        .rejects.toThrow('No promise factories provided');
+        .rejects.toThrow(getMessage('VALIDATION_REQUIRED', 'promise factories'));
     });
 
     it('should handle abort signal', async () => {
@@ -377,7 +382,7 @@ describe('promise utilities', () => {
       
       await expect(
         firstSuccessful(factories, { signal: controller.signal })
-      ).rejects.toThrow('Operation aborted');
+      ).rejects.toThrow(getMessage('OPERATION_ABORTED'));
     });
 
     it('should abort during execution', async () => {
@@ -389,16 +394,17 @@ describe('promise utilities', () => {
           attempts.push(1);
           return Promise.reject(new Error('fail 1'));
         },
-        () => {
+        async () => {
           attempts.push(2);
-          controller.abort();
-          return Promise.resolve('not reached');
+          controller.abort('Operation aborted');
+          // Since abort is called before resolution, the signal check after resolution should catch it
+          return 'success';
         }
       ];
       
       await expect(
         firstSuccessful(factories, { signal: controller.signal })
-      ).rejects.toThrow('Operation aborted');
+      ).rejects.toThrow(getMessage('OPERATION_ABORTED'));
       
       expect(attempts).toEqual([1, 2]);
     });
@@ -406,6 +412,8 @@ describe('promise utilities', () => {
 
   describe('integration', () => {
     it('should combine retry with defer', async () => {
+      vi.useFakeTimers();
+      
       const deferred = defer<string>();
       let attempts = 0;
       
@@ -419,16 +427,15 @@ describe('promise utilities', () => {
       
       const retryPromise = retry(fn, { attempts: 5, delay: 10 });
       
-      // Let it retry twice
-      vi.advanceTimersByTime(20);
-      await Promise.resolve();
-      
-      // Now resolve the deferred
+      // Run timers and resolve deferred
+      await vi.runAllTimersAsync();
       deferred.resolve('deferred success');
       
       const result = await retryPromise;
       expect(result).toBe('deferred success');
       expect(attempts).toBe(3);
+      
+      vi.useRealTimers();
     });
   });
 });

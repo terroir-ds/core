@@ -11,6 +11,7 @@ import type {
   AsyncFactory
 } from '@utils/types/async.types.js';
 import { delay } from './delay.js';
+import { getMessage } from '@utils/errors/messages.js';
 
 // Re-export Deferred for backward compatibility
 export type Deferred<T> = DeferredBase<T>;
@@ -56,7 +57,7 @@ export async function retry<T>(
   } = options ?? {};
 
   if (signal?.aborted) {
-    throw new DOMException('Operation aborted', 'AbortError');
+    throw new DOMException(getMessage('OPERATION_ABORTED'), 'AbortError');
   }
 
   let lastError: unknown;
@@ -155,18 +156,18 @@ export async function firstSuccessful<T>(
   const { signal } = options ?? {};
 
   if (signal?.aborted) {
-    throw new DOMException('Operation aborted', 'AbortError');
+    throw new DOMException(getMessage('OPERATION_ABORTED'), 'AbortError');
   }
 
   if (factories.length === 0) {
-    throw new Error('No promise factories provided');
+    throw new Error(getMessage('VALIDATION_REQUIRED', 'promise factories'));
   }
 
   const errors: unknown[] = [];
   
   for (const factory of factories) {
     if (signal?.aborted) {
-      throw new DOMException('Operation aborted', 'AbortError');
+      throw new DOMException(getMessage('OPERATION_ABORTED'), 'AbortError');
     }
 
     try {
@@ -174,15 +175,19 @@ export async function firstSuccessful<T>(
       
       // Check signal again after promise resolves
       if (signal?.aborted) {
-        throw new DOMException('Operation aborted', 'AbortError');
+        throw new DOMException(getMessage('OPERATION_ABORTED'), 'AbortError');
       }
       
       return result;
     } catch (error) {
+      // If this is an AbortError, propagate it immediately
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        throw error;
+      }
       errors.push(error);
     }
   }
   
   // All failed, throw aggregate error
-  throw new AggregateError(errors, 'All promises failed');
+  throw new AggregateError(errors, getMessage('OPERATION_FAILED', factories.length));
 }
