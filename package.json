@@ -97,18 +97,13 @@
       "eslint --fix --max-warnings 0"
     ],
     "*.{md,markdown}": [
-      "markdownlint-cli2 --fix",
       "prettier --write"
     ],
     "*.{json,yml,yaml}": [
       "prettier --write"
     ],
-    "*.{css,scss}": [
-      "stylelint --fix",
-      "prettier --write"
-    ],
     "package.json": [
-      "pnpm exec sort-package-json"
+      "sort-package-json"
     ]
   },
   "dependencies": {
