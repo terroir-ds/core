@@ -21,8 +21,7 @@ export const fontConfig = {
     },
   },
 };
-```
-
+```text
 ### Material Symbols Integration
 
 ```javascript
@@ -62,8 +61,7 @@ export const iconConfig = {
     'GRAD' var(--icon-grad, 0),
     'FILL' var(--icon-fill, 0);
 }
-```
-
+```text
 ## 2. Motion & Animation Tokens
 
 ### Motion Token Structure
@@ -95,8 +93,7 @@ export const iconConfig = {
     }
   }
 }
-```
-
+```text
 ### Animated Loading Spinner Example
 
 ```javascript
@@ -147,8 +144,7 @@ export const spinnerAnimation = {
     }
   `,
 };
-```
-
+```text
 ## 3. Critical CSS Extraction
 
 ### Implementation
@@ -201,8 +197,7 @@ async function extractCriticalCSS() {
   <!-- Non-critical CSS loaded async -->
   <link rel="preload" href="/css/main-async.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
 </head>
-```
-
+```text
 ## 4. Visual Documentation Generator (with Storybook)
 
 ### Storybook Integration
@@ -251,8 +246,7 @@ export async function generateTokenStories(tokens) {
     themes: ['light', 'dark', 'high-contrast'],
   });
 }
-```
-
+```text
 ### Static Documentation
 
 ```javascript
@@ -284,8 +278,7 @@ export async function generateDocs() {
   // Generate static HTML/PDF
   await generateStaticSite(pages, 'dist/docs');
 }
-```
-
+```text
 ## 5. Accessibility Testing Tools
 
 ### Visual Accessibility Tests
@@ -357,8 +350,7 @@ test('touch targets', async ({ page }) => {
 
   await page.screenshot({ path: 'a11y/touch-targets.png' });
 });
-```
-
+```text
 ## 6. Build Artifacts & Reports
 
 ### Visual Pipeline Report
@@ -413,8 +405,7 @@ export async function generateBuildReport() {
 
   return report;
 }
-```
-
+```text
 ## 7. Version Control for Visual Changes
 
 ### Visual Diff System
@@ -468,8 +459,7 @@ if git diff --cached --name-only | grep -E "tokens/.*\.json$"; then
   npm run design:snapshot
   git add design-system/snapshots/
 fi
-```
-
+```text
 ## Complete Pipeline Scripts
 
 ```json
@@ -511,8 +501,7 @@ fi
     "design:all": "npm run design:build && npm run design:test && npm run design:docs && npm run design:report"
   }
 }
-```
-
+```text
 ## 8. Design Token Linting
 
 ### Token Validation Rules
@@ -612,8 +601,7 @@ async function lintTokens() {
 
   console.log('✅ Token linting complete');
 }
-```
-
+```text
 ### Custom Validation Rules
 
 ```javascript
@@ -654,8 +642,7 @@ export const customRules = {
     message: 'Version must follow semver format (x.y.z)',
   },
 };
-```
-
+```text
 ### Integration with Build Pipeline
 
 ```json

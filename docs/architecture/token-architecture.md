@@ -6,7 +6,7 @@
 
 We use a three-tier token system that's compatible with Style Dictionary, Figma Tokens plugin, and WCAG standards:
 
-```
+```text
 tokens/
 ├── tier-1-primitives/      # Raw values (colors, numbers)
 │   ├── colors.json         # Raw color palette
@@ -19,8 +19,7 @@ tokens/
 └── tier-3-component/       # Component-specific
     ├── button.json         # component.button.background
     └── card.json           # component.card.shadow
-```
-
+```text
 ### 2. **Token Naming Convention**
 
 Use dot notation with clear hierarchy:
@@ -43,8 +42,7 @@ Use dot notation with clear hierarchy:
     }
   }
 }
-```
-
+```text
 ### 3. **File Format Strategy**
 
 ```javascript
@@ -92,8 +90,7 @@ module.exports = {
     },
   },
 };
-```
-
+```text
 ### 4. **WCAG Compliance Structure**
 
 Organize tokens to support WCAG contrast checking:
@@ -113,11 +110,10 @@ Organize tokens to support WCAG contrast checking:
     }
   }
 }
-```
-
+```text
 ### 5. **Theme Organization**
 
-```
+```text
 tokens/
 ├── global/           # Shared across all themes
 │   ├── spacing.json
@@ -131,8 +127,7 @@ tokens/
 └── brands/          # Multi-brand support
     ├── default/
     └── enterprise/
-```
-
+```text
 ### 6. **Tooling Compatibility Matrix**
 
 | Tool              | Format     | Structure      | Notes                    |
@@ -165,8 +160,7 @@ const transforms = {
     };
   },
 };
-```
-
+```text
 ### 8. **Best Practices**
 
 1. **Source of Truth**: Keep Style Dictionary format as source
@@ -214,8 +208,7 @@ const pipeline = {
   // Post-process compression
   compress: imagemin,
 };
-```
-
+```text
 ### SVG Token Replacement with SVGO
 
 ```javascript
@@ -263,8 +256,7 @@ export const tokenReplacerPlugin = {
 function getTokenValue(tokens, path) {
   return path.split('.').reduce((obj, key) => obj?.[key], tokens);
 }
-```
-
+```text
 #### Why Sharp over ImageMagick?
 
 - **Performance**: 4-5x faster processing
@@ -318,8 +310,7 @@ if (process.argv.includes('--watch')) {
 } else {
   buildAssets();
 }
-```
-
+```text
 #### Package.json Scripts
 
 ```json
@@ -332,8 +323,7 @@ if (process.argv.includes('--watch')) {
     "prebuild": "npm run design:build"
   }
 }
-```
-
+```text
 #### Complete SVG Processing Pipeline
 
 ```javascript
@@ -388,8 +378,7 @@ async function generateThemedAssets(iconName, theme) {
     await sharp(Buffer.from(result.data)).resize(32, 32).toFile(`dist/favicon-${theme}.ico`);
   }
 }
-```
-
+```text
 #### SVG Template Example
 
 ```xml
@@ -411,8 +400,7 @@ async function generateThemedAssets(iconName, theme) {
     stroke-linecap="round"
   />
 </svg>
-```
-
+```text
 ### Alternative Build Tools
 
 If you prefer a task runner:

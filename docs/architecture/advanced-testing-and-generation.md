@@ -23,8 +23,7 @@ async function testTypography() {
     assert(lineHeightRatio >= 1.2, `Line height too tight for ${size.name}`);
   });
 }
-```
-
+```text
 ### 2. **Spacing Consistency Testing**
 
 ```javascript
@@ -41,8 +40,7 @@ function testSpacingScale() {
     }
   });
 }
-```
-
+```text
 ### 3. **Animation Performance Testing**
 
 ```javascript
@@ -58,8 +56,7 @@ function testAnimations() {
     }
   });
 }
-```
-
+```text
 ### 4. **Icon Consistency Testing**
 
 ```javascript
@@ -85,8 +82,7 @@ async function testIcons() {
     );
   }
 }
-```
-
+```text
 ### 5. **Focus Indicator Testing**
 
 ```javascript
@@ -115,8 +111,7 @@ async function testFocusIndicators(page) {
     );
   }
 }
-```
-
+```text
 ## Part 2: Advanced Color Generation (Best-in-Class Approach)
 
 ### Material Color Utilities (Recommended for 2024)
@@ -375,8 +370,7 @@ export function generateColorTokens(brandColor, options = {}) {
     },
   };
 }
-```
-
+```text
 ### Key Benefits of Material Color Utilities
 
 1. **HCT Color Space**: Google's proprietary space provides better perceptual uniformity than even LCH
@@ -405,8 +399,7 @@ console.log(palette.tone(87)); // In-between shade
 // Find exact tone for contrast requirement
 const accessibleTone = findAccessibleTone(palette, backgroundArgb, 4.5);
 console.log(`Use tone ${accessibleTone.tone} for AA compliance`);
-```
-
+```text
 ### Implementation Strategy
 
 ```javascript
@@ -438,8 +431,7 @@ export default {
     'custom.brand.DEFAULT': { tone: 47 },
   },
 };
-```
-
+```text
 ### Build Integration
 
 ```json
@@ -450,8 +442,7 @@ export default {
     "design:preview": "node design-system/scripts/preview-server.js"
   }
 }
-```
-
+```text
 ### Why MCU is Best-in-Class
 
 1. **Google Scale Testing**: Validated across billions of devices and applications

@@ -17,8 +17,7 @@ pnpm test:unit:logger
 
 # Run all unit tests
 pnpm test:unit
-```
-
+```text
 ### Coverage Testing
 
 ```bash
@@ -30,8 +29,7 @@ pnpm test:coverage:watch
 
 # View HTML coverage report
 open coverage/index.html
-```
-
+```yaml
 ## Coverage Philosophy
 
 ### Simple, Progressive Thresholds
@@ -65,8 +63,7 @@ In CI/CD pipelines, use:
 ```bash
 # Strict coverage checking
 pnpm test:coverage:all
-```
-
+```text
 For local development, use:
 
 ```bash

@@ -19,8 +19,7 @@ Define color relationships through naming conventions:
     }
   }
 }
-```
-
+```text
 **Naming Pattern**: `on-{background}` indicates text/content color for that background
 
 ### 2. Contrast Testing Implementation
@@ -90,8 +89,7 @@ function testContrast(pairs) {
 
   return { results, failures };
 }
-```
-
+```text
 ### 3. Token Metadata for Testing
 
 Enhance tokens with accessibility metadata:
@@ -122,8 +120,7 @@ Enhance tokens with accessibility metadata:
     }
   }
 }
-```
-
+```text
 ### 4. Build-time Testing
 
 ```javascript
@@ -150,8 +147,7 @@ async function buildAssets() {
 
   // 3. Continue with asset generation...
 }
-```
-
+```text
 ### 5. Git Hook Integration
 
 ```javascript
@@ -167,8 +163,7 @@ if git diff --cached --name-only | grep -E "tokens/.*\.json$"; then
     exit 1
   }
 fi
-```
-
+```text
 ### 6. Visual Regression Testing
 
 ```javascript
@@ -194,8 +189,7 @@ colorPairs.forEach((pair) => {
     await expect(page).toHaveScreenshot(`contrast-${pair.background.name}.png`);
   });
 });
-```
-
+```text
 ### 7. Continuous Monitoring
 
 ```javascript
@@ -238,8 +232,7 @@ async function generateReport() {
 
   await fs.writeFile('dist/contrast-report.html', html);
 }
-```
-
+```text
 ### 8. Integration with Style Dictionary
 
 ```javascript
@@ -275,8 +268,7 @@ module.exports = {
     },
   },
 };
-```
-
+```text
 ### 9. Testing Commands
 
 ```json
@@ -289,8 +281,7 @@ module.exports = {
     "design:report": "node design-system/scripts/contrast-report.js"
   }
 }
-```
-
+```text
 ### 10. CI/CD Integration
 
 ```yaml
