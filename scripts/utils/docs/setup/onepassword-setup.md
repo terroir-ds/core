@@ -30,8 +30,7 @@ OP_ACCOUNT=your-account-id
 # Optional: Custom names for items in 1Password
 GIT_SIGNING_KEY_ITEM=Git Signing Key    # Name of your SSH signing key in 1Password
 GIT_CONFIG_ITEM=Git Config              # Name of item containing git user info
-```
-
+```bash
 ### 3. Store SSH Keys in 1Password
 
 Create SSH Key items in 1Password with these fields:
@@ -88,8 +87,7 @@ git config --global --list | grep -E "(gpg|sign)"
 # Test a signed commit
 git commit --allow-empty -m "Test signed commit"
 git log --show-signature -1
-```
-
+```text
 ## Troubleshooting
 
 ### "OP_SERVICE_ACCOUNT_TOKEN environment variable is not set"

@@ -82,8 +82,7 @@ describe('MyAsyncFunction', () => {
       .rejects.toThrow('User cancelled');
   });
 });
-```
-
+```bash
 ### Testing Concurrency
 
 ```typescript
@@ -100,8 +99,7 @@ it('should limit concurrent operations', async () => {
   
   expect(tracker.getMaxConcurrent()).toBeLessThanOrEqual(5);
 });
-```
-
+```bash
 ### Testing Event Handling
 
 ```typescript
@@ -120,8 +118,7 @@ it('should emit events', async () => {
     expect.objectContaining({ type: 'custom', detail: 'test' })
   );
 });
-```
-
+```bash
 ### Testing Expected Errors
 
 ```typescript
@@ -154,8 +151,7 @@ it('should capture and examine errors', async () => {
   expect(error.message).toBe('Expected error');
   expect(error.cause).toBeDefined();
 });
-```
-
+```bash
 ### Testing with Controlled Timing
 
 ```typescript
@@ -177,8 +173,7 @@ it('should handle rate limiting', async () => {
   
   time.restore();
 });
-```
-
+```bash
 ## Best Practices
 
 ### 1. Use Helper Functions Over Direct Mocking
@@ -190,8 +185,7 @@ const controller = createAbortedController();
 // ❌ Avoid - manual setup
 const controller = new AbortController();
 controller.abort();
-```
-
+```bash
 ### 2. Leverage Automatic Cleanup
 
 ```typescript
@@ -206,8 +200,7 @@ describe('MyTests', () => {
 // ❌ Avoid - manual cleanup
 beforeEach(() => vi.useFakeTimers());
 afterEach(() => vi.restoreAllMocks());
-```
-
+```bash
 ### 3. Track Async State Properly
 
 ```typescript
@@ -220,8 +213,7 @@ expect(state.isPending()).toBe(true);
 let resolved = false;
 promise.then(() => { resolved = true; });
 // May have race conditions
-```
-
+```bash
 ### 4. Use Type-Safe Helpers
 
 ```typescript
@@ -235,8 +227,7 @@ const results = mockSequentialResults<string>([
 const fn = vi.fn();
 fn.mockResolvedValueOnce('first');
 fn.mockRejectedValueOnce(new Error('failed'));
-```
-
+```bash
 ## Adding New Helpers
 
 When adding new test helpers:
@@ -264,8 +255,7 @@ Example structure:
 export function myHelper(param1: string): string {
   // Implementation
 }
-```
-
+```bash
 ## Performance Considerations
 
 1. **Fake timers** - Always use fake timers for time-dependent tests
@@ -289,8 +279,7 @@ describe('Feature', () => {
   
   // Tests use tracker
 });
-```
-
+```bash
 ### Assertion Helpers Pattern
 
 ```typescript
@@ -307,8 +296,7 @@ async function assertEventuallyTrue(
     await waitForNextTick();
   }
 }
-```
-
+```bash
 ### State Machine Testing
 
 ```typescript
@@ -322,8 +310,7 @@ const states = {
     this.current = to;
   },
 };
-```
-
+```bash
 ## Debugging Tests
 
 When tests using these helpers fail:
