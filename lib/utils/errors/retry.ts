@@ -9,7 +9,6 @@
  * - Resource cleanup
  */
 
-// Note: delay package imported but not used - we use custom delayWithSignal instead
 import { NetworkError } from './base-error.js';
 import { logger } from '../logger.js';
 import { getMessage } from './messages.js';
@@ -231,7 +230,7 @@ export function combineSignals(signals: (AbortSignal | undefined)[]): AbortSigna
   
   // Use native AbortSignal.any if available (Node.js 20+)
   if ('any' in AbortSignal && typeof AbortSignal.any === 'function') {
-    return AbortSignal.any(validSignals);
+    return (AbortSignal as any).any(validSignals);
   }
   
   // Fallback for older Node.js versions
