@@ -182,7 +182,7 @@ describe('timer helpers', () => {
   });
 
   describe('debounce', () => {
-    it('should debounce function calls', () => {
+    it('should debounce function calls', async () => {
       const fn = vi.fn();
       const debounced = debounce(fn, 100);
       
@@ -195,27 +195,27 @@ describe('timer helpers', () => {
       vi.advanceTimersByTime(99);
       expect(fn).not.toHaveBeenCalled();
       
-      vi.advanceTimersByTime(1);
+      await vi.advanceTimersByTimeAsync(1);
       expect(fn).toHaveBeenCalledOnce();
       expect(fn).toHaveBeenCalledWith('c');
     });
 
-    it('should reset timer on each call', () => {
+    it('should reset timer on each call', async () => {
       const fn = vi.fn();
       const debounced = debounce(fn, 100);
       
       debounced('a');
-      vi.advanceTimersByTime(50);
+      await vi.advanceTimersByTimeAsync(50);
       
       debounced('b');
-      vi.advanceTimersByTime(50);
+      await vi.advanceTimersByTimeAsync(50);
       
       debounced('c');
-      vi.advanceTimersByTime(50);
+      await vi.advanceTimersByTimeAsync(50);
       
       expect(fn).not.toHaveBeenCalled();
       
-      vi.advanceTimersByTime(50);
+      await vi.advanceTimersByTimeAsync(50);
       expect(fn).toHaveBeenCalledOnce();
       expect(fn).toHaveBeenCalledWith('c');
     });

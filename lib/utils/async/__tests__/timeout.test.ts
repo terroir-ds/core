@@ -128,7 +128,7 @@ describe('timeout utilities', () => {
       vi.advanceTimersByTime(100);
       
       await verifyRejection(timeoutPromise, {
-        message: 'Timeout after 100ms',
+        message: 'Operation timed out after 100ms',
         customCheck: (error) => error instanceof TimeoutError
       });
     });

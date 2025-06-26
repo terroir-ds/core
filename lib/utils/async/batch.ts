@@ -73,6 +73,11 @@ export async function processBatch<T, R>(
   const indexedItems = items.map((item, index) => ({ item, index }));
   const results = await queue.process(indexedItems);
 
+  // Check if we were aborted
+  if (signal?.aborted) {
+    throw new Error(AsyncErrorMessages.ABORTED);
+  }
+
   // Convert queue results to batch results
   const batchResults: BatchResult<T, R>[] = [];
   

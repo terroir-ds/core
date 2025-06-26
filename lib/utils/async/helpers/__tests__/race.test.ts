@@ -262,7 +262,10 @@ describe('race helpers', () => {
       const op1 = {
         start: (signal: AbortSignal) => {
           signal.addEventListener('abort', abortFn1);
-          return new Promise(resolve => setTimeout(() => resolve('slow'), 200));
+          return new Promise(resolve => {
+            const timeout = setTimeout(() => resolve('slow'), 200);
+            signal.addEventListener('abort', () => clearTimeout(timeout));
+          });
         },
         name: 'slow'
       };
@@ -270,15 +273,18 @@ describe('race helpers', () => {
       const op2 = {
         start: (signal: AbortSignal) => {
           signal.addEventListener('abort', abortFn2);
-          return new Promise(resolve => setTimeout(() => resolve('fast'), 100));
+          return new Promise(resolve => {
+            const timeout = setTimeout(() => resolve('fast'), 100);
+            signal.addEventListener('abort', () => clearTimeout(timeout));
+          });
         },
         name: 'fast'
       };
       
       const resultPromise = raceWithCancellation([op1, op2]);
       
-      vi.advanceTimersByTime(100);
-      await vi.runAllTimersAsync();
+      // Let fast operation complete
+      await vi.advanceTimersByTimeAsync(100);
       
       const result = await resultPromise;
       
@@ -327,14 +333,13 @@ describe('race helpers', () => {
       
       const resultPromise = raceFirstN(promises, 2);
       
-      vi.advanceTimersByTime(100);
-      await vi.runAllTimersAsync();
+      // Advance to let first two complete (50ms and 75ms)
+      await vi.advanceTimersByTimeAsync(75);
       
       const results = await resultPromise;
       
       expect(results).toHaveLength(2);
-      expect(results).toContain('2nd'); // Fastest
-      expect(results).toContain('4th'); // Second fastest
+      expect(results).toEqual(['2nd', '4th']); // In order of completion
     });
 
     it('should return all if count >= length', async () => {

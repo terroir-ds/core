@@ -8,6 +8,7 @@ import { checkAborted, createAbortError } from './helpers/abort.js';
 import { createTimeoutPromise, raceWithCleanup } from './helpers/race.js';
 import { createCleanupManager } from './helpers/cleanup.js';
 import { AsyncErrorMessages } from './helpers/messages.js';
+import { createManagedTimer } from './helpers/timers.js';
 
 export interface TimeoutOptions extends CancellableOptions {
   message?: string | ((ms: number) => string);
@@ -41,19 +42,21 @@ export async function withTimeout<T>(
   // Check if already aborted
   checkAborted(signal);
 
-  // Create timeout promise with custom error
-  const timeoutPromise = createTimeoutPromise<T>(
-    ms,
-    (timeMs) => {
-      const errorMessage = typeof message === 'function' 
-        ? message(timeMs) 
-        : message ?? AsyncErrorMessages.TIMEOUT(timeMs);
-      return new errorClass(errorMessage);
-    }
-  );
-
   // Create cleanup manager
   const cleanup = createCleanupManager();
+
+  // Create timeout with managed timer
+  const timerOptions = signal ? { signal } : undefined;
+  const timer = createManagedTimer(ms, timerOptions);
+  const timeoutPromise = timer.promise.then(() => {
+    const errorMessage = typeof message === 'function' 
+      ? message(ms) 
+      : message ?? AsyncErrorMessages.TIMEOUT(ms);
+    throw new errorClass(errorMessage);
+  });
+
+  // Add timer cleanup
+  cleanup.add(() => timer.clear());
 
   // Handle abort signal
   if (signal) {
@@ -69,7 +72,10 @@ export async function withTimeout<T>(
     );
   }
 
-  return Promise.race([promise, timeoutPromise]);
+  return raceWithCleanup(
+    [promise, timeoutPromise],
+    () => cleanup.execute()
+  );
 }
 
 /**
@@ -92,11 +98,15 @@ export function timeout(
     return Promise.reject(error);
   }
 
-  const errorMessage = message ?? `Timeout after ${ms}ms`;
-  return createTimeoutPromise(
-    ms,
-    () => new TimeoutError(errorMessage)
-  );
+  const errorMessage = message ?? AsyncErrorMessages.TIMEOUT(ms);
+  
+  // Create managed timer
+  const timerOptions = signal ? { signal } : undefined;
+  const timer = createManagedTimer(ms, timerOptions);
+  
+  return timer.promise.then(() => {
+    throw new TimeoutError(errorMessage);
+  });
 }
 
 /**

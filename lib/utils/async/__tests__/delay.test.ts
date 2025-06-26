@@ -165,11 +165,11 @@ describe('delay utilities', () => {
     it('should throw for negative values', async () => {
       await expectRejection(
         randomDelay(-10, 100),
-        'Delay values must be non-negative'
+        'Delay must be a non-negative number'
       );
       await expectRejection(
         randomDelay(10, -100),
-        'Delay values must be non-negative'
+        'Delay must be a non-negative number'
       );
     });
 

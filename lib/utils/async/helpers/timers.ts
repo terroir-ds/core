@@ -176,7 +176,7 @@ export function debounce<T extends (...args: unknown[]) => unknown>(
     timer = createManagedTimer(ms, options);
     
     // Execute function after delay
-    timer.promise.then(
+    void timer.promise.then(
       () => fn(...args),
       () => {} // Ignore abort errors
     );
