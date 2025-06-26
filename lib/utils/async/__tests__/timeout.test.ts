@@ -4,6 +4,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { withTimeout, timeout, raceWithTimeout, TimeoutError } from '../timeout.js';
+import { expectRejection, verifyRejection } from '@test/helpers/error-handling.js';
 
 describe('timeout utilities', () => {
   beforeEach(() => {
@@ -27,8 +28,10 @@ describe('timeout utilities', () => {
       
       vi.advanceTimersByTime(100);
       
-      await expect(timeoutPromise).rejects.toThrow(TimeoutError);
-      await expect(timeoutPromise).rejects.toThrow('Operation timed out after 100ms');
+      await verifyRejection(timeoutPromise, {
+        message: 'Operation timed out after 100ms',
+        customCheck: (error) => error instanceof TimeoutError
+      });
     });
 
     it('should use custom error message', async () => {
@@ -39,7 +42,7 @@ describe('timeout utilities', () => {
       
       vi.advanceTimersByTime(100);
       
-      await expect(timeoutPromise).rejects.toThrow('Custom timeout message');
+      await expectRejection(timeoutPromise, 'Custom timeout message');
     });
 
     it('should use custom error message function', async () => {
@@ -50,7 +53,7 @@ describe('timeout utilities', () => {
       
       vi.advanceTimersByTime(100);
       
-      await expect(timeoutPromise).rejects.toThrow('Timed out waiting 100ms');
+      await expectRejection(timeoutPromise, 'Timed out waiting 100ms');
     });
 
     it('should use custom error class', async () => {
@@ -68,7 +71,9 @@ describe('timeout utilities', () => {
       
       vi.advanceTimersByTime(100);
       
-      await expect(timeoutPromise).rejects.toBeInstanceOf(CustomError);
+      await verifyRejection(timeoutPromise, {
+        customCheck: (error) => error instanceof CustomError
+      });
     });
 
     it('should handle already aborted signal', async () => {
@@ -77,9 +82,10 @@ describe('timeout utilities', () => {
       
       const promise = Promise.resolve('value');
       
-      await expect(
-        withTimeout(promise, 1000, { signal: controller.signal })
-      ).rejects.toThrow('Operation aborted');
+      await expectRejection(
+        withTimeout(promise, 1000, { signal: controller.signal }),
+        'Operation aborted'
+      );
     });
 
     it('should abort on signal', async () => {
@@ -92,7 +98,7 @@ describe('timeout utilities', () => {
       
       controller.abort();
       
-      await expect(timeoutPromise).rejects.toThrow('Operation aborted');
+      await expectRejection(timeoutPromise, 'Operation aborted');
     });
 
     it('should cleanup timeout when promise resolves', async () => {
@@ -121,8 +127,10 @@ describe('timeout utilities', () => {
       
       vi.advanceTimersByTime(100);
       
-      await expect(timeoutPromise).rejects.toThrow(TimeoutError);
-      await expect(timeoutPromise).rejects.toThrow('Timeout after 100ms');
+      await verifyRejection(timeoutPromise, {
+        message: 'Timeout after 100ms',
+        customCheck: (error) => error instanceof TimeoutError
+      });
     });
 
     it('should use custom message', async () => {
@@ -130,16 +138,17 @@ describe('timeout utilities', () => {
       
       vi.advanceTimersByTime(100);
       
-      await expect(timeoutPromise).rejects.toThrow('Custom message');
+      await expectRejection(timeoutPromise, 'Custom message');
     });
 
     it('should handle already aborted signal', async () => {
       const controller = new AbortController();
       controller.abort();
       
-      await expect(
-        timeout(1000, { signal: controller.signal })
-      ).rejects.toThrow('Operation aborted');
+      await expectRejection(
+        timeout(1000, { signal: controller.signal }),
+        'Operation aborted'
+      );
     });
 
     it('should abort on signal', async () => {
@@ -148,7 +157,7 @@ describe('timeout utilities', () => {
       
       controller.abort();
       
-      await expect(timeoutPromise).rejects.toThrow('Operation aborted');
+      await expectRejection(timeoutPromise, 'Operation aborted');
     });
 
     it('should cleanup timeout on abort', async () => {
@@ -189,7 +198,9 @@ describe('timeout utilities', () => {
       
       vi.advanceTimersByTime(100);
       
-      await expect(racePromise).rejects.toThrow(TimeoutError);
+      await verifyRejection(racePromise, {
+        customCheck: (error) => error instanceof TimeoutError
+      });
     });
 
     it('should return fallback on timeout', async () => {
@@ -203,9 +214,10 @@ describe('timeout utilities', () => {
     });
 
     it('should throw error when no promises and no fallback', async () => {
-      await expect(
-        raceWithTimeout([], 100)
-      ).rejects.toThrow('No promises provided and no fallback specified');
+      await expectRejection(
+        raceWithTimeout([], 100),
+        'No promises provided and no fallback specified'
+      );
     });
 
     it('should return fallback when no promises provided', async () => {
@@ -217,19 +229,21 @@ describe('timeout utilities', () => {
       const controller = new AbortController();
       controller.abort();
       
-      await expect(
+      await expectRejection(
         raceWithTimeout([Promise.resolve('value')], 1000, {
           signal: controller.signal
-        })
-      ).rejects.toThrow('Operation aborted');
+        }),
+        'Operation aborted'
+      );
     });
 
     it('should propagate non-timeout errors', async () => {
       const error = new Error('Custom error');
       
-      await expect(
-        raceWithTimeout([Promise.reject(error)], 1000)
-      ).rejects.toThrow('Custom error');
+      await expectRejection(
+        raceWithTimeout([Promise.reject(error)], 1000),
+        'Custom error'
+      );
     });
   });
 

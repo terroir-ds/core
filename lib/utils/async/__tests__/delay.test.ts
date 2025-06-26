@@ -9,6 +9,7 @@ import {
   randomDelay,
   debouncedDelay
 } from '../delay.js';
+import { expectRejection } from '@test/helpers/error-handling.js';
 
 describe('delay utilities', () => {
   beforeEach(() => {
@@ -48,8 +49,10 @@ describe('delay utilities', () => {
       const controller = new AbortController();
       controller.abort();
       
-      await expect(delay(100, { signal: controller.signal }))
-        .rejects.toThrow('Operation aborted');
+      await expectRejection(
+        delay(100, { signal: controller.signal }),
+        'Operation aborted'
+      );
     });
 
     it('should reject when signal aborts', async () => {
@@ -58,7 +61,7 @@ describe('delay utilities', () => {
       
       controller.abort();
       
-      await expect(promise).rejects.toThrow('Operation aborted');
+      await expectRejection(promise, 'Operation aborted');
     });
 
     it('should cleanup timeout on abort', () => {
@@ -125,7 +128,7 @@ describe('delay utilities', () => {
       
       controller.abort();
       
-      await expect(promise).rejects.toThrow('Operation aborted');
+      await expectRejection(promise, 'Operation aborted');
     });
   });
 
@@ -160,12 +163,21 @@ describe('delay utilities', () => {
     });
 
     it('should throw for negative values', async () => {
-      await expect(randomDelay(-10, 100)).rejects.toThrow('Delay values must be non-negative');
-      await expect(randomDelay(10, -100)).rejects.toThrow('Delay values must be non-negative');
+      await expectRejection(
+        randomDelay(-10, 100),
+        'Delay values must be non-negative'
+      );
+      await expectRejection(
+        randomDelay(10, -100),
+        'Delay values must be non-negative'
+      );
     });
 
     it('should throw if min > max', async () => {
-      await expect(randomDelay(200, 100)).rejects.toThrow('Minimum delay must not exceed maximum delay');
+      await expectRejection(
+        randomDelay(200, 100),
+        'Minimum delay must not exceed maximum delay'
+      );
     });
 
     it('should handle abort signal', async () => {
@@ -174,7 +186,7 @@ describe('delay utilities', () => {
       
       controller.abort();
       
-      await expect(promise).rejects.toThrow('Operation aborted');
+      await expectRejection(promise, 'Operation aborted');
     });
   });
 
@@ -222,7 +234,7 @@ describe('delay utilities', () => {
       const promise = delay();
       cancel();
       
-      await expect(promise).rejects.toThrow('Debounced delay cancelled');
+      await expectRejection(promise, 'Debounced delay cancelled');
     });
 
     it('should handle flush', async () => {
@@ -275,7 +287,7 @@ describe('delay utilities', () => {
       const promise = delay();
       controller.abort();
       
-      await expect(promise).rejects.toThrow('Debounced delay cancelled');
+      await expectRejection(promise, 'Debounced delay cancelled');
     });
 
     it('should handle multiple cancel calls', async () => {

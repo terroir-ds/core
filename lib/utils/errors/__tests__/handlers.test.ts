@@ -19,7 +19,7 @@ import {
 } from '../handlers.js';
 import { ValidationError, ErrorSeverity } from '../base-error.js';
 import { logger } from '../../logger/index.js';
-import { suppressWarningsInErrorTests } from './test-utils.js';
+import { expectErrors, expectRejection } from '@test/helpers/error-handling.js';
 
 // Mock the logger
 vi.mock('../../logger/index.js', () => ({
@@ -33,12 +33,11 @@ vi.mock('../../logger/index.js', () => ({
 }));
 
 describe('Error Handlers', () => {
-  // Set up clean warning suppression for error tests
-  suppressWarningsInErrorTests();
-
   beforeEach(() => {
     vi.clearAllMocks();
+    expectErrors(); // Suppress expected unhandled rejections
   });
+
 
   describe('Error Handler Registry', () => {
     it('should register and call error handlers', async () => {
@@ -218,7 +217,7 @@ describe('Error Handlers', () => {
       const fn = vi.fn().mockRejectedValue(error);
       const wrapped = withErrorHandling(fn, { rethrow: true });
       
-      await expect(wrapped()).rejects.toThrow('Failed');
+      await expectRejection(wrapped(), 'Failed');
       expect(logger.warn).toHaveBeenCalled();
     });
 
@@ -305,7 +304,7 @@ describe('Error Handlers', () => {
       const error = new ValidationError('Failed');
       const operation = vi.fn().mockRejectedValue(error);
       
-      await expect(errorBoundary(operation)).rejects.toThrow('Failed');
+      await expectRejection(errorBoundary(operation), 'Failed');
     });
 
     it('should include context in error handling', async () => {

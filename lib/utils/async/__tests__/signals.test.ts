@@ -11,6 +11,7 @@ import {
   waitForAbort,
   manualSignal
 } from '../signals.js';
+import { expectRejection } from '@test/helpers/error-handling.js';
 
 describe('signal utilities', () => {
   beforeEach(() => {
@@ -219,8 +220,10 @@ describe('signal utilities', () => {
       const controller = new AbortController();
       controller.abort();
       
-      await expect(waitForAbort(controller.signal))
-        .rejects.toThrow('Already aborted');
+      await expectRejection(
+        waitForAbort(controller.signal),
+        'Already aborted'
+      );
     });
 
     it('should reject when signal aborts', async () => {
@@ -230,7 +233,7 @@ describe('signal utilities', () => {
       
       controller.abort();
       
-      await expect(waitPromise).rejects.toThrow('Operation aborted');
+      await expectRejection(waitPromise, 'Operation aborted');
     });
 
     it('should handle abort with reason', async () => {
@@ -240,7 +243,7 @@ describe('signal utilities', () => {
       
       controller.abort('Custom reason');
       
-      await expect(waitPromise).rejects.toThrow('Operation aborted');
+      await expectRejection(waitPromise, 'Operation aborted');
     });
   });
 

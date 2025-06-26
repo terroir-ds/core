@@ -1,38 +1,27 @@
 /**
  * Test utilities for error handling tests
  * 
- * Provides utilities to suppress expected warnings while preserving
- * detection of unexpected errors in tests.
+ * Re-exports the shared error handling utilities for consistency.
+ * This file is deprecated - use @test/helpers/error-handling.js directly.
  */
 
-import { beforeEach, afterEach } from 'vitest';
+// Re-export the shared error handling utilities
+export {
+  expectRejection,
+  verifyRejection,
+  captureExpectedError,
+  expectErrors,
+  cleanupErrorHandling,
+  suppressConsoleErrors,
+  createDelayedRejection,
+  createDelayedResolution
+} from '@test/helpers/error-handling.js';
 
 /**
- * Suppress expected promise rejection warnings during error tests
- * 
- * These warnings are expected when testing error scenarios because
- * test frameworks handle promise rejections asynchronously.
+ * @deprecated Use expectErrors() from '@test/helpers/error-handling.js' instead
+ * This function is kept for backward compatibility
  */
 export function suppressWarningsInErrorTests() {
-  let originalRejectionListeners: Array<(...args: unknown[]) => void> = [];
-
-  beforeEach(() => {
-    // Store and remove original unhandledRejection listeners
-    originalRejectionListeners = process.listeners('unhandledRejection') as Array<(...args: unknown[]) => void>;
-    process.removeAllListeners('unhandledRejection');
-
-    // Add silent handler for test rejections
-    process.on('unhandledRejection', () => {
-      // Silently suppress - these are expected in error tests
-    });
-  });
-
-  afterEach(() => {
-    process.removeAllListeners('unhandledRejection');
-    originalRejectionListeners.forEach(listener => {
-      process.on('unhandledRejection', listener);
-    });
-  });
+  // This function is now a no-op since the global test setup handles error suppression
+  // and individual tests should use expectErrors() when needed
 }
-
-// Additional test utilities can be added here as needed
