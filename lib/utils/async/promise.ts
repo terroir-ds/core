@@ -12,6 +12,7 @@ import type {
 } from '@utils/types/async.types.js';
 import { delay } from './delay.js';
 import { getMessage } from '@utils/errors/messages.js';
+import { checkAborted } from './helpers/abort.js';
 
 // Re-export Deferred for backward compatibility
 export type Deferred<T> = DeferredBase<T>;
@@ -56,9 +57,7 @@ export async function retry<T>(
     signal
   } = options ?? {};
 
-  if (signal?.aborted) {
-    throw new DOMException(getMessage('OPERATION_ABORTED'), 'AbortError');
-  }
+  checkAborted(signal);
 
   let lastError: unknown;
   
@@ -155,9 +154,7 @@ export async function firstSuccessful<T>(
 ): Promise<T> {
   const { signal } = options ?? {};
 
-  if (signal?.aborted) {
-    throw new DOMException(getMessage('OPERATION_ABORTED'), 'AbortError');
-  }
+  checkAborted(signal);
 
   if (factories.length === 0) {
     throw new Error(getMessage('VALIDATION_REQUIRED', 'promise factories'));

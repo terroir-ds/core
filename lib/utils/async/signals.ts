@@ -4,6 +4,8 @@
  */
 
 import { isAbortError as isAbortErrorBase } from '@utils/types/async.types.js';
+import { combineAbortSignals, createTimeoutAbortController, createAbortError } from './helpers/abort.js';
+import { createEventCleanup } from './helpers/cleanup.js';
 
 /**
  * Combine multiple abort signals into one
@@ -13,54 +15,18 @@ import { isAbortError as isAbortErrorBase } from '@utils/types/async.types.js';
 export function combineSignals(
   signals: (AbortSignal | undefined | null)[]
 ): AbortSignal {
-  // Filter out null/undefined signals
-  const validSignals = signals.filter((s): s is AbortSignal => s != null);
-
+  // Filter out null values to match helper signature
+  const filteredSignals = signals.filter((s): s is AbortSignal | undefined => s !== null);
+  
+  // Use the helper which handles all edge cases
+  const combined = combineAbortSignals(filteredSignals);
+  
   // If no valid signals, return a never-aborting signal
-  if (validSignals.length === 0) {
+  if (!combined) {
     return new AbortController().signal;
   }
-
-  // If only one signal, return it
-  if (validSignals.length === 1) {
-    const signal = validSignals[0];
-    if (!signal) {
-      throw new Error('Unexpected undefined signal after filtering');
-    }
-    return signal;
-  }
-
-  // Check if any signal is already aborted
-  const aborted = validSignals.find(s => s.aborted);
-  if (aborted) {
-    const controller = new AbortController();
-    controller.abort(aborted.reason);
-    return controller.signal;
-  }
-
-  // Use native AbortSignal.any if available (Node.js 20+)
-  if ('any' in AbortSignal && typeof AbortSignal.any === 'function') {
-    return AbortSignal.any(validSignals);
-  }
-
-  // Fallback implementation for older Node.js versions
-  const controller = new AbortController();
-  const cleanup: (() => void)[] = [];
-
-  const handleAbort = (reason?: unknown) => {
-    // Cleanup all listeners
-    cleanup.forEach(fn => fn());
-    controller.abort(reason);
-  };
-
-  // Listen to all signals
-  validSignals.forEach(signal => {
-    const listener = () => handleAbort(signal.reason);
-    signal.addEventListener('abort', listener, { once: true });
-    cleanup.push(() => signal.removeEventListener('abort', listener));
-  });
-
-  return controller.signal;
+  
+  return combined;
 }
 
 /**
@@ -75,11 +41,18 @@ export function timeoutSignal(
     return AbortSignal.timeout(ms);
   }
 
-  // Fallback implementation
-  const controller = new AbortController();
-  setTimeout(() => {
-    controller.abort(reason ?? `Timed out after ${ms}ms`);
-  }, ms);
+  // Use helper for fallback implementation
+  const controller = createTimeoutAbortController(ms);
+  
+  // If custom reason provided, override the default abort
+  if (reason) {
+    const originalSignal = controller.signal;
+    const customController = new AbortController();
+    originalSignal.addEventListener('abort', () => {
+      customController.abort(reason);
+    }, { once: true });
+    return customController.signal;
+  }
   
   return controller.signal;
 }
@@ -92,16 +65,16 @@ export function eventSignal(
   events: string[]
 ): AbortSignal {
   const controller = new AbortController();
-  const cleanup: (() => void)[] = [];
+  const cleanups: (() => void)[] = [];
 
   const handleEvent = (event: Event) => {
-    cleanup.forEach(fn => fn());
+    cleanups.forEach(fn => fn());
     controller.abort(`Event: ${event.type}`);
   };
 
   events.forEach(eventName => {
-    target.addEventListener(eventName, handleEvent, { once: true });
-    cleanup.push(() => target.removeEventListener(eventName, handleEvent));
+    const cleanup = createEventCleanup(target, eventName, handleEvent, { once: true });
+    cleanups.push(cleanup);
   });
 
   // Cleanup if signal is garbage collected
@@ -109,7 +82,7 @@ export function eventSignal(
     const weakController = new WeakRef(controller);
     const interval = setInterval(() => {
       if (!weakController.deref()) {
-        cleanup.forEach(fn => fn());
+        cleanups.forEach(fn => fn());
         clearInterval(interval);
       }
     }, 60000); // Check every minute
@@ -129,12 +102,12 @@ export const isAbortError = isAbortErrorBase;
  */
 export function waitForAbort(signal: AbortSignal): Promise<void> {
   if (signal.aborted) {
-    return Promise.reject(new DOMException('Already aborted', 'AbortError'));
+    return Promise.reject(createAbortError('Already aborted'));
   }
 
   return new Promise((_, reject) => {
     const handleAbort = () => {
-      reject(new DOMException('Operation aborted', 'AbortError'));
+      reject(createAbortError());
     };
     signal.addEventListener('abort', handleAbort, { once: true });
   });

@@ -4,6 +4,10 @@
  */
 
 import type { CancellableOptions, ErrorConstructor } from '@utils/types/async.types.js';
+import { checkAborted, createAbortError } from './helpers/abort.js';
+import { createTimeoutPromise, raceWithCleanup } from './helpers/race.js';
+import { createCleanupManager } from './helpers/cleanup.js';
+import { AsyncErrorMessages } from './helpers/messages.js';
 
 export interface TimeoutOptions extends CancellableOptions {
   message?: string | ((ms: number) => string);
@@ -35,36 +39,35 @@ export async function withTimeout<T>(
   const { signal, message, errorClass = TimeoutError } = options ?? {};
 
   // Check if already aborted
-  if (signal?.aborted) {
-    throw new DOMException('Operation aborted', 'AbortError');
-  }
+  checkAborted(signal);
 
-  // Create timeout promise
-  const timeoutPromise = new Promise<never>((_, reject) => {
-    const timeoutId = setTimeout(() => {
+  // Create timeout promise with custom error
+  const timeoutPromise = createTimeoutPromise<T>(
+    ms,
+    (timeMs) => {
       const errorMessage = typeof message === 'function' 
-        ? message(ms) 
-        : message ?? `Operation timed out after ${ms}ms`;
-      reject(new errorClass(errorMessage));
-    }, ms);
-
-    // Cleanup on signal abort
-    const cleanup = () => {
-      clearTimeout(timeoutId);
-      signal?.removeEventListener('abort', cleanup);
-    };
-
-    // Handle abort signal
-    if (signal) {
-      signal.addEventListener('abort', () => {
-        cleanup();
-        reject(new DOMException('Operation aborted', 'AbortError'));
-      }, { once: true });
+        ? message(timeMs) 
+        : message ?? AsyncErrorMessages.TIMEOUT(timeMs);
+      return new errorClass(errorMessage);
     }
+  );
 
-    // Ensure cleanup when promise settles
-    promise.finally(cleanup);
-  });
+  // Create cleanup manager
+  const cleanup = createCleanupManager();
+
+  // Handle abort signal
+  if (signal) {
+    const abortPromise = new Promise<never>((_, reject) => {
+      const handleAbort = () => reject(createAbortError());
+      signal.addEventListener('abort', handleAbort, { once: true });
+      cleanup.add(() => signal.removeEventListener('abort', handleAbort));
+    });
+
+    return raceWithCleanup(
+      [promise, timeoutPromise, abortPromise],
+      () => cleanup.execute()
+    );
+  }
 
   return Promise.race([promise, timeoutPromise]);
 }
@@ -80,27 +83,20 @@ export function timeout(
     message?: string;
   }
 ): Promise<never> {
-  const { signal, message = `Timeout after ${ms}ms` } = options ?? {};
+  const { signal, message } = options ?? {};
 
-  return new Promise((_, reject) => {
-    // Check if already aborted
-    if (signal?.aborted) {
-      reject(new DOMException('Operation aborted', 'AbortError'));
-      return;
-    }
+  // Check if already aborted
+  try {
+    checkAborted(signal);
+  } catch (error) {
+    return Promise.reject(error);
+  }
 
-    const timeoutId = setTimeout(() => {
-      reject(new TimeoutError(message));
-    }, ms);
-
-    // Handle abort signal
-    if (signal) {
-      signal.addEventListener('abort', () => {
-        clearTimeout(timeoutId);
-        reject(new DOMException('Operation aborted', 'AbortError'));
-      }, { once: true });
-    }
-  });
+  const errorMessage = message ?? `Timeout after ${ms}ms`;
+  return createTimeoutPromise(
+    ms,
+    () => new TimeoutError(errorMessage)
+  );
 }
 
 /**
@@ -116,15 +112,13 @@ export async function raceWithTimeout<T>(
   const { signal, fallback } = options ?? {};
 
   // Check if already aborted
-  if (signal?.aborted) {
-    throw new DOMException('Operation aborted', 'AbortError');
-  }
+  checkAborted(signal);
 
   if (promises.length === 0) {
     if (fallback !== undefined) {
       return fallback;
     }
-    throw new Error('No promises provided and no fallback specified');
+    throw new Error(AsyncErrorMessages.NO_PROMISES + ' and no fallback specified');
   }
 
   try {
