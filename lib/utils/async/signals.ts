@@ -23,7 +23,11 @@ export function combineSignals(
 
   // If only one signal, return it
   if (validSignals.length === 1) {
-    return validSignals[0]!;
+    const signal = validSignals[0];
+    if (!signal) {
+      throw new Error('Unexpected undefined signal after filtering');
+    }
+    return signal;
   }
 
   // Check if any signal is already aborted

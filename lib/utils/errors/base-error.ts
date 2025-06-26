@@ -439,7 +439,7 @@ export async function createErrorFromResponse(response: Response, context?: Erro
       url: response.url,
       status: response.status,
       statusText: response.statusText,
-      headers: Object.fromEntries((response.headers as any).entries()),
+      headers: {} as Record<string, string>,
       ...(typeof details === 'object' && details !== null ? details : {}),
     },
   };

@@ -90,21 +90,13 @@ export function trackPromiseState<T>(promise: Promise<T>): {
 export function mockSequentialResults<T>(
   results: Array<{ type: 'resolve'; value: T } | { type: 'reject'; error: unknown }>
 ) {
-  const fn = vi.fn() as any;
+  const fn = vi.fn();
   
-  results.forEach((result, index) => {
+  results.forEach((result) => {
     if (result.type === 'resolve') {
-      if (index === 0) {
-        fn.mockResolvedValueOnce(result.value);
-      } else {
-        fn.mockResolvedValueOnce(result.value);
-      }
+      fn.mockResolvedValueOnce(result.value);
     } else {
-      if (index === 0) {
-        fn.mockRejectedValueOnce(result.error);
-      } else {
-        fn.mockRejectedValueOnce(result.error);
-      }
+      fn.mockRejectedValueOnce(result.error);
     }
   });
   
