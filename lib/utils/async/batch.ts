@@ -9,6 +9,10 @@ import type {
   BatchResult as BatchResultBase,
   AsyncMapper
 } from '@utils/types/async.types.js';
+import { checkAborted } from './helpers/abort.js';
+import { ConcurrentQueue } from './helpers/queue.js';
+import { TokenBucket } from './helpers/rate-limit.js';
+import { AsyncErrorMessages } from './helpers/messages.js';
 
 export interface BatchOptions extends CancellableProgressOptions {
   concurrency?: number;
@@ -44,64 +48,47 @@ export async function processBatch<T, R>(
     signal
   } = options ?? {};
 
-  if (signal?.aborted) {
-    throw new DOMException('Operation aborted', 'AbortError');
-  }
+  checkAborted(signal);
 
   if (items.length === 0) {
     return [];
   }
 
-  const results: BatchResult<T, R>[] = [];
-  const queue = [...items.map((item, index) => ({ item, index }))];
-  let completed = 0;
-  let shouldStop = false;
-
-  const processItem = async (item: T, index: number): Promise<void> => {
-    if (shouldStop || signal?.aborted) {
-      return;
-    }
-
-    try {
-      const result = await processor(item, index);
-      results[index] = { item, value: result, index };
-    } catch (error) {
-      results[index] = { 
-        item, 
-        error: error instanceof Error ? error : new Error(String(error)), 
-        index 
-      };
-      
-      if (stopOnError) {
-        shouldStop = true;
-      }
-    }
-
-    completed++;
-    onProgress?.(completed, items.length);
+  // Create a wrapper to match the queue processor signature
+  const queueProcessor = async (item: { item: T; index: number }) => {
+    const result = await processor(item.item, item.index);
+    return { item: item.item, value: result, index: item.index } as BatchResult<T, R>;
   };
 
-  // Process items with concurrency limit
-  const workers: Promise<void>[] = [];
+  // Use concurrent queue for processing
+  const queueOptions = {
+    concurrency,
+    stopOnError,
+    preserveOrder,
+    ...(onProgress && { onProgress }),
+    ...(signal && { signal })
+  };
+  const queue = new ConcurrentQueue(queueProcessor, queueOptions);
+
+  const indexedItems = items.map((item, index) => ({ item, index }));
+  const results = await queue.process(indexedItems);
+
+  // Convert queue results to batch results
+  const batchResults: BatchResult<T, R>[] = [];
   
-  for (let i = 0; i < Math.min(concurrency, queue.length); i++) {
-    workers.push((async () => {
-      while (queue.length > 0 && !shouldStop && !signal?.aborted) {
-        const next = queue.shift();
-        if (next) {
-          await processItem(next.item, next.index);
-        }
-      }
-    })());
+  for (const [input, result] of results) {
+    if (result.success && result.result) {
+      batchResults[input.index] = result.result;
+    } else if (!result.success) {
+      batchResults[input.index] = {
+        item: input.item,
+        error: result.error as Error,
+        index: input.index
+      };
+    }
   }
 
-  await Promise.all(workers);
-
-  if (signal?.aborted) {
-    throw new DOMException('Operation aborted', 'AbortError');
-  }
-
-  return preserveOrder ? results : results.filter(r => r !== undefined);
+  return preserveOrder ? batchResults : batchResults.filter(r => r !== undefined);
 }
 
 /**
@@ -114,20 +101,16 @@ export async function processChunked<T, R>(
 ): Promise<R[]> {
   const { chunkSize, signal } = options;
 
-  if (signal?.aborted) {
-    throw new DOMException('Operation aborted', 'AbortError');
-  }
+  checkAborted(signal);
 
   if (chunkSize <= 0) {
-    throw new Error('Chunk size must be positive');
+    throw new Error(AsyncErrorMessages.INVALID_CHUNK_SIZE);
   }
 
   const results: R[] = [];
   
   for (let i = 0; i < items.length; i += chunkSize) {
-    if (signal?.aborted) {
-      throw new DOMException('Operation aborted', 'AbortError');
-    }
+    checkAborted(signal);
 
     const chunk = items.slice(i, i + chunkSize);
     const chunkResults = await processor(chunk);
@@ -179,40 +162,23 @@ export async function processRateLimited<T, R>(
     signal
   } = options ?? { maxPerSecond: 10 };
 
-  if (signal?.aborted) {
-    throw new DOMException('Operation aborted', 'AbortError');
-  }
+  checkAborted(signal);
 
   if (maxPerSecond <= 0) {
-    throw new Error('Rate limit must be positive');
+    throw new Error(AsyncErrorMessages.INVALID_RATE_LIMIT);
   }
 
+  const bucket = new TokenBucket(burst, maxPerSecond);
   const results: R[] = [];
-  const delayMs = 1000 / maxPerSecond;
-  let tokens = burst;
-  let lastRefill = Date.now();
 
   for (let i = 0; i < items.length; i++) {
-    if (signal?.aborted) {
-      throw new DOMException('Operation aborted', 'AbortError');
-    }
+    checkAborted(signal);
 
-    // Refill tokens
-    const now = Date.now();
-    const elapsed = now - lastRefill;
-    const refillAmount = (elapsed / 1000) * maxPerSecond;
-    tokens = Math.min(burst, tokens + refillAmount);
-    lastRefill = now;
-
-    // Wait if no tokens available
-    if (tokens < 1) {
-      const waitTime = (1 - tokens) * delayMs;
-      await new Promise(resolve => setTimeout(resolve, waitTime));
-      tokens = 1;
-    }
+    // Wait for token
+    const acquireOptions = signal ? { signal } : undefined;
+    await bucket.acquire(1, acquireOptions);
 
     // Process item
-    tokens--;
     const item = items[i];
     if (item !== undefined) {
       const result = await processor(item);
