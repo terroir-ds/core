@@ -1,0 +1,7 @@
+# Astro-specific files (inherited from root .gitignore)
+# dist/ - covered by root
+# .astro/ - covered by root  
+# node_modules/ - covered by root
+
+# Package-specific environment files
+.env.production
