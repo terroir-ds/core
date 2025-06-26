@@ -249,7 +249,7 @@ describe('timer helpers', () => {
   });
 
   describe('throttle', () => {
-    it('should throttle function calls with leading=true', () => {
+    it('should throttle function calls with leading=true', async () => {
       const fn = vi.fn();
       const throttled = throttle(fn, 100);
       
@@ -261,19 +261,19 @@ describe('timer helpers', () => {
       throttled('c');
       expect(fn).toHaveBeenCalledOnce();
       
-      vi.advanceTimersByTime(100);
+      await vi.advanceTimersByTimeAsync(100);
       expect(fn).toHaveBeenCalledTimes(2);
       expect(fn).toHaveBeenLastCalledWith('c');
     });
 
-    it('should throttle with leading=false', () => {
+    it('should throttle with leading=false', async () => {
       const fn = vi.fn();
       const throttled = throttle(fn, 100, { leading: false });
       
       throttled('a');
       expect(fn).not.toHaveBeenCalled();
       
-      vi.advanceTimersByTime(100);
+      await vi.advanceTimersByTimeAsync(100);
       expect(fn).toHaveBeenCalledOnce();
       expect(fn).toHaveBeenCalledWith('a');
     });

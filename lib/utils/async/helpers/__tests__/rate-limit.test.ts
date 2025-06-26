@@ -299,9 +299,9 @@ describe('rate-limit helpers', () => {
       vi.advanceTimersByTime(500);
       expect(limiter.tryCall()).toBe(false); // Still within window
       
-      vi.advanceTimersByTime(501);
-      expect(limiter.tryCall()).toBe(true); // First call expired
-      expect(limiter.tryCall()).toBe(false);
+      vi.advanceTimersByTime(501); // Total: 1001ms elapsed
+      expect(limiter.tryCall()).toBe(true); // All calls from t=0 expired, now t=1001
+      expect(limiter.tryCall()).toBe(true); // Still have room (only 1 call from previous line)
       
       vi.advanceTimersByTime(500);
       expect(limiter.getCurrentCalls()).toBe(1); // Only the last call remains

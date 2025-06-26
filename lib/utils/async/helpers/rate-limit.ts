@@ -193,8 +193,10 @@ export class RateLimiter {
     fn: () => T | Promise<T>,
     options?: { signal?: AbortSignal }
   ): Promise<T> {
-    if (this.throwOnLimit && !this.bucket.tryAcquire()) {
-      throw new Error('Rate limit exceeded');
+    if (this.throwOnLimit) {
+      if (!this.bucket.tryAcquire()) {
+        throw new Error('Rate limit exceeded');
+      }
     } else {
       await this.bucket.acquire(1, options);
     }

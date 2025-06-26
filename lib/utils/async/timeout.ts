@@ -5,7 +5,7 @@
 
 import type { CancellableOptions, ErrorConstructor } from '@utils/types/async.types.js';
 import { checkAborted, createAbortError } from './helpers/abort.js';
-import { createTimeoutPromise, raceWithCleanup } from './helpers/race.js';
+import { raceWithCleanup } from './helpers/race.js';
 import { createCleanupManager } from './helpers/cleanup.js';
 import { AsyncErrorMessages } from './helpers/messages.js';
 import { createManagedTimer } from './helpers/timers.js';
