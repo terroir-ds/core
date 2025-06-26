@@ -3,6 +3,16 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+
+// Mock the logger module
+vi.mock('@utils/logger/index.js', () => ({
+  logger: {
+    error: vi.fn(),
+    warn: vi.fn(),
+    info: vi.fn(),
+    debug: vi.fn()
+  }
+}));
 import {
   createTimeoutPromise,
   raceWithCleanup,
@@ -81,7 +91,9 @@ describe('race helpers', () => {
     });
 
     it('should handle cleanup errors gracefully', async () => {
-      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const { logger } = await import('@utils/logger/index.js');
+      vi.clearAllMocks();
+      
       const cleanup = vi.fn().mockRejectedValue(new Error('Cleanup failed'));
       const promise = Promise.resolve('result');
       
@@ -89,9 +101,9 @@ describe('race helpers', () => {
       
       expect(result).toBe('result');
       expect(cleanup).toHaveBeenCalledOnce();
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        'Cleanup error in race:',
-        expect.any(Error)
+      expect(logger.error).toHaveBeenCalledWith(
+        { error: expect.any(Error) },
+        'Cleanup error in race'
       );
     });
   });

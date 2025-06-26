@@ -5,6 +5,8 @@
 
 import { createCleanupManager } from './cleanup';
 import { AsyncErrorMessages } from './messages';
+import { logger } from '@utils/logger/index.js';
+import { AsyncValidationError, AsyncTimeoutError } from '../errors.js';
 
 /**
  * Result of a race operation
@@ -40,7 +42,9 @@ export function createTimeoutPromise<T = never>(
     setTimeout(() => {
       const error = errorFactory 
         ? errorFactory(ms) 
-        : new Error(AsyncErrorMessages.TIMEOUT(ms));
+        : new AsyncTimeoutError(AsyncErrorMessages.TIMEOUT(ms), {
+            context: { timeout: ms }
+          });
       reject(error);
     }, ms);
   });
@@ -63,7 +67,7 @@ export async function raceWithCleanup<T>(
       try {
         await cleanup();
       } catch (error) {
-        console.error('Cleanup error in race:', error);
+        logger.error({ error }, 'Cleanup error in race');
       }
     }
   }
@@ -78,7 +82,7 @@ export async function raceWithIndex<T>(
   promises: Promise<T>[]
 ): Promise<RaceResult<T>> {
   if (promises.length === 0) {
-    throw new Error(AsyncErrorMessages.NO_PROMISES);
+    throw new AsyncValidationError(AsyncErrorMessages.NO_PROMISES);
   }
   
   const startTime = Date.now();
@@ -109,7 +113,7 @@ export async function raceWithTimeouts<T>(
   }>
 ): Promise<T> {
   if (operations.length === 0) {
-    throw new Error(AsyncErrorMessages.NO_PROMISES);
+    throw new AsyncValidationError(AsyncErrorMessages.NO_PROMISES);
   }
   
   const cleanup = createCleanupManager();
@@ -167,7 +171,7 @@ export async function raceUntil<T>(
   }
 ): Promise<T> {
   if (promises.length === 0) {
-    throw new Error(AsyncErrorMessages.NO_PROMISES);
+    throw new AsyncValidationError(AsyncErrorMessages.NO_PROMISES);
   }
   
   const { timeout, rejectNonMatching = false } = options || {};
@@ -251,7 +255,7 @@ export async function raceWithCancellation<T>(
   }>
 ): Promise<T> {
   if (operations.length === 0) {
-    throw new Error(AsyncErrorMessages.NO_PROMISES);
+    throw new AsyncValidationError(AsyncErrorMessages.NO_PROMISES);
   }
   
   const controllers = operations.map(() => new AbortController());
@@ -293,11 +297,13 @@ export async function raceFirstN<T>(
   count: number
 ): Promise<T[]> {
   if (promises.length === 0) {
-    throw new Error(AsyncErrorMessages.NO_PROMISES);
+    throw new AsyncValidationError(AsyncErrorMessages.NO_PROMISES);
   }
   
   if (count <= 0) {
-    throw new Error('Count must be positive');
+    throw new AsyncValidationError('Count must be positive', {
+      context: { count }
+    });
   }
   
   if (count >= promises.length) {

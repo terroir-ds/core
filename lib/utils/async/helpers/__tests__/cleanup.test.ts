@@ -12,14 +12,20 @@ import {
   createIntervalCleanup,
 } from '../cleanup';
 
-describe('cleanup helpers', () => {
-  let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
-  let consoleWarnSpy: ReturnType<typeof vi.spyOn>;
+// Mock the logger module
+vi.mock('@utils/logger/index.js', () => ({
+  logger: {
+    error: vi.fn(),
+    warn: vi.fn(),
+    info: vi.fn(),
+    debug: vi.fn()
+  }
+}));
 
+describe('cleanup helpers', () => {
   beforeEach(() => {
     vi.useFakeTimers();
-    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    vi.clearAllMocks();
   });
 
   afterEach(() => {
@@ -81,8 +87,9 @@ describe('cleanup helpers', () => {
       expect(cleanup1).toHaveBeenCalledOnce();
       expect(cleanup2).toHaveBeenCalledOnce();
       expect(cleanup3).toHaveBeenCalledOnce();
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Cleanup error:', expect.any(Error));
-      expect(consoleWarnSpy).toHaveBeenCalledWith('1 cleanup operations failed');
+      const { logger } = await import('@utils/logger/index.js');
+      expect(logger.error).toHaveBeenCalledWith({ error: expect.any(Error) }, 'Cleanup error occurred');
+      expect(logger.warn).toHaveBeenCalledWith({ errorCount: 1 }, 'Multiple cleanup operations failed');
     });
 
     it('should clear cleanups after execution', async () => {
@@ -189,7 +196,8 @@ describe('cleanup helpers', () => {
       expect(cleanup1).toHaveBeenCalledOnce();
       expect(cleanup2).toHaveBeenCalledOnce();
       expect(cleanup3).toHaveBeenCalledOnce();
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Cleanup error:', expect.any(Error));
+      const { logger } = await import('@utils/logger/index.js');
+      expect(logger.error).toHaveBeenCalledWith({ error: expect.any(Error) }, 'Cleanup error in combineCleanups');
     });
   });
 

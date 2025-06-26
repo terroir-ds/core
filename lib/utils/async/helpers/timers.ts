@@ -7,6 +7,8 @@ import { createAbortError } from './abort';
 import { createCleanupManager } from './cleanup';
 import pDebounce from 'p-debounce';
 import pThrottle from 'p-throttle';
+import { logger } from '@utils/logger/index.js';
+import { PollingError } from '../errors.js';
 
 /**
  * A managed timer with cleanup capabilities
@@ -128,7 +130,7 @@ export function createManagedInterval(
       // Stop interval on error
       stop();
       // Log error but don't throw - we're in an async context with no handler
-      console.error('Interval callback error:', error);
+      logger.error({ error }, 'Interval callback error');
     }
   };
   
@@ -337,7 +339,9 @@ export async function poll(
     
     // Check timeout
     if (timeout && Date.now() - startTime >= timeout) {
-      throw new Error(`Polling timed out after ${timeout}ms`);
+      throw new PollingError(`Polling timed out after ${timeout}ms`, {
+        context: { timeout, elapsed: Date.now() - startTime }
+      });
     }
     
     // Check condition

@@ -12,6 +12,16 @@ import {
   poll,
 } from '../timers';
 
+// Mock the logger module
+vi.mock('@utils/logger/index.js', () => ({
+  logger: {
+    error: vi.fn(),
+    warn: vi.fn(),
+    info: vi.fn(),
+    debug: vi.fn()
+  }
+}));
+
 describe('timer helpers', () => {
   beforeEach(() => {
     vi.useFakeTimers();
@@ -142,8 +152,9 @@ describe('timer helpers', () => {
         .mockResolvedValueOnce(undefined)
         .mockRejectedValueOnce(error);
       
-      // Mock console.error to prevent error logging
-      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      // Clear logger mocks
+      const { logger } = await import('@utils/logger/index.js');
+      vi.clearAllMocks();
       
       createManagedInterval(callback, 100);
       
@@ -166,8 +177,7 @@ describe('timer helpers', () => {
       expect(callback).toHaveBeenCalledTimes(2);
       
       // Verify error was logged
-      expect(consoleErrorSpy).toHaveBeenCalled();
-      consoleErrorSpy.mockRestore();
+      expect(logger.error).toHaveBeenCalledWith({ error }, 'Interval callback error');
     });
 
     it('should handle abort signal', () => {
@@ -271,8 +281,8 @@ describe('timer helpers', () => {
       const throttled = throttle(fn, 2, 1000);
       
       // First two calls should execute immediately
-      const p1 = throttled('a');
-      const p2 = throttled('b');
+      void throttled('a');
+      void throttled('b');
       
       // Third call should be delayed
       const p3 = throttled('c');
@@ -320,8 +330,8 @@ describe('timer helpers', () => {
       const throttled = throttle(fn, 2, 1000, { strict: true });
       
       // Make 3 calls in quick succession
-      const p1 = throttled('a');
-      const p2 = throttled('b');
+      void throttled('a');
+      void throttled('b');
       const p3 = throttled('c');
       
       await Promise.resolve();
@@ -402,8 +412,8 @@ describe('timer helpers', () => {
       
       // Queue multiple calls
       const p1 = throttled('a');
-      const p2 = throttled('b');
-      const p3 = throttled('c');
+      void throttled('b');
+      void throttled('c');
       
       // First call should execute immediately
       await p1;

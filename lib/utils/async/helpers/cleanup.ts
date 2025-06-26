@@ -3,6 +3,8 @@
  * @module @utils/async/helpers/cleanup
  */
 
+import { logger } from '@utils/logger/index.js';
+
 /**
  * Interface for managing cleanup operations
  */
@@ -53,13 +55,13 @@ export function createCleanupManager(): CleanupManager {
       let errorCount = 0;
       for (const result of results) {
         if (result.status === 'rejected') {
-          console.error('Cleanup error:', result.reason);
+          logger.error({ error: result.reason }, 'Cleanup error occurred');
           errorCount++;
         }
       }
       
       if (errorCount > 0) {
-        console.warn(`${errorCount} cleanup operations failed`);
+        logger.warn({ errorCount }, 'Multiple cleanup operations failed');
       }
     },
     
@@ -124,7 +126,7 @@ export function combineCleanups(...cleanups: Array<(() => void | Promise<void>) 
         try {
           await cleanup();
         } catch (error) {
-          console.error('Cleanup error:', error);
+          logger.error({ error }, 'Cleanup error in combineCleanups');
         }
       })
     );
