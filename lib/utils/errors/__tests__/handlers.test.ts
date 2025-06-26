@@ -19,7 +19,7 @@ import {
 } from '../handlers.js';
 import { ValidationError, ErrorSeverity } from '../base-error.js';
 import { logger } from '../../logger/index.js';
-import { expectErrors, expectRejection } from '@test/helpers/error-handling.js';
+import { expectRejection } from '@test/helpers/error-handling.js';
 
 // Mock the logger
 vi.mock('../../logger/index.js', () => ({
@@ -35,7 +35,6 @@ vi.mock('../../logger/index.js', () => ({
 describe('Error Handlers', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    expectErrors(); // Suppress expected unhandled rejections
   });
 
 
