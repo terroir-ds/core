@@ -1,0 +1,25 @@
+{
+  "name": "@terroir/docs",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Documentation site for Terroir Core Design System",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.34.4",
+    "@terroir/core": "workspace:*",
+    "astro": "^5.10.1",
+    "sharp": "^0.32.6"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "typescript": "^5.8.3"
+  }
+}

@@ -1,0 +1,106 @@
+/* Custom styles for Terroir Core documentation */
+
+:root {
+  /* Brand colors - will be replaced with design tokens */
+  --sl-color-accent-low: #e6f1ff;
+  --sl-color-accent: #0066cc;
+  --sl-color-accent-high: #003d7a;
+  
+  /* Typography adjustments */
+  --sl-text-h1: 2.5rem;
+  --sl-text-h2: 2rem;
+  --sl-text-h3: 1.5rem;
+  
+  /* Content width */
+  --sl-content-width: 72ch;
+}
+
+/* Dark theme overrides */
+:root[data-theme="dark"] {
+  --sl-color-accent-low: #001933;
+  --sl-color-accent: #4d94ff;
+  --sl-color-accent-high: #99c2ff;
+}
+
+/* Code block enhancements */
+.expressive-code {
+  margin: 1.5rem 0;
+}
+
+/* Component preview containers */
+.component-preview {
+  border: 1px solid var(--sl-color-gray-5);
+  border-radius: 8px;
+  padding: 2rem;
+  margin: 1.5rem 0;
+  background: var(--sl-color-bg);
+}
+
+/* Token swatches */
+.color-swatch {
+  display: inline-block;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 4px;
+  border: 1px solid var(--sl-color-gray-6);
+  vertical-align: middle;
+  margin-right: 0.5rem;
+}
+
+/* API reference styling */
+.api-table {
+  margin: 1.5rem 0;
+}
+
+.api-table th {
+  text-align: left;
+  font-weight: 600;
+}
+
+/* Utility badges */
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 4px;
+  background: var(--sl-color-gray-6);
+  color: var(--sl-color-text);
+}
+
+.badge.new {
+  background: var(--sl-color-green-low);
+  color: var(--sl-color-green-high);
+}
+
+.badge.deprecated {
+  background: var(--sl-color-orange-low);
+  color: var(--sl-color-orange-high);
+}
+
+.badge.experimental {
+  background: var(--sl-color-purple-low);
+  color: var(--sl-color-purple-high);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  :root {
+    --sl-text-h1: 2rem;
+    --sl-text-h2: 1.5rem;
+    --sl-text-h3: 1.25rem;
+  }
+}
+
+/* Print styles */
+@media print {
+  .not-content,
+  nav,
+  aside {
+    display: none !important;
+  }
+  
+  main {
+    max-width: 100% !important;
+  }
+}
