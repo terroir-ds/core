@@ -81,7 +81,7 @@ When CLAUDE.md grows too large:
 
 ### Before (Too Detailed)
 
-````markdown
+`````markdown
 ### Logging Standards
 
 [50+ lines of examples and explanations]
@@ -94,8 +94,6 @@ When CLAUDE.md grows too large:
 See [Logging Standards](./docs/standards/logging.md) for structured logging practices.
 
 **Quick reminder**: Never use `console.log` - always use the structured logger from `@utils/logger`.
-````
-````
 
 ## Review Checklist
 
@@ -114,3 +112,5 @@ When updating CLAUDE.md:
 - **On PR**: Check if additions are necessary
 
 Remember: CLAUDE.md should be a **roadmap**, not an **encyclopedia**.
+````
+`````
