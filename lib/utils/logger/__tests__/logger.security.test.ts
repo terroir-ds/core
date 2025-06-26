@@ -271,8 +271,8 @@ describe('Logger Security', () => {
       const { logger } = await import('../index.js');
       
       // Create a problematic object that will cause serialization issues
-      const circularRef: any = { a: 1 };
-      circularRef.self = circularRef;
+      const circularRef: Record<string, unknown> = { a: 1 };
+      circularRef['self'] = circularRef;
       
       // The logger should handle circular references without throwing
       expect(() => {

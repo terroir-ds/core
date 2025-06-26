@@ -578,7 +578,7 @@ function getLogger(): Logger {
 
 // Lazy logger proxy
 const logger: Logger = new Proxy({} as Logger, {
-  get(target, prop) {
+  get(_target, prop) {
     const loggerInstance = getLogger();
     const value = (loggerInstance as unknown as Record<string | symbol, unknown>)[prop];
     if (typeof value === 'function') {
