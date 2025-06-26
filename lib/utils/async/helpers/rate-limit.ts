@@ -87,7 +87,8 @@ export class TokenBucket {
       const waitMs = Math.ceil((tokensNeeded / this.refillRate) * 1000);
       
       // Wait for tokens to become available
-      const timer = createManagedTimer(Math.min(waitMs, 100), { signal: options?.signal });
+      const timerOptions = options?.signal ? { signal: options.signal } : {};
+      const timer = createManagedTimer(Math.min(waitMs, 100), timerOptions);
       await timer.promise;
     }
   }
@@ -170,6 +171,9 @@ export class TokenBucket {
  */
 export class RateLimiter {
   private readonly bucket: TokenBucket;
+  private readonly throwOnLimit: boolean;
+  private readonly callsPerInterval: number;
+  private readonly interval: number;
   
   /**
    * Creates a new rate limiter
@@ -194,9 +198,9 @@ export class RateLimiter {
     
     this.bucket = new TokenBucket(burstSize, callsPerSecond);
     this.throwOnLimit = throwOnLimit;
+    this.callsPerInterval = callsPerSecond;
+    this.interval = 1000; // milliseconds (1 second)
   }
-  
-  private readonly throwOnLimit: boolean;
   
   /**
    * Execute a function with rate limiting
@@ -333,10 +337,14 @@ export class SlidingWindowRateLimiter {
       
       // Wait until the oldest call expires
       const oldestCall = this.calls[0];
+      if (oldestCall === undefined) {
+        throw new AsyncValidationError('Invalid state: no calls in sliding window');
+      }
       const waitMs = oldestCall + this.windowMs - now;
       
       if (waitMs > 0) {
-        const timer = createManagedTimer(Math.min(waitMs + 1, 100), { signal });
+        const timerOptions = signal ? { signal } : {};
+        const timer = createManagedTimer(Math.min(waitMs + 1, 100), timerOptions);
         await timer.promise;
       }
     }
@@ -363,7 +371,11 @@ export class SlidingWindowRateLimiter {
   private cleanup(now: number): void {
     const cutoff = now - this.windowMs;
     let i = 0;
-    while (i < this.calls.length && this.calls[i] < cutoff) {
+    while (i < this.calls.length) {
+      const callTime = this.calls[i];
+      if (callTime === undefined || callTime >= cutoff) {
+        break;
+      }
       i++;
     }
     if (i > 0) {

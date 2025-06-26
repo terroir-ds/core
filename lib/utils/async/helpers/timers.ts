@@ -267,13 +267,27 @@ export function throttle<T extends (...args: unknown[]) => unknown>(
   readonly queueSize: number;
 } {
   // Create p-throttle instance
-  const throttler = pThrottle({
+  const throttleConfig: {
+    limit: number;
+    interval: number;
+    strict: boolean;
+    signal?: AbortSignal;
+    onDelay?: (...args: unknown[]) => void;
+  } = {
     limit,
     interval,
-    strict: options?.strict,
-    signal: options?.signal,
-    onDelay: options?.onDelay
-  });
+    strict: options?.strict ?? false
+  };
+  
+  if (options?.signal) {
+    throttleConfig.signal = options.signal;
+  }
+  
+  if (options?.onDelay) {
+    throttleConfig.onDelay = options.onDelay;
+  }
+  
+  const throttler = pThrottle(throttleConfig);
   
   // Create throttled function
   const throttled = throttler(fn);
@@ -299,9 +313,8 @@ export function createSimpleThrottle<T extends (...args: unknown[]) => unknown>(
   options?: TimerOptions
 ): T & { cancel: () => void } {
   // For backward compatibility, create a simple 1-per-interval throttle
-  const throttled = throttle(fn, 1, ms, {
-    signal: options?.signal
-  });
+  const throttleOptions = options?.signal ? { signal: options.signal } : {};
+  const throttled = throttle(fn, 1, ms, throttleOptions);
   
   // Add cancel method for compatibility
   const wrappedThrottled = ((...args: Parameters<T>) => {

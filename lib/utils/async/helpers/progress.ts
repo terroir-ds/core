@@ -64,7 +64,7 @@ export interface ProgressTrackerOptions {
 export class ProgressTracker {
   private completed: number;
   private readonly total: number;
-  private readonly callback?: ProgressCallback;
+  private readonly callback: ProgressCallback | undefined;
   private readonly startTime: number;
   private lastCallbackTime: number = 0;
   private readonly throttleMs: number;
@@ -196,6 +196,13 @@ export class ProgressTracker {
     this.completionTimes.length = 0;
     this.lastCallbackTime = 0;
     this.reportProgress();
+  }
+
+  /**
+   * Get the callback function
+   */
+  getCallback(): ProgressCallback | undefined {
+    return this.callback;
   }
   
   /**

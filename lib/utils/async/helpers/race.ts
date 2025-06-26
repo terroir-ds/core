@@ -267,16 +267,20 @@ export async function raceWithCancellation<T>(
   });
   
   try {
-    const promises = operations.map((op, index) => 
-      op.start(controllers[index].signal)
+    const promises = operations.map((op, index) => {
+      const controller = controllers[index];
+      if (!controller) {
+        throw new AsyncValidationError('Invalid controller index');
+      }
+      return op.start(controller.signal)
         .then(value => {
           // Cancel all other operations
           controllers.forEach((c, i) => {
             if (i !== index) c.abort();
           });
           return value;
-        })
-    );
+        });
+    });
     
     return await Promise.race(promises);
   } catch (error) {

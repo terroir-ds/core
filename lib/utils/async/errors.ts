@@ -19,7 +19,7 @@ export class AsyncAbortError extends BaseError {
     super(message, {
       ...options,
       code: options?.code ?? 'ASYNC_ABORTED',
-      category: ErrorCategory.OPERATIONAL,
+      category: ErrorCategory.BUSINESS_LOGIC,
       severity: ErrorSeverity.LOW,
       retryable: false,
       statusCode: 499, // Client Closed Request
@@ -35,7 +35,7 @@ export class AsyncTimeoutError extends BaseError {
     super(message, {
       ...options,
       code: options?.code ?? 'ASYNC_TIMEOUT',
-      category: ErrorCategory.OPERATIONAL,
+      category: ErrorCategory.BUSINESS_LOGIC,
       severity: ErrorSeverity.MEDIUM,
       retryable: true,
       statusCode: 408, // Request Timeout
@@ -63,7 +63,7 @@ export class RateLimitError extends BaseError {
     super(message, {
       ...options,
       code: options?.code ?? 'RATE_LIMIT_EXCEEDED',
-      category: ErrorCategory.OPERATIONAL,
+      category: ErrorCategory.BUSINESS_LOGIC,
       severity: ErrorSeverity.MEDIUM,
       retryable: true,
       statusCode: 429, // Too Many Requests
@@ -79,7 +79,7 @@ export class QueueError extends BaseError {
     super(message, {
       ...options,
       code: options?.code ?? 'QUEUE_ERROR',
-      category: ErrorCategory.OPERATIONAL,
+      category: ErrorCategory.BUSINESS_LOGIC,
       severity: ErrorSeverity.MEDIUM,
       retryable: options?.retryable ?? false,
       statusCode: 503, // Service Unavailable
@@ -95,7 +95,7 @@ export class PollingError extends BaseError {
     super(message, {
       ...options,
       code: options?.code ?? 'POLLING_ERROR',
-      category: ErrorCategory.OPERATIONAL,
+      category: ErrorCategory.BUSINESS_LOGIC,
       severity: ErrorSeverity.MEDIUM,
       retryable: false,
       statusCode: 408, // Request Timeout

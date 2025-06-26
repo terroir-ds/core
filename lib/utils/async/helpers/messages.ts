@@ -78,7 +78,8 @@ export type ErrorMessageKey = keyof typeof AsyncErrorMessages;
 export function getErrorMessage(key: ErrorMessageKey, ...args: unknown[]): string {
   const message = AsyncErrorMessages[key];
   if (typeof message === 'function') {
-    return message(...args);
+    // TypeScript needs explicit typing for spread arguments
+    return (message as (...args: unknown[]) => string)(...args);
   }
   return message;
 }

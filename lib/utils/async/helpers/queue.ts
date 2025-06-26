@@ -144,10 +144,11 @@ export class ConcurrentQueue<T, R> {
     this.aborted = false;
     
     if (this.progressTracker) {
+      const callback = this.progressTracker.getCallback();
       this.progressTracker.reset();
       this.progressTracker = new ProgressTracker(
         items.length,
-        this.progressTracker.callback
+        callback
       );
     }
     
