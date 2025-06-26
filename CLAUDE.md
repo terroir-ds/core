@@ -36,8 +36,7 @@ terroir-core/
 │   └── utils/                # Reusable script utilities
 ├── docs/                     # Documentation and Storybook
 └── tests/                    # Visual regression and unit tests
-```
-
+```bash
 ## Technology Stack
 
 ### Core Technologies
@@ -78,8 +77,7 @@ const colors = await generateColorSystem({
 });
 // Generates primary, secondary, tertiary, neutral, and error palettes
 // Each with continuous tone access (0-100)
-```
-
+```text
 ### 2. **Token Architecture**
 
 Three-tier token system for maximum flexibility:
@@ -102,8 +100,7 @@ Custom SVGO plugin for dynamic theming:
 <svg>
   <circle fill="#0066cc" stroke="#e0e0e0"/>
 </svg>
-```
-
+```yaml
 ### 4. **Automated Testing**
 
 - **WCAG Contrast**: Every color combination tested
@@ -125,24 +122,21 @@ Custom SVGO plugin for dynamic theming:
 ```bash
 pnpm install
 pnpm setup           # Install dependencies, generate initial tokens
-```
-
+```text
 ### Token Development
 
 ```bash
 pnpm tokens:watch    # Watch mode for token changes
 pnpm tokens:build    # Build all token formats
 pnpm tokens:lint     # Validate token structure
-```
-
+```text
 ### Asset Generation
 
 ```bash
 pnpm assets:icons    # Process SVG icons with tokens
 pnpm assets:images   # Generate PNG/WebP variants
 pnpm assets:fonts    # Optimize web fonts
-```
-
+```text
 ### Testing
 
 ```bash
@@ -150,16 +144,14 @@ pnpm test           # All tests
 pnpm test:contrast  # WCAG contrast validation
 pnpm test:visual    # Visual regression tests
 pnpm test:a11y      # Accessibility tests
-```
-
+```text
 ### Documentation
 
 ```bash
 pnpm storybook:dev  # Development server
 pnpm storybook:build # Static documentation
 pnpm docs:generate  # API documentation
-```
-
+```bash
 ## Design Principles
 
 ### 1. **Accessibility First**
@@ -306,49 +298,9 @@ pnpm docs:generate  # API documentation
 
 ## Node.js Compatibility
 
-### Development Environment
+See [Node.js Compatibility Standards](./docs/standards/nodejs-compatibility.md) for version support guidelines.
 
-- **Local Development**: Node.js 22 (latest features, best DX)
-- **CI/CD Testing**: Matrix testing against Node.js 18, 20, and 22
-- **Minimum Support**: Node.js 18+ (current LTS)
-
-### Compatibility Guidelines
-
-When adding dependencies or features, ensure compatibility with Node.js 18+:
-
-1. **Check before adding dependencies**:
-   - Review the dependency's engines field
-   - Test in CI against all Node versions
-   - Prefer dependencies with broad Node.js support
-
-2. **Avoid Node.js 20+ exclusive features**:
-   - `fs.cp()` - use `fs-extra` or manual copying for Node 18
-   - Stable test runner - use external test frameworks
-   - Permission model APIs
-
-3. **Safe to use features (Node.js 18+)**:
-   - `Error.cause` property
-   - Native `fetch` and `AbortController`
-   - `fs.promises` API
-   - `structuredClone()`
-   - ES modules and CommonJS interop
-   - `AggregateError` for multiple errors
-
-4. **Dependency compatibility checks**:
-
-   ```bash
-   # Check a dependency's Node.js requirements
-   npm view [package-name] engines
-
-   # Run CI locally against different Node versions
-   nvm use 18 && pnpm test
-   nvm use 20 && pnpm test
-   ```
-
-5. **If polyfills are needed**:
-   - Document in package README
-   - Add to build process, not runtime
-   - Consider alternatives first
+**Quick reminder**: Minimum Node.js 18+, test against 18/20/22 in CI.
 
 ## Current Status
 
@@ -392,8 +344,7 @@ GENERATE_WEBP=true
 # Testing
 STRICT_CONTRAST=true
 VISUAL_REGRESSION_THRESHOLD=0.1
-```
-
+```text
 ### Token Configuration
 
 See `tokens/config.js` for:
@@ -427,8 +378,7 @@ pnpm release:major  # Major release
 pnpm analyze        # Bundle analysis
 pnpm lint:fix       # Auto-fix issues
 pnpm upgrade:deps   # Update dependencies
-```
-
+```bash
 ## Resources
 
 ### Project Documentation
@@ -477,15 +427,13 @@ pnpm build
 # ❌ Incorrect - don't use npm
 npm install
 npm install package-name
-```
-
+```text
 If you need to add to workspace root:
 
 ```bash
 pnpm add -w package-name
 pnpm add -w -D dev-package
-```
-
+```yaml
 ### Task-Commit Workflow
 
 Follow this workflow for consistent, high-quality development:
@@ -507,16 +455,27 @@ Follow this workflow for consistent, high-quality development:
    - Verify no regressions
    - Check performance impact
 
-4. **Commit Changes**
+4. **Fix and Commit Changes**
 
    ```bash
    # After completing each logical task
+   
+   # STANDARD: Always attempt fixes before commit
+   pnpm fix
+   
+   # Review the automated fixes
+   git diff
+   
+   # Stage and commit
    git add .
    git commit -m "type(scope): description
 
    - Implementation details
    - Tests added
    - Closes #issue"
+   
+   # Note: If pnpm fix fails or causes issues, you can still commit:
+   # git add . && git commit -m "..." --no-verify
    ```
 
 5. **Move to Next Task**
@@ -530,8 +489,7 @@ Follow this workflow for consistent, high-quality development:
 ├── tasks/               # Task planning and tracking
 ├── sessions/            # Session context and notes
 └── README.md           # Directory documentation
-```
-
+```yaml
 ### Definition of Done
 
 A task is complete when:
@@ -539,97 +497,42 @@ A task is complete when:
 - ✅ All code implemented
 - ✅ Tests written and passing
 - ✅ Documentation updated
-- ✅ No linting/type errors
+- ✅ No linting/type errors (run `pnpm fix` before commit)
 - ✅ Performance verified
 - ✅ Committed with conventional message
 - ✅ Uses structured logging (no console.log)
+- ✅ Uses standard error handling (typed errors with context)
 
-### Testing Requirements
+### Development Standards
 
-For each feature, ensure:
+**IMPORTANT**: Follow the project's development standards documented in `/docs/standards/`:
 
-#### Code Testing
+- **[Error Handling](./docs/standards/error-handling.md)** - Always use typed errors with context
+- **[Logging](./docs/standards/logging.md)** - Use structured logger, never console
+- **[Code Quality](./docs/standards/code-quality.md)** - Run `pnpm fix` before commits
+- **[Testing](./docs/standards/testing.md)** - Co-locate tests with source
+- **[Documentation](./docs/standards/documentation.md)** - Keep docs close to code
 
-- Unit tests for logic
-- Integration tests for interactions
-- Visual tests for UI changes
-- Performance tests for critical paths
-
-#### Documentation Testing
-
-- API docs accurate
-- Examples working
-- Migration guides complete
-
-#### Manual Verification
-
-- Works in development
-- Works in container
-- No console errors
-- Accessibility verified
-
-### Test Organization Pattern
-
-**IMPORTANT**: This project uses **co-located tests** where test files live alongside the source code they test.
-
-#### Directory Structure
-
-```text
-lib/
-  utils/
-    logger.ts                 # Source file
-    __tests__/               # Tests for this module
-      logger.test.ts
-    __mocks__/               # Mock implementations
-      logger.mock.ts
-  config/
-    env.ts
-    __tests__/
-      env.test.ts
-    __mocks__/
-      config.mock.ts
-
-test/                        # ONLY shared test infrastructure
-  setup.ts                   # Global test setup
-  helpers/                   # Shared test utilities
-  README.md                  # Test documentation
-```
-
-#### Test File Conventions
-
-- **Test files**: `__tests__/[name].test.ts` (co-located with source)
-- **Mock files**: `__mocks__/[name].mock.ts` (co-located with source)
-- **Test data**: `__fixtures__/[data].json` (co-located with tests)
-- **Shared utilities**: `test/helpers/` (only truly shared utilities)
-
-#### What Goes Where
-
-**Co-located (with source code)**:
-
-- Unit tests specific to a module
-- Mocks for that module
-- Test fixtures for that module
-
-**Centralized (/test directory)**:
-
-- Global test setup/configuration
-- Shared test utilities used by multiple modules
-- Integration test suites
-- E2E test suites
-- Performance benchmarks
-
-#### Import Examples
+Quick examples:
 
 ```typescript
-// From within the same module
-import { createMockLogger } from '../__mocks__/logger.mock.js';
+// ✅ Error handling
+import { ValidationError } from '@utils/errors';
+throw new ValidationError('Invalid input', { code: 'INVALID_INPUT', context: { value } });
 
-// From other modules (use path aliases)
-import { createConfigMock } from '@lib/config/__mocks__/config.mock.js';
+// ✅ Logging
+import { logger } from '@utils/logger';
+logger.info({ userId }, 'Processing user');
 
-// From shared test helpers
-import { setupTestDB, cleanupTestDB } from '@test/helpers';
-```
+// ❌ Never use
+throw new Error('Something failed');
+console.log('Debug info');
+```text
+### Test Organization
+
+See [Testing Standards](./docs/standards/testing.md) for comprehensive testing guidelines.
+
+**Key principle**: Co-locate tests with source code in `__tests__` subdirectories.
 
 ### Quick Commands
 
@@ -637,133 +540,39 @@ import { setupTestDB, cleanupTestDB } from '@test/helpers';
 # Start new task
 mkdir -p .claude/tasks && echo "# Task: [Name]" > .claude/tasks/current-task.md
 
-# Run all checks before commit
-pnpm test:lint && pnpm test:type && pnpm test && pnpm build
+# STANDARD: Run fixes and checks before commit
+pnpm fix && pnpm test:lint && pnpm test:type && pnpm test && pnpm build
 
 # Commit with conventional format
 git commit -m "feat(tokens): add new color system"
-```
-
-### Logging Standards
-
-**IMPORTANT**: Always use the structured logger instead of console.log:
-
-```typescript
-// ❌ Don't use console
-console.log('Processing colors...');
-console.error('Failed to process', error);
-
-// ✅ Use the logger
-import { logger, logStart, logSuccess, measureTime } from '@terroir/core/lib/utils/logger';
-
-logStart('color processing');
-logger.info({ colorCount: 5 }, 'Processing colors');
-logger.error({ err: error }, 'Failed to process colors');
-logSuccess('color processing');
-
-// ✅ Use performance tracking
-await measureTime('color generation', async () => {
-  await generateColors();
-});
-```
-
-**Logger Features**:
-
-- Environment-aware (pretty in dev, JSON in prod)
-- Security features (redacts sensitive data)
-- Performance tracking utilities
-- TypeScript types for safety
-- Child loggers for context
-
-**When to log**:
-
-- Start/end of major operations
-- Errors with full context
-- Performance metrics
-- Important state changes
-- Never log sensitive data (tokens, passwords, etc.)
-
-### File Organization Standards
-
-**Documentation Pattern**:
-
-Always place documentation close to the code it describes:
-
 ```text
-lib/utils/
-├── logger.ts                 # Implementation
-├── __tests__/
-│   └── logger.test.ts       # Tests
-├── docs/
-│   └── logging.md           # Detailed guide
-└── README.md                # Overview of all utils in this directory
 
-scripts/utils/
-├── post-create.sh           # Implementation
-├── __tests__/
-│   └── post-create.test.sh  # Tests (if applicable)
-├── docs/
-│   ├── setup/              # Setup guides
-│   └── troubleshooting.md  # Troubleshooting
-└── README.md               # Overview
-```
+### Code Quality
 
-**Testing Pattern**:
+See [Code Quality Standards](./docs/standards/code-quality.md) for comprehensive linting and fixing guidelines.
 
-Use `__tests__` subdirectories for all test files:
+**Quick reminder**: Always run `pnpm fix` before commits to automatically fix formatting issues.
 
-```typescript
-// Place tests in __tests__ subdirectory
-lib/utils/__tests__/logger.test.ts
-lib/colors/__tests__/generator.test.ts
-packages/core/src/__tests__/index.test.ts
-```
+### Logging
 
-**Documentation Requirements**:
+See [Logging Standards](./docs/standards/logging.md) for structured logging practices.
 
-1. **README.md** - Overview at each major directory level
-2. **docs/** - Detailed guides in subdirectory
-3. **Inline** - JSDoc comments for all public APIs
-4. **Examples** - Working code examples in docs
+**Quick reminder**: Never use `console.log` - always use the structured logger from `@utils/logger`.
 
-**Naming Conventions**:
+### File Organization
 
-- Test files: `*.test.ts` or `*.spec.ts`
-- Documentation: `*.md` with kebab-case
-- Utilities: Singular nouns (`logger.ts`, not `logging.ts`)
-- Directories: Plural when containing multiple items (`utils/`, `docs/`)
+See [Documentation Standards](./docs/standards/documentation.md) and [Testing Standards](./docs/standards/testing.md) for detailed patterns.
 
-**Import Path Aliases**:
+**Quick reminders**:
+- Co-locate tests in `__tests__` subdirectories
+- Keep documentation close to code
+- Use consistent naming patterns
 
-Always use path aliases instead of relative imports:
+### Import Conventions
 
-```typescript
-// ❌ Don't use relative imports
-import { logger } from '../../../lib/utils/logger';
-import { generateColors } from './colors/generator';
+See [Import Conventions](./docs/standards/import-conventions.md) for path alias usage.
 
-// ✅ Use path aliases
-import { logger } from '@utils/logger';
-import { generateColors } from '@colors/generator';
-import { Button } from '@packages/react/src/Button';
-```
-
-Available aliases:
-
-- `@terroir/core` - Main library entry (lib/index.ts)
-- `@lib/*` - Library modules (lib/*)
-- `@utils/*` - Utility modules (lib/utils/*)
-- `@colors/*` - Color modules (lib/colors/*)
-- `@scripts/*` - Build scripts (scripts/*)
-- `@packages/*` - Package sources (packages/*)
-- `@test/*` - Test utilities (test/*)
-
-This makes imports:
-
-- Easier to read and understand
-- Resilient to file moves
-- Consistent across the codebase
-- Searchable and replaceable
+**Quick reminder**: Always use path aliases (`@utils/logger`) instead of relative imports (`../../../lib/utils/logger`).
 
 ---
 
