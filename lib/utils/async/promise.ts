@@ -10,7 +10,7 @@ import type {
   RetryPredicate,
   AsyncFactory
 } from '@utils/types/async.types.js';
-import { delay } from './delay.js';
+import pRetry, { AbortError } from 'p-retry';
 import { getMessage } from '@utils/errors/messages.js';
 import { checkAborted } from './helpers/abort.js';
 
@@ -42,7 +42,7 @@ export function defer<T>(): DeferredBase<T> {
 }
 
 /**
- * Retry a promise-returning function
+ * Retry a promise-returning function using p-retry
  * @param fn - Function that returns a promise
  * @param options - Retry configuration
  */
@@ -59,35 +59,51 @@ export async function retry<T>(
 
   checkAborted(signal);
 
-  let lastError: unknown;
-  
-  for (let attempt = 1; attempt <= attempts; attempt++) {
-    if (signal?.aborted) {
-      throw new DOMException('Operation aborted', 'AbortError');
+  // Build p-retry options
+  const pRetryOptions: {
+    retries: number;
+    signal?: AbortSignal;
+    minTimeout?: number;
+    maxTimeout?: number;
+    factor?: number;
+    randomize?: boolean;
+    onFailedAttempt?: (error: Error & { attemptNumber: number; retriesLeft: number }) => Promise<void>;
+    shouldRetry?: (error: Error & { attemptNumber: number; retriesLeft: number }) => boolean | Promise<boolean>;
+  } = {
+    retries: attempts - 1, // p-retry uses retries (not total attempts)
+    ...(signal && { signal }),
+    // Adapt our shouldRetry to p-retry's format
+    shouldRetry: (error) => {
+      // Our shouldRetry expects (error, attemptNumber), p-retry provides attemptNumber on the error
+      return shouldRetry(error, error.attemptNumber);
     }
+  };
 
-    try {
-      return await fn();
-    } catch (error) {
-      lastError = error;
-      
-      // Check if we should retry
-      if (attempt < attempts && shouldRetry(error, attempt)) {
-        // Calculate delay
-        const delayTime = typeof delayMs === 'function' 
-          ? delayMs(attempt) 
-          : delayMs;
-        
-        if (delayTime > 0) {
-          await delay(delayTime, signal ? { signal } : undefined);
+  // Handle delay configuration
+  if (typeof delayMs === 'number') {
+    // For fixed delay, use p-retry's built-in timing options
+    pRetryOptions.minTimeout = delayMs;
+    pRetryOptions.maxTimeout = delayMs;
+    pRetryOptions.factor = 1; // No exponential backoff
+    pRetryOptions.randomize = false;
+  } else if (typeof delayMs === 'function') {
+    // For custom delay function, disable p-retry's built-in delay and handle it ourselves
+    pRetryOptions.minTimeout = 0;
+    pRetryOptions.maxTimeout = 0; 
+    pRetryOptions.factor = 1;
+    pRetryOptions.randomize = false;
+    pRetryOptions.onFailedAttempt = async (error: Error & { attemptNumber: number; retriesLeft: number }) => {
+      // Only delay if we're going to retry again
+      if (error.retriesLeft > 0) {
+        const customDelay = delayMs(error.attemptNumber);
+        if (customDelay > 0) {
+          await new Promise<void>(resolve => setTimeout(resolve, customDelay));
         }
-      } else {
-        break;
       }
-    }
+    };
   }
-  
-  throw lastError;
+
+  return pRetry(fn, pRetryOptions);
 }
 
 /**

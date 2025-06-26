@@ -157,6 +157,9 @@ describe('promise utilities', () => {
       }
     });
     it('should respect shouldRetry predicate', async () => {
+      vi.useFakeTimers();
+      
+      try {
       const fn = vi.fn()
         .mockRejectedValueOnce(new Error('retryable'))
         .mockRejectedValueOnce(new Error('fatal'))
@@ -172,8 +175,12 @@ describe('promise utilities', () => {
         shouldRetry 
       });
       
+      await vi.runAllTimersAsync();
       await expectRejection(promise, 'fatal');
       expect(fn).toHaveBeenCalledTimes(2);
+      } finally {
+        vi.useRealTimers();
+      }
     });
 
     it('should handle abort signal', async () => {
@@ -210,19 +217,28 @@ describe('promise utilities', () => {
       // Abort during delay
       controller.abort();
       
-      await expectRejection(promise, 'Operation aborted');
+      await expectRejection(promise, 'The operation was aborted.');
       expect(fn).toHaveBeenCalledTimes(1);
     });
 
     it('should handle zero delay', async () => {
+      vi.useFakeTimers();
+      
+      try {
       const fn = vi.fn()
         .mockRejectedValueOnce(new Error('fail'))
         .mockResolvedValue('success');
       
-      const result = await retry(fn, { attempts: 2, delay: 0 });
+      const promise = retry(fn, { attempts: 2, delay: 0 });
+      
+      await vi.runAllTimersAsync();
+      const result = await promise;
       
       expect(result).toBe('success');
       expect(fn).toHaveBeenCalledTimes(2);
+      } finally {
+        vi.useRealTimers();
+      }
     });
   });
 

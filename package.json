@@ -44,7 +44,7 @@
     "assets:watch": "nodemon -w assets -e svg,png,jpg -x 'pnpm assets:build'",
     "build": "pnpm clean && pnpm build:ts && pnpm tokens:build && pnpm assets:build && pnpm packages:build",
     "build:ts": "tsc",
-    "clean": "rimraf dist packages/*/dist",
+    "clean": "del dist 'packages/*/dist'",
     "dev": "concurrently \"pnpm:tokens:watch\" \"pnpm:assets:watch\" \"pnpm:storybook:dev\"",
     "docs:generate": "node scripts/generate-docs.js",
     "docs:serve": "npx serve dist/storybook",
@@ -109,6 +109,9 @@
   "dependencies": {
     "@t3-oss/env-core": "^0.13.8",
     "husky": "^9.1.7",
+    "p-debounce": "^4.0.0",
+    "p-retry": "^6.2.1",
+    "p-throttle": "^7.0.0",
     "serialize-error": "^12.0.0",
     "zod": "^3.25.67"
   },
@@ -128,6 +131,7 @@
     "@typescript-eslint/eslint-plugin": "^8.35.0",
     "@typescript-eslint/parser": "^8.35.0",
     "@vitest/coverage-v8": "^3.2.4",
+    "del-cli": "^6.0.0",
     "eslint": "^9.29.0",
     "jsdom": "^26.1.0",
     "lint-staged": "^16.1.2",
