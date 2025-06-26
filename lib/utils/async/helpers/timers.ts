@@ -5,6 +5,8 @@
 
 import { createAbortError } from './abort';
 import { createCleanupManager } from './cleanup';
+import pDebounce from 'p-debounce';
+import pThrottle from 'p-throttle';
 
 /**
  * A managed timer with cleanup capabilities
@@ -156,7 +158,7 @@ export function createManagedInterval(
 }
 
 /**
- * Creates a debounced version of a function
+ * Creates a debounced version of a function using p-debounce
  * @param fn - The function to debounce
  * @param ms - Milliseconds to wait
  * @param options - Timer options
@@ -165,92 +167,151 @@ export function createManagedInterval(
 export function debounce<T extends (...args: unknown[]) => unknown>(
   fn: T,
   ms: number,
-  options?: TimerOptions
+  options?: TimerOptions & { leading?: boolean }
 ): T & { cancel: () => void } {
-  let timer: ManagedTimer | null = null;
+  // Track cancellation state
+  let isCancelled = false;
+  let abortHandler: (() => void) | null = null;
   
+  // Create p-debounce wrapper
+  const pDebounced = pDebounce(
+    async (...args: Parameters<T>) => {
+      // Check if cancelled or aborted
+      if (isCancelled || options?.signal?.aborted) {
+        throw createAbortError();
+      }
+      
+      // Execute the function
+      const result = await fn(...args);
+      
+      // Check again in case it was cancelled during execution
+      if (isCancelled) {
+        throw createAbortError();
+      }
+      
+      return result;
+    },
+    ms,
+    {
+      before: options?.leading ?? false
+    }
+  );
+  
+  // Create wrapper that handles abort signal
   const debounced = ((...args: Parameters<T>) => {
-    // Cancel previous timer
-    timer?.clear();
+    // Reset cancelled state on new call
+    isCancelled = false;
     
-    // Create new timer
-    timer = createManagedTimer(ms, options);
+    // If abort signal, set up handler
+    if (options?.signal && !abortHandler) {
+      abortHandler = () => {
+        isCancelled = true;
+      };
+      options.signal.addEventListener('abort', abortHandler, { once: true });
+    }
     
-    // Execute function after delay
-    void timer.promise.then(
-      () => fn(...args),
-      () => {} // Ignore abort errors
-    );
+    // Check if already aborted
+    if (options?.signal?.aborted) {
+      return Promise.reject(createAbortError());
+    }
+    
+    return pDebounced(...args).catch((error) => {
+      // Suppress abort errors from cancelled calls
+      if (isCancelled && error.message === 'The operation was aborted.') {
+        return undefined;
+      }
+      throw error;
+    });
   }) as T & { cancel: () => void };
   
+  // Add cancel method for compatibility
   debounced.cancel = () => {
-    timer?.clear();
-    timer = null;
+    isCancelled = true;
+    
+    // Clean up abort handler
+    if (options?.signal && abortHandler) {
+      options.signal.removeEventListener('abort', abortHandler);
+      abortHandler = null;
+    }
   };
   
   return debounced;
 }
 
 /**
- * Creates a throttled version of a function
+ * Creates a throttled version of a function using p-throttle
+ * 
+ * This implements rate limiting (X calls per interval) rather than
+ * classic edge throttling. It's ideal for API rate limiting and 
+ * ensuring a maximum number of calls within a time window.
+ * 
  * @param fn - The function to throttle
- * @param ms - Minimum milliseconds between calls
- * @param options - Throttle options
+ * @param limit - Maximum number of calls within the interval
+ * @param interval - The timespan for limit in milliseconds
+ * @param options - Additional throttle options
  * @returns A throttled version of the function
  */
 export function throttle<T extends (...args: unknown[]) => unknown>(
   fn: T,
+  limit: number,
+  interval: number,
+  options?: {
+    signal?: AbortSignal;
+    strict?: boolean;
+    onDelay?: (...args: unknown[]) => void;
+  }
+): T & { 
+  isEnabled: boolean;
+  readonly queueSize: number;
+} {
+  // Create p-throttle instance
+  const throttler = pThrottle({
+    limit,
+    interval,
+    strict: options?.strict,
+    signal: options?.signal,
+    onDelay: options?.onDelay
+  });
+  
+  // Create throttled function
+  const throttled = throttler(fn);
+  
+  return throttled as T & {
+    isEnabled: boolean;
+    readonly queueSize: number;
+  };
+}
+
+/**
+ * Creates a simple rate-limited function for backward compatibility
+ * 
+ * @deprecated Use throttle() with explicit limit and interval instead
+ * @param fn - The function to throttle
+ * @param ms - Minimum milliseconds between calls
+ * @param options - Timer options
+ * @returns A throttled version of the function
+ */
+export function createSimpleThrottle<T extends (...args: unknown[]) => unknown>(
+  fn: T,
   ms: number,
-  options?: TimerOptions & { leading?: boolean; trailing?: boolean }
+  options?: TimerOptions
 ): T & { cancel: () => void } {
-  let timer: ManagedTimer | null = null;
-  let lastArgs: Parameters<T> | null = null;
-  let lastCallTime = 0;
+  // For backward compatibility, create a simple 1-per-interval throttle
+  const throttled = throttle(fn, 1, ms, {
+    signal: options?.signal
+  });
   
-  const { leading = true, trailing = true } = options || {};
-  
-  const throttled = ((...args: Parameters<T>) => {
-    const now = Date.now();
-    const timeSinceLastCall = now - lastCallTime;
-    
-    lastArgs = args;
-    
-    const execute = () => {
-      lastCallTime = Date.now();
-      if (lastArgs) {
-        fn(...lastArgs);
-        lastArgs = null;
-      }
-    };
-    
-    // Cancel any pending timer
-    timer?.clear();
-    
-    if (timeSinceLastCall >= ms) {
-      // Enough time has passed, execute immediately if leading
-      if (leading) {
-        execute();
-      }
-    }
-    
-    if (trailing && lastArgs) {
-      // Schedule execution after remaining time
-      const remainingTime = ms - timeSinceLastCall;
-      timer = createManagedTimer(Math.max(0, remainingTime), options);
-      timer.promise.then(
-        () => execute(),
-        () => {} // Ignore abort errors
-      );
-    }
+  // Add cancel method for compatibility
+  const wrappedThrottled = ((...args: Parameters<T>) => {
+    return throttled(...args);
   }) as T & { cancel: () => void };
   
-  throttled.cancel = () => {
-    timer?.clear();
-    timer = null;
-    lastArgs = null;
+  wrappedThrottled.cancel = () => {
+    // p-throttle doesn't have a cancel method, but we can disable it
+    throttled.isEnabled = false;
   };
   
-  return throttled;
+  return wrappedThrottled;
 }
 
 /**
