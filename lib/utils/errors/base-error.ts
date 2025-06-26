@@ -432,6 +432,12 @@ export async function createErrorFromResponse(response: Response, context?: Erro
     // Ignore parsing errors
   }
   
+  // Extract headers from response
+  const headers: Record<string, string> = {};
+  response.headers.forEach((value, key) => {
+    headers[key.toLowerCase()] = value;
+  });
+  
   const options: ErrorOptions = {
     statusCode: response.status,
     context: {
@@ -439,7 +445,7 @@ export async function createErrorFromResponse(response: Response, context?: Erro
       url: response.url,
       status: response.status,
       statusText: response.statusText,
-      headers: {} as Record<string, string>,
+      headers,
       ...(typeof details === 'object' && details !== null ? details : {}),
     },
   };
