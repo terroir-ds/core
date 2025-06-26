@@ -8,6 +8,24 @@ import { beforeEach, afterEach, vi } from 'vitest';
 // Store original environment variables
 const originalEnv = process.env;
 
+// Suppress PromiseRejectionHandledWarning warnings
+// These are expected in our tests when we handle promise rejections 
+// that were initially detected as unhandled
+const originalWarningListeners = process.listeners('warning');
+process.removeAllListeners('warning');
+
+process.on('warning', (warning) => {
+  // Ignore PromiseRejectionHandledWarning - these are expected
+  if (warning.name === 'PromiseRejectionHandledWarning') {
+    return;
+  }
+  
+  // Re-emit other warnings to original listeners
+  originalWarningListeners.forEach(listener => {
+    listener(warning);
+  });
+});
+
 // Global setup for all tests
 beforeEach(() => {
   // Reset modules before each test
