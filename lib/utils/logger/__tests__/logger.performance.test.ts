@@ -14,7 +14,7 @@ import {
   createLogger,
   measureTime,
   logPerformance
-} from '@utils/logger.js';
+} from '../index.js';
 
 describe('Logger Performance Tests', () => {
   beforeEach(() => {
@@ -280,7 +280,7 @@ describe('Logger Performance Tests', () => {
         isCI: () => false
       }));
       
-      const { logger: prodLogger } = await import('@utils/logger.js');
+      const { logger: prodLogger } = await import('../index.js');
       
       const iterations = 5000;
       const startTime = performance.now();

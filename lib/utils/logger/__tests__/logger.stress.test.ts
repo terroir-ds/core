@@ -17,7 +17,7 @@ import {
   getRequestId,
   generateRequestId,
   clearRequestId
-} from '@utils/logger.js';
+} from '../index.js';
 
 describe('Logger Stress Tests', () => {
   let originalConsoleError: typeof console.error;

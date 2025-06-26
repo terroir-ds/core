@@ -15,7 +15,7 @@ import pino from 'pino';
 import type { Logger, LoggerOptions, TransportTargetOptions } from 'pino';
 import path from 'node:path';
 import { env, isDevelopment, isTest, isCI } from '@lib/config/index.js';
-import type { LogContext, PerformanceMetrics } from './types/logger.types.js';
+import type { LogContext, PerformanceMetrics } from '@utils/types/logger.types.js';
 
 // Performance: Limit log message size to prevent memory issues
 const MAX_MESSAGE_LENGTH = 10000; // 10KB
@@ -1031,5 +1031,5 @@ export const createTracedLogger = (staticContext?: LogContext): Logger => {
 export default logger;
 export { logger };
 export type { Logger } from 'pino';
-export type { LogContext, PerformanceMetrics } from './types/logger.types.js';
+export type { LogContext, PerformanceMetrics } from '@utils/types/logger.types.js';
 export type { GlobalWithLoggerState };

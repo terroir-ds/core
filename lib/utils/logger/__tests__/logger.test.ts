@@ -34,7 +34,7 @@ describe('Logger Utility', () => {
       vi.resetModules();
       mockConfigDevelopment();
       
-      const { logger } = await import('@utils/logger.js');
+      const { logger } = await import('../index.js');
       expect(logger.level).toBe('debug');
     });
 
@@ -42,7 +42,7 @@ describe('Logger Utility', () => {
       vi.resetModules();
       mockConfigProduction();
       
-      const { logger } = await import('@utils/logger.js');
+      const { logger } = await import('../index.js');
       expect(logger.level).toBe('info');
     });
 
@@ -53,7 +53,7 @@ describe('Logger Utility', () => {
         LOG_LEVEL: 'error'
       }));
       
-      const { logger } = await import('@utils/logger.js');
+      const { logger } = await import('../index.js');
       expect(logger.level).toBe('error');
     });
 
@@ -64,7 +64,7 @@ describe('Logger Utility', () => {
         LOG_LEVEL: 'warn'
       }));
       
-      const { logger } = await import('@utils/logger.js');
+      const { logger } = await import('../index.js');
       expect(logger.level).toBe('warn');
     });
   });
@@ -72,7 +72,7 @@ describe('Logger Utility', () => {
   describe('Redaction Function', () => {
     it('should deep redact sensitive fields', async () => {
       // Import the actual logger module to test deepRedact
-      const loggerModule = await import('@utils/logger.js');
+      const loggerModule = await import('../index.js');
       
       // Test data with nested sensitive fields
       const testData = {
@@ -139,7 +139,7 @@ describe('Logger Utility', () => {
     });
 
     it('should not include hostname in logs', async () => {
-      const { logger } = await import('@utils/logger.js');
+      const { logger } = await import('../index.js');
       
       // Check that our logger config attempts to remove hostname
       expect(logger.bindings()['hostname']).toBeUndefined();
@@ -158,7 +158,7 @@ describe('Logger Utility', () => {
 
   describe('Utility Functions', () => {
     it('should log start of process', async () => {
-      const { logStart, logger } = await import('@utils/logger.js');
+      const { logStart, logger } = await import('../index.js');
       
       const infoSpy = vi.spyOn(logger, 'info');
       
@@ -171,7 +171,7 @@ describe('Logger Utility', () => {
     });
 
     it('should log successful completion', async () => {
-      const { logSuccess, logger } = await import('@utils/logger.js');
+      const { logSuccess, logger } = await import('../index.js');
       
       const infoSpy = vi.spyOn(logger, 'info');
       
@@ -184,7 +184,7 @@ describe('Logger Utility', () => {
     });
 
     it('should log performance metrics', async () => {
-      const { logPerformance, logger } = await import('@utils/logger.js');
+      const { logPerformance, logger } = await import('../index.js');
       
       const infoSpy = vi.spyOn(logger, 'info');
       
@@ -206,7 +206,7 @@ describe('Logger Utility', () => {
 
   describe('Child Logger', () => {
     it('should create child logger with additional context', async () => {
-      const { createLogger } = await import('@utils/logger.js');
+      const { createLogger } = await import('../index.js');
       
       const childLogger = createLogger({ 
         module: 'test-module',
@@ -220,7 +220,7 @@ describe('Logger Utility', () => {
     });
 
     it('should inherit parent logger configuration', async () => {
-      const { createLogger, logger } = await import('@utils/logger.js');
+      const { createLogger, logger } = await import('../index.js');
       
       const childLogger = createLogger({ module: 'child' });
       
@@ -230,7 +230,7 @@ describe('Logger Utility', () => {
 
   describe('Performance Measurement', () => {
     it('should measure successful async operations', async () => {
-      const { measureTime, logger } = await import('@utils/logger.js');
+      const { measureTime, logger } = await import('../index.js');
       
       const infoSpy = vi.spyOn(logger, 'info');
       
@@ -259,7 +259,7 @@ describe('Logger Utility', () => {
     });
 
     it('should log failed operations with error', async () => {
-      const { measureTime, logger } = await import('@utils/logger.js');
+      const { measureTime, logger } = await import('../index.js');
       
       const errorSpy = vi.spyOn(logger, 'error');
       const testError = new Error('Test error');
@@ -319,7 +319,7 @@ describe('Logger Utility', () => {
       vi.resetModules();
       mockConfigDevelopment();
       
-      const { logger } = await import('@utils/logger.js');
+      const { logger } = await import('../index.js');
       
       // Test error handling in development mode
       const testError = new Error('Dev error');
@@ -334,7 +334,7 @@ describe('Logger Utility', () => {
 
   describe('Type Safety', () => {
     it('should export proper TypeScript types', async () => {
-      const loggerModule = await import('@utils/logger.js');
+      const loggerModule = await import('../index.js');
       
       // Check that all expected exports exist
       expect(loggerModule.logger).toBeDefined();
@@ -367,7 +367,7 @@ describe('Logger Utility', () => {
     });
 
     it('should generate unique request IDs', async () => {
-      const { generateRequestId } = await import('@utils/logger.js');
+      const { generateRequestId } = await import('../index.js');
       
       const id1 = generateRequestId();
       const id2 = generateRequestId();
@@ -378,7 +378,7 @@ describe('Logger Utility', () => {
     });
 
     it('should set and get request ID globally', async () => {
-      const { setRequestId, getRequestId } = await import('@utils/logger.js');
+      const { setRequestId, getRequestId } = await import('../index.js');
       
       const testId = 'test-request-123';
       setRequestId(testId);
@@ -387,7 +387,7 @@ describe('Logger Utility', () => {
     });
 
     it('should clear request ID', async () => {
-      const { setRequestId, getRequestId, clearRequestId } = await import('@utils/logger.js');
+      const { setRequestId, getRequestId, clearRequestId } = await import('../index.js');
       
       setRequestId('test-id');
       expect(getRequestId()).toBe('test-id');
@@ -397,7 +397,7 @@ describe('Logger Utility', () => {
     });
 
     it('should handle multiple request ID operations', async () => {
-      const { setRequestId, getRequestId, clearRequestId } = await import('@utils/logger.js');
+      const { setRequestId, getRequestId, clearRequestId } = await import('../index.js');
       
       // Set first ID
       setRequestId('request-1');
@@ -417,7 +417,7 @@ describe('Logger Utility', () => {
     });
 
     it('should handle request ID when global namespace does not exist', async () => {
-      const { getRequestId, clearRequestId } = await import('@utils/logger.js');
+      const { getRequestId, clearRequestId } = await import('../index.js');
       
       // Delete the entire namespace
       delete (globalThis as { __terroir?: unknown }).__terroir;
@@ -439,14 +439,14 @@ describe('Logger Utility', () => {
 
   describe('Log Sampling', () => {
     it('should validate sampling rate', async () => {
-      const { createSampledLogger } = await import('@utils/logger.js');
+      const { createSampledLogger } = await import('../index.js');
       
       expect(() => createSampledLogger({ rate: -0.1 })).toThrow('Sampling rate must be between 0 and 1');
       expect(() => createSampledLogger({ rate: 1.1 })).toThrow('Sampling rate must be between 0 and 1');
     });
 
     it('should always log when rate is 1', async () => {
-      const { createSampledLogger } = await import('@utils/logger.js');
+      const { createSampledLogger } = await import('../index.js');
       
       const sampledLogger = createSampledLogger({ rate: 1 });
       const infoSpy = vi.spyOn(sampledLogger, 'info');
@@ -459,7 +459,7 @@ describe('Logger Utility', () => {
     });
 
     it('should sample logs based on rate', async () => {
-      const { createSampledLogger } = await import('@utils/logger.js');
+      const { createSampledLogger } = await import('../index.js');
       
       const sampledLogger = createSampledLogger({ rate: 0.5 });
       let logCount = 0;
@@ -482,7 +482,7 @@ describe('Logger Utility', () => {
     });
 
     it('should always log critical levels regardless of sampling', async () => {
-      const { createSampledLogger } = await import('@utils/logger.js');
+      const { createSampledLogger } = await import('../index.js');
       
       const sampledLogger = createSampledLogger({ 
         rate: 0.1, 
@@ -509,7 +509,7 @@ describe('Logger Utility', () => {
     });
 
     it('should use consistent sampling with key', async () => {
-      const { createSampledLogger } = await import('@utils/logger.js');
+      const { createSampledLogger } = await import('../index.js');
       
       // Test that same key produces consistent results
       const key = 'user-123';
@@ -531,7 +531,7 @@ describe('Logger Utility', () => {
 
   describe('AsyncLocalStorage Context', () => {
     it('should run function with context', async () => {
-      const { runWithContext, getAsyncContext } = await import('@utils/logger.js');
+      const { runWithContext, getAsyncContext } = await import('../index.js');
       
       const testContext = { userId: '123', requestId: 'req-456' };
       
@@ -549,7 +549,7 @@ describe('Logger Utility', () => {
     });
 
     it('should update async context', async () => {
-      const { runWithContext, updateAsyncContext, getAsyncContext } = await import('@utils/logger.js');
+      const { runWithContext, updateAsyncContext, getAsyncContext } = await import('../index.js');
       
       await runWithContext({ userId: '123' }, async () => {
         expect(getAsyncContext()).toEqual({ userId: '123' });
@@ -565,7 +565,7 @@ describe('Logger Utility', () => {
     });
 
     it('should create async logger with context', async () => {
-      const { createAsyncLogger, runWithContext } = await import('@utils/logger.js');
+      const { createAsyncLogger, runWithContext } = await import('../index.js');
       
       const asyncLogger = createAsyncLogger({ service: 'test-service' });
       
@@ -579,7 +579,7 @@ describe('Logger Utility', () => {
     });
 
     it('should handle nested contexts correctly', async () => {
-      const { runWithContext, getAsyncContext } = await import('@utils/logger.js');
+      const { runWithContext, getAsyncContext } = await import('../index.js');
       
       await runWithContext({ level: 1, id: 'outer' }, async () => {
         expect(getAsyncContext()).toEqual({ level: 1, id: 'outer' });
@@ -596,7 +596,7 @@ describe('Logger Utility', () => {
 
   describe('Resource Management', () => {
     it('should track child loggers', async () => {
-      const { createLogger } = await import('@utils/logger.js');
+      const { createLogger } = await import('../index.js');
       
       // Create multiple child loggers
       const child1 = createLogger({ service: 'auth' });
@@ -610,7 +610,7 @@ describe('Logger Utility', () => {
     });
 
     it('should provide memory statistics', async () => {
-      const { getMemoryStats } = await import('@utils/logger.js');
+      const { getMemoryStats } = await import('../index.js');
       
       const stats = getMemoryStats();
       
@@ -629,7 +629,7 @@ describe('Logger Utility', () => {
     });
 
     it('should log memory usage', async () => {
-      const { logMemoryUsage, logger } = await import('@utils/logger.js');
+      const { logMemoryUsage, logger } = await import('../index.js');
       
       const infoSpy = vi.spyOn(logger, 'info');
       
@@ -648,7 +648,7 @@ describe('Logger Utility', () => {
     });
 
     it('should start and stop memory monitoring', async () => {
-      const { startMemoryMonitoring } = await import('@utils/logger.js');
+      const { startMemoryMonitoring } = await import('../index.js');
       
       // Start monitoring with short interval
       const stopMonitoring = startMemoryMonitoring(100, 10000);
@@ -662,7 +662,7 @@ describe('Logger Utility', () => {
 
   describe('OpenTelemetry Integration', () => {
     it('should register and use OTel hooks', async () => {
-      const { registerOTelHooks, getTraceContext } = await import('@utils/logger.js');
+      const { registerOTelHooks, getTraceContext } = await import('../index.js');
       
       // Register hooks
       const mockHooks = {
@@ -684,7 +684,7 @@ describe('Logger Utility', () => {
     });
 
     it('should handle missing trace context', async () => {
-      const { registerOTelHooks, getTraceContext } = await import('@utils/logger.js');
+      const { registerOTelHooks, getTraceContext } = await import('../index.js');
       
       // Register hooks that return undefined
       registerOTelHooks({
@@ -697,7 +697,7 @@ describe('Logger Utility', () => {
     });
 
     it('should create traced logger', async () => {
-      const { createTracedLogger } = await import('@utils/logger.js');
+      const { createTracedLogger } = await import('../index.js');
       
       const tracedLogger = createTracedLogger({ service: 'traced' });
       

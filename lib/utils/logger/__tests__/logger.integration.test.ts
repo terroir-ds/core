@@ -21,7 +21,7 @@ import {
   logSuccess,
   runWithContext,
   getAsyncContext
-} from '@utils/logger.js';
+} from '../index.js';
 
 describe('Logger Integration Tests', () => {
   beforeEach(() => {

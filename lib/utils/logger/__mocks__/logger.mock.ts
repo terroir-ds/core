@@ -5,7 +5,7 @@
 
 import { vi } from 'vitest';
 import type { Logger } from 'pino';
-import type { LogContext } from '@utils/logger.js';
+import type { LogContext } from '@utils/logger/index.js';
 
 /**
  * Create a mock logger instance

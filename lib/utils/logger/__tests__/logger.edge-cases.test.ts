@@ -23,7 +23,7 @@ import {
   updateAsyncContext,
   createAsyncLogger,
   type LogContext
-} from '@utils/logger.js';
+} from '../index.js';
 
 describe('Logger Edge Cases', () => {
   beforeEach(() => {
@@ -371,7 +371,7 @@ describe('Logger Edge Cases', () => {
       vi.resetModules();
       
       expect(async () => {
-        const { logger: newLogger } = await import('@utils/logger.js');
+        const { logger: newLogger } = await import('../index.js');
         newLogger.info('Test without argv');
       }).not.toThrow();
       
@@ -391,7 +391,7 @@ describe('Logger Edge Cases', () => {
           isCI: () => false
         }));
         
-        const { logger: envLogger } = await import('@utils/logger.js');
+        const { logger: envLogger } = await import('../index.js');
         expect(() => envLogger.info(`Testing in ${env}`)).not.toThrow();
       }
     });
