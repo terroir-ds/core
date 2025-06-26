@@ -214,12 +214,12 @@ export const ERROR_MESSAGE_CATEGORIES = {
  */
 export function getMessage(
   key: keyof typeof ERROR_MESSAGES,
-  ...args: any[]
+  ...args: unknown[]
 ): string {
   const messageTemplate = ERROR_MESSAGES[key];
   
   if (typeof messageTemplate === 'function') {
-    return (messageTemplate as (...args: any[]) => string)(...args);
+    return (messageTemplate as (...args: unknown[]) => string)(...args);
   }
   
   return messageTemplate;

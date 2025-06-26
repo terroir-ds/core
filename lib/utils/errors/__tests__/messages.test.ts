@@ -157,7 +157,7 @@ describe('Error Messages', () => {
 
     it('should ensure no message template throws errors', () => {
       // Test a representative sample of each message type
-      const testCases: Array<[ErrorMessageKey, any[]]> = [
+      const testCases: Array<[ErrorMessageKey, unknown[]]> = [
         ['OPERATION_FAILED', [3]],
         ['OPERATION_TIMEOUT', [5000]],
         ['OPERATION_CANCELLED', []],

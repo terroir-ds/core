@@ -14,11 +14,11 @@ import { beforeEach, afterEach } from 'vitest';
  * test frameworks handle promise rejections asynchronously.
  */
 export function suppressWarningsInErrorTests() {
-  let originalRejectionListeners: Array<(...args: any[]) => void> = [];
+  let originalRejectionListeners: Array<(...args: unknown[]) => void> = [];
 
   beforeEach(() => {
     // Store and remove original unhandledRejection listeners
-    originalRejectionListeners = process.listeners('unhandledRejection') as Array<(...args: any[]) => void>;
+    originalRejectionListeners = process.listeners('unhandledRejection') as Array<(...args: unknown[]) => void>;
     process.removeAllListeners('unhandledRejection');
 
     // Add silent handler for test rejections
