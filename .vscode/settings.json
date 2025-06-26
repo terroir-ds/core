@@ -112,7 +112,10 @@
     "wcag",
     "WEBP",
     "yoavbls",
-    "yzhang"
+    "yzhang",
+    "retryable",
+    "Retryable",
+    "cooldown"
   ],
   "editor.fontFamily": "'Intel One Mono', 'Roboto Mono for Powerline', monospace",
   "editor.fontSize": 13,

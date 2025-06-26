@@ -13,10 +13,6 @@
     "react",
     "typescript"
   ],
-  "engines": {
-    "node": ">=18.0.0",
-    "pnpm": ">=8.0.0"
-  },
   "homepage": "https://github.com/terroir-ds/core#readme",
   "bugs": {
     "url": "https://github.com/terroir-ds/core/issues"
@@ -30,6 +26,7 @@
   "maintainers": [
     "Joshua Hall <josh@yaplabs.com>"
   ],
+  "type": "module",
   "files": [
     "packages/*/dist",
     "packages/*/README.md",
@@ -96,6 +93,7 @@
   },
   "dependencies": {
     "@t3-oss/env-core": "^0.13.8",
+    "delay": "^6.0.0",
     "husky": "^9.1.7",
     "zod": "^3.25.67"
   },
@@ -126,8 +124,11 @@
     "typescript": "^5.8.3",
     "vitest": "^3.2.4"
   },
-  "type": "module",
   "packageManager": "pnpm@10.12.3",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
