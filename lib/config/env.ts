@@ -14,6 +14,12 @@ import { z } from 'zod';
  */
 export const env = createEnv({
   /**
+   * Tell env-core we're always in server environment
+   * This prevents "client-side access" errors in tests
+   */
+  isServer: true,
+  
+  /**
    * Server-side environment variables
    * These are validated at build time and runtime
    */
