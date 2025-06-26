@@ -109,6 +109,14 @@ export const ERROR_MESSAGES = {
   HTTP_BAD_GATEWAY: 'Bad gateway',
   HTTP_SERVICE_UNAVAILABLE: 'Service unavailable',
   HTTP_GATEWAY_TIMEOUT: 'Gateway timeout',
+  HTTP_UNPROCESSABLE: 'Unprocessable entity',
+  HTTP_RATE_LIMITED: 'Rate limited',
+  HTTP_SERVER_ERROR: 'Server error',
+  HTTP_CLIENT_ERROR: 'Client error',
+  
+  // General
+  UNKNOWN_ERROR: 'Unknown error',
+  MULTIPLE_ERRORS: 'Multiple errors occurred',
 } as const;
 
 /**
@@ -189,6 +197,14 @@ export const ERROR_MESSAGE_CATEGORIES = {
     'HTTP_BAD_GATEWAY',
     'HTTP_SERVICE_UNAVAILABLE',
     'HTTP_GATEWAY_TIMEOUT',
+    'HTTP_UNPROCESSABLE',
+    'HTTP_RATE_LIMITED',
+    'HTTP_SERVER_ERROR',
+    'HTTP_CLIENT_ERROR',
+  ],
+  GENERAL: [
+    'UNKNOWN_ERROR',
+    'MULTIPLE_ERRORS',
   ],
 } as const;
 
@@ -254,7 +270,7 @@ export function validateMessages(): boolean {
     // ... can add more validations as needed
     
     return true;
-  } catch (error) {
+  } catch {
     return false;
   }
 }
