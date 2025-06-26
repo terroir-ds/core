@@ -16,8 +16,7 @@ This module provides a set of utilities to handle common async patterns:
 
 ```typescript
 import { withTimeout, delay, combineSignals, processBatch, retry } from '@terroir/core/lib/utils/async';
-```
-
+```bash
 ## API Reference
 
 ### Timeout Utilities
@@ -32,9 +31,9 @@ const result = await withTimeout(
   5000,
   { message: 'Request timed out' }
 );
-```
-
+```bash
 **Options:**
+
 - `signal?: AbortSignal` - Cancel the operation
 - `message?: string | ((ms: number) => string)` - Custom error message
 - `errorClass?: new (message: string) => Error` - Custom error class
@@ -48,8 +47,7 @@ await Promise.race([
   doWork(),
   timeout(5000, { message: 'Operation timed out' })
 ]);
-```
-
+```bash
 #### `raceWithTimeout<T>(promises, ms, options?)`
 
 Race multiple promises with a timeout.
@@ -60,8 +58,7 @@ const result = await raceWithTimeout(
   3000,
   { fallback: cachedData }
 );
-```
-
+```bash
 ### Delay Utilities
 
 #### `delay(ms, options?)`
@@ -74,9 +71,9 @@ await delay(1000); // Wait 1 second
 // With cancellation
 const controller = new AbortController();
 await delay(5000, { signal: controller.signal });
-```
-
+```bash
 **Options:**
+
 - `signal?: AbortSignal` - Cancel the delay
 - `unref?: boolean` - Allow process to exit during delay
 
@@ -87,16 +84,14 @@ Delay with value passthrough.
 ```typescript
 const result = await delayValue('data', 1000);
 console.log(result); // 'data' (after 1 second)
-```
-
+```bash
 #### `randomDelay(min, max, options?)`
 
 Random delay within range.
 
 ```typescript
 await randomDelay(1000, 5000); // Wait 1-5 seconds
-```
-
+```bash
 #### `debouncedDelay(ms, options?)`
 
 Debounced delay that resets on each call.
@@ -112,8 +107,7 @@ cancel();
 
 // Resolve immediately
 flush();
-```
-
+```bash
 ### Signal Utilities
 
 #### `combineSignals(signals)`
@@ -126,8 +120,7 @@ const combined = combineSignals([
   controller2.signal,
   timeoutSignal(5000)
 ]);
-```
-
+```bash
 #### `timeoutSignal(ms, reason?)`
 
 Create a signal that aborts after timeout.
@@ -135,16 +128,14 @@ Create a signal that aborts after timeout.
 ```typescript
 const signal = timeoutSignal(5000);
 await fetch('/api/data', { signal });
-```
-
+```bash
 #### `eventSignal(target, events)`
 
 Create a signal that aborts when events occur.
 
 ```typescript
 const signal = eventSignal(window, ['beforeunload', 'offline']);
-```
-
+```bash
 #### `isAbortError(error)`
 
 Check if an error was caused by signal abortion.
@@ -157,8 +148,7 @@ try {
     console.log('Operation was cancelled');
   }
 }
-```
-
+```bash
 #### `manualSignal()`
 
 Create a signal that can be manually aborted.
@@ -168,8 +158,7 @@ const { signal, abort } = manualSignal();
 
 // Later...
 abort('User cancelled');
-```
-
+```bash
 ### Batch Processing
 
 #### `processBatch<T, R>(items, processor, options?)`
@@ -187,9 +176,9 @@ const results = await processBatch(
     }
   }
 );
-```
-
+```bash
 **Options:**
+
 - `concurrency?: number` - Max parallel operations (default: 5)
 - `preserveOrder?: boolean` - Maintain input order (default: true)
 - `stopOnError?: boolean` - Stop on first error (default: false)
@@ -206,8 +195,7 @@ const results = await processChunked(
   async (chunk) => processChunk(chunk),
   { chunkSize: 100 }
 );
-```
-
+```bash
 #### `mapConcurrent<T, R>(items, mapper, concurrency?)`
 
 Map with concurrency limit.
@@ -218,8 +206,7 @@ const results = await mapConcurrent(
   async (item) => transform(item),
   10 // Process 10 at a time
 );
-```
-
+```bash
 #### `processRateLimited<T, R>(items, processor, options?)`
 
 Process with rate limiting.
@@ -233,8 +220,7 @@ const results = await processRateLimited(
     burst: 15 // Allow burst of 15
   }
 );
-```
-
+```bash
 ### Promise Utilities
 
 #### `defer<T>()`
@@ -250,8 +236,7 @@ deferred.resolve('success');
 deferred.reject(new Error('failed'));
 
 const result = await deferred.promise;
-```
-
+```bash
 #### `retry<T>(fn, options?)`
 
 Retry a promise-returning function.
@@ -265,9 +250,9 @@ const data = await retry(
     shouldRetry: (error) => error.status !== 404
   }
 );
-```
-
+```bash
 **Options:**
+
 - `attempts?: number` - Max retry attempts (default: 3)
 - `delay?: number | ((attempt: number) => number)` - Delay between retries
 - `shouldRetry?: (error: unknown, attempt: number) => boolean` - Retry predicate
@@ -283,8 +268,7 @@ const data = await promiseWithFallback(
   getCachedData, // Function or value
   5000 // Optional timeout
 );
-```
-
+```bash
 #### `allSettledWithTimeout<T>(promises, timeoutMs)`
 
 All promises with individual timeouts.
@@ -302,8 +286,7 @@ results.forEach((result, i) => {
     console.log(`Request ${i} failed:`, result.reason);
   }
 });
-```
-
+```bash
 #### `firstSuccessful<T>(factories, options?)`
 
 Try promises in sequence until one succeeds.
@@ -314,8 +297,7 @@ const data = await firstSuccessful([
   () => fetchFromSecondary(),
   () => fetchFromCache()
 ]);
-```
-
+```bash
 ## Usage Examples
 
 ### Resilient API Calls
@@ -336,8 +318,7 @@ async function fetchWithRetry(url: string, options?: RequestInit) {
     }
   );
 }
-```
-
+```bash
 ### Batch Processing with Progress
 
 ```typescript
@@ -366,8 +347,7 @@ async function processFiles(files: File[]) {
     console.error(`${failed.length} files failed to process`);
   }
 }
-```
-
+```bash
 ### Coordinated Cancellation
 
 ```typescript
@@ -401,8 +381,7 @@ async function processWithTimeout(items: string[], timeout: number) {
     throw error;
   }
 }
-```
-
+```bash
 ### Debounced Search
 
 ```typescript
@@ -433,8 +412,7 @@ function createSearch() {
     }
   };
 }
-```
-
+```bash
 ## Best Practices
 
 1. **Always handle cancellation**: Check for abort errors when operations can be cancelled

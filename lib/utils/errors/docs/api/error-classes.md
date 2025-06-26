@@ -8,8 +8,7 @@ The abstract base class for all custom errors in the Terroir Core Design System.
 
 ```typescript
 constructor(message: string, options?: ErrorOptions)
-```
-
+```typescript
 #### Parameters
 
 - `message` (string): The error message
@@ -27,8 +26,7 @@ interface ErrorOptions {
   statusCode?: number; // HTTP status code
   code?: string; // Machine-readable error code
 }
-```
-
+```typescript
 ### Properties
 
 | Property     | Type             | Description                            |
@@ -51,8 +49,7 @@ Get the root cause of the error chain.
 
 ```typescript
 getRootCause(): Error | unknown
-```
-
+```typescript
 **Returns**: The deepest error in the cause chain
 
 **Example**:
@@ -60,16 +57,14 @@ getRootCause(): Error | unknown
 ```typescript
 const rootCause = error.getRootCause();
 console.log('Root cause:', rootCause.message);
-```
-
+```typescript
 #### getErrorChain()
 
 Get all errors in the cause chain.
 
 ```typescript
 getErrorChain(): Array<Error | unknown>
-```
-
+```typescript
 **Returns**: Array of all errors from this error to the root cause
 
 **Example**:
@@ -77,16 +72,14 @@ getErrorChain(): Array<Error | unknown>
 ```typescript
 const chain = error.getErrorChain();
 console.log(`Error chain depth: ${chain.length}`);
-```
-
+```typescript
 #### hasErrorType()
 
 Check if error chain contains a specific error type.
 
 ```typescript
 hasErrorType<T extends Error>(errorClass: new (...args: unknown[]) => T): boolean
-```
-
+```typescript
 **Parameters**:
 
 - `errorClass`: The error class constructor to check for
@@ -99,16 +92,14 @@ hasErrorType<T extends Error>(errorClass: new (...args: unknown[]) => T): boolea
 if (error.hasErrorType(NetworkError)) {
   console.log('Network error in chain');
 }
-```
-
+```typescript
 #### toJSON()
 
 Serialize error for logging or storage.
 
 ```typescript
 toJSON(): Record<string, unknown>
-```
-
+```typescript
 **Returns**: Complete error data including stack trace
 
 **Example**:
@@ -116,40 +107,35 @@ toJSON(): Record<string, unknown>
 ```typescript
 const errorData = error.toJSON();
 await logger.error(errorData);
-```
-
+```typescript
 #### toPublicJSON()
 
 Create a safe object for external APIs (no stack traces).
 
 ```typescript
 toPublicJSON(): Record<string, unknown>
-```
-
+```typescript
 **Returns**: Sanitized error data safe for public consumption
 
 **Example**:
 
 ```typescript
 res.status(error.statusCode).json(error.toPublicJSON());
-```
-
+```typescript
 #### toLogContext()
 
 Format error for structured logging.
 
 ```typescript
 toLogContext(): LogContext
-```
-
+```typescript
 **Returns**: Error data formatted for Pino logger
 
 **Example**:
 
 ```typescript
 logger.error(error.toLogContext(), error.message);
-```
-
+```typescript
 ## Built-in Error Classes
 
 ### ValidationError
@@ -158,8 +144,7 @@ For input validation failures.
 
 ```typescript
 class ValidationError extends BaseError
-```
-
+```typescript
 **Default Properties**:
 
 - `category`: ErrorCategory.VALIDATION
@@ -178,16 +163,14 @@ throw new ValidationError('Invalid email format', {
     value: 'not-an-email',
   },
 });
-```
-
+```typescript
 ### ConfigurationError
 
 For configuration and setup issues.
 
 ```typescript
 class ConfigurationError extends BaseError
-```
-
+```typescript
 **Default Properties**:
 
 - `category`: ErrorCategory.CONFIGURATION
@@ -205,16 +188,14 @@ throw new ConfigurationError('Missing required configuration', {
     missingKeys: ['API_KEY', 'DATABASE_URL'],
   },
 });
-```
-
+```typescript
 ### NetworkError
 
 For network and connectivity issues.
 
 ```typescript
 class NetworkError extends BaseError
-```
-
+```typescript
 **Default Properties**:
 
 - `category`: ErrorCategory.NETWORK
@@ -233,16 +214,14 @@ throw new NetworkError('Connection timeout', {
     timeout: 5000,
   },
 });
-```
-
+```typescript
 ### PermissionError
 
 For authentication and authorization failures.
 
 ```typescript
 class PermissionError extends BaseError
-```
-
+```typescript
 **Default Properties**:
 
 - `category`: ErrorCategory.PERMISSION
@@ -261,16 +240,14 @@ throw new PermissionError('Insufficient permissions', {
     actual: ['read'],
   },
 });
-```
-
+```typescript
 ### ResourceError
 
 For missing or unavailable resources.
 
 ```typescript
 class ResourceError extends BaseError
-```
-
+```typescript
 **Default Properties**:
 
 - `category`: ErrorCategory.RESOURCE
@@ -289,16 +266,14 @@ throw new ResourceError('User not found', {
     resourceId: userId,
   },
 });
-```
-
+```typescript
 ### BusinessLogicError
 
 For domain-specific business rule violations.
 
 ```typescript
 class BusinessLogicError extends BaseError
-```
-
+```typescript
 **Default Properties**:
 
 - `category`: ErrorCategory.BUSINESS_LOGIC
@@ -318,16 +293,14 @@ throw new BusinessLogicError('Insufficient funds', {
     currency: 'USD',
   },
 });
-```
-
+```typescript
 ### IntegrationError
 
 For third-party service integration issues.
 
 ```typescript
 class IntegrationError extends BaseError
-```
-
+```typescript
 **Default Properties**:
 
 - `category`: ErrorCategory.INTEGRATION
@@ -347,16 +320,14 @@ throw new IntegrationError('Payment gateway error', {
     externalError: stripeError,
   },
 });
-```
-
+```typescript
 ### MultiError
 
 For aggregating multiple errors using native AggregateError.
 
 ```typescript
 class MultiError extends AggregateError
-```
-
+```typescript
 **Additional Properties**:
 
 - `errorId`: Unique identifier
@@ -371,45 +342,39 @@ Get all unique error types.
 
 ```typescript
 getErrorTypes(): string[]
-```
-
+```typescript
 **Example**:
 
 ```typescript
 const types = multiError.getErrorTypes();
 // ['ValidationError', 'NetworkError']
-```
-
+```typescript
 #### getErrorsByType()
 
 Get errors of a specific type.
 
 ```typescript
 getErrorsByType<T extends Error>(errorClass: new (...args: unknown[]) => T): T[]
-```
-
+```typescript
 **Example**:
 
 ```typescript
 const validationErrors = multiError.getErrorsByType(ValidationError);
-```
-
+```typescript
 #### hasErrorType()
 
 Check if contains specific error type.
 
 ```typescript
 hasErrorType<T extends Error>(errorClass: new (...args: unknown[]) => T): boolean
-```
-
+```typescript
 **Example**:
 
 ```typescript
 if (multiError.hasErrorType(NetworkError)) {
   // Contains at least one network error
 }
-```
-
+```typescript
 ## Utility Functions
 
 ### isError()
@@ -418,40 +383,35 @@ Type guard to check if value is an Error.
 
 ```typescript
 function isError(value: unknown): value is Error;
-```
-
+```typescript
 **Example**:
 
 ```typescript
 if (isError(value)) {
   console.log(value.message);
 }
-```
-
+```typescript
 ### isBaseError()
 
 Type guard to check if value is a BaseError.
 
 ```typescript
 function isBaseError(value: unknown): value is BaseError;
-```
-
+```typescript
 **Example**:
 
 ```typescript
 if (isBaseError(error)) {
   console.log(error.errorId);
 }
-```
-
+```typescript
 ### isRetryableError()
 
 Check if an error is retryable.
 
 ```typescript
 function isRetryableError(error: unknown): boolean;
-```
-
+```typescript
 **Logic**:
 
 - Returns `true` for BaseError instances with `retryable: true`
@@ -464,16 +424,14 @@ function isRetryableError(error: unknown): boolean;
 if (isRetryableError(error)) {
   await retry(() => operation());
 }
-```
-
+```typescript
 ### wrapError()
 
 Wrap unknown errors in BaseError.
 
 ```typescript
 function wrapError(error: unknown, message?: string, options?: ErrorOptions): BaseError;
-```
-
+```typescript
 **Parameters**:
 
 - `error`: The error to wrap
@@ -491,8 +449,7 @@ try {
     context: { configFile: 'app.json' },
   });
 }
-```
-
+```typescript
 ### createErrorFromResponse()
 
 Create appropriate error from HTTP response.
@@ -502,8 +459,7 @@ async function createErrorFromResponse(
   response: Response,
   context?: ErrorContext
 ): Promise<BaseError>;
-```
-
+```typescript
 **Parameters**:
 
 - `response`: Fetch API Response object
@@ -527,8 +483,7 @@ if (!response.ok) {
     operation: 'fetchUsers',
   });
 }
-```
-
+```typescript
 ## Type Definitions
 
 ### ErrorSeverity
@@ -540,8 +495,7 @@ enum ErrorSeverity {
   HIGH = 'high', // Error-level logging
   CRITICAL = 'critical', // Fatal-level logging
 }
-```
-
+```typescript
 ### ErrorCategory
 
 ```typescript
@@ -555,8 +509,7 @@ enum ErrorCategory {
   INTEGRATION = 'integration',
   UNKNOWN = 'unknown',
 }
-```
-
+```typescript
 ### ErrorContext
 
 ```typescript

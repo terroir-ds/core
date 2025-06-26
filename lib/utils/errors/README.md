@@ -29,8 +29,7 @@ import {
   CircuitBreaker,
   handleError,
 } from '@terroir/core/lib/utils/errors';
-```
-
+```bash
 ## Quick Start
 
 ### Basic Error Handling
@@ -52,8 +51,7 @@ try {
     operation: 'userRegistration',
   });
 }
-```
-
+```bash
 ### Retry Failed Operations
 
 ```typescript
@@ -70,8 +68,7 @@ const data = await retry(
     timeout: 5000,
   }
 );
-```
-
+```bash
 ### Circuit Breaker Protection
 
 ```typescript
@@ -83,8 +80,7 @@ const apiBreaker = new CircuitBreaker({
 });
 
 const data = await apiBreaker.execute(() => fetch('/api/external').then((r) => r.json()));
-```
-
+```bash
 ## Error Classes
 
 | Class                | Purpose                   | Status Code | Retryable |
@@ -111,8 +107,7 @@ const error = new NetworkError('Connection timeout', {
     timeout: 5000,
   },
 });
-```
-
+```bash
 ### Error Handling
 
 ```typescript
@@ -128,8 +123,7 @@ registerErrorHandler('metrics', async (error, context) => {
 registerRecoveryStrategy('NETWORK_TIMEOUT', async () => {
   return await cache.getLastKnown();
 });
-```
-
+```bash
 ### Retry Logic
 
 ```typescript
@@ -141,8 +135,7 @@ const result = await retry(operation, {
     logger.info(`Retry ${attempt} after ${delay}ms`);
   },
 });
-```
-
+```bash
 ### Circuit Breakers
 
 ```typescript
@@ -157,8 +150,7 @@ const breaker = new CircuitBreaker({
 if (breaker.getState() === 'open') {
   return getCachedData();
 }
-```
-
+```bash
 ## Documentation
 
 ### 📚 Guides
@@ -191,8 +183,7 @@ app.use(async (error, req, res, next) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-```
-
+```bash
 ### Database Operations
 
 ```typescript
@@ -201,8 +192,7 @@ const dbBreaker = new CircuitBreaker({ name: 'Database' });
 async function queryWithRetry(sql: string) {
   return await retryWithCircuitBreaker(() => db.query(sql), dbBreaker, { maxAttempts: 3 });
 }
-```
-
+```bash
 ### Batch Processing
 
 ```typescript

@@ -24,8 +24,7 @@ import {
   logSuccess,
   measureTime,
 } from '@terroir/core/lib/utils/logger';
-```
-
+```bash
 ## Core API
 
 ### Basic Logging
@@ -42,8 +41,7 @@ logger.error({ err: error, attemptCount: 3 }, 'Failed to connect');
 
 // With formatting
 logger.info({ count: 5 }, 'Processed %d items', 5);
-```
-
+```bash
 ### Log Levels
 
 The logger supports standard Pino log levels:
@@ -67,8 +65,7 @@ const customLogger = createLogger({
   name: 'api',
   level: 'warn', // Only warn and above
 });
-```
-
+```bash
 ### Child Loggers
 
 Create contextual loggers that inherit configuration:
@@ -86,8 +83,7 @@ requestLogger.info('Processing request');
 // Nested children
 const dbLogger = requestLogger.child({ component: 'database' });
 dbLogger.info({ query: 'SELECT *' }, 'Executing query');
-```
-
+```bash
 ### Performance Tracking
 
 Built-in utilities for measuring operations:
@@ -115,8 +111,7 @@ logSuccess('api-call', {
   statusCode: response.status,
   duration: Date.now() - startTime,
 });
-```
-
+```bash
 ### Error Logging
 
 Enhanced error logging with stack traces and context:
@@ -145,8 +140,7 @@ logger.error(
   },
   'Failed to initialize database'
 );
-```
-
+```bash
 ## Advanced Features
 
 ### Custom Logger Creation
@@ -166,8 +160,7 @@ const customLogger = createLogger({
     req: (req) => ({ method: req.method, url: req.url }),
   },
 });
-```
-
+```bash
 ### Security Features
 
 The logger automatically redacts sensitive data:
@@ -190,8 +183,7 @@ logger.info({
 //   email: "u***@example.com",
 //   phone: "+1******890"
 // }
-```
-
+```bash
 **Redacted patterns include:**
 
 - `password`, `passwd`, `pwd`
@@ -213,8 +205,7 @@ logger.info(
   },
   'Processing data'
 );
-```
-
+```bash
 ### Request Context
 
 Automatic request ID tracking:
@@ -254,8 +245,7 @@ app.use((req, res, next) => {
 
 // All subsequent logs include request context
 logger.info('Processing request'); // Includes requestId automatically
-```
-
+```bash
 ### Performance Utilities
 
 ```typescript
@@ -280,8 +270,7 @@ await measureTime('full-export', async () => {
   await measureTime('transform-data', transformData);
   await measureTime('write-output', writeOutput);
 });
-```
-
+```bash
 ## Environment-Specific Behavior
 
 ### Development Mode
@@ -299,8 +288,7 @@ logger.info({ user: { id: 123 } }, 'User logged in');
 //   user: {
 //     id: 123
 //   }
-```
-
+```bash
 ### Production Mode
 
 - JSON format for parsing
@@ -313,8 +301,7 @@ logger.info({ user: { id: 123 } }, 'User logged in');
 logger.info({ user: { id: 123 } }, 'User logged in');
 // Output:
 // {"level":30,"time":1234567890,"msg":"User logged in","user":{"id":123}}
-```
-
+```bash
 ### Test Mode
 
 - Disabled by default
@@ -332,8 +319,7 @@ it('should log success', () => {
 
   expect(logs.info).toContainEqual(expect.objectContaining({ msg: 'Operation successful' }));
 });
-```
-
+```bash
 ## Best Practices
 
 ### 1. Use Structured Data
@@ -344,8 +330,7 @@ logger.info(`User ${userId} performed ${action}`);
 
 // ✅ Use structured data
 logger.info({ userId, action }, 'User performed action');
-```
-
+```bash
 ### 2. Create Contextual Loggers
 
 ```typescript
@@ -357,8 +342,7 @@ logger.info({ component: 'auth', userId }, 'Login successful');
 const authLogger = logger.child({ component: 'auth', userId });
 authLogger.info('Login attempt');
 authLogger.info('Login successful');
-```
-
+```bash
 ### 3. Use Appropriate Levels
 
 ```typescript
@@ -379,8 +363,7 @@ logger.error({ err }, 'Operation failed');
 
 // Fatal: Application crash
 logger.fatal({ err }, 'Unrecoverable error');
-```
-
+```bash
 ### 4. Include Error Context
 
 ```typescript
@@ -397,8 +380,7 @@ logger.error(
   },
   'Request failed'
 );
-```
-
+```bash
 ### 5. Measure Performance
 
 ```typescript
@@ -413,8 +395,7 @@ const data = await measureTime('fetch', fetchData);
 const processed = await measureTime('process', () => processData(data));
 await measureTime('save', () => saveData(processed));
 logSuccess('data-pipeline');
-```
-
+```bash
 ## Configuration
 
 ### Environment Variables
@@ -435,8 +416,7 @@ interface LoggerOptions {
   redact?: string[]; // Additional fields to redact
   prettyPrint?: boolean; // Force pretty printing
 }
-```
-
+```bash
 ## Integration Examples
 
 ### Express Middleware
@@ -469,8 +449,7 @@ app.use((req, res, next) => {
 
   next();
 });
-```
-
+```bash
 ### Error Handler
 
 ```typescript
@@ -489,8 +468,7 @@ app.use((err, req, res, next) => {
     requestId: getRequestId(),
   });
 });
-```
-
+```bash
 ## Testing
 
 ### Using the Mock Logger
@@ -521,8 +499,7 @@ describe('MyComponent', () => {
     expect(logs.all).toHaveLength(2);
   });
 });
-```
-
+```bash
 ## Performance Considerations
 
 1. **Lazy Evaluation**: Check log levels before expensive operations
@@ -542,8 +519,7 @@ console.error('Failed:', error);
 // After
 logger.info({ userId }, 'User logged in');
 logger.error({ err: error }, 'Failed');
-```
-
+```bash
 ### From Winston
 
 ```typescript
@@ -554,8 +530,7 @@ winston.error('Failed', error);
 // After
 logger.info({ userId }, 'User logged in');
 logger.error({ err: error }, 'Failed');
-```
-
+```bash
 ### From Debug
 
 ```typescript

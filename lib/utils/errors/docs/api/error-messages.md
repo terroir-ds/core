@@ -12,8 +12,7 @@ Get a formatted error message by key.
 
 ```typescript
 function getMessage(key: keyof typeof ERROR_MESSAGES, ...args: any[]): string;
-```
-
+```typescript
 **Parameters**:
 
 - `key`: The message key from ERROR_MESSAGES
@@ -35,8 +34,7 @@ const msg2 = getMessage('OPERATION_FAILED', 3);
 // Multiple parameters
 const msg3 = getMessage('VALIDATION_RANGE', 'age', 18, 65);
 // "age must be between 18 and 65"
-```
-
+```typescript
 ## Message Templates
 
 ### ERROR_MESSAGES Object
@@ -57,8 +55,7 @@ OPERATION_TIMEOUT: (ms: number) => string;
 
 CIRCUIT_OPEN: string;
 // "Circuit breaker is open"
-```
-
+```typescript
 #### Validation Messages
 
 ```typescript
@@ -75,8 +72,7 @@ VALIDATION_RANGE: (field: string, min?: number, max?: number) => string;
 // "{field} must be between {min} and {max}"
 // "{field} must be at least {min}"
 // "{field} must be at most {max}"
-```
-
+```typescript
 #### Configuration Messages
 
 ```typescript
@@ -91,8 +87,7 @@ CONFIG_ENV_MISSING: (env: string) => string;
 
 CONFIG_FILE_NOT_FOUND: (path: string) => string;
 // "Configuration file not found: {path}"
-```
-
+```typescript
 #### Permission Messages
 
 ```typescript
@@ -110,8 +105,7 @@ AUTH_INVALID: string;
 
 AUTH_EXPIRED: string;
 // "Authentication token has expired"
-```
-
+```typescript
 #### Resource Messages
 
 ```typescript
@@ -126,8 +120,7 @@ RESOURCE_LOCKED: (type: string, id?: string) => string;
 
 RESOURCE_UNAVAILABLE: (type: string) => string;
 // "{type} is temporarily unavailable"
-```
-
+```typescript
 #### Network/Integration Messages
 
 ```typescript
@@ -145,8 +138,7 @@ SERVICE_ERROR: (service: string, error?: string) => string;
 
 API_RATE_LIMITED: string;
 // "API rate limit exceeded"
-```
-
+```typescript
 #### Business Logic Messages
 
 ```typescript
@@ -158,8 +150,7 @@ WORKFLOW_INVALID_STATE: (current: string, attempted: string) => string;
 
 DATA_INCONSISTENT: (details?: string) => string;
 // "Data inconsistency detected: {details}" or "Data inconsistency detected"
-```
-
+```typescript
 #### File/IO Messages
 
 ```typescript
@@ -177,8 +168,7 @@ DIRECTORY_NOT_FOUND: (path: string) => string;
 
 DISK_FULL: string;
 // "Insufficient disk space"
-```
-
+```typescript
 #### HTTP Messages
 
 ```typescript
@@ -208,8 +198,7 @@ HTTP_SERVICE_UNAVAILABLE: string;
 
 HTTP_GATEWAY_TIMEOUT: string;
 // "Gateway timeout"
-```
-
+```typescript
 ## Message Categories
 
 ### ERROR_MESSAGE_CATEGORIES
@@ -234,8 +223,7 @@ const ERROR_MESSAGE_CATEGORIES = {
   ],
   // ... more categories
 };
-```
-
+```typescript
 **Usage**:
 
 ```typescript
@@ -249,8 +237,7 @@ const isValidationError = ERROR_MESSAGE_CATEGORIES.VALIDATION.includes(errorKey)
 for (const key of ERROR_MESSAGE_CATEGORIES.NETWORK) {
   console.log(`Network error: ${key}`);
 }
-```
-
+```typescript
 ## Type Definitions
 
 ### ErrorMessageKey
@@ -259,8 +246,7 @@ Type-safe message keys:
 
 ```typescript
 type ErrorMessageKey = keyof typeof ERROR_MESSAGES;
-```
-
+```typescript
 **Usage**:
 
 ```typescript
@@ -272,8 +258,7 @@ function logError(key: ErrorMessageKey, ...args: any[]) {
 // Type-safe usage
 logError('VALIDATION_REQUIRED', 'email'); // ✅
 logError('INVALID_KEY', 'email'); // ❌ Type error
-```
-
+```typescript
 ## Internationalization
 
 ### I18nErrorMessages Interface
@@ -285,16 +270,14 @@ interface I18nErrorMessages {
   locale: string;
   messages: typeof ERROR_MESSAGES;
 }
-```
-
+```typescript
 ### createLocalizedMessages()
 
 Create locale-specific message sets:
 
 ```typescript
 function createLocalizedMessages(locale: string = 'en'): I18nErrorMessages;
-```
-
+```typescript
 **Parameters**:
 
 - `locale`: Language/locale code (default: 'en')
@@ -310,8 +293,7 @@ const enMessages = createLocalizedMessages('en');
 // Future implementation could load locale-specific files
 const esMessages = createLocalizedMessages('es');
 // Would load from './locales/es/errors.json'
-```
-
+```typescript
 ### Future i18n Implementation
 
 ```typescript
@@ -330,8 +312,7 @@ function getLocalizedMessage(key: ErrorMessageKey, locale: string, ...args: any[
   const messages = i18n.getMessages(locale);
   return messages[key](...args);
 }
-```
-
+```typescript
 ## Validation
 
 ### validateMessages()
@@ -340,8 +321,7 @@ Test that all message templates are valid:
 
 ```typescript
 function validateMessages(): boolean;
-```
-
+```typescript
 **Returns**: true if all messages are valid, false otherwise
 
 **Example**:
@@ -353,8 +333,7 @@ describe('Error Messages', () => {
     expect(validateMessages()).toBe(true);
   });
 });
-```
-
+```typescript
 ## Usage Patterns
 
 ### With Error Classes
@@ -375,8 +354,7 @@ if (age < 18 || age > 65) {
     context: { field: 'age', value: age },
   });
 }
-```
-
+```typescript
 ### Dynamic Message Building
 
 ```typescript
@@ -400,8 +378,7 @@ function validateConfig(config: Config) {
     throw new ConfigurationError(errors.join('; '));
   }
 }
-```
-
+```typescript
 ### HTTP Error Responses
 
 ```typescript
@@ -430,8 +407,7 @@ function getHttpErrorMessage(status: number, method?: string): string {
       return `HTTP Error ${status}`;
   }
 }
-```
-
+```typescript
 ### Contextual Messages
 
 ```typescript
@@ -454,8 +430,7 @@ class UserService {
     return user;
   }
 }
-```
-
+```typescript
 ### Message Composition
 
 ```typescript
@@ -491,8 +466,7 @@ function validateUserInput(input: UserInput) {
     });
   }
 }
-```
-
+```typescript
 ## Testing
 
 ### Testing with Messages
@@ -517,8 +491,7 @@ describe('User Validation', () => {
     expect(() => validateUser({ age: 150 })).toThrow(getMessage('VALIDATION_RANGE', 'age', 0, 120));
   });
 });
-```
-
+```typescript
 ### Mocking Messages
 
 ```typescript
@@ -532,8 +505,7 @@ jest.mock('@terroir/core/lib/utils/errors/messages', () => ({
     VALIDATION_REQUIRED: () => 'TEST_MESSAGE',
   },
 }));
-```
-
+```typescript
 ## Best Practices
 
 ### 1. Use Centralized Messages
@@ -544,8 +516,7 @@ throw new Error('Email is required');
 
 // ✅ Good - centralized messages
 throw new ValidationError(getMessage('VALIDATION_REQUIRED', 'email'));
-```
-
+```typescript
 ### 2. Include Context
 
 ```typescript
@@ -556,8 +527,7 @@ throw new Error(getMessage('RESOURCE_NOT_FOUND', 'Resource'));
 throw new ResourceError(getMessage('RESOURCE_NOT_FOUND', 'User', userId), {
   context: { userId, searchCriteria },
 });
-```
-
+```typescript
 ### 3. Consistent Formatting
 
 ```typescript
@@ -566,8 +536,7 @@ getMessage('VALIDATION_TYPE', fieldName, expectedType, actualType);
 getMessage('VALIDATION_RANGE', fieldName, minValue, maxValue);
 
 // Field name always first, then constraints
-```
-
+```typescript
 ### 4. Future-Proof for i18n
 
 ```typescript

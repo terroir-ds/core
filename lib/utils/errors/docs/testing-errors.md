@@ -71,8 +71,7 @@ describe('ValidationError', () => {
     expect(error.context.value).toBe('invalid');
   });
 });
-```
-
+```text
 ### Error Chaining
 
 ```typescript
@@ -88,8 +87,7 @@ describe('Error Chaining', () => {
     expect(topError.hasErrorType(ValidationError)).toBe(false);
   });
 });
-```
-
+```text
 ### Error Serialization
 
 ```typescript
@@ -125,8 +123,7 @@ describe('Error Serialization', () => {
     expect(publicJson).toHaveProperty('message');
   });
 });
-```
-
+```text
 ## Testing Error Handlers
 
 ### Handler Registration
@@ -177,8 +174,7 @@ describe('Error Handlers', () => {
     unregisterErrorHandler('handler2');
   });
 });
-```
-
+```text
 ### Recovery Strategies
 
 ```typescript
@@ -206,8 +202,7 @@ describe('Recovery Strategies', () => {
     expect(result).toBe('default');
   });
 });
-```
-
+```text
 ### Error Boundaries
 
 ```typescript
@@ -247,8 +242,7 @@ describe('Error Boundary', () => {
     expect(result).toEqual({ computed: true });
   });
 });
-```
-
+```text
 ## Testing Retry Logic
 
 ### Basic Retry
@@ -283,8 +277,7 @@ describe('Retry Logic', () => {
     expect(fn).toHaveBeenCalledTimes(2);
   });
 });
-```
-
+```text
 ### Conditional Retry
 
 ```typescript
@@ -307,8 +300,7 @@ describe('Conditional Retry', () => {
     expect(fn).toHaveBeenCalledTimes(1);
   });
 });
-```
-
+```text
 ### Cancellation
 
 ```typescript
@@ -332,8 +324,7 @@ describe('Retry Cancellation', () => {
     expect(fn).toHaveBeenCalledTimes(1);
   });
 });
-```
-
+```text
 ### Timing and Delays
 
 ```typescript
@@ -377,8 +368,7 @@ describe('Retry Timing', () => {
     expect(result).toBe('Success');
   });
 });
-```
-
+```text
 ## Testing Circuit Breakers
 
 ### State Transitions
@@ -435,8 +425,7 @@ describe('Circuit Breaker', () => {
     expect(breaker.getState()).toBe('half-open');
   });
 });
-```
-
+```text
 ### Time Window Testing
 
 ```typescript
@@ -461,8 +450,7 @@ describe('Circuit Breaker Time Window', () => {
     expect(breaker.getState()).toBe('closed'); // Still closed
   });
 });
-```
-
+```text
 ## Integration Testing
 
 ### Full Error Flow
@@ -512,8 +500,7 @@ describe('Error Flow Integration', () => {
     unregisterErrorHandler('metrics');
   });
 });
-```
-
+```text
 ## Test Utilities
 
 ### Error Test Helpers
@@ -601,8 +588,7 @@ export const mockTimers = {
     await Promise.resolve();
   },
 };
-```
-
+```text
 ### Using Test Utilities
 
 ```typescript
@@ -633,8 +619,7 @@ describe('Using Test Utilities', () => {
     expect(fn).toHaveBeenCalledTimes(3);
   });
 });
-```
-
+```text
 ## Common Patterns
 
 ### Testing Error Context
@@ -660,8 +645,7 @@ it('should preserve context through error chain', () => {
     service: 'OrderService',
   });
 });
-```
-
+```text
 ### Testing Async Error Flows
 
 ```typescript
@@ -687,8 +671,7 @@ it('should handle async error propagation', async () => {
   const result = await outerOperation();
   expect(result).toEqual({ default: true });
 });
-```
-
+```text
 ### Testing Cleanup on Error
 
 ```typescript
@@ -717,8 +700,7 @@ it('should cleanup resources on error', async () => {
 
   expect(cleanup).toHaveBeenCalled();
 });
-```
-
+```text
 ### Testing Error Metrics
 
 ```typescript

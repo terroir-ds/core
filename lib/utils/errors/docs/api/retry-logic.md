@@ -8,8 +8,7 @@ Execute a function with retry logic and exponential backoff.
 
 ```typescript
 async function retry<T>(fn: () => Promise<T>, options?: RetryOptions): Promise<T>;
-```
-
+```typescript
 **Parameters**:
 
 - `fn`: The async function to retry
@@ -30,8 +29,7 @@ interface RetryOptions {
   onRetry?: (error: unknown, attempt: number, delay: number) => void;
   context?: LogContext;
 }
-```
-
+```typescript
 **Example**:
 
 ```typescript
@@ -55,8 +53,7 @@ const result = await retry(
     },
   }
 );
-```
-
+```typescript
 ### Delay Calculation
 
 The delay between retries is calculated using exponential backoff:
@@ -70,8 +67,7 @@ if (jitter) {
   const jitterAmount = delay * 0.25;
   delay += (Math.random() * 2 - 1) * jitterAmount;
 }
-```
-
+```typescript
 **Example delays** (initialDelay=100, backoffFactor=2):
 
 - Attempt 1: 100ms (±25ms with jitter)
@@ -111,8 +107,7 @@ const result = await retry(() => apiCall(), {
     return error.statusCode >= 500;
   },
 });
-```
-
+```typescript
 ## Timeout Handling
 
 ### withTimeout()
@@ -125,8 +120,7 @@ async function withTimeout<T>(
   timeoutMs: number,
   signal?: AbortSignal
 ): Promise<T>;
-```
-
+```typescript
 **Parameters**:
 
 - `promise`: The promise to execute
@@ -148,8 +142,7 @@ const result = await withTimeout(fetchData(), 5000, controller.signal);
 
 // Cancel if needed
 controller.abort();
-```
-
+```typescript
 ## Signal Handling
 
 ### combineSignals()
@@ -158,8 +151,7 @@ Combine multiple abort signals into one.
 
 ```typescript
 function combineSignals(signals: (AbortSignal | undefined)[]): AbortSignal;
-```
-
+```typescript
 **Parameters**:
 
 - `signals`: Array of signals to combine (undefined values are filtered)
@@ -184,8 +176,7 @@ try {
     console.log('Operation was cancelled or timed out');
   }
 }
-```
-
+```typescript
 ### Cancellation Support
 
 Use AbortSignal for cancellable retries:
@@ -209,8 +200,7 @@ try {
 } catch (error) {
   console.log('Cancelled:', error.message);
 }
-```
-
+```typescript
 ## Batch Operations
 
 ### batchRetry()
@@ -223,8 +213,7 @@ async function batchRetry<T, R>(
   fn: (item: T) => Promise<R>,
   options?: RetryOptions & { concurrency?: number }
 ): Promise<Array<{ item: T; result?: R; error?: Error }>>;
-```
-
+```typescript
 **Parameters**:
 
 - `items`: Array of items to process
@@ -258,8 +247,7 @@ for (const { item, result, error } of results) {
     console.log(`Updated user ${item.id}`);
   }
 }
-```
-
+```typescript
 ## Function Wrapping
 
 ### makeRetryable()
@@ -271,8 +259,7 @@ function makeRetryable<T extends (...args: unknown[]) => Promise<unknown>>(
   fn: T,
   defaultOptions?: RetryOptions
 ): T;
-```
-
+```typescript
 **Parameters**:
 
 - `fn`: The async function to wrap
@@ -301,8 +288,7 @@ const user = await retryableFetchUser('123');
 
 // Can override options per call
 const user2 = await retry(() => retryableFetchUser('456'), { maxAttempts: 5 });
-```
-
+```typescript
 ## Advanced Patterns
 
 ### Retry with Backpressure
@@ -324,8 +310,7 @@ const result = await retry(() => apiCall(), {
     }
   },
 });
-```
-
+```typescript
 ### Retry with Different Strategies
 
 Try different approaches on retry:
@@ -349,8 +334,7 @@ const result = await retry(
     },
   }
 );
-```
-
+```typescript
 ### Retry with Exponential Backoff and Jitter
 
 Prevent thundering herd with jitter:
@@ -367,8 +351,7 @@ const results = await Promise.all(
     })
   )
 );
-```
-
+```typescript
 ## Error Handling in Retry
 
 ### Error Wrapping
@@ -384,8 +367,7 @@ try {
   console.log(error.cause); // Original error
   console.log(error.context); // { attempts: 3, duration: 1234 }
 }
-```
-
+```typescript
 ### Logging
 
 Retry operations are automatically logged:
@@ -419,8 +401,7 @@ logger.error(
   },
   'Retry failed'
 );
-```
-
+```typescript
 ## Performance Considerations
 
 ### Memory Usage
@@ -434,8 +415,7 @@ const bigData = await retry(() => fetchLargeDataset());
 // ✅ Good - stream data
 const stream = await retry(() => fetchDataStream());
 await processStream(stream);
-```
-
+```typescript
 ### Connection Pooling
 
 Reuse connections across retries:
@@ -459,8 +439,7 @@ const result = await retry(
     },
   }
 );
-```
-
+```typescript
 ### Resource Cleanup
 
 Ensure cleanup happens even with retries:
@@ -478,8 +457,7 @@ async function withCleanup() {
     }
   }
 }
-```
-
+```typescript
 ## Testing Retry Logic
 
 Example test scenarios:

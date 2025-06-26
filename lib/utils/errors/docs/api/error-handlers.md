@@ -8,8 +8,7 @@ Install global error handlers for Node.js process events.
 
 ```typescript
 function setupGlobalErrorHandlers(): void;
-```
-
+```typescript
 **Handles**:
 
 - `uncaughtException`: Logs fatal error and exits after 1 second
@@ -24,8 +23,7 @@ function setupGlobalErrorHandlers(): void;
 import { setupGlobalErrorHandlers } from '@terroir/core/lib/utils/errors';
 
 setupGlobalErrorHandlers();
-```
-
+```typescript
 ## Error Handler Registration
 
 ### registerErrorHandler()
@@ -34,8 +32,7 @@ Register a custom error handler.
 
 ```typescript
 function registerErrorHandler(name: string, handler: ErrorHandler): void;
-```
-
+```typescript
 **Parameters**:
 
 - `name`: Unique identifier for the handler
@@ -45,8 +42,7 @@ function registerErrorHandler(name: string, handler: ErrorHandler): void;
 
 ```typescript
 type ErrorHandler = (error: Error, context?: LogContext) => void | Promise<void>;
-```
-
+```typescript
 **Example**:
 
 ```typescript
@@ -69,16 +65,14 @@ registerErrorHandler('alerts', async (error, context) => {
     });
   }
 });
-```
-
+```typescript
 ### unregisterErrorHandler()
 
 Remove a registered error handler.
 
 ```typescript
 function unregisterErrorHandler(name: string): void;
-```
-
+```typescript
 **Parameters**:
 
 - `name`: The handler name to remove
@@ -88,16 +82,14 @@ function unregisterErrorHandler(name: string): void;
 ```typescript
 // Remove handler
 unregisterErrorHandler('metrics');
-```
-
+```typescript
 ### handleError()
 
 Process error with all registered handlers.
 
 ```typescript
 async function handleError(error: unknown, context?: LogContext): Promise<void>;
-```
-
+```typescript
 **Parameters**:
 
 - `error`: The error to handle
@@ -122,8 +114,7 @@ try {
     batchId: batch.id,
   });
 }
-```
-
+```typescript
 ## Recovery Strategies
 
 ### registerRecoveryStrategy()
@@ -132,8 +123,7 @@ Register an error recovery strategy.
 
 ```typescript
 function registerRecoveryStrategy(errorCode: string, strategy: RecoveryStrategy): void;
-```
-
+```typescript
 **Parameters**:
 
 - `errorCode`: The error code to handle
@@ -143,8 +133,7 @@ function registerRecoveryStrategy(errorCode: string, strategy: RecoveryStrategy)
 
 ```typescript
 type RecoveryStrategy<T = void> = (error: Error) => T | Promise<T>;
-```
-
+```typescript
 **Example**:
 
 ```typescript
@@ -160,16 +149,14 @@ registerRecoveryStrategy('RATE_LIMITED', async (error) => {
   await sleep(retryAfter * 1000);
   return retry(() => originalOperation());
 });
-```
-
+```typescript
 ### tryRecover()
 
 Attempt to recover from an error using registered strategies.
 
 ```typescript
 async function tryRecover<T>(error: unknown, defaultValue?: T): Promise<T | undefined>;
-```
-
+```typescript
 **Parameters**:
 
 - `error`: The error to recover from
@@ -190,8 +177,7 @@ try {
   });
   return recovered;
 }
-```
-
+```typescript
 ## Error Boundaries
 
 ### errorBoundary()
@@ -208,8 +194,7 @@ async function errorBoundary<T>(
     retry?: boolean;
   }
 ): Promise<T>;
-```
-
+```typescript
 **Parameters**:
 
 - `operation`: The async function to execute
@@ -238,8 +223,7 @@ const user = await errorBoundary(() => fetchUser(id), {
     await notifyAdmins('User fetch failed', error);
   },
 });
-```
-
+```typescript
 ### withErrorHandling()
 
 Create a function that handles its own errors.
@@ -253,8 +237,7 @@ function withErrorHandling<T extends (...args: unknown[]) => unknown>(
     rethrow?: boolean;
   }
 ): T;
-```
-
+```typescript
 **Parameters**:
 
 - `fn`: Function to wrap
@@ -288,8 +271,7 @@ const processUser = withErrorHandling(
     context: { component: 'UserProcessor' },
   }
 );
-```
-
+```typescript
 ## Error Formatting
 
 ### formatError()
@@ -305,8 +287,7 @@ function formatError(
     context?: boolean;
   }
 ): string;
-```
-
+```typescript
 **Parameters**:
 
 - `error`: The error to format
@@ -346,16 +327,14 @@ console.log(
 //   Stack:
 //     at Socket._onTimeout (net.js:123:45)
 //     ...
-```
-
+```typescript
 ### extractErrorDetails()
 
 Extract error details as structured data.
 
 ```typescript
 function extractErrorDetails(error: unknown): Record<string, unknown>;
-```
-
+```typescript
 **Parameters**:
 
 - `error`: The error to extract details from
@@ -377,8 +356,7 @@ const details = extractErrorDetails(error);
 // Safe for non-errors too
 const details2 = extractErrorDetails('string error');
 // { error: 'string error' }
-```
-
+```typescript
 ## Assertions
 
 ### assert()
@@ -387,8 +365,7 @@ Assert a condition and throw if false.
 
 ```typescript
 function assert(condition: unknown, message: string, code?: string): asserts condition;
-```
-
+```typescript
 **Parameters**:
 
 - `condition`: Value to test for truthiness
@@ -405,16 +382,14 @@ function processOrder(order: Order) {
   // TypeScript knows order.items.length > 0 here
   const firstItem = order.items[0];
 }
-```
-
+```typescript
 ### assertDefined()
 
 Assert value is not null or undefined.
 
 ```typescript
 function assertDefined<T>(value: T | null | undefined, message: string): asserts value is T;
-```
-
+```typescript
 **Parameters**:
 
 - `value`: Value to check
@@ -430,8 +405,7 @@ function getUser(id: string): User {
   // TypeScript knows user is defined here
   return user;
 }
-```
-
+```typescript
 ## Process Event Handlers
 
 ### Graceful Shutdown
@@ -452,8 +426,7 @@ process.on('SIGTERM', async () => {
     process.exit(1);
   }
 });
-```
-
+```typescript
 **Graceful Shutdown Process**:
 
 1. Receives SIGTERM or SIGINT
@@ -482,8 +455,7 @@ async function gracefulShutdown(): Promise<void> {
     }),
   ]);
 }
-```
-
+```typescript
 ## Examples
 
 ### Complete Error Handling Setup
@@ -526,8 +498,7 @@ async function application() {
     process.exit(1);
   }
 }
-```
-
+```typescript
 ### Error Middleware for Express
 
 ```typescript

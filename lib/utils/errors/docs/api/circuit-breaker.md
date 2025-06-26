@@ -8,8 +8,7 @@ The `CircuitBreaker` class implements the circuit breaker pattern to prevent cas
 
 ```typescript
 constructor(options?: CircuitBreakerOptions)
-```
-
+```typescript
 **CircuitBreakerOptions Interface**:
 
 ```typescript
@@ -20,8 +19,7 @@ interface CircuitBreakerOptions {
   cooldownPeriod?: number; // Default: 30000ms (30 seconds)
   name?: string; // Default: 'CircuitBreaker'
 }
-```
-
+```typescript
 **Parameters**:
 
 - `failureThreshold`: Number of failures before opening circuit
@@ -40,8 +38,7 @@ const apiBreaker = new CircuitBreaker({
   cooldownPeriod: 30000, // 30 seconds
   name: 'ExternalAPI',
 });
-```
-
+```typescript
 ## Circuit States
 
 ### States Enum
@@ -52,17 +49,15 @@ enum CircuitState {
   OPEN = 'open', // Rejecting requests
   HALF_OPEN = 'half-open', // Testing recovery
 }
-```
-
+```typescript
 ### State Transitions
 
-```
+```typescript
 CLOSED → OPEN: After failureThreshold failures within timeWindow
 OPEN → HALF_OPEN: After cooldownPeriod expires
 HALF_OPEN → CLOSED: After successThreshold consecutive successes
 HALF_OPEN → OPEN: After any failure
-```
-
+```typescript
 ## Methods
 
 ### execute()
@@ -71,8 +66,7 @@ Execute a function with circuit breaker protection.
 
 ```typescript
 async execute<T>(fn: () => Promise<T>): Promise<T>
-```
-
+```typescript
 **Parameters**:
 
 - `fn`: The async function to execute
@@ -100,16 +94,14 @@ try {
   }
   throw error;
 }
-```
-
+```typescript
 ### getState()
 
 Get the current circuit state.
 
 ```typescript
 getState(): CircuitState
-```
-
+```typescript
 **Returns**: Current state (CLOSED, OPEN, or HALF_OPEN)
 
 **Example**:
@@ -121,16 +113,14 @@ console.log(`Circuit is ${state}`);
 if (state === CircuitState.OPEN) {
   console.log('Service is currently unavailable');
 }
-```
-
+```typescript
 ### getStats()
 
 Get circuit breaker statistics.
 
 ```typescript
 getStats(): Record<string, unknown>
-```
-
+```typescript
 **Returns**: Object containing:
 
 - `name`: Circuit breaker name
@@ -153,16 +143,14 @@ console.log(JSON.stringify(stats, null, 2));
 //   "timeWindow": 60000,
 //   "failureThreshold": 5
 // }
-```
-
+```typescript
 ### reset()
 
 Manually reset the circuit to closed state.
 
 ```typescript
 reset(): void
-```
-
+```typescript
 **Effects**:
 
 - Sets state to CLOSED
@@ -176,8 +164,7 @@ reset(): void
 // Manual reset after fixing issue
 breaker.reset();
 console.log('Circuit manually reset');
-```
-
+```typescript
 ## Helper Functions
 
 ### retryWithCircuitBreaker()
@@ -190,8 +177,7 @@ async function retryWithCircuitBreaker<T>(
   circuitBreaker: CircuitBreaker<T>,
   retryOptions?: RetryOptions
 ): Promise<T>;
-```
-
+```typescript
 **Parameters**:
 
 - `fn`: Function to execute
@@ -211,8 +197,7 @@ const result = await retryWithCircuitBreaker(
     initialDelay: 100,
   }
 );
-```
-
+```typescript
 ## Usage Patterns
 
 ### Basic Protection
@@ -234,8 +219,7 @@ async function queryDatabase(sql: string) {
     }
   });
 }
-```
-
+```typescript
 ### Multiple Services
 
 ```typescript
@@ -261,8 +245,7 @@ async function callService(service: string, request: Request) {
   const breaker = getBreaker(service);
   return await breaker.execute(() => serviceClient.call(service, request));
 }
-```
-
+```typescript
 ### Fallback Strategies
 
 ```typescript
@@ -290,8 +273,7 @@ async function fetchDataWithFallback(): Promise<Data> {
     }
   }
 }
-```
-
+```typescript
 ### Health Monitoring
 
 ```typescript
@@ -314,8 +296,7 @@ function getSystemHealth(): HealthStatus {
     return { status: 'unhealthy', circuits: stats };
   }
 }
-```
-
+```typescript
 ### Gradual Recovery
 
 ```typescript
@@ -346,8 +327,7 @@ class GradualRecoveryBreaker extends CircuitBreaker {
     }
   }
 }
-```
-
+```typescript
 ## Configuration Examples
 
 ### Aggressive Protection
@@ -362,8 +342,7 @@ const criticalBreaker = new CircuitBreaker({
   cooldownPeriod: 60000, // 1 minute cooldown
   name: 'CriticalService',
 });
-```
-
+```typescript
 ### Tolerant Configuration
 
 For services with occasional hiccups:
@@ -376,8 +355,7 @@ const tolerantBreaker = new CircuitBreaker({
   cooldownPeriod: 15000, // 15 second cooldown
   name: 'TolerantService',
 });
-```
-
+```typescript
 ### Rate Limiting Aware
 
 Handle rate-limited APIs:
@@ -405,8 +383,7 @@ async function callRateLimitedAPI() {
     }
   });
 }
-```
-
+```typescript
 ## Testing Circuit Breakers
 
 Example test scenarios:
@@ -464,8 +441,7 @@ describe('CircuitBreaker', () => {
     expect(breaker.getState()).toBe('closed');
   });
 });
-```
-
+```typescript
 ## Monitoring and Metrics
 
 ### Prometheus Metrics
@@ -504,8 +480,7 @@ class MonitoredCircuitBreaker extends CircuitBreaker {
     circuitStateGauge.labels(this.options.name).set(value);
   }
 }
-```
-
+```typescript
 ### Logging
 
 Circuit breaker state changes are automatically logged:

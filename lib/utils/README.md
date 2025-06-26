@@ -10,8 +10,7 @@ High-performance structured logging with Pino.
 
 ```typescript
 import { logger, logStart, logSuccess, measureTime } from '@terroir/core/lib/utils/logger';
-```
-
+```bash
 **Features:**
 
 - Environment-aware configuration
@@ -49,8 +48,7 @@ Run tests for all utilities:
 
 ```bash
 pnpm test lib/utils/**/*.test.ts
-```
-
+```bash
 Run tests with coverage:
 
 ```bash
