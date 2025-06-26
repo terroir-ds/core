@@ -1,5 +1,10 @@
-# Run lint-staged but don't block commits
+# Run lint-staged from the git root directory
 echo "🔍 Running quick fixes on staged files..."
+
+# Change to git root directory to find lint-staged config
+GIT_ROOT=$(git rev-parse --show-toplevel)
+cd "$GIT_ROOT"
+
 pnpm exec lint-staged --quiet --concurrent false || {
   echo ""
   echo "⚠️  Some linting issues couldn't be auto-fixed."
