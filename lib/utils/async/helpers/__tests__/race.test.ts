@@ -26,17 +26,18 @@ describe('race helpers', () => {
     it('should reject after timeout', async () => {
       const promise = createTimeoutPromise(1000);
       
-      vi.advanceTimersByTime(999);
-      await vi.runAllTimersAsync();
-      
-      // Should not reject yet
+      // Add a catch handler to prevent unhandled rejection
       let rejected = false;
       promise.catch(() => { rejected = true; });
+      
+      vi.advanceTimersByTime(999);
+      // Don't use runAllTimersAsync here, just check the state
       expect(rejected).toBe(false);
       
       vi.advanceTimersByTime(1);
       await vi.runAllTimersAsync();
       
+      // Now it should have rejected
       await expect(promise).rejects.toThrow('Operation timed out after 1000ms');
     });
 
@@ -205,7 +206,7 @@ describe('race helpers', () => {
       
       const resultPromise = raceUntil(
         promises,
-        value => value > 20,
+        (value: unknown) => typeof value === 'number' && value > 20,
         { timeout: 100 }
       );
       
@@ -223,7 +224,7 @@ describe('race helpers', () => {
       ];
       
       await expect(
-        raceUntil(promises, value => value > 10)
+        raceUntil(promises, (value: unknown) => typeof value === 'number' && value > 10)
       ).rejects.toThrow('No results matched the condition. Received 3 results.');
     });
 
@@ -236,7 +237,7 @@ describe('race helpers', () => {
       await expect(
         raceUntil(
           promises,
-          value => value > 10,
+          (value: unknown) => typeof value === 'number' && value > 10,
           { rejectNonMatching: true }
         )
       ).rejects.toThrow('Promise at index 0 did not match condition');

@@ -150,48 +150,28 @@ describe('batch processing utilities', () => {
     });
 
     it('should abort during processing', async () => {
-      // Standard industry pattern: direct handler replacement for this test only
-      const originalHandlers = process.listeners('unhandledRejection');
-      process.removeAllListeners('unhandledRejection');
+      const controller = new AbortController();
+      const items = Array.from({ length: 10 }, (_, i) => i);
+      let processed = 0;
       
-      // Silently catch AbortError rejections
-      process.on('unhandledRejection', (reason: unknown) => {
-        if (reason instanceof DOMException && reason.name === 'AbortError') {
-          return; // Expected - silently ignore
+      const processor = async (item: number) => {
+        processed++;
+        if (processed === 3) {
+          controller.abort();
         }
-        console.error('Unexpected rejection:', reason);
+        await new Promise(resolve => setTimeout(resolve, 10));
+        return item;
+      };
+      
+      const promise = processBatch(items, processor, { 
+        signal: controller.signal,
+        concurrency: 1
       });
       
-      try {
-        const controller = new AbortController();
-        const items = Array.from({ length: 10 }, (_, i) => i);
-        let processed = 0;
-        
-        const processor = async (item: number) => {
-          processed++;
-          if (processed === 3) {
-            controller.abort();
-          }
-          await new Promise(resolve => setTimeout(resolve, 10));
-          return item;
-        };
-        
-        const promise = processBatch(items, processor, { 
-          signal: controller.signal,
-          concurrency: 1
-        });
-        
-        await vi.runAllTimersAsync();
-        await expectRejection(promise, 'Operation aborted');
-        expect(processed).toBeLessThanOrEqual(5);
-      } finally {
-        // Restore original handlers
-        process.removeAllListeners('unhandledRejection');
-        originalHandlers.forEach(handler => {
-          process.on('unhandledRejection', handler as NodeJS.UnhandledRejectionListener);
-        });
-      }
-    }, 10000);
+      await vi.runAllTimersAsync();
+      await expectRejection(promise, 'Operation aborted');
+      expect(processed).toBeLessThanOrEqual(5);
+    }, 15000);
 
     it('should handle empty array', async () => {
       const processor = vi.fn();

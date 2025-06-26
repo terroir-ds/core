@@ -125,7 +125,8 @@ export function createManagedInterval(
     } catch (error) {
       // Stop interval on error
       stop();
-      throw error;
+      // Log error but don't throw - we're in an async context with no handler
+      console.error('Interval callback error:', error);
     }
   };
   

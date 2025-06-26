@@ -185,10 +185,10 @@ describe('queue helpers', () => {
       const entries = Array.from(results.entries());
       
       // Check order is preserved
-      expect(entries[0][0]).toBe(1);
-      expect(entries[1][0]).toBe(2);
-      expect(entries[2][0]).toBe(3);
-      expect(entries[3][0]).toBe(4);
+      expect(entries[0]?.[0]).toBe(1);
+      expect(entries[1]?.[0]).toBe(2);
+      expect(entries[2]?.[0]).toBe(3);
+      expect(entries[3]?.[0]).toBe(4);
     });
 
     it('should validate concurrency', () => {
@@ -254,9 +254,9 @@ describe('queue helpers', () => {
       });
       
       expect(results).toHaveLength(3);
-      expect(results[0].result).toBe(3);
-      expect(results[1].result).toBe(6);
-      expect(results[2].result).toBe(9);
+      expect(results[0]?.result).toBe(3);
+      expect(results[1]?.result).toBe(6);
+      expect(results[2]?.result).toBe(9);
       
       results.forEach(r => {
         expect(r.success).toBe(true);
@@ -444,6 +444,10 @@ describe('queue helpers', () => {
       const promise1 = queue.add(1);
       const promise2 = queue.add(2);
       const promise3 = queue.add(3);
+      
+      // Add catch handlers to prevent unhandled rejections
+      promise2.catch(() => {});
+      promise3.catch(() => {});
       
       // Let first item start processing
       await vi.advanceTimersByTimeAsync(10);

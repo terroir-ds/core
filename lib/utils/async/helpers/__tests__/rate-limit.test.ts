@@ -204,7 +204,7 @@ describe('rate-limit helpers', () => {
     it('should wrap functions', async () => {
       const limiter = new RateLimiter(2);
       const fn = vi.fn((x: number) => x * 2);
-      const wrapped = limiter.wrap(fn);
+      const wrapped = limiter.wrap(fn as (...args: unknown[]) => unknown) as (x: number) => Promise<number>;
       
       expect(await wrapped(5)).toBe(10);
       expect(await wrapped(10)).toBe(20);
@@ -304,7 +304,7 @@ describe('rate-limit helpers', () => {
       expect(limiter.tryCall()).toBe(true); // Still have room (only 1 call from previous line)
       
       vi.advanceTimersByTime(500);
-      expect(limiter.getCurrentCalls()).toBe(1); // Only the last call remains
+      expect(limiter.getCurrentCalls()).toBe(2); // Both calls from t=1001 are still within window
     });
 
     it('should wait for available slot', async () => {

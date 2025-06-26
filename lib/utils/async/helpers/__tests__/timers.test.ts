@@ -122,12 +122,16 @@ describe('timer helpers', () => {
       
       createManagedInterval(callback, 100);
       
+      // Wait a bit for any immediate execution
+      await Promise.resolve();
+      expect(callCount).toBe(0);
+      
       vi.advanceTimersByTime(100);
-      await vi.runAllTimersAsync();
+      await Promise.resolve();
       expect(callCount).toBe(1);
       
       vi.advanceTimersByTime(100);
-      await vi.runAllTimersAsync();
+      await Promise.resolve();
       expect(callCount).toBe(2);
     });
 
@@ -137,20 +141,32 @@ describe('timer helpers', () => {
         .mockResolvedValueOnce(undefined)
         .mockRejectedValueOnce(error);
       
+      // Mock console.error to prevent error logging
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      
       createManagedInterval(callback, 100);
       
+      // First call succeeds
       vi.advanceTimersByTime(100);
-      await vi.runAllTimersAsync();
+      await Promise.resolve();
       expect(callback).toHaveBeenCalledTimes(1);
       
+      // Second call fails
       vi.advanceTimersByTime(100);
-      await vi.runAllTimersAsync();
+      await Promise.resolve();
       expect(callback).toHaveBeenCalledTimes(2);
+      
+      // Give time for error handling
+      await Promise.resolve();
       
       // Should not be called again
       vi.advanceTimersByTime(200);
-      await vi.runAllTimersAsync();
+      await Promise.resolve();
       expect(callback).toHaveBeenCalledTimes(2);
+      
+      // Verify error was logged
+      expect(consoleErrorSpy).toHaveBeenCalled();
+      consoleErrorSpy.mockRestore();
     });
 
     it('should handle abort signal', () => {
@@ -335,15 +351,16 @@ describe('timer helpers', () => {
       
       const promise = poll(condition, 100);
       
-      expect(condition).toHaveBeenCalledOnce();
+      // First check happens immediately
+      await vi.waitFor(() => expect(condition).toHaveBeenCalledOnce());
       
+      // Advance timer and wait for next poll
       vi.advanceTimersByTime(100);
-      await vi.runAllTimersAsync();
-      expect(condition).toHaveBeenCalledTimes(2);
+      await vi.waitFor(() => expect(condition).toHaveBeenCalledTimes(2));
       
+      // Advance timer again for final poll
       vi.advanceTimersByTime(100);
-      await vi.runAllTimersAsync();
-      expect(condition).toHaveBeenCalledTimes(3);
+      await vi.waitFor(() => expect(condition).toHaveBeenCalledTimes(3));
       
       await expect(promise).resolves.toBeUndefined();
     });
@@ -358,12 +375,12 @@ describe('timer helpers', () => {
       
       const promise = poll(condition, 100);
       
-      await vi.runAllTimersAsync();
-      expect(condition).toHaveBeenCalledOnce();
+      // First check happens immediately
+      await vi.waitFor(() => expect(condition).toHaveBeenCalledOnce());
       
+      // Advance timer and wait for next poll
       vi.advanceTimersByTime(100);
-      await vi.runAllTimersAsync();
-      expect(condition).toHaveBeenCalledTimes(2);
+      await vi.waitFor(() => expect(condition).toHaveBeenCalledTimes(2));
       
       await expect(promise).resolves.toBeUndefined();
     });
@@ -384,7 +401,6 @@ describe('timer helpers', () => {
       const promise = poll(condition, 100, { signal: controller.signal });
       
       vi.advanceTimersByTime(150);
-      await vi.runAllTimersAsync();
       
       controller.abort();
       
