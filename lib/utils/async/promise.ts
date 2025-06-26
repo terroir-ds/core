@@ -10,7 +10,7 @@ import type {
   RetryPredicate,
   AsyncFactory
 } from '@utils/types/async.types.js';
-import pRetry, { AbortError } from 'p-retry';
+import pRetry from 'p-retry';
 import { getMessage } from '@utils/errors/messages.js';
 import { checkAborted } from './helpers/abort.js';
 
