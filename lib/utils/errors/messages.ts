@@ -1,0 +1,260 @@
+/**
+ * Centralized error messages for Terroir Core Design System
+ * 
+ * Benefits:
+ * - Consistent messaging across the system
+ * - Test stability (copy changes don't break tests)
+ * - Future i18n support ready
+ * - Easy maintenance and updates
+ */
+
+/**
+ * Core error message templates
+ */
+export const ERROR_MESSAGES = {
+  // Retry/Network errors
+  OPERATION_FAILED: (attempts: number) => `Operation failed after ${attempts} attempt(s)`,
+  OPERATION_CANCELLED: 'Operation cancelled',
+  OPERATION_TIMEOUT: (ms: number) => `Operation timed out after ${ms}ms`,
+  
+  // Circuit breaker errors  
+  CIRCUIT_OPEN: 'Circuit breaker is open',
+  CIRCUIT_HALF_OPEN: 'Circuit breaker half-open',
+  CIRCUIT_CLOSED: 'Circuit breaker closed',
+  
+  // Validation errors
+  VALIDATION_REQUIRED: (field: string) => `${field} is required`,
+  VALIDATION_INVALID: (field: string, value?: unknown) => 
+    value !== undefined ? `${field} has invalid value: ${String(value)}` : `${field} is invalid`,
+  VALIDATION_TYPE: (field: string, expected: string, actual: string) => 
+    `${field} must be ${expected}, got ${actual}`,
+  VALIDATION_RANGE: (field: string, min?: number, max?: number) => {
+    if (min !== undefined && max !== undefined) {
+      return `${field} must be between ${min} and ${max}`;
+    } else if (min !== undefined) {
+      return `${field} must be at least ${min}`;
+    } else if (max !== undefined) {
+      return `${field} must be at most ${max}`;
+    }
+    return `${field} is out of range`;
+  },
+  
+  // Configuration errors
+  CONFIG_MISSING: (key: string) => `Configuration key '${key}' is missing`,
+  CONFIG_INVALID: (key: string, reason?: string) => 
+    reason ? `Configuration key '${key}' is invalid: ${reason}` : `Configuration key '${key}' is invalid`,
+  CONFIG_ENV_MISSING: (env: string) => `Environment variable '${env}' is not set`,
+  CONFIG_FILE_NOT_FOUND: (path: string) => `Configuration file not found: ${path}`,
+  CONFIG_FILE_INVALID: (path: string, reason?: string) => 
+    reason ? `Configuration file invalid: ${path} - ${reason}` : `Configuration file invalid: ${path}`,
+  
+  // Permission/Security errors
+  PERMISSION_DENIED: 'Permission denied',
+  PERMISSION_INSUFFICIENT: (required: string) => `Insufficient permissions. Required: ${required}`,
+  AUTH_REQUIRED: 'Authentication required',
+  AUTH_INVALID: 'Invalid authentication credentials',
+  AUTH_EXPIRED: 'Authentication token has expired',
+  
+  // Resource errors
+  RESOURCE_NOT_FOUND: (type: string, id?: string) => 
+    id ? `${type} not found: ${id}` : `${type} not found`,
+  RESOURCE_CONFLICT: (type: string, id?: string) => 
+    id ? `${type} already exists: ${id}` : `${type} already exists`,
+  RESOURCE_LOCKED: (type: string, id?: string) => 
+    id ? `${type} is locked: ${id}` : `${type} is locked`,
+  RESOURCE_UNAVAILABLE: (type: string) => `${type} is temporarily unavailable`,
+  
+  // Network/Integration errors
+  NETWORK_CONNECTION_FAILED: 'Network connection failed',
+  NETWORK_TIMEOUT: 'Network request timed out',
+  NETWORK_UNAVAILABLE: 'Network is unavailable',
+  SERVICE_UNAVAILABLE: (service: string) => `Service '${service}' is unavailable`,
+  SERVICE_ERROR: (service: string, error?: string) => 
+    error ? `Service '${service}' error: ${error}` : `Service '${service}' error`,
+  API_RATE_LIMITED: 'API rate limit exceeded',
+  API_QUOTA_EXCEEDED: 'API quota exceeded',
+  
+  // Business logic errors
+  BUSINESS_RULE_VIOLATED: (rule: string) => `Business rule violated: ${rule}`,
+  WORKFLOW_INVALID_STATE: (current: string, attempted: string) => 
+    `Cannot transition from '${current}' to '${attempted}'`,
+  DATA_INCONSISTENT: (details?: string) => 
+    details ? `Data inconsistency detected: ${details}` : 'Data inconsistency detected',
+  
+  // File/IO errors
+  FILE_NOT_FOUND: (path: string) => `File not found: ${path}`,
+  FILE_ACCESS_DENIED: (path: string) => `Access denied to file: ${path}`,
+  FILE_TOO_LARGE: (path: string, maxSize?: string) => 
+    maxSize ? `File too large: ${path} (max: ${maxSize})` : `File too large: ${path}`,
+  DIRECTORY_NOT_FOUND: (path: string) => `Directory not found: ${path}`,
+  DISK_FULL: 'Insufficient disk space',
+  
+  // General system errors
+  INTERNAL_ERROR: 'An internal error occurred',
+  UNEXPECTED_ERROR: 'An unexpected error occurred',
+  NOT_IMPLEMENTED: (feature: string) => `Feature not implemented: ${feature}`,
+  DEPRECATED_FEATURE: (feature: string, alternative?: string) => 
+    alternative ? `Feature '${feature}' is deprecated. Use '${alternative}' instead` : `Feature '${feature}' is deprecated`,
+  
+  // HTTP-specific errors
+  HTTP_BAD_REQUEST: 'Bad request',
+  HTTP_UNAUTHORIZED: 'Unauthorized',
+  HTTP_FORBIDDEN: 'Forbidden',
+  HTTP_NOT_FOUND: 'Not found',
+  HTTP_METHOD_NOT_ALLOWED: (method: string) => `Method '${method}' not allowed`,
+  HTTP_CONFLICT: 'Conflict',
+  HTTP_UNPROCESSABLE_ENTITY: 'Unprocessable entity',
+  HTTP_TOO_MANY_REQUESTS: 'Too many requests',
+  HTTP_INTERNAL_SERVER_ERROR: 'Internal server error',
+  HTTP_BAD_GATEWAY: 'Bad gateway',
+  HTTP_SERVICE_UNAVAILABLE: 'Service unavailable',
+  HTTP_GATEWAY_TIMEOUT: 'Gateway timeout',
+} as const;
+
+/**
+ * Error message categories for grouping and filtering
+ */
+export const ERROR_MESSAGE_CATEGORIES = {
+  RETRY: [
+    'OPERATION_FAILED',
+    'OPERATION_CANCELLED', 
+    'OPERATION_TIMEOUT',
+    'CIRCUIT_OPEN',
+    'CIRCUIT_HALF_OPEN',
+    'CIRCUIT_CLOSED',
+  ],
+  VALIDATION: [
+    'VALIDATION_REQUIRED',
+    'VALIDATION_INVALID',
+    'VALIDATION_TYPE',
+    'VALIDATION_RANGE',
+  ],
+  CONFIGURATION: [
+    'CONFIG_MISSING',
+    'CONFIG_INVALID',
+    'CONFIG_ENV_MISSING',
+    'CONFIG_FILE_NOT_FOUND',
+    'CONFIG_FILE_INVALID',
+  ],
+  PERMISSION: [
+    'PERMISSION_DENIED',
+    'PERMISSION_INSUFFICIENT',
+    'AUTH_REQUIRED',
+    'AUTH_INVALID',
+    'AUTH_EXPIRED',
+  ],
+  RESOURCE: [
+    'RESOURCE_NOT_FOUND',
+    'RESOURCE_CONFLICT',
+    'RESOURCE_LOCKED',
+    'RESOURCE_UNAVAILABLE',
+  ],
+  NETWORK: [
+    'NETWORK_CONNECTION_FAILED',
+    'NETWORK_TIMEOUT',
+    'NETWORK_UNAVAILABLE',
+    'SERVICE_UNAVAILABLE',
+    'SERVICE_ERROR',
+    'API_RATE_LIMITED',
+    'API_QUOTA_EXCEEDED',
+  ],
+  BUSINESS: [
+    'BUSINESS_RULE_VIOLATED',
+    'WORKFLOW_INVALID_STATE',
+    'DATA_INCONSISTENT',
+  ],
+  FILE: [
+    'FILE_NOT_FOUND',
+    'FILE_ACCESS_DENIED',
+    'FILE_TOO_LARGE',
+    'DIRECTORY_NOT_FOUND',
+    'DISK_FULL',
+  ],
+  SYSTEM: [
+    'INTERNAL_ERROR',
+    'UNEXPECTED_ERROR',
+    'NOT_IMPLEMENTED',
+    'DEPRECATED_FEATURE',
+  ],
+  HTTP: [
+    'HTTP_BAD_REQUEST',
+    'HTTP_UNAUTHORIZED',
+    'HTTP_FORBIDDEN',
+    'HTTP_NOT_FOUND',
+    'HTTP_METHOD_NOT_ALLOWED',
+    'HTTP_CONFLICT',
+    'HTTP_UNPROCESSABLE_ENTITY',
+    'HTTP_TOO_MANY_REQUESTS',
+    'HTTP_INTERNAL_SERVER_ERROR',
+    'HTTP_BAD_GATEWAY',
+    'HTTP_SERVICE_UNAVAILABLE',
+    'HTTP_GATEWAY_TIMEOUT',
+  ],
+} as const;
+
+/**
+ * Helper function to get message by key
+ * Future-ready for i18n implementation
+ */
+export function getMessage(
+  key: keyof typeof ERROR_MESSAGES,
+  ...args: any[]
+): string {
+  const messageTemplate = ERROR_MESSAGES[key];
+  
+  if (typeof messageTemplate === 'function') {
+    return (messageTemplate as (...args: any[]) => string)(...args);
+  }
+  
+  return messageTemplate;
+}
+
+/**
+ * Type-safe message keys
+ */
+export type ErrorMessageKey = keyof typeof ERROR_MESSAGES;
+
+/**
+ * Future i18n support - placeholder for locale-aware messages
+ */
+export interface I18nErrorMessages {
+  locale: string;
+  messages: typeof ERROR_MESSAGES;
+}
+
+/**
+ * Create localized error messages (future implementation)
+ */
+export function createLocalizedMessages(locale: string = 'en'): I18nErrorMessages {
+  // For now, return English messages
+  // In the future, this could load locale-specific message files
+  return {
+    locale,
+    messages: ERROR_MESSAGES,
+  };
+}
+
+/**
+ * Validate that all message functions can be called
+ * Useful for testing message completeness
+ */
+export function validateMessages(): boolean {
+  try {
+    // Test each message template with dummy parameters
+    getMessage('OPERATION_FAILED', 3);
+    getMessage('OPERATION_TIMEOUT', 5000);
+    getMessage('VALIDATION_REQUIRED', 'email');
+    getMessage('VALIDATION_INVALID', 'age', 'abc');
+    getMessage('VALIDATION_TYPE', 'id', 'number', 'string');
+    getMessage('VALIDATION_RANGE', 'score', 0, 100);
+    getMessage('CONFIG_MISSING', 'API_KEY');
+    getMessage('CONFIG_INVALID', 'port', 'must be a number');
+    getMessage('RESOURCE_NOT_FOUND', 'User', '123');
+    getMessage('SERVICE_ERROR', 'PaymentService', 'timeout');
+    // ... can add more validations as needed
+    
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
