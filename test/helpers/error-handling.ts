@@ -218,8 +218,9 @@ export async function verifyRejection<T>(
     
     // Convert DOMException to Error for consistent handling but preserve original properties
     const errorObj = error instanceof Error ? error : (() => {
-      const err = new Error((error as any).message || String(error));
-      err.name = (error as any).name || 'Error';
+      const errorLike = error as { message?: string; name?: string };
+      const err = new Error(errorLike.message || String(error));
+      err.name = errorLike.name || 'Error';
       return err;
     })();
     
@@ -268,4 +269,92 @@ export function globalErrorCleanup(): void {
     process.removeAllListeners('unhandledRejection');
     process.removeAllListeners('uncaughtException');
   }
+}
+/**
+ * Handle concurrent operations that may have background promise rejections
+ * This is specifically designed for batch processing and similar scenarios
+ * where aborting operations leaves background promises that reject
+ * 
+ * @param testFn The test function to execute
+ * @param expectedBackgroundErrors Array of error patterns expected in background
+ */
+export async function withConcurrentErrorHandling<T>(
+  testFn: () => Promise<T>,
+  expectedBackgroundErrors: (string | RegExp | ((error: unknown) => boolean))[] = []
+): Promise<T> {
+  const backgroundRejections: unknown[] = [];
+  let isTestComplete = false;
+  
+  // Set up background rejection collector
+  const backgroundHandler = (reason: unknown, promise: Promise<unknown>) => {
+    if (isTestComplete) {
+      // Test is done, collect background rejections for analysis
+      backgroundRejections.push(reason);
+      
+      // Check if this rejection matches expected patterns
+      const isExpected = expectedBackgroundErrors.some(pattern => {
+        if (typeof pattern === 'string') {
+          return reason instanceof Error && reason.message.includes(pattern);
+        } else if (pattern instanceof RegExp) {
+          return reason instanceof Error && pattern.test(reason.message);
+        } else if (typeof pattern === 'function') {
+          return pattern(reason);
+        }
+        return false;
+      });
+      
+      if (!isExpected) {
+        console.warn('Unexpected background rejection after test completion:', reason);
+      }
+      
+      // Don't re-throw - this is expected cleanup behavior
+      return;
+    }
+    
+    // During test execution, let the normal error handling take over
+    // Remove this handler temporarily to avoid infinite loops
+    process.off('unhandledRejection', backgroundHandler);
+    
+    // Re-emit the rejection to trigger normal handling
+    setImmediate(() => {
+      process.emit('unhandledRejection', reason, promise);
+      // Re-add our handler after a tick
+      process.on('unhandledRejection', backgroundHandler);
+    });
+  };
+  
+  // Add background handler
+  process.on('unhandledRejection', backgroundHandler);
+  
+  try {
+    const result = await testFn();
+    isTestComplete = true;
+    
+    // Give background operations a chance to complete
+    await new Promise(resolve => setImmediate(resolve));
+    
+    return result;
+  } finally {
+    isTestComplete = true;
+    process.off('unhandledRejection', backgroundHandler);
+    
+    // Wait a bit more for any final background operations
+    await new Promise(resolve => setTimeout(resolve, 10));
+  }
+}
+
+/**
+ * Simplified version for the common case of AbortError background rejections
+ * This is the most common scenario in concurrent operations
+ */
+export async function withAbortErrorHandling<T>(
+  testFn: () => Promise<T>
+): Promise<T> {
+  return withConcurrentErrorHandling(testFn, [
+    'Operation aborted',
+    'AbortError',
+    (error: unknown) => {
+      return error instanceof DOMException && error.name === 'AbortError';
+    }
+  ]);
 }

@@ -26,11 +26,9 @@ import {
   makeRetryable,
 } from '../retry.js';
 import { getMessage } from '../messages.js';
-import { suppressWarningsInErrorTests } from './test-utils.js';
+import { expectRejection } from '@test/helpers/error-handling.js';
 
 describe('Retry Logic', () => {
-  // Set up clean warning suppression for error tests
-  suppressWarningsInErrorTests();
   
   beforeEach(() => {
     vi.clearAllMocks();
@@ -200,7 +198,7 @@ describe('Retry Logic', () => {
       setTimeout(() => controller.abort('User cancelled'), 50);
       await vi.runAllTimersAsync();
       
-      await expect(promise).rejects.toThrow('User cancelled');
+      await expectRejection(promise, 'User cancelled');
       expect(fn).toHaveBeenCalledTimes(1);
     });
 
@@ -251,7 +249,7 @@ describe('Retry Logic', () => {
       const resultPromise = withTimeout(promise, 100);
       await vi.advanceTimersByTimeAsync(100);
       
-      await expect(resultPromise).rejects.toThrow(getMessage('OPERATION_TIMEOUT', 100));
+      await expectRejection(resultPromise, getMessage('OPERATION_TIMEOUT', 100));
     });
 
     it('should respect abort signal', async () => {
@@ -266,7 +264,7 @@ describe('Retry Logic', () => {
       await vi.advanceTimersByTimeAsync(50);
       controller.abort('User cancelled');
       
-      await expect(resultPromise).rejects.toThrow('User cancelled');
+      await expectRejection(resultPromise, 'User cancelled');
     });
 
     it('should clean up timeout on success', async () => {
@@ -301,13 +299,13 @@ describe('Retry Logic', () => {
       
       // Fail 3 times to open circuit
       for (let i = 0; i < 3; i++) {
-        await expect(breaker.execute(fn)).rejects.toThrow('Fail');
+        await expectRejection(breaker.execute(fn), 'Fail');
       }
       
       expect(breaker.getState()).toBe('open');
       
       // Next request should fail immediately
-      await expect(breaker.execute(fn)).rejects.toThrow(getMessage('CIRCUIT_OPEN'));
+      await expectRejection(breaker.execute(fn), getMessage('CIRCUIT_OPEN'));
       expect(fn).toHaveBeenCalledTimes(3); // Not called for 4th attempt
     });
 
@@ -322,7 +320,7 @@ describe('Retry Logic', () => {
         .mockResolvedValue('success');
       
       // Open circuit
-      await expect(breaker.execute(fn)).rejects.toThrow();
+      await expectRejection(breaker.execute(fn));
       expect(breaker.getState()).toBe('open');
       
       // Wait for cooldown
@@ -346,7 +344,7 @@ describe('Retry Logic', () => {
         .mockResolvedValue('success');
       
       // Open circuit
-      await expect(breaker.execute(fn)).rejects.toThrow();
+      await expectRejection(breaker.execute(fn));
       
       // Wait for cooldown
       await vi.advanceTimersByTimeAsync(100);
@@ -368,14 +366,14 @@ describe('Retry Logic', () => {
       const fn = vi.fn().mockRejectedValue(new Error('Always fails'));
       
       // Open circuit
-      await expect(breaker.execute(fn)).rejects.toThrow();
+      await expectRejection(breaker.execute(fn));
       expect(breaker.getState()).toBe('open');
       
       // Wait for cooldown
       await vi.advanceTimersByTimeAsync(100);
       
       // Fail in half-open state
-      await expect(breaker.execute(fn)).rejects.toThrow();
+      await expectRejection(breaker.execute(fn));
       expect(breaker.getState()).toBe('open');
     });
 
@@ -388,8 +386,8 @@ describe('Retry Logic', () => {
       const fn = vi.fn().mockRejectedValue(new Error('Fail'));
       
       // Two failures
-      await expect(breaker.execute(fn)).rejects.toThrow();
-      await expect(breaker.execute(fn)).rejects.toThrow();
+      await expectRejection(breaker.execute(fn));
+      await expectRejection(breaker.execute(fn));
       
       // Wait for failures to expire
       await vi.advanceTimersByTimeAsync(1100);
@@ -398,7 +396,7 @@ describe('Retry Logic', () => {
       expect(breaker.getState()).toBe('closed');
       
       // New failure shouldn't open circuit
-      await expect(breaker.execute(fn)).rejects.toThrow();
+      await expectRejection(breaker.execute(fn));
       expect(breaker.getState()).toBe('closed');
     });
 
@@ -421,7 +419,7 @@ describe('Retry Logic', () => {
       const fn = vi.fn().mockRejectedValue(new Error('Fail'));
       
       // Open circuit
-      await expect(breaker.execute(fn)).rejects.toThrow();
+      await expectRejection(breaker.execute(fn));
       expect(breaker.getState()).toBe('open');
       
       // Reset
@@ -462,12 +460,13 @@ describe('Retry Logic', () => {
       // This will open the circuit
       const promise1 = retryWithCircuitBreaker(fn, breaker, { maxAttempts: 3, initialDelay: 10 });
       await vi.runAllTimersAsync();
-      await expect(promise1).rejects.toThrow();
+      await expectRejection(promise1);
       
       // Circuit should be open, next call fails immediately
-      await expect(
-        retryWithCircuitBreaker(fn, breaker)
-      ).rejects.toThrow(getMessage('CIRCUIT_OPEN'));
+      await expectRejection(
+        retryWithCircuitBreaker(fn, breaker),
+        getMessage('CIRCUIT_OPEN')
+      );
     });
   });
 
