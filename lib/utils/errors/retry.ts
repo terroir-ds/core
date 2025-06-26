@@ -215,21 +215,30 @@ export async function withTimeout<T>(
  * Combine multiple abort signals into one
  * Useful for timeout + user cancellation scenarios
  */
-function combineSignals(signals: AbortSignal[]): AbortSignal {
+export function combineSignals(signals: (AbortSignal | undefined)[]): AbortSignal {
+  // Filter out undefined signals
+  const validSignals = signals.filter((s): s is AbortSignal => s !== undefined);
+  
   // If no signals provided, return never-aborted signal
-  if (signals.length === 0) {
+  if (validSignals.length === 0) {
     return new AbortController().signal;
   }
   
   // If only one signal, return it directly
-  if (signals.length === 1) {
-    return signals[0] as AbortSignal;
+  if (validSignals.length === 1) {
+    return validSignals[0];
   }
   
+  // Use native AbortSignal.any if available (Node.js 20+)
+  if ('any' in AbortSignal && typeof AbortSignal.any === 'function') {
+    return AbortSignal.any(validSignals);
+  }
+  
+  // Fallback for older Node.js versions
   const controller = new AbortController();
   
   // Check if any signal is already aborted
-  for (const signal of signals) {
+  for (const signal of validSignals) {
     if (signal.aborted) {
       controller.abort(signal.reason);
       return controller.signal;
@@ -237,7 +246,7 @@ function combineSignals(signals: AbortSignal[]): AbortSignal {
   }
   
   // Listen for abort events on all signals
-  for (const signal of signals) {
+  for (const signal of validSignals) {
     signal.addEventListener('abort', () => {
       if (!controller.signal.aborted) {
         controller.abort(signal.reason);

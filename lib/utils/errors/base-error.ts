@@ -4,12 +4,13 @@
  * Features:
  * - Error.cause for error chaining (Node 16.9+)
  * - Structured error context
- * - Serialization support
+ * - Serialization support (enhanced with serialize-error)
  * - Stack trace enhancement
  * - Error categorization
  */
 
 import { randomUUID } from 'crypto';
+import { serializeError } from 'serialize-error';
 import type { LogContext } from '../types/logger.types.js';
 import {
   ErrorSeverity,
@@ -113,11 +114,15 @@ export abstract class BaseError extends Error {
 
   /**
    * Serialize error for logging or API responses
+   * Uses serialize-error to handle circular references
    */
   toJSON(): Record<string, unknown> {
+    // Use serialize-error for robust serialization with circular reference handling
+    const serialized = serializeError(this);
+    
+    // Ensure our custom properties are included
     return {
-      name: this.name,
-      message: this.message,
+      ...serialized,
       errorId: this.errorId,
       timestamp: this.timestamp,
       severity: this.severity,
@@ -126,12 +131,6 @@ export abstract class BaseError extends Error {
       statusCode: this.statusCode,
       code: this.code,
       context: this.context,
-      stack: this.stack,
-      cause: this.cause instanceof Error ? {
-        name: this.cause.name,
-        message: this.cause.message,
-        stack: this.cause.stack,
-      } : this.cause,
     };
   }
 
@@ -338,14 +337,9 @@ export class MultiError extends AggregateError {
       errors: this.errors.map(error => {
         if (error instanceof BaseError) {
           return error.toJSON();
-        } else if (error instanceof Error) {
-          return {
-            name: error.name,
-            message: error.message,
-            stack: error.stack,
-          };
         }
-        return error;
+        // Use serialize-error for non-BaseError instances
+        return serializeError(error);
       }),
     };
   }
