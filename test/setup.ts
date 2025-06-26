@@ -3,10 +3,37 @@
  * This file is loaded before all tests
  */
 
-import { beforeEach, afterEach, vi } from 'vitest';
+import { beforeEach, afterEach, afterAll, vi } from 'vitest';
 
 // Store original environment variables
 const originalEnv = process.env;
+
+// Store original promise rejection handlers
+const originalUnhandledRejection = process.listeners('unhandledRejection');
+const originalRejectionHandled = process.listeners('rejectionHandled');
+
+// Track unhandled rejections for cleanup
+const unhandledRejections = new Map<Promise<unknown>, { reason: unknown; promise: Promise<unknown> }>();
+
+// Remove all existing handlers
+process.removeAllListeners('unhandledRejection');
+process.removeAllListeners('rejectionHandled');
+
+// Add our test-friendly handlers
+process.on('unhandledRejection', (reason, promise) => {
+  // Store the rejection for potential cleanup
+  unhandledRejections.set(promise, { reason, promise });
+  
+  // Log for debugging if needed (but don't fail the test)
+  if (process.env['DEBUG_UNHANDLED_REJECTIONS'] === 'true') {
+    console.warn('Unhandled rejection in test:', reason);
+  }
+});
+
+process.on('rejectionHandled', (promise) => {
+  // Remove from our tracking when handled
+  unhandledRejections.delete(promise);
+});
 
 // Suppress PromiseRejectionHandledWarning warnings
 // These are expected in our tests when we handle promise rejections 
@@ -54,6 +81,9 @@ afterEach(async () => {
   // Restore all mocks
   vi.restoreAllMocks();
   
+  // Clear tracked unhandled rejections
+  unhandledRejections.clear();
+  
   // Clean up error handling
   try {
     const { globalErrorCleanup } = await import('@test/helpers/error-handling.js');
@@ -71,6 +101,32 @@ afterEach(async () => {
   } catch {
     // Ignore errors if logger wasn't imported
   }
+});
+
+// Restore original handlers after all tests
+afterAll(() => {
+  // Clear our handlers
+  process.removeAllListeners('unhandledRejection');
+  process.removeAllListeners('rejectionHandled');
+  process.removeAllListeners('warning');
+  
+  // Restore original unhandled rejection handlers
+  originalUnhandledRejection.forEach(listener => {
+    process.on('unhandledRejection', listener as NodeJS.UnhandledRejectionListener);
+  });
+  
+  // Restore original rejection handled handlers
+  originalRejectionHandled.forEach(listener => {
+    process.on('rejectionHandled', listener as NodeJS.RejectionHandledListener);
+  });
+  
+  // Restore original warning handlers
+  originalWarningListeners.forEach(listener => {
+    process.on('warning', listener as NodeJS.WarningListener);
+  });
+  
+  // Clear any remaining tracked rejections
+  unhandledRejections.clear();
 });
 
 // Make test utilities globally available
