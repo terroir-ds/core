@@ -19,6 +19,10 @@ Welcome to the Terroir Core Design System documentation.
   - [Testing](./standards/testing.md) - Test organization and coverage
   - [Documentation](./standards/documentation.md) - Documentation patterns
 
+### 🔄 Development Process
+
+- [Refactoring Opportunities](./development/refactoring-opportunities.md) - Track potential improvements
+
 ### 🔧 Component Documentation
 
 - [Error System](../lib/utils/errors/docs/error-handling.md)

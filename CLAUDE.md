@@ -14,7 +14,7 @@ A comprehensive, open-source design system built with modern web standards, feat
 
 ## Architecture
 
-```text
+````text
 terroir-core/
 ├── lib/                       # Core library code (TypeScript)
 │   ├── colors/               # Color generation utilities
@@ -443,7 +443,7 @@ Follow this workflow for consistent, high-quality development:
    ```bash
    # Create task plan in .claude/tasks/
    # Define scope, success criteria, and tests
-   ```
+````
 
 2. **Implement Feature**
    - Write code/configuration
@@ -459,13 +459,13 @@ Follow this workflow for consistent, high-quality development:
 
    ```bash
    # After completing each logical task
-   
+
    # STANDARD: Always attempt fixes before commit
    pnpm fix
-   
+
    # Review the automated fixes
    git diff
-   
+
    # Stage and commit
    git add .
    git commit -m "type(scope): description
@@ -473,7 +473,7 @@ Follow this workflow for consistent, high-quality development:
    - Implementation details
    - Tests added
    - Closes #issue"
-   
+
    # Note: If pnpm fix fails or causes issues, you can still commit:
    # git add . && git commit -m "..." --no-verify
    ```
@@ -484,7 +484,7 @@ Follow this workflow for consistent, high-quality development:
 
 ### Working Directory Structure
 
-```text
+````text
 .claude/                  # AI session working directory (gitignored)
 ├── tasks/               # Task planning and tracking
 ├── sessions/            # Session context and notes
@@ -574,6 +574,13 @@ See [Import Conventions](./docs/standards/import-conventions.md) for path alias 
 
 **Quick reminder**: Always use path aliases (`@utils/logger`) instead of relative imports (`../../../lib/utils/logger`).
 
+### Tracking Improvements
+
+See [Refactoring Opportunities](./docs/development/refactoring-opportunities.md) for tracking potential code improvements.
+
+**Quick reminder**: When you identify reusable code that could be extracted, add it to the refactoring opportunities document rather than refactoring prematurely.
+
 ---
 
 Built with ❤️ for the open-source community
+````
