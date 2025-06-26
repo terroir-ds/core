@@ -225,12 +225,15 @@ export function combineSignals(signals: (AbortSignal | undefined)[]): AbortSigna
   
   // If only one signal, return it directly
   if (validSignals.length === 1) {
-    return validSignals[0];
+    const signal = validSignals[0];
+    if (signal) {
+      return signal;
+    }
   }
   
   // Use native AbortSignal.any if available (Node.js 20+)
   if ('any' in AbortSignal && typeof AbortSignal.any === 'function') {
-    return (AbortSignal as any).any(validSignals);
+    return (AbortSignal as unknown as { any: (signals: AbortSignal[]) => AbortSignal }).any(validSignals);
   }
   
   // Fallback for older Node.js versions
