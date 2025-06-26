@@ -131,7 +131,63 @@ describe('error handling', () => {
     expect(logger.error).toHaveBeenCalled();
   });
 });
+```
+
+## Handling Promise Rejections in Tests
+
+The project includes a global unhandled rejection handler that prevents test failures from unhandled promises. This means:
+
+### Automatic Handling
+
+1. **Tests don't fail on unhandled rejections** - They're logged but don't cause test failures
+2. **No manual cleanup needed** - The global test setup handles this automatically
+3. **Debug mode available** - Set `DEBUG_UNHANDLED_REJECTIONS=true` to see rejection warnings
+
+### Testing Promise Rejections
+
 ```typescript
+import { expectRejection, verifyRejection } from '@test/helpers/error-handling';
+
+// Simple rejection test
+it('should reject with error message', async () => {
+  await expectRejection(failingPromise, 'Expected error message');
+});
+
+// Detailed rejection verification
+it('should reject with specific error details', async () => {
+  await verifyRejection(failingPromise, {
+    message: /timeout/i,
+    name: 'TimeoutError',
+    code: 'TIMEOUT_ERROR'
+  });
+});
+
+// Standard vitest pattern still works
+it('should reject on invalid input', async () => {
+  await expect(someAsyncFunction('invalid')).rejects.toThrow(ValidationError);
+});
+```
+
+### Background Operations
+
+For tests that trigger background operations with intentional rejections (e.g., abort scenarios):
+
+```typescript
+it('should handle concurrent operations with abort', async () => {
+  const controller = new AbortController();
+
+  // Start operations
+  const promises = startConcurrentOperations({ signal: controller.signal });
+
+  // Abort will cause background rejections - these are handled automatically
+  controller.abort();
+
+  // Test continues without failing
+  await expect(promises[0]).rejects.toThrow('Operation aborted');
+});
+```
+
+No special handling is needed - the global setup manages background rejections.
 ## Best Practices
 
 1. **Test Behavior, Not Implementation**

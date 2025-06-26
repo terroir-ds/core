@@ -15,6 +15,15 @@ This guide covers best practices and patterns for testing error handling in the 
 
 ## Testing Philosophy
 
+### Global Error Handling
+
+The project includes global unhandled rejection handling both in production (via `setupGlobalErrorHandlers()`) and in tests (via the test setup). This means:
+
+1. **Tests don't fail on unhandled rejections** - They're logged but don't cause test failures
+2. **No manual cleanup needed** - The global test setup handles this automatically
+3. **Focus on testing behavior** - Use assertion helpers for expected errors
+4. **Debug mode available** - Set `DEBUG_UNHANDLED_REJECTIONS=true` to see rejection warnings
+
 ### Principles
 
 1. **Test the behavior, not the implementation**
@@ -34,11 +43,31 @@ This guide covers best practices and patterns for testing error handling in the 
 - Recovery strategy execution
 - Resource cleanup on failure
 
+### Assertion Helpers
+
+For testing expected promise rejections, use these helpers:
+
+```typescript
+import { expectRejection, verifyRejection } from '@test/helpers/error-handling';
+
+// Simple assertion
+await expectRejection(promise, 'Expected error message');
+
+// Detailed verification
+await verifyRejection(promise, {
+  message: /pattern/,
+  code: 'ERROR_CODE',
+  name: 'ValidationError',
+});
+```
+
+These helpers automatically handle the promise rejection without triggering warnings.
+
 ## Testing Error Classes
 
 ### Basic Error Creation
 
-```typescript
+````typescript
 import { ValidationError, ErrorSeverity, ErrorCategory } from '@terroir/core/lib/utils/errors';
 
 describe('ValidationError', () => {
@@ -727,7 +756,7 @@ it('should track error metrics', async () => {
 
   unregisterErrorHandler('metrics');
 });
-```
+````
 
 ## Best Practices
 
