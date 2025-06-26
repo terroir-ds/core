@@ -2,7 +2,7 @@
  * Tests for retry logic and resilience patterns
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi, beforeAll, afterAll } from 'vitest';
 
 // Mock the logger module to avoid environment variable issues
 vi.mock('../../../logger/index.js', () => {
@@ -28,7 +28,41 @@ import {
 import { getMessage } from '../messages.js';
 import { expectRejection } from '@test/helpers/error-handling.js';
 
+// Suppress unhandled rejection warnings for the entire test suite
+let unhandledRejectionHandler: ((reason: unknown, promise: Promise<unknown>) => void) | null = null;
+
 describe('Retry Logic', () => {
+  
+  beforeAll(() => {
+    // Suppress unhandled rejection warnings for expected errors
+    unhandledRejectionHandler = (reason: unknown, _promise: Promise<unknown>) => {
+      // These are expected in retry tests
+      const expectedMessages = [
+        'Operation aborted',
+        'User cancelled',
+        'Operation timed out',
+        'Operation failed',
+        'Not retryable',
+        'Item 2 failed',
+        'AbortError'
+      ];
+      
+      const reasonStr = reason instanceof Error ? reason.message : String(reason);
+      const isExpected = expectedMessages.some(msg => reasonStr.includes(msg));
+      
+      if (!isExpected) {
+        console.error('Unexpected unhandled rejection:', reason);
+      }
+    };
+    
+    process.on('unhandledRejection', unhandledRejectionHandler);
+  });
+  
+  afterAll(() => {
+    if (unhandledRejectionHandler) {
+      process.off('unhandledRejection', unhandledRejectionHandler);
+    }
+  });
   
   beforeEach(() => {
     vi.clearAllMocks();

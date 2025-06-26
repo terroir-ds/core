@@ -35,15 +35,26 @@ async function delayWithSignal(ms: number, signal?: AbortSignal): Promise<void> 
   }
   
   return new Promise<void>((resolve, reject) => {
-    const timer = globalThis.setTimeout(resolve, ms);
+    let timer: ReturnType<typeof globalThis.setTimeout> | null = globalThis.setTimeout(() => {
+      timer = null;
+      if (signal && abortHandler) {
+        signal.removeEventListener('abort', abortHandler);
+      }
+      resolve();
+    }, ms);
+    
+    let abortHandler: (() => void) | null = null;
     
     if (signal) {
-      const abortHandler = () => {
-        globalThis.clearTimeout(timer);
-        const reason = signal.reason instanceof Error 
-          ? signal.reason.message 
-          : String(signal.reason) || 'Operation cancelled';
-        reject(new Error(reason));
+      abortHandler = () => {
+        if (timer !== null) {
+          globalThis.clearTimeout(timer);
+          timer = null;
+          const reason = signal.reason instanceof Error 
+            ? signal.reason.message 
+            : String(signal.reason) || 'Operation cancelled';
+          reject(new Error(reason));
+        }
       };
       
       signal.addEventListener('abort', abortHandler, { once: true });
@@ -191,20 +202,42 @@ export async function withTimeout<T>(
       ? combineSignals([signal, timeoutController.signal])
       : timeoutController.signal;
     
-    // Race promise against combined signal
-    const result = await Promise.race([
-      promise,
-      new Promise<never>((_, reject) => {
-        combinedSignal.addEventListener('abort', () => {
+    // Check if already aborted
+    if (combinedSignal.aborted) {
+      const reason = combinedSignal.reason instanceof Error 
+        ? combinedSignal.reason.message 
+        : String(combinedSignal.reason) || 'Operation aborted';
+      throw new Error(reason);
+    }
+    
+    // Create abort promise with cleanup
+    let settled = false;
+    let abortHandler: (() => void) | null = null;
+    
+    const abortPromise = new Promise<never>((_, reject) => {
+      abortHandler = () => {
+        if (!settled) {
           const reason = combinedSignal.reason instanceof Error 
             ? combinedSignal.reason.message 
             : String(combinedSignal.reason) || 'Operation aborted';
           reject(new Error(reason));
-        });
-      }),
-    ]);
+        }
+      };
+      combinedSignal.addEventListener('abort', abortHandler, { once: true });
+    });
     
-    return result;
+    try {
+      // Race promise against abort signal
+      const result = await Promise.race([promise, abortPromise]);
+      settled = true;
+      return result;
+    } finally {
+      settled = true;
+      // Clean up event listener to prevent unhandled rejections
+      if (abortHandler) {
+        combinedSignal.removeEventListener('abort', abortHandler);
+      }
+    }
   } finally {
     globalThis.clearTimeout(timeoutId);
   }
