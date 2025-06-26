@@ -21,10 +21,10 @@ export {
   logSuccess,
   logPerformance,
   measureTime,
-} from './utils/logger.js';
+} from './utils/logger/index.js';
 
 export type {
   Logger,
   LogContext,
   PerformanceMetrics,
-} from './utils/logger.js';
+} from './utils/logger/index.js';

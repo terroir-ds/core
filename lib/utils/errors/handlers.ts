@@ -9,8 +9,8 @@
  */
 
 import { isBaseError, wrapError, ErrorSeverity } from './base-error.js';
-import { logger } from '../logger.js';
-import type { LogContext } from '../types/logger.types.js';
+import { logger } from '../logger/index.js';
+import type { LogContext } from '@utils/types/logger.types.js';
 
 /**
  * Error handler function type

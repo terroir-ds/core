@@ -6,7 +6,7 @@
  */
 
 import { generateColorSystem } from '@colors/index.js';
-import { logger, logStart, logSuccess, measureTime } from '@utils/logger.js';
+import { logger, logStart, logSuccess, measureTime } from '@utils/logger/index.js';
 import fs from 'fs/promises';
 import path from 'path';
 

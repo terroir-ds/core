@@ -33,7 +33,7 @@ afterEach(async () => {
   
   // Clean up logger if it was imported
   try {
-    const loggerModule = await vi.importActual('@utils/logger.js') as { cleanupLogger?: () => void };
+    const loggerModule = await vi.importActual('@utils/logger/index.js') as { cleanupLogger?: () => void };
     if (loggerModule.cleanupLogger) {
       loggerModule.cleanupLogger();
     }

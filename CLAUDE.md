@@ -459,6 +459,33 @@ MIT - Feel free to use in your own projects!
 
 ## Claude AI Development Workflow
 
+### Important: Package Manager
+
+**This project uses pnpm, not npm!**
+
+Always use pnpm for package management:
+
+```bash
+# ✅ Correct - use pnpm
+pnpm install
+pnpm add package-name
+pnpm add -D dev-package
+pnpm remove package-name
+pnpm test
+pnpm build
+
+# ❌ Incorrect - don't use npm
+npm install
+npm install package-name
+```
+
+If you need to add to workspace root:
+
+```bash
+pnpm add -w package-name
+pnpm add -w -D dev-package
+```
+
 ### Task-Commit Workflow
 
 Follow this workflow for consistent, high-quality development:

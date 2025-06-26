@@ -24,7 +24,7 @@ import {
   SchemeFidelity,
   Hct,
 } from '@material/material-color-utilities';
-import { createLogger } from '@utils/logger.js';
+import { createLogger } from '@utils/logger/index.js';
 import type { Logger } from 'pino';
 
 // Create module-specific logger

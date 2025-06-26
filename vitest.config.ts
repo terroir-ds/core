@@ -17,8 +17,15 @@ export default defineConfig({
   },
   test: {
     globals: true,
-    environment: 'node',
+    environment: 'jsdom',
     setupFiles: ['./test/setup.ts'],
+    onConsoleLog: (log) => {
+      // Suppress expected abort error warnings in tests
+      if (log.includes('PromiseRejectionHandledWarning') || log.includes('AbortError: Operation aborted')) {
+        return false;
+      }
+      return true;
+    },
     coverage: {
       // Simple, modern coverage configuration
       enabled: true,

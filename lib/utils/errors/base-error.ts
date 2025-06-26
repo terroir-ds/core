@@ -9,9 +9,11 @@
  * - Error categorization
  */
 
+/// <reference lib="dom" />
+
 import { randomUUID } from 'crypto';
 import { serializeError } from 'serialize-error';
-import type { LogContext } from '../types/logger.types.js';
+import type { LogContext } from '@utils/types/logger.types.js';
 import {
   ErrorSeverity,
   ErrorCategory,
@@ -437,7 +439,7 @@ export async function createErrorFromResponse(response: Response, context?: Erro
       url: response.url,
       status: response.status,
       statusText: response.statusText,
-      headers: Object.fromEntries(response.headers.entries()),
+      headers: Object.fromEntries((response.headers as any).entries()),
       ...(typeof details === 'object' && details !== null ? details : {}),
     },
   };

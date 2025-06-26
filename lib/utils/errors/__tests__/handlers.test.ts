@@ -18,11 +18,11 @@ import {
   assertDefined,
 } from '../handlers.js';
 import { ValidationError, ErrorSeverity } from '../base-error.js';
-import { logger } from '../../logger.js';
+import { logger } from '../../logger/index.js';
 import { suppressWarningsInErrorTests } from './test-utils.js';
 
 // Mock the logger
-vi.mock('../../logger.js', () => ({
+vi.mock('../../logger/index.js', () => ({
   logger: {
     debug: vi.fn(),
     info: vi.fn(),

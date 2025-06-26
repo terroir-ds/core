@@ -3,6 +3,20 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+
+// Mock the logger module to avoid environment variable issues
+vi.mock('../../../logger/index.js', () => {
+  return {
+    logger: {
+      info: vi.fn(),
+      warn: vi.fn(),
+      error: vi.fn(),
+      debug: vi.fn(),
+      trace: vi.fn(),
+      child: vi.fn().mockReturnThis(),
+    }
+  };
+});
 import {
   retry,
   withTimeout,

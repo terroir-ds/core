@@ -10,7 +10,7 @@
  */
 
 import { NetworkError } from './base-error.js';
-import { logger } from '../logger.js';
+import { logger } from '../logger/index.js';
 import { getMessage } from './messages.js';
 import type {
   RetryOptions,
