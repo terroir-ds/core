@@ -47,7 +47,7 @@ The project includes global unhandled rejection handling both in production (via
 
 For testing expected promise rejections, use these helpers:
 
-```typescript
+`````typescript
 import { expectRejection, verifyRejection } from '@test/helpers/error-handling';
 
 // Simple assertion
@@ -59,8 +59,7 @@ await verifyRejection(promise, {
   code: 'ERROR_CODE',
   name: 'ValidationError',
 });
-```
-
+```text
 These helpers automatically handle the promise rejection without triggering warnings.
 
 ## Testing Error Classes
@@ -756,7 +755,7 @@ it('should track error metrics', async () => {
 
   unregisterErrorHandler('metrics');
 });
-````
+`````
 
 ## Best Practices
 

@@ -131,8 +131,7 @@ describe('error handling', () => {
     expect(logger.error).toHaveBeenCalled();
   });
 });
-```
-
+```text
 ## Handling Promise Rejections in Tests
 
 The project includes a global unhandled rejection handler that prevents test failures from unhandled promises. This means:
@@ -166,8 +165,7 @@ it('should reject with specific error details', async () => {
 it('should reject on invalid input', async () => {
   await expect(someAsyncFunction('invalid')).rejects.toThrow(ValidationError);
 });
-```
-
+```text
 ### Background Operations
 
 For tests that trigger background operations with intentional rejections (e.g., abort scenarios):
@@ -185,8 +183,7 @@ it('should handle concurrent operations with abort', async () => {
   // Test continues without failing
   await expect(promises[0]).rejects.toThrow('Operation aborted');
 });
-```
-
+```typescript
 No special handling is needed - the global setup manages background rejections.
 ## Best Practices
 
