@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+pnpm-lock.yaml
+
+# Build outputs
+dist/
+build/
+coverage/
+.husky/
+
+# Generated files
+packages/*/dist/
+
+# Claude development
+.claude/
+
+# Test artifacts
+**/__snapshots__/
+*.snap
+
+# Temporary files
+*.tmp
+*.temp
+
+# IDE files
+.vscode/
+.idea/
+
+# Logs
+*.log

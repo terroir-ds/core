@@ -48,6 +48,17 @@
     "dev": "concurrently \"pnpm:tokens:watch\" \"pnpm:assets:watch\" \"pnpm:storybook:dev\"",
     "docs:generate": "node scripts/generate-docs.js",
     "docs:serve": "npx serve dist/storybook",
+    "fix": "./scripts/utils/fix-all.sh",
+    "fix:all": "pnpm fix",
+    "lint": "pnpm test:lint",
+    "lint:fix": "pnpm lint:ts:fix && pnpm lint:md:fix && pnpm lint:prettier:fix",
+    "lint:md": "markdownlint-cli2 '**/*.{md,markdown}'",
+    "lint:md:fix": "markdownlint-cli2 '**/*.{md,markdown}' --fix",
+    "lint:md:fix-blocks": "node scripts/utils/fix-markdown-code-blocks.js",
+    "lint:prettier": "prettier --check '**/*.{json,yml,yaml}'",
+    "lint:prettier:fix": "prettier --write '**/*.{json,yml,yaml}'",
+    "lint:ts": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "lint:ts:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
     "packages:build": "pnpm -r build --filter './packages/*'",
     "packages:test": "pnpm -r test --filter './packages/*'",
     "prepare": "husky",
@@ -66,7 +77,7 @@
     "test:coverage": "vitest run --coverage",
     "test:coverage:ci": "vitest run --config vitest.config.coverage.ts",
     "test:dev": "vitest",
-    "test:lint": "pnpm tokens:lint && eslint . --ext .ts,.tsx,.js,.jsx",
+    "test:lint": "pnpm tokens:lint && eslint . --ext .ts,.tsx,.js,.jsx && pnpm lint:md",
     "test:type": "tsc --noEmit",
     "test:unit": "vitest",
     "test:unit:logger": "vitest run lib/utils/__tests__/logger",
@@ -80,7 +91,11 @@
     "*.{js,jsx,ts,tsx}": [
       "eslint --fix --max-warnings 0"
     ],
-    "*.{json,md,yml,yaml}": [
+    "*.{md,markdown}": [
+      "markdownlint-cli2 --fix",
+      "prettier --write"
+    ],
+    "*.{json,yml,yaml}": [
       "prettier --write"
     ],
     "*.{css,scss}": [
@@ -116,6 +131,7 @@
     "eslint": "^9.29.0",
     "jsdom": "^26.1.0",
     "lint-staged": "^16.1.2",
+    "markdownlint-cli2": "^0.18.1",
     "pino": "^9.7.0",
     "pino-pretty": "^13.0.0",
     "prettier": "^3.6.1",

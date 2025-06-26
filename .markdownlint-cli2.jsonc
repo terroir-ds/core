@@ -20,6 +20,9 @@
     "MD013": false,  // line length
     "MD033": false,  // inline HTML
     "MD041": false,  // first line in file should be a top level heading
+    "MD024": false,  // no duplicate headings (useful for API docs with repeated method names)
+    "MD029": false,  // ordered list item prefix (allows custom numbering schemes)
+    "MD051": false,  // link fragments - disabled due to false positives with valid fragments
     "no-hard-tabs": false
   }
 }
