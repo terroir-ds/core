@@ -7,3 +7,4 @@ packages:
 onlyBuiltDependencies:
   - '@anthropic-ai/claude-code'
   - esbuild
+  - sharp
