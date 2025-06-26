@@ -1,7 +1,13 @@
 /**
- * Shared test helper utilities
- * These are generic helpers used across multiple test files
+ * Test helpers for the Terroir Core Design System
+ * Central export point for all test utilities
  */
 
-export * from '@lib/config/__mocks__/config.mock.js';
-export * from '@lib/utils/__mocks__/logger.mock.js';
+// Async test utilities
+export * from './async-test-utils.js';
+
+// Timing and performance helpers
+export * from './timing-helpers.js';
+
+// Event handling helpers
+export * from './event-helpers.js';
