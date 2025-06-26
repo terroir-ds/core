@@ -384,7 +384,10 @@ describe('Error Handlers', () => {
       setupGlobalErrorHandlers();
       
       const reason = new Error('Rejected');
+      // Create a promise but immediately catch it to prevent actual unhandled rejection
       const promise = Promise.reject(reason);
+      promise.catch(() => {}); // Suppress the actual rejection
+      
       const handler = processListeners['unhandledRejection'][0];
       
       handler(reason, promise);
