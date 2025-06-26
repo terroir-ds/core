@@ -11,7 +11,7 @@ import {
   firstSuccessful
 } from '../promise.js';
 import { getMessage } from '@utils/errors/messages.js';
-import { expectRejection, verifyRejection, expectErrors, cleanupErrorHandling } from '@test/helpers/error-handling.js';
+import { expectRejection, verifyRejection } from '@test/helpers/error-handling.js';
 
 describe('promise utilities', () => {
   beforeEach(() => {
@@ -90,49 +90,72 @@ describe('promise utilities', () => {
 
     it('should fail after max attempts', async () => {
       vi.useFakeTimers();
-      expectErrors(); // Suppress expected unhandled rejections
       
-      const fn = vi.fn().mockRejectedValue(new Error('persistent failure'));
+      // Handle expected background rejections from retry logic
+      const originalHandlers = process.listeners('unhandledRejection');
+      process.removeAllListeners('unhandledRejection');
+      process.on('unhandledRejection', (reason: unknown) => {
+        if (reason instanceof Error && reason.message === 'persistent failure') {
+          return; // Expected retry rejections
+        }
+        console.error('Unexpected rejection:', reason);
+      });
       
-      const promise = retry(fn, { attempts: 3, delay: 10 });
-      
-      await vi.runAllTimersAsync();
-      
-      await expectRejection(promise, 'persistent failure');
-      expect(fn).toHaveBeenCalledTimes(3);
-      
-      vi.useRealTimers();
-      cleanupErrorHandling();
+      try {
+        const fn = vi.fn().mockRejectedValue(new Error('persistent failure'));
+        const promise = retry(fn, { attempts: 3, delay: 10 });
+        
+        await vi.runAllTimersAsync();
+        await expectRejection(promise, 'persistent failure');
+        expect(fn).toHaveBeenCalledTimes(3);
+      } finally {
+        vi.useRealTimers();
+        process.removeAllListeners('unhandledRejection');
+        originalHandlers.forEach(handler => {
+          process.on('unhandledRejection', handler as NodeJS.UnhandledRejectionListener);
+        });
+      }
     }, 10000);
 
     it('should use exponential backoff', async () => {
       vi.useFakeTimers();
-      expectErrors(); // Suppress expected unhandled rejections
       
-      const fn = vi.fn().mockRejectedValue(new Error('fail'));
-      const delays: number[] = [];
-      
-      const backoff = (attempt: number) => {
-        const delay = Math.pow(2, attempt - 1) * 100;
-        delays.push(delay);
-        return delay;
-      };
-      
-      const promise = retry(fn, { 
-        attempts: 4, 
-        delay: backoff 
+      // Handle expected background rejections from retry logic
+      const originalHandlers = process.listeners('unhandledRejection');
+      process.removeAllListeners('unhandledRejection');
+      process.on('unhandledRejection', (reason: unknown) => {
+        if (reason instanceof Error && reason.message === 'fail') {
+          return; // Expected retry rejections
+        }
+        console.error('Unexpected rejection:', reason);
       });
       
-      await vi.runAllTimersAsync();
-      
-      await expectRejection(promise, 'fail');
-      
-      expect(delays).toEqual([100, 200, 400]);
-      
-      vi.useRealTimers();
-      cleanupErrorHandling();
+      try {
+        const fn = vi.fn().mockRejectedValue(new Error('fail'));
+        const delays: number[] = [];
+        
+        const backoff = (attempt: number) => {
+          const delay = Math.pow(2, attempt - 1) * 100;
+          delays.push(delay);
+          return delay;
+        };
+        
+        const promise = retry(fn, { 
+          attempts: 4, 
+          delay: backoff 
+        });
+        
+        await vi.runAllTimersAsync();
+        await expectRejection(promise, 'fail');
+        expect(delays).toEqual([100, 200, 400]);
+      } finally {
+        vi.useRealTimers();
+        process.removeAllListeners('unhandledRejection');
+        originalHandlers.forEach(handler => {
+          process.on('unhandledRejection', handler as NodeJS.UnhandledRejectionListener);
+        });
+      }
     });
-
     it('should respect shouldRetry predicate', async () => {
       const fn = vi.fn()
         .mockRejectedValueOnce(new Error('retryable'))
@@ -187,7 +210,7 @@ describe('promise utilities', () => {
       // Abort during delay
       controller.abort();
       
-      await expect(promise).rejects.toThrow('Operation aborted');
+      await expectRejection(promise, 'Operation aborted');
       expect(fn).toHaveBeenCalledTimes(1);
     });
 

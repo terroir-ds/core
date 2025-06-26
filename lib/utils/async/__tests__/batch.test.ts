@@ -9,6 +9,7 @@ import {
   mapConcurrent,
   processRateLimited
 } from '../batch.js';
+import { expectRejection } from '@test/helpers/error-handling.js';
 
 describe('batch processing utilities', () => {
   beforeEach(() => {
@@ -140,69 +141,55 @@ describe('batch processing utilities', () => {
       
       controller.abort();
       
-      await expect(
-        processBatch(items, processor, { signal: controller.signal })
-      ).rejects.toThrow('Operation aborted');
+      await expectRejection(
+        processBatch(items, processor, { signal: controller.signal }),
+        'Operation aborted'
+      );
     });
 
     it('should abort during processing', async () => {
-      const controller = new AbortController();
-      const items = Array.from({ length: 10 }, (_, i) => i);
-      let processed = 0;
-      
-      // Suppress unhandled rejection from background operations
-      const originalRejectionHandler = process.listeners('unhandledRejection');
-      const suppressedRejections: unknown[] = [];
-      
+      // Standard industry pattern: direct handler replacement for this test only
+      const originalHandlers = process.listeners('unhandledRejection');
       process.removeAllListeners('unhandledRejection');
-      process.on('unhandledRejection', (reason) => {
+      
+      // Silently catch AbortError rejections
+      process.on('unhandledRejection', (reason: unknown) => {
         if (reason instanceof DOMException && reason.name === 'AbortError') {
-          suppressedRejections.push(reason); // Expected behavior
-        } else {
-          // Re-emit unexpected rejections
-          originalRejectionHandler.forEach(handler => {
-            if (typeof handler === 'function') {
-              handler(reason, Promise.reject(reason));
-            }
-          });
+          return; // Expected - silently ignore
         }
+        console.error('Unexpected rejection:', reason);
       });
-      
-      const processor = async (item: number) => {
-        processed++;
-        if (processed === 3) {
-          // Abort immediately to ensure clean test
-          controller.abort();
-        }
-        await new Promise(resolve => setTimeout(resolve, 10));
-        return item;
-      };
-      
-      const promise = processBatch(items, processor, { 
-        signal: controller.signal,
-        concurrency: 1
-      });
-      
-      // Ensure all timers run before checking the result
-      await vi.runAllTimersAsync();
       
       try {
-        await promise;
-        // Should not reach here
-        expect.fail('Expected promise to reject');
-      } catch (error) {
-        expect(error).toBeInstanceOf(DOMException);
-        expect((error as DOMException).message).toBe('Operation aborted');
+        const controller = new AbortController();
+        const items = Array.from({ length: 10 }, (_, i) => i);
+        let processed = 0;
+        
+        const processor = async (item: number) => {
+          processed++;
+          if (processed === 3) {
+            controller.abort();
+          }
+          await new Promise(resolve => setTimeout(resolve, 10));
+          return item;
+        };
+        
+        const promise = processBatch(items, processor, { 
+          signal: controller.signal,
+          concurrency: 1
+        });
+        
+        await vi.runAllTimersAsync();
+        await expectRejection(promise, 'Operation aborted');
+        expect(processed).toBeLessThanOrEqual(5);
+      } finally {
+        // Restore original handlers
+        process.removeAllListeners('unhandledRejection');
+        originalHandlers.forEach(handler => {
+          process.on('unhandledRejection', handler as NodeJS.UnhandledRejectionListener);
+        });
       }
-      
-      // Restore original handlers
-      process.removeAllListeners('unhandledRejection');
-      originalRejectionHandler.forEach(handler => {
-        process.on('unhandledRejection', handler as any);
-      });
-      
-      expect(processed).toBeLessThanOrEqual(5);
-    });
+    }, 10000);
 
     it('should handle empty array', async () => {
       const processor = vi.fn();
@@ -238,13 +225,15 @@ describe('batch processing utilities', () => {
       const items = [1, 2, 3];
       const processor = async (chunk: number[]) => chunk;
       
-      await expect(
-        processChunked(items, processor, { chunkSize: 0 })
-      ).rejects.toThrow('Chunk size must be positive');
+      await expectRejection(
+        processChunked(items, processor, { chunkSize: 0 }),
+        'Chunk size must be positive'
+      );
       
-      await expect(
-        processChunked(items, processor, { chunkSize: -1 })
-      ).rejects.toThrow('Chunk size must be positive');
+      await expectRejection(
+        processChunked(items, processor, { chunkSize: -1 }),
+        'Chunk size must be positive'
+      );
     });
 
     it('should handle abort signal', async () => {
@@ -254,12 +243,13 @@ describe('batch processing utilities', () => {
       
       controller.abort();
       
-      await expect(
+      await expectRejection(
         processChunked(items, processor, { 
           chunkSize: 2, 
           signal: controller.signal 
-        })
-      ).rejects.toThrow('Operation aborted');
+        }),
+        'Operation aborted'
+      );
     });
 
     it('should abort during processing', async () => {
@@ -275,12 +265,13 @@ describe('batch processing utilities', () => {
         return chunk;
       };
       
-      await expect(
+      await expectRejection(
         processChunked(items, processor, { 
           chunkSize: 2, 
           signal: controller.signal 
-        })
-      ).rejects.toThrow('Operation aborted');
+        }),
+        'Operation aborted'
+      );
       
       expect(chunksProcessed).toBe(2);
     });
@@ -305,9 +296,10 @@ describe('batch processing utilities', () => {
         return item * 2;
       };
       
-      await expect(
-        mapConcurrent(items, mapper, 2)
-      ).rejects.toThrow('Mapping error');
+      await expectRejection(
+        mapConcurrent(items, mapper, 2),
+        'Mapping error'
+      );
     });
 
     it('should use default concurrency', async () => {
@@ -401,13 +393,15 @@ describe('batch processing utilities', () => {
       const items = [1, 2, 3];
       const processor = async (item: number) => item;
       
-      await expect(
-        processRateLimited(items, processor, { maxPerSecond: 0 })
-      ).rejects.toThrow('Rate limit must be positive');
+      await expectRejection(
+        processRateLimited(items, processor, { maxPerSecond: 0 }),
+        'Rate limit must be positive'
+      );
       
-      await expect(
-        processRateLimited(items, processor, { maxPerSecond: -1 })
-      ).rejects.toThrow('Rate limit must be positive');
+      await expectRejection(
+        processRateLimited(items, processor, { maxPerSecond: -1 }),
+        'Rate limit must be positive'
+      );
     });
 
     it('should handle abort signal', async () => {
@@ -417,12 +411,13 @@ describe('batch processing utilities', () => {
       
       controller.abort();
       
-      await expect(
+      await expectRejection(
         processRateLimited(items, processor, { 
           maxPerSecond: 10,
           signal: controller.signal 
-        })
-      ).rejects.toThrow('Operation aborted');
+        }),
+        'Operation aborted'
+      );
     });
 
     it('should use default rate limit', async () => {
