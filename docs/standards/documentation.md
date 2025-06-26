@@ -26,12 +26,15 @@ lib/utils/
 
 ## JSDoc Standards
 
-### Document All Public APIs
+See [JSDoc Standards](./jsdoc-standards.md) for comprehensive documentation guidelines.
+
+### Quick Reference
 
 ```typescript
 /**
- * Validates an email address format
+ * Validates an email address format per RFC 5321
  *
+ * @category Utils
  * @param email - The email address to validate
  * @returns True if valid, false otherwise
  * @throws {ValidationError} If email is null or undefined
@@ -42,6 +45,8 @@ lib/utils/
  *   // Process valid email
  * }
  * ```
+ * 
+ * @since 1.0.0
  */
 export function isValidEmail(email: string): boolean {
   if (!email) {

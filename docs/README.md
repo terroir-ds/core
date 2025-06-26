@@ -18,6 +18,7 @@ Welcome to the Terroir Core Design System documentation.
   - [Code Quality](./standards/code-quality.md) - Linting and formatting
   - [Testing](./standards/testing.md) - Test organization and coverage
   - [Documentation](./standards/documentation.md) - Documentation patterns
+  - [JSDoc Standards](./standards/jsdoc-standards.md) - API documentation guidelines
 
 ### 🔄 Development Process
 
