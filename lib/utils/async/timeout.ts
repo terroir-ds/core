@@ -8,6 +8,7 @@ import { checkAborted, createAbortError } from './helpers/abort.js';
 import { raceWithCleanup } from './helpers/race.js';
 import { createCleanupManager } from './helpers/cleanup.js';
 import { AsyncErrorMessages } from './helpers/messages.js';
+import { AsyncValidationError } from './errors.js';
 import { createManagedTimer } from './helpers/timers.js';
 
 export interface TimeoutOptions extends CancellableOptions {
@@ -128,7 +129,9 @@ export async function raceWithTimeout<T>(
     if (fallback !== undefined) {
       return fallback;
     }
-    throw new Error(AsyncErrorMessages.NO_PROMISES + ' and no fallback specified');
+    throw new AsyncValidationError(AsyncErrorMessages.NO_PROMISES + ' and no fallback specified', {
+      context: { promisesLength: promises.length }
+    });
   }
 
   try {

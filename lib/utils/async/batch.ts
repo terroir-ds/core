@@ -13,6 +13,7 @@ import { checkAborted } from './helpers/abort.js';
 import { ConcurrentQueue } from './helpers/queue.js';
 import { TokenBucket } from './helpers/rate-limit.js';
 import { AsyncErrorMessages } from './helpers/messages.js';
+import { AsyncAbortError, AsyncValidationError } from './errors.js';
 
 export interface BatchOptions extends CancellableProgressOptions {
   concurrency?: number;
@@ -75,7 +76,7 @@ export async function processBatch<T, R>(
 
   // Check if we were aborted
   if (signal?.aborted) {
-    throw new Error(AsyncErrorMessages.ABORTED);
+    throw new AsyncAbortError();
   }
 
   // Convert queue results to batch results
@@ -109,7 +110,9 @@ export async function processChunked<T, R>(
   checkAborted(signal);
 
   if (chunkSize <= 0) {
-    throw new Error(AsyncErrorMessages.INVALID_CHUNK_SIZE);
+    throw new AsyncValidationError(AsyncErrorMessages.INVALID_CHUNK_SIZE, {
+      context: { chunkSize }
+    });
   }
 
   const results: R[] = [];
@@ -170,7 +173,9 @@ export async function processRateLimited<T, R>(
   checkAborted(signal);
 
   if (maxPerSecond <= 0) {
-    throw new Error(AsyncErrorMessages.INVALID_RATE_LIMIT);
+    throw new AsyncValidationError(AsyncErrorMessages.INVALID_RATE_LIMIT, {
+      context: { maxPerSecond }
+    });
   }
 
   const bucket = new TokenBucket(burst, maxPerSecond);

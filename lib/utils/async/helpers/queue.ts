@@ -7,6 +7,7 @@ import { checkAborted } from './abort';
 import { createCleanupManager } from './cleanup';
 import { ProgressTracker } from './progress';
 import { AsyncErrorMessages } from './messages';
+import { AsyncValidationError, AsyncAbortError } from '../errors.js';
 
 /**
  * Result of processing a queue item
@@ -101,7 +102,9 @@ export class ConcurrentQueue<T, R> {
     } = options;
     
     if (concurrency <= 0) {
-      throw new Error(AsyncErrorMessages.INVALID_CONCURRENCY);
+      throw new AsyncValidationError(AsyncErrorMessages.INVALID_CONCURRENCY, {
+        context: { concurrency }
+      });
     }
     
     this.processor = processor;
@@ -188,7 +191,7 @@ export class ConcurrentQueue<T, R> {
       
       try {
         if (this.aborted) {
-          throw new Error(AsyncErrorMessages.ABORTED);
+          throw new AsyncAbortError();
         }
         
         const result = await this.processor(item);
@@ -286,7 +289,9 @@ export class PriorityQueue<T, R> {
     concurrency: number = 5
   ) {
     if (concurrency <= 0) {
-      throw new Error(AsyncErrorMessages.INVALID_CONCURRENCY);
+      throw new AsyncValidationError(AsyncErrorMessages.INVALID_CONCURRENCY, {
+        context: { concurrency }
+      });
     }
     
     this.processor = processor;

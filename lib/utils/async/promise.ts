@@ -13,6 +13,7 @@ import type {
 import pRetry from 'p-retry';
 import { getMessage } from '@utils/errors/messages.js';
 import { checkAborted } from './helpers/abort.js';
+import { AsyncValidationError } from './errors.js';
 
 // Re-export Deferred for backward compatibility
 export type Deferred<T> = DeferredBase<T>;
@@ -173,7 +174,9 @@ export async function firstSuccessful<T>(
   checkAborted(signal);
 
   if (factories.length === 0) {
-    throw new Error(getMessage('VALIDATION_REQUIRED', 'promise factories'));
+    throw new AsyncValidationError(getMessage('VALIDATION_REQUIRED', 'promise factories'), {
+      context: { factoriesLength: factories.length }
+    });
   }
 
   const errors: unknown[] = [];

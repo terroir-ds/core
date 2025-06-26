@@ -74,6 +74,16 @@ export {
   type RateLimitOptions,
 } from './batch.js';
 
+// Error types
+export {
+  AsyncAbortError,
+  AsyncTimeoutError,
+  AsyncValidationError,
+  RateLimitError,
+  QueueError,
+  PollingError,
+} from './errors.js';
+
 // Promise manipulation utilities
 export {
   defer,

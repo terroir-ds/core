@@ -5,6 +5,7 @@
 
 import { createManagedTimer } from './timers';
 import { checkAborted } from './abort';
+import { AsyncValidationError, RateLimitError, AsyncTimeoutError } from '../errors.js';
 
 /**
  * Token bucket for rate limiting
@@ -22,10 +23,14 @@ export class TokenBucket {
    */
   constructor(maxTokens: number, refillRate: number) {
     if (maxTokens <= 0) {
-      throw new Error('maxTokens must be positive');
+      throw new AsyncValidationError('maxTokens must be positive', {
+        context: { maxTokens }
+      });
     }
     if (refillRate <= 0) {
-      throw new Error('refillRate must be positive');
+      throw new AsyncValidationError('refillRate must be positive', {
+        context: { refillRate }
+      });
     }
     
     this.maxTokens = maxTokens;
@@ -45,10 +50,14 @@ export class TokenBucket {
     options?: { signal?: AbortSignal; maxWaitMs?: number }
   ): Promise<void> {
     if (count <= 0) {
-      throw new Error('Token count must be positive');
+      throw new AsyncValidationError('Token count must be positive', {
+        context: { count }
+      });
     }
     if (count > this.maxTokens) {
-      throw new Error(`Cannot acquire ${count} tokens, max is ${this.maxTokens}`);
+      throw new AsyncValidationError(`Cannot acquire ${count} tokens, max is ${this.maxTokens}`, {
+        context: { count, maxTokens: this.maxTokens }
+      });
     }
     
     checkAborted(options?.signal);
@@ -67,7 +76,9 @@ export class TokenBucket {
       if (options?.maxWaitMs !== undefined) {
         const elapsed = Date.now() - startTime;
         if (elapsed >= options.maxWaitMs) {
-          throw new Error(`Timeout waiting for ${count} tokens after ${elapsed}ms`);
+          throw new AsyncTimeoutError(`Timeout waiting for ${count} tokens after ${elapsed}ms`, {
+            context: { count, elapsed, maxWaitMs: options.maxWaitMs }
+          });
         }
       }
       
@@ -88,7 +99,9 @@ export class TokenBucket {
    */
   tryAcquire(count: number = 1): boolean {
     if (count <= 0) {
-      throw new Error('Token count must be positive');
+      throw new AsyncValidationError('Token count must be positive', {
+        context: { count }
+      });
     }
     
     this.refill();
@@ -116,7 +129,9 @@ export class TokenBucket {
    */
   getWaitTime(count: number = 1): number {
     if (count <= 0) {
-      throw new Error('Token count must be positive');
+      throw new AsyncValidationError('Token count must be positive', {
+        context: { count }
+      });
     }
     
     this.refill();
@@ -195,7 +210,9 @@ export class RateLimiter {
   ): Promise<T> {
     if (this.throwOnLimit) {
       if (!this.bucket.tryAcquire()) {
-        throw new Error('Rate limit exceeded');
+        throw new RateLimitError('Rate limit exceeded', {
+          context: { callsPerInterval: this.callsPerInterval, interval: this.interval }
+        });
       }
     } else {
       await this.bucket.acquire(1, options);
@@ -267,10 +284,14 @@ export class SlidingWindowRateLimiter {
    */
   constructor(maxCalls: number, windowMs: number) {
     if (maxCalls <= 0) {
-      throw new Error('maxCalls must be positive');
+      throw new AsyncValidationError('maxCalls must be positive', {
+        context: { maxCalls }
+      });
     }
     if (windowMs <= 0) {
-      throw new Error('windowMs must be positive');
+      throw new AsyncValidationError('windowMs must be positive', {
+        context: { windowMs }
+      });
     }
     
     this.maxCalls = maxCalls;

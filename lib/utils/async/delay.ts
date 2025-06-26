@@ -8,6 +8,7 @@ import { checkAborted, createAbortError } from './helpers/abort.js';
 import { createManagedTimer } from './helpers/timers.js';
 import { createCleanupManager } from './helpers/cleanup.js';
 import { AsyncErrorMessages } from './helpers/messages.js';
+import { AsyncValidationError } from './errors.js';
 
 export interface DelayOptions extends CancellableOptions {
   unref?: boolean;
@@ -30,7 +31,9 @@ export async function delay(
 
   // Validate input
   if (ms < 0) {
-    throw new Error(AsyncErrorMessages.INVALID_DELAY);
+    throw new AsyncValidationError(AsyncErrorMessages.INVALID_DELAY, {
+      context: { ms }
+    });
   }
 
   // Check if already aborted
@@ -68,11 +71,15 @@ export async function randomDelay(
   options?: DelayOptions
 ): Promise<void> {
   if (min < 0 || max < 0) {
-    throw new Error(AsyncErrorMessages.INVALID_DELAY);
+    throw new AsyncValidationError(AsyncErrorMessages.INVALID_DELAY, {
+      context: { min, max }
+    });
   }
   
   if (min > max) {
-    throw new Error('Minimum delay must not exceed maximum delay');
+    throw new AsyncValidationError('Minimum delay must not exceed maximum delay', {
+      context: { min, max }
+    });
   }
   
   const ms = Math.floor(Math.random() * (max - min + 1)) + min;
