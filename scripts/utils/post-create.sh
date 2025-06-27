@@ -734,14 +734,26 @@ atomic_append() {
 
 # Load environment variables from .env file
 load_env_file() {
-    # Find .env file using same logic as early loading
+    # Find .env file - prioritize relative paths for portability
     local env_file=""
-    for possible_env in "$SCRIPT_DIR/../../.env" "/workspaces/core/.env" "/workspaces/terroir-core/.env" "$(pwd)/.env"; do
+    # Look in common relative locations first, then fall back to absolute paths
+    for possible_env in \
+        "$(pwd)/.env" \
+        "$SCRIPT_DIR/../../.env" \
+        "${WORKSPACE_FOLDER:-/workspaces/*}/.env" \
+        "/workspace/.env" \
+        "/workspaces/.env"; do
         if [ -f "$possible_env" ]; then
             env_file="$possible_env"
             break
         fi
     done
+    
+    # Debug: Show what we checked
+    log_debug "Searched for .env files in:"
+    log_debug "  - Current directory: $(pwd)"
+    log_debug "  - Script relative: $SCRIPT_DIR/../../"
+    log_debug "  - Found files: $(ls -la $(pwd)/.env 2>/dev/null || echo 'none in pwd')"
     
     if [ -n "$env_file" ]; then
         log_info "Loading environment variables from .env file: $env_file"
@@ -1026,6 +1038,17 @@ configure_git_user() {
     
     if [ -z "${GIT_CONFIG_ITEM:-}" ]; then
         log_warn "GIT_CONFIG_ITEM not set, skipping Git user configuration"
+        return 0
+    fi
+    
+    # Check if Git user is already configured (common in worktrees)
+    local existing_name existing_email
+    existing_name="$(git config --global user.name 2>/dev/null || echo "")"
+    existing_email="$(git config --global user.email 2>/dev/null || echo "")"
+    
+    if [ -n "$existing_name" ] && [ -n "$existing_email" ]; then
+        log_info "Git user already configured: $existing_name <$existing_email>"
+        log_info "Skipping 1Password git configuration (likely in a worktree)"
         return 0
     fi
     

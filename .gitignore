@@ -47,8 +47,9 @@ assets/icons/optimized/
 *~
 .DS_Store
 
-# Claude
+# Claude and multi-agent coordination
 .claude
+.agent-coordination
 
 # Environment
 .env
