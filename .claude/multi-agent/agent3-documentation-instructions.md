@@ -30,6 +30,11 @@ Coordinate before modifying:
   - If you need VS Code settings or devcontainer config changed, request it from the main orchestrator
   - The orchestrator will update shared configurations and run host-setup.sh
 
+### Files You CAN Modify
+- `.vscode/cspell.json` - Add technical terms to the spell checker dictionary
+  - This file is shared and committed to help all agents
+  - See `.vscode/README.md` for VS Code configuration guidelines
+
 ### Current Priority Tasks
 
 1. **TypeDoc Configuration**
