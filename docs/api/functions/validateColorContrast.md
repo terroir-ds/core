@@ -1,6 +1,6 @@
 [**Terroir Core Design System v0.1.0**](../README.md)
 
-***
+---
 
 [Terroir Core Design System](../globals.md) / validateColorContrast
 
@@ -8,7 +8,7 @@
 
 > **validateColorContrast**(`colorSystem`, `minContrast`): [`ContrastValidationResult`](../interfaces/ContrastValidationResult.md)
 
-Defined in: [colors/generator.ts:404](https://github.com/terroir-ds/core/blob/a3f3cd156fc544ddf3040641fcdb94420bfa9e60/lib/colors/generator.ts#L404)
+Defined in: [colors/generator.ts:404](https://github.com/terroir-ds/core/blob/9691713b8c512b7d2abe808c4f7084bdfab798bf/lib/colors/generator.ts#L404)
 
 Validate color system against WCAG contrast requirements
 

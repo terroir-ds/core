@@ -1,6 +1,6 @@
 [**Terroir Core Design System v0.1.0**](../README.md)
 
-***
+---
 
 [Terroir Core Design System](../globals.md) / createLogger
 
@@ -8,10 +8,14 @@
 
 > **createLogger**(`context`): `Logger`
 
-Defined in: [utils/logger/index.ts:625](https://github.com/terroir-ds/core/blob/a3f3cd156fc544ddf3040641fcdb94420bfa9e60/lib/utils/logger/index.ts#L625)
+Defined in: [utils/logger/index.ts:792](https://github.com/terroir-ds/core/blob/9691713b8c512b7d2abe808c4f7084bdfab798bf/lib/utils/logger/index.ts#L792)
 
-Create a child logger with additional context
-Tracks child loggers for resource management
+Creates a child logger with additional context.
+
+Child loggers inherit all configuration from the parent logger
+while adding their own context. This is useful for adding
+module-specific or request-specific context. Child loggers
+are tracked for resource management.
 
 ## Parameters
 
@@ -19,6 +23,36 @@ Tracks child loggers for resource management
 
 [`LogContext`](../interfaces/LogContext.md)
 
+Context to include in all logs from this logger
+
 ## Returns
 
 `Logger`
+
+A new logger instance with the additional context
+
+## Examples
+
+```typescript
+// In auth module
+const authLogger = createLogger({ module: 'auth' });
+
+authLogger.info('User login attempt');
+// Logs with: { module: 'auth', msg: 'User login attempt' }
+
+authLogger.error({ userId, error }, 'Login failed');
+// Includes module context automatically
+```
+
+```typescript
+function handleRequest(req: Request) {
+  const reqLogger = createLogger({
+    requestId: req.id,
+    path: req.path,
+    method: req.method,
+  });
+
+  reqLogger.info('Processing request');
+  // All logs include request context
+}
+```

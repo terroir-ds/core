@@ -8,6 +8,6 @@
     "scripts/**",
     "tests/**",
     "dist/**",
-    "packages/**/dist/**"
+    "packages/**"
   ]
 }

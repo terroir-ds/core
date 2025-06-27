@@ -1,6 +1,6 @@
 [**Terroir Core Design System v0.1.0**](../README.md)
 
-***
+---
 
 [Terroir Core Design System](../globals.md) / generateColorSystem
 
@@ -8,7 +8,7 @@
 
 > **generateColorSystem**(`sourceOrOptions`): `Promise`\<[`ColorSystem`](../interfaces/ColorSystem.md)\>
 
-Defined in: [colors/generator.ts:135](https://github.com/terroir-ds/core/blob/a3f3cd156fc544ddf3040641fcdb94420bfa9e60/lib/colors/generator.ts#L135)
+Defined in: [colors/generator.ts:135](https://github.com/terroir-ds/core/blob/9691713b8c512b7d2abe808c4f7084bdfab798bf/lib/colors/generator.ts#L135)
 
 Generate a complete color system from a source color
 
@@ -38,6 +38,6 @@ const colors = await generateColorSystem('#1976d2');
 const colors = await generateColorSystem({
   source: '#1976d2',
   contrastLevel: 0.5,
-  variant: 'vibrant'
+  variant: 'vibrant',
 });
 ```

@@ -1,12 +1,12 @@
 [**Terroir Core Design System v0.1.0**](../README.md)
 
-***
+---
 
 [Terroir Core Design System](../globals.md) / ColorSystem
 
 # Interface: ColorSystem
 
-Defined in: [colors/generator.ts:80](https://github.com/terroir-ds/core/blob/a3f3cd156fc544ddf3040641fcdb94420bfa9e60/lib/colors/generator.ts#L80)
+Defined in: [colors/generator.ts:80](https://github.com/terroir-ds/core/blob/9691713b8c512b7d2abe808c4f7084bdfab798bf/lib/colors/generator.ts#L80)
 
 Generated color system
 
@@ -16,7 +16,7 @@ Generated color system
 
 > **metadata**: `object`
 
-Defined in: [colors/generator.ts:97](https://github.com/terroir-ds/core/blob/a3f3cd156fc544ddf3040641fcdb94420bfa9e60/lib/colors/generator.ts#L97)
+Defined in: [colors/generator.ts:97](https://github.com/terroir-ds/core/blob/9691713b8c512b7d2abe808c4f7084bdfab798bf/lib/colors/generator.ts#L97)
 
 #### generatedAt
 
@@ -42,13 +42,13 @@ Defined in: [colors/generator.ts:97](https://github.com/terroir-ds/core/blob/a3f
 
 > **version**: `string`
 
-***
+---
 
 ### palettes
 
 > **palettes**: `object`
 
-Defined in: [colors/generator.ts:85](https://github.com/terroir-ds/core/blob/a3f3cd156fc544ddf3040641fcdb94420bfa9e60/lib/colors/generator.ts#L85)
+Defined in: [colors/generator.ts:85](https://github.com/terroir-ds/core/blob/9691713b8c512b7d2abe808c4f7084bdfab798bf/lib/colors/generator.ts#L85)
 
 #### error
 
@@ -74,13 +74,13 @@ Defined in: [colors/generator.ts:85](https://github.com/terroir-ds/core/blob/a3f
 
 > **tertiary**: [`TonalScale`](TonalScale.md)
 
-***
+---
 
 ### source
 
 > **source**: `object`
 
-Defined in: [colors/generator.ts:81](https://github.com/terroir-ds/core/blob/a3f3cd156fc544ddf3040641fcdb94420bfa9e60/lib/colors/generator.ts#L81)
+Defined in: [colors/generator.ts:81](https://github.com/terroir-ds/core/blob/9691713b8c512b7d2abe808c4f7084bdfab798bf/lib/colors/generator.ts#L81)
 
 #### argb
 
@@ -90,13 +90,13 @@ Defined in: [colors/generator.ts:81](https://github.com/terroir-ds/core/blob/a3f
 
 > **hex**: `string`
 
-***
+---
 
 ### themes?
 
 > `optional` **themes**: `object`
 
-Defined in: [colors/generator.ts:93](https://github.com/terroir-ds/core/blob/a3f3cd156fc544ddf3040641fcdb94420bfa9e60/lib/colors/generator.ts#L93)
+Defined in: [colors/generator.ts:93](https://github.com/terroir-ds/core/blob/9691713b8c512b7d2abe808c4f7084bdfab798bf/lib/colors/generator.ts#L93)
 
 #### dark
 

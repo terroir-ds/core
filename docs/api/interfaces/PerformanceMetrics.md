@@ -1,14 +1,26 @@
 [**Terroir Core Design System v0.1.0**](../README.md)
 
-***
+---
 
 [Terroir Core Design System](../globals.md) / PerformanceMetrics
 
 # Interface: PerformanceMetrics
 
-Defined in: [utils/types/logger.types.ts:18](https://github.com/terroir-ds/core/blob/a3f3cd156fc544ddf3040641fcdb94420bfa9e60/lib/utils/types/logger.types.ts#L18)
+Defined in: [utils/types/logger.types.ts:79](https://github.com/terroir-ds/core/blob/9691713b8c512b7d2abe808c4f7084bdfab798bf/lib/utils/types/logger.types.ts#L79)
 
-Performance metrics for operation tracking
+Performance metrics for operation tracking.
+
+Standard structure for logging performance data. Used by the logger's
+timer utilities to automatically track operation durations.
+
+## Example
+
+```typescript
+const timer = logger.startTimer();
+await expensiveOperation();
+timer.done({ operation: 'dataProcessing' }, 'Processing complete');
+// Logs with: { perf: { operation: 'dataProcessing', duration: 1234, durationUnit: 'ms' } }
+```
 
 ## Properties
 
@@ -16,20 +28,20 @@ Performance metrics for operation tracking
 
 > **duration**: `number`
 
-Defined in: [utils/types/logger.types.ts:20](https://github.com/terroir-ds/core/blob/a3f3cd156fc544ddf3040641fcdb94420bfa9e60/lib/utils/types/logger.types.ts#L20)
+Defined in: [utils/types/logger.types.ts:81](https://github.com/terroir-ds/core/blob/9691713b8c512b7d2abe808c4f7084bdfab798bf/lib/utils/types/logger.types.ts#L81)
 
-***
+---
 
 ### durationUnit
 
 > **durationUnit**: `"ms"`
 
-Defined in: [utils/types/logger.types.ts:21](https://github.com/terroir-ds/core/blob/a3f3cd156fc544ddf3040641fcdb94420bfa9e60/lib/utils/types/logger.types.ts#L21)
+Defined in: [utils/types/logger.types.ts:82](https://github.com/terroir-ds/core/blob/9691713b8c512b7d2abe808c4f7084bdfab798bf/lib/utils/types/logger.types.ts#L82)
 
-***
+---
 
 ### operation
 
 > **operation**: `string`
 
-Defined in: [utils/types/logger.types.ts:19](https://github.com/terroir-ds/core/blob/a3f3cd156fc544ddf3040641fcdb94420bfa9e60/lib/utils/types/logger.types.ts#L19)
+Defined in: [utils/types/logger.types.ts:80](https://github.com/terroir-ds/core/blob/9691713b8c512b7d2abe808c4f7084bdfab798bf/lib/utils/types/logger.types.ts#L80)
