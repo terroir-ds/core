@@ -1,5 +1,5 @@
 ---
-"@terroir/core": patch
+'@terroir/core': patch
 ---
 
 Restructure monorepo for proper package organization
