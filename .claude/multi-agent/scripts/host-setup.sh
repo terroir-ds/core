@@ -87,11 +87,18 @@ for i in 1 2 3; do
         echo "✅ Copied .env file for devcontainer"
     fi
     
-    # Always copy latest .devcontainer from main repo to ensure updates
+    # Copy .devcontainer from main repo and use agent-specific config
     if [ -d "../terroir-core/.devcontainer" ]; then
         rm -rf .devcontainer
         cp -r "../terroir-core/.devcontainer" .devcontainer
-        echo "✅ Copied latest devcontainer config for Agent $i"
+        
+        # Use agent-specific devcontainer.json if template exists
+        if [ -f "../terroir-core/.claude/multi-agent/templates/agent-devcontainer.json" ]; then
+            cp "../terroir-core/.claude/multi-agent/templates/agent-devcontainer.json" .devcontainer/devcontainer.json
+            echo "✅ Copied agent-specific devcontainer config for Agent $i"
+        else
+            echo "✅ Copied devcontainer config for Agent $i"
+        fi
     fi
     
     # Copy latest scripts to ensure agents have updated post-create.sh
@@ -323,9 +330,10 @@ echo "   - Shared settings from the main repo (.vscode/settings.json)"
 echo "   - Agent-specific color overrides (not committed to git)"
 echo "   - Environment variables for easy agent identification"
 echo ""
-echo "📝 Note about VS Code settings:"
-echo "   - .vscode/settings.json is now in .gitignore to preserve agent settings"
-echo "   - To update shared settings: edit in main repo, then re-run this script"
-echo "   - Agents should NOT edit .vscode/settings.json directly"
+echo "📝 Note about VS Code settings and devcontainer:"
+echo "   - .vscode/settings.json and .devcontainer/devcontainer.json are in .gitignore"
+echo "   - This preserves agent-specific configurations through merges"
+echo "   - To update shared configs: edit in main repo, then re-run this script"
+echo "   - Agents should NOT edit these files directly"
 echo ""
 echo "Happy parallel developing! 🎉"

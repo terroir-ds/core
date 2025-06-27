@@ -24,8 +24,9 @@ Coordinate before modifying:
 
 ### Files You Cannot Modify
 - `.vscode/settings.json` - Agent-specific settings are preserved via .gitignore
-  - If you need VS Code settings changed, request it from the main orchestrator
-  - The orchestrator will update shared settings and run host-setup.sh
+- `.devcontainer/devcontainer.json` - Agent-specific container config preserved via .gitignore
+  - If you need VS Code settings or devcontainer config changed, request it from the main orchestrator
+  - The orchestrator will update shared configurations and run host-setup.sh
 
 ### Current Priority Tasks
 
