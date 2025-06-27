@@ -636,7 +636,11 @@ function getLogger(): Logger {
   if (!_logger) {
     // Increase max listeners to prevent warnings in tests
     if (isTest()) {
-      process.setMaxListeners(50);
+      // Only increase if current limit is lower than what we need
+      const currentMax = process.getMaxListeners();
+      if (currentMax < 100) {
+        process.setMaxListeners(100);
+      }
       _logger = pino(createTestConfig());
     } else if (isDevelopment() && !isCI()) {
       _logger = pino({
