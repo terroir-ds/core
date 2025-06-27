@@ -133,6 +133,12 @@ for i in 1 2 3; do
             if ! grep -q "^\.env$" "$HOST_GIT_DIR/info/exclude" 2>/dev/null; then
                 echo ".env" >> "$HOST_GIT_DIR/info/exclude"
             fi
+            if ! grep -q "^\.devcontainer/$" "$HOST_GIT_DIR/info/exclude" 2>/dev/null; then
+                echo ".devcontainer/" >> "$HOST_GIT_DIR/info/exclude"
+            fi
+            if ! grep -q "^scripts/$" "$HOST_GIT_DIR/info/exclude" 2>/dev/null; then
+                echo "scripts/" >> "$HOST_GIT_DIR/info/exclude"
+            fi
             echo "✅ Added git exclusions for agent-specific files"
         else
             echo "⚠️  Git directory not found: $HOST_GIT_DIR"
