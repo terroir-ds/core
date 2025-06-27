@@ -36,7 +36,7 @@
   "forwardPorts": [],
 
   // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "echo 'Current directory:' && pwd && echo 'Looking for .env:' && ls -la .env 2>/dev/null || echo '.env not found' && echo '---' && LOG_LEVEL=3 bash scripts/utils/post-create.sh && pnpm install --force && pnpm exec playwright install chromium firefox webkit",
+  "postCreateCommand": "bash scripts/utils/post-create.sh && pnpm install --force && pnpm exec playwright install chromium firefox webkit",
 
   // Configure tool-specific properties.
   "customizations": {
