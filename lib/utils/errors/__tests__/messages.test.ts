@@ -1,5 +1,19 @@
 /**
- * Tests for centralized error messages
+ * @module test/lib/utils/errors/messages
+ * 
+ * Unit tests for centralized error message system
+ * 
+ * Tests error message functionality including:
+ * - ERROR_MESSAGES object with static and parameterized templates
+ * - getMessage helper for retrieving formatted messages
+ * - ERROR_MESSAGE_CATEGORIES for grouping related messages
+ * - createLocalizedMessages for i18n support (future feature)
+ * - validateMessages for template consistency
+ * - Message parameters and optional values
+ * - HTTP status code messages
+ * - Business logic and validation messages
+ * - Edge cases with missing parameters
+ * - Real-world usage scenarios
  */
 
 import { describe, it, expect } from 'vitest';

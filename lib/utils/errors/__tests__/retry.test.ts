@@ -1,5 +1,20 @@
 /**
- * Tests for retry logic and resilience patterns
+ * @module test/lib/utils/errors/retry
+ * 
+ * Unit tests for retry logic and resilience patterns
+ * 
+ * Tests retry functionality including:
+ * - retry with exponential backoff and jitter
+ * - withTimeout for operation timeouts
+ * - CircuitBreaker pattern implementation
+ * - retryWithCircuitBreaker combination
+ * - batchRetry for parallel item processing
+ * - makeRetryable function wrapper
+ * - Custom retry predicates
+ * - Abort signal support
+ * - Failure thresholds and cooldown periods
+ * - Circuit breaker states (closed, open, half-open)
+ * - Time window-based failure tracking
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi, beforeAll, afterAll } from 'vitest';

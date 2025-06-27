@@ -1,5 +1,19 @@
 /**
- * Tests for base error classes
+ * @module test/lib/utils/errors/base-error
+ * 
+ * Unit tests for base error classes and utilities
+ * 
+ * Tests error functionality including:
+ * - BaseError construction with severity and category
+ * - Error chaining and root cause analysis
+ * - Error serialization (JSON, public JSON, log context)
+ * - Specific error types (Validation, Network, Permission, etc.)
+ * - MultiError for aggregating multiple errors
+ * - Type guards (isError, isBaseError, isRetryableError)
+ * - Error wrapping utilities
+ * - HTTP response error creation
+ * - Error context and metadata handling
+ * - Stack trace capture and formatting
  */
 
 import { describe, it, expect } from 'vitest';

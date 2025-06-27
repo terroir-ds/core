@@ -1,5 +1,20 @@
 /**
- * Tests for error handlers and utilities
+ * @module test/lib/utils/errors/handlers
+ * 
+ * Unit tests for error handling and recovery utilities
+ * 
+ * Tests error handling functionality including:
+ * - Error handler registration and execution
+ * - Recovery strategy registration and execution
+ * - handleError with severity-based logging
+ * - tryRecover with fallback values
+ * - withErrorHandling decorator function
+ * - errorBoundary for safe execution
+ * - Global error handlers (uncaught exceptions, rejections)
+ * - Error formatting and detail extraction
+ * - Assertion utilities (assert, assertDefined)
+ * - Context propagation through error handling
+ * - Graceful shutdown signal handling
  */
 
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
