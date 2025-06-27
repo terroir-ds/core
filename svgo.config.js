@@ -1,3 +1,26 @@
+/**
+ * @module svgo.config
+ * 
+ * SVGO (SVG Optimizer) configuration for the Terroir Core Design System.
+ * 
+ * Configures SVG optimization and token replacement for icon assets:
+ * - Preserves viewBox for proper scaling
+ * - Maintains IDs for accessibility and targeting
+ * - Removes hardcoded fill/stroke colors
+ * - Applies currentColor for theme compatibility
+ * - Replaces design tokens with CSS custom properties
+ * 
+ * Optimization features:
+ * - Multi-pass optimization for maximum compression
+ * - Color attributes removal for theming
+ * - Token placeholder replacement (e.g., {color.primary} → var(--color-primary))
+ * - Accessibility-friendly output
+ * 
+ * Custom plugin:
+ * - custom-token-replacer: Converts token references in SVG attributes
+ *   to CSS custom properties for runtime theming
+ */
+
 module.exports = {
   multipass: true,
   plugins: [

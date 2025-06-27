@@ -1,3 +1,29 @@
+/**
+ * @module style-dictionary.config
+ * 
+ * Style Dictionary configuration for the Terroir Core Design System.
+ * 
+ * Configures design token transformation and output for multiple platforms:
+ * - CSS custom properties with theme support
+ * - JavaScript/TypeScript modules
+ * - JSON for documentation and tooling
+ * 
+ * Features:
+ * - Custom size/px transform for consistent units
+ * - Themed CSS output (light/dark) with data attributes
+ * - Output references for maintainable token relationships
+ * - Multiple format outputs for different use cases
+ * - Theme-specific token filtering
+ * 
+ * Token sources:
+ * - tokens/**/*.json - All design token definitions
+ * 
+ * Output formats:
+ * - CSS: Custom properties with theme variants
+ * - JS: ES6 modules with TypeScript definitions
+ * - JSON: Nested and flat structures for tooling
+ */
+
 const StyleDictionary = require('style-dictionary');
 
 // Custom transforms

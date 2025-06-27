@@ -1,3 +1,29 @@
+/**
+ * @module vitest.config
+ * 
+ * Vitest configuration for the Terroir Core Design System.
+ * 
+ * Configures the test runner with:
+ * - Path aliases matching TypeScript configuration
+ * - Global test setup with proper cleanup
+ * - JSDOM environment for DOM-related tests
+ * - Console log filtering for expected warnings
+ * - V8 coverage provider with reasonable thresholds
+ * 
+ * Test features:
+ * - Global utilities available in all tests
+ * - Automatic mock and timer cleanup
+ * - Unhandled rejection handling
+ * - Request ID tracking for async operations
+ * - Coverage focused on source files only
+ * 
+ * Coverage thresholds are set conservatively to allow for growth:
+ * - Lines: 60%
+ * - Functions: 60%
+ * - Branches: 50%
+ * - Statements: 60%
+ */
+
 import { defineConfig } from 'vitest/config';
 import { coverageConfigDefaults } from 'vitest/config';
 import path from 'path';

@@ -1,3 +1,23 @@
+/**
+ * @module eslint.config
+ * 
+ * ESLint configuration for the Terroir Core Design System.
+ * 
+ * Configures linting rules for JavaScript and TypeScript files across the
+ * project. Enforces code quality standards including:
+ * - TypeScript type safety
+ * - No console.log usage (use structured logger instead)
+ * - Modern JavaScript patterns (const, arrow functions, template literals)
+ * - Consistent code style
+ * 
+ * Configuration features:
+ * - Separate rules for JS and TS files
+ * - TypeScript project-aware linting
+ * - Proper globals for Node.js environment
+ * - Ignored paths for generated files
+ * - Compatibility with project's error handling and logging standards
+ */
+
 import js from '@eslint/js';
 import typescript from '@typescript-eslint/eslint-plugin';
 import typescriptParser from '@typescript-eslint/parser';

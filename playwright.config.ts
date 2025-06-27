@@ -1,3 +1,27 @@
+/**
+ * @module playwright.config
+ * 
+ * Playwright configuration for visual regression testing in the Terroir Core Design System.
+ * 
+ * Configures automated browser testing for:
+ * - Visual regression snapshots
+ * - Cross-browser compatibility (Chrome, Firefox, Safari)
+ * - Mobile viewport testing (Pixel 5, iPhone 12)
+ * - Accessibility testing
+ * - Component interaction testing
+ * 
+ * Test features:
+ * - Parallel test execution (4 workers locally, 1 on CI)
+ * - Automatic retry on CI (2 retries)
+ * - Trace collection on first retry
+ * - Screenshots and videos on failure
+ * - Storybook integration for component testing
+ * - Consistent viewport sizes for visual regression
+ * 
+ * The configuration automatically starts Storybook dev server
+ * before running tests and reuses existing servers locally.
+ */
+
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({

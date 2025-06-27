@@ -1,3 +1,26 @@
+/**
+ * @module astro.config
+ * 
+ * Astro configuration for the Terroir Core Design System documentation site.
+ * 
+ * Configures the Starlight documentation theme with:
+ * - GitHub Pages deployment settings
+ * - Environment-aware base path (production vs development)
+ * - Social links and edit functionality
+ * - Custom styling
+ * - Auto-generated sidebar from content structure
+ * 
+ * Features:
+ * - Last updated timestamps on pages
+ * - Pagination for better navigation
+ * - GitHub edit links for contributions
+ * - Path aliases for importing core library
+ * - Responsive documentation layout
+ * 
+ * The site is deployed to: https://terroir-ds.github.io/core
+ * in production, and runs on root path during development.
+ */
+
 // @ts-check
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';

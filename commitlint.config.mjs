@@ -1,3 +1,33 @@
+/**
+ * @module commitlint.config
+ * 
+ * Commitlint configuration for the Terroir Core Design System.
+ * 
+ * Enforces conventional commit message format to:
+ * - Maintain consistent commit history
+ * - Enable automated changelog generation
+ * - Improve project maintainability
+ * - Support semantic versioning
+ * 
+ * Commit types:
+ * - feat: New features (triggers minor version)
+ * - fix: Bug fixes (triggers patch version)
+ * - docs: Documentation changes
+ * - style: Code formatting (no logic changes)
+ * - refactor: Code restructuring (no behavior changes)
+ * - perf: Performance improvements
+ * - test: Test additions or modifications
+ * - build: Build system changes
+ * - ci: CI/CD configuration changes
+ * - chore: Maintenance tasks
+ * - revert: Reverting previous commits
+ * 
+ * Rules:
+ * - Maximum header length: 100 characters
+ * - Scope required for feat and fix commits
+ * - Follows @commitlint/config-conventional standards
+ */
+
 export default {
   extends: ['@commitlint/config-conventional'],
   rules: {
