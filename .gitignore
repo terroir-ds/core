@@ -40,6 +40,8 @@ assets/icons/optimized/
 # IDE
 .vscode/*
 !.vscode/extensions.json
+!.vscode/cspell.json
+!.vscode/README.md
 # Note: settings.json is now ignored to preserve agent-specific settings
 # To update shared settings, temporarily comment out the line below
 .vscode/settings.json
@@ -55,6 +57,7 @@ assets/icons/optimized/
 .devcontainer/devcontainer.json
 
 # Claude and multi-agent coordination
+.claude
 .claude/*
 !.claude/multi-agent/
 .agent-coordination
