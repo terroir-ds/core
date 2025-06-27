@@ -9,7 +9,10 @@
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 
   // Mount parent directory to ensure both agent and core are accessible for git worktrees
-  "mounts": ["source=${localWorkspaceFolder}/..,target=/workspaces,type=bind,consistency=cached"],
+  // Also mount the main terroir-core directory specifically for git access
+  "mounts": [
+    "source=${localWorkspaceFolder}/../terroir-core,target=/workspaces/terroir-core,type=bind,consistency=cached"
+  ],
 
   // Features to add to the dev container. More info: https://containers.dev/features.
   "features": {
