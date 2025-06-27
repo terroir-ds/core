@@ -4,17 +4,32 @@
 
 This system enables parallel development using multiple Claude agents working simultaneously on different aspects of the Terroir Core Design System. Each agent operates in its own VS Code window and container, coordinating through shared task management.
 
+## Prerequisites
+
+**Important**: All git worktrees must be on `feat/initial-setup` branch (or have it merged) to include the latest multi-agent fixes:
+- Settings merge functionality
+- Direct folder opening support
+- Environment variable handling
+- Git exclusion configurations
+
 ## Quick Start
 
 ```bash
-# 1. Run setup (one time)
-./.claude/multi-agent/scripts/setup-multi-agent.sh
+# 1. Run host setup script (one time, from host machine)
+cd ~/path/to/terroir-core
+./.claude/multi-agent/host-setup.sh
 
-# 2. Start all agents
-./.claude/multi-agent/scripts/start-agents.sh
+# 2. Open each agent folder directly in VS Code
+# No workspace files needed - just open the folders:
+code ../terroir-agent1
+code ../terroir-agent2  
+code ../terroir-agent3
 
-# 3. Open the 3 VS Code windows that appear
-# Each will have an agent ready to work on their focus area
+# 3. Each VS Code window will:
+# - Detect .devcontainer and prompt to reopen in container
+# - Load merged settings (shared + agent-specific)
+# - Show agent color in title bar
+# - Have working git, pnpm, and environment
 
 # 4. At sync times (10am, 2pm, 6pm), run:
 ./.claude/multi-agent/scripts/sync-agents.sh
@@ -126,7 +141,39 @@ Your Machine
 
 ### Common Issues
 
-**Merge Conflicts**
+**"OP_SERVICE_ACCOUNT_TOKEN not set" Warning**
+- **Cause**: .env file not found or not loaded
+- **Solution**: Ensure .env exists in agent directory, run host-setup.sh again
+- **Verification**: `ls -la .env` in agent directory
+
+**"fatal: not a git repository" Error**
+- **Cause**: Git worktree paths incorrect or branches outdated
+- **Solution**: Merge feat/initial-setup into agent branches:
+  ```bash
+  git merge feat/initial-setup
+  ```
+
+**Agent Settings/Colors Missing After Merge**
+- **Cause**: Git merge overwrites settings.json
+- **Solution**: Run host-setup.sh again - it recreates merged settings
+- **Note**: Host setup now preserves shared settings while adding agent overrides
+
+**Empty /workspaces/core Directory**
+- **Cause**: Docker mount artifact from earlier PATH configuration
+- **Solution**: Harmless, can be ignored
+- **Fixed in**: Latest devcontainer.json uses ${localWorkspaceFolderBasename}
+
+**VS Code Not Detecting Devcontainer**
+- **Cause**: Using workspace files or outdated configuration
+- **Solution**: Open folders directly: `code ../terroir-agent1`
+- **Note**: Workspace files are no longer needed or created
+
+**Changes Showing as Modified in Git**
+- **Cause**: Copied files from main repo differ from agent branch versions
+- **Solution 1**: Merge latest changes from feat/initial-setup
+- **Solution 2**: Git exclusions will hide .vscode/settings.json, .env, etc.
+
+**Merge Conflicts During Sync**
 - Run `check-conflicts.sh` to identify issues
 - Coordinate through `CONFLICTS.md`
 - Use integration branch for resolution
@@ -136,18 +183,17 @@ Your Machine
 - Other agents check every 30 minutes
 - Collaborate on resolution
 
-**Resource Contention**
-- Check lock files before editing
-- Respect ownership boundaries
-- Communicate in advance for shared resources
-
 ## Scripts
 
-- `setup-multi-agent.sh` - Initial setup (run once)
-- `start-agents.sh` - Launch all agent environments
-- `sync-agents.sh` - Synchronize agent work
-- `check-conflicts.sh` - Detect potential issues
-- `stop-agents.sh` - Clean shutdown
+- `host-setup.sh` - Complete host machine setup (run once from main repo)
+  - Creates git worktrees on specified branches
+  - Sets up shared coordination directory
+  - Configures symbolic links
+  - Copies devcontainer, scripts, and environment files
+  - Configures git to exclude agent-specific files
+- `sync-agents.sh` - Synchronize agent work at scheduled times
+- `check-conflicts.sh` - Detect potential merge issues
+- `stop-agents.sh` - Clean shutdown of environments
 
 ## Best Practices
 
@@ -158,6 +204,38 @@ Your Machine
 5. **Test Locally**: Before pushing changes
 6. **Sync Regularly**: Don't skip merge windows
 
+## Technical Implementation Details
+
+### Settings Merge Strategy
+The host setup script implements smart settings management:
+1. Copies shared settings.json from main repo
+2. Creates agent-specific overrides (colors, env vars)
+3. Merges them using Node.js for deep object merging
+4. Falls back to simple replacement if Node.js unavailable
+5. Recreates on every run to handle post-merge scenarios
+
+### Git Exclusions
+Each agent worktree excludes locally-modified files:
+- `.vscode/settings.json` - Agent-specific VS Code settings
+- `.env` - Local environment variables
+- `.devcontainer/` - Container configuration
+- `scripts/` - Development scripts
+
+These exclusions prevent git from showing modifications after setup.
+
+### Container Mounts
+Each agent container mounts:
+- **Agent workspace**: `/workspaces/terroir-agentN` (primary workspace)
+- **Main repo**: `/workspaces/terroir-core` (for git worktree access)
+- **Dynamic PATH**: `/workspaces/${localWorkspaceFolderBasename}/node_modules/.bin`
+
+### Environment Loading
+The post-create.sh script:
+1. Searches for .env in working directory first
+2. No hardcoded project paths for portability
+3. Loads 1Password tokens for SSH key management
+4. Configures git signing with loaded SSH keys
+
 ## Metrics
 
 Track effectiveness through:
@@ -166,11 +244,33 @@ Track effectiveness through:
 - Integration success rate
 - Time saved vs sequential work
 
+## Key Implementation Details
+
+### Settings Management
+- Each agent has two settings files:
+  - `terroir-shared/.vscode/settings.json` - Shared settings
+  - `terroir-agentN/.vscode/settings.json` - Agent-specific overrides
+- VS Code automatically merges these (agent settings take precedence)
+
+### Git Configuration
+- Each worktree excludes:
+  - `.vscode/settings.json` (agent-specific)
+  - `.env` (local environment)
+  - `.devcontainer/` (agent configuration)
+  - `scripts/` (agent scripts)
+- Main repository (terroir-core) mounted read-only for git operations
+
+### Container Setup
+- No workspace files needed - open folders directly
+- Devcontainer uses dynamic paths with `${localWorkspaceFolderBasename}`
+- Post-create script properly loads environment variables
+- Each container isolated but shares coordination via symlinks
+
 ## Next Steps
 
-1. Run setup script
-2. Start your first multi-agent session
-3. Monitor effectiveness
-4. Adjust boundaries as needed
+1. Ensure all worktrees are on `feat/initial-setup` or have it merged
+2. Run host setup script from main repository
+3. Open agent folders directly (no workspace files)
+4. Start coordinated development
 
 Ready to 3x your development speed? Let's go! 🚀

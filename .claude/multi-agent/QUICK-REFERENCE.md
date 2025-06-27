@@ -3,13 +3,15 @@
 ## Setup Commands
 
 ```bash
-# One-time setup
-./.claude/multi-agent/scripts/setup-multi-agent.sh
+# One-time setup (from host machine, in main repo)
+./.claude/multi-agent/host-setup.sh
 
-# Daily startup
-./.claude/multi-agent/scripts/start-agents.sh
+# Open agent folders (no workspace files needed)
+code ../terroir-agent1
+code ../terroir-agent2
+code ../terroir-agent3
 
-# Sync work (10 AM, 2 PM, 6 PM)
+# Sync work (10 AM, 2 PM, 6 PM) - from any agent container
 ./.claude/multi-agent/scripts/sync-agents.sh
 
 # Check for conflicts
@@ -78,11 +80,16 @@ git commit -m "docs(agent3): add API reference"
 ## Quick Status Check
 
 ```bash
-# From parent directory
-./agent-status.sh
+# Check git status (from within any agent container)
+git status
 
-# Check specific agent
-cd terroir-agent1 && git status
+# Verify environment
+echo $NODE_ENV
+echo $CLAUDE_AGENT_ID
+
+# Check shared coordination
+ls -la .claude/
+ls -la .agent-coordination/
 ```
 
 ## Emergency Procedures
@@ -125,9 +132,17 @@ cd terroir-agent1 && git status
 - 1&2: `tsconfig.json`
 - All: Root config files
 
-## Help
+## Help & Key Points
 
+### Documentation
 - Instructions: `.claude/multi-agent/README.md`
 - Agent 1: `.claude/multi-agent/agent1-utilities-instructions.md`
 - Agent 2: `.claude/multi-agent/agent2-infrastructure-instructions.md`
 - Agent 3: `.claude/multi-agent/agent3-documentation-instructions.md`
+
+### Key Implementation Details
+- **No workspace files needed** - Open folders directly
+- **Settings merge automatically** - Shared + agent-specific
+- **Git works via mounts** - terroir-core mounted for git access
+- **Environment loads properly** - Post-create script handles .env
+- **Branches must include fixes** - Base on feat/initial-setup or later

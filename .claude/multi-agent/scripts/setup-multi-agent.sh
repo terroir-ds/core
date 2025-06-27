@@ -1,5 +1,9 @@
 #!/bin/bash
 # setup-multi-agent.sh - One-time setup for multi-agent development
+#
+# ⚠️  DEPRECATED: Use host-setup.sh instead!
+# This script is kept for reference but should not be used.
+# The new setup process uses git worktrees and must be run from the host machine.
 
 set -e
 
@@ -67,71 +71,8 @@ done
 echo -e "\n📋 Copying coordination files..."
 cp -r "$MAIN_REPO/.claude/"* "$SHARED_DIR/.claude/" 2>/dev/null || true
 
-# Create VS Code workspace files
-echo -e "\n💻 Creating VS Code workspace files..."
-
-# Agent 1 workspace
-cat > "$PARENT_DIR/terroir-agent1.code-workspace" << 'EOF'
-{
-  "folders": [{
-    "path": "terroir-agent1"
-  }],
-  "settings": {
-    "terminal.integrated.env.linux": {
-      "AGENT_ID": "1",
-      "AGENT_FOCUS": "utilities"
-    },
-    "workbench.colorCustomizations": {
-      "activityBar.background": "#1a4d1a",
-      "titleBar.activeBackground": "#1a4d1a",
-      "statusBar.background": "#1a4d1a"
-    },
-    "window.title": "Agent 1 - Utilities - ${folderName}"
-  }
-}
-EOF
-
-# Agent 2 workspace
-cat > "$PARENT_DIR/terroir-agent2.code-workspace" << 'EOF'
-{
-  "folders": [{
-    "path": "terroir-agent2"
-  }],
-  "settings": {
-    "terminal.integrated.env.linux": {
-      "AGENT_ID": "2",
-      "AGENT_FOCUS": "infrastructure"
-    },
-    "workbench.colorCustomizations": {
-      "activityBar.background": "#1a2d4d",
-      "titleBar.activeBackground": "#1a2d4d",
-      "statusBar.background": "#1a2d4d"
-    },
-    "window.title": "Agent 2 - Infrastructure - ${folderName}"
-  }
-}
-EOF
-
-# Agent 3 workspace
-cat > "$PARENT_DIR/terroir-agent3.code-workspace" << 'EOF'
-{
-  "folders": [{
-    "path": "terroir-agent3"
-  }],
-  "settings": {
-    "terminal.integrated.env.linux": {
-      "AGENT_ID": "3",
-      "AGENT_FOCUS": "documentation"
-    },
-    "workbench.colorCustomizations": {
-      "activityBar.background": "#3d1a4d",
-      "titleBar.activeBackground": "#3d1a4d",
-      "statusBar.background": "#3d1a4d"
-    },
-    "window.title": "Agent 3 - Documentation - ${folderName}"
-  }
-}
-EOF
+# Note: We no longer create workspace files - agents open folders directly
+# The host-setup.sh script handles VS Code settings configuration
 
 # Create initial coordination files
 echo -e "\n📄 Creating coordination files..."
@@ -292,8 +233,9 @@ services:
 EOF
 
 echo -e "\n✨ Setup complete!"
-echo -e "\nNext steps:"
-echo "1. Run: ./.claude/multi-agent/scripts/start-agents.sh"
-echo "2. Open the 3 VS Code windows that appear"
-echo "3. Each agent will be ready to work in their focus area"
-echo -e "\nHappy parallel developing! 🚀"
+echo -e "\n⚠️  Note: This script is deprecated in favor of host-setup.sh"
+echo -e "\nFor the new multi-agent setup, use:"
+echo "1. Exit to host machine (not in container)"
+echo "2. Run: ./.claude/multi-agent/host-setup.sh"
+echo "3. Open agent folders directly with VS Code"
+echo -e "\nSee .claude/multi-agent/README.md for details."

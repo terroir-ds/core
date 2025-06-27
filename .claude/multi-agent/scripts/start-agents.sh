@@ -99,28 +99,33 @@ echo -e "\n💻 Opening VS Code windows..."
 
 # Function to open VS Code with retry
 open_vscode() {
-    local workspace=$1
+    local folder=$1
     local attempt=1
     
     while [ $attempt -le 3 ]; do
-        if code "$workspace" 2>/dev/null; then
+        if code "$folder" 2>/dev/null; then
             return 0
         fi
-        echo "Retry $attempt for $workspace..."
+        echo "Retry $attempt for $folder..."
         sleep 2
         ((attempt++))
     done
     
-    echo "❌ Failed to open $workspace"
+    echo "❌ Failed to open $folder"
     return 1
 }
 
-# Open each agent workspace
-open_vscode "$PARENT_DIR/terroir-agent1.code-workspace" &
+# Open each agent folder
+echo "Opening Agent 1 (Utilities - Green)..."
+open_vscode "$PARENT_DIR/terroir-agent1" &
 sleep 2
-open_vscode "$PARENT_DIR/terroir-agent2.code-workspace" &
+
+echo "Opening Agent 2 (Infrastructure - Blue)..."
+open_vscode "$PARENT_DIR/terroir-agent2" &
 sleep 2
-open_vscode "$PARENT_DIR/terroir-agent3.code-workspace" &
+
+echo "Opening Agent 3 (Documentation - Purple)..."
+open_vscode "$PARENT_DIR/terroir-agent3" &
 
 # Create quick status script
 cat > "$PARENT_DIR/agent-status.sh" << 'EOF'
@@ -161,10 +166,12 @@ echo "  - Status: $PARENT_DIR/agent-status.sh"
 echo "  - Sync: $SCRIPT_DIR/sync-agents.sh"
 echo "  - Stop: $SCRIPT_DIR/stop-agents.sh"
 echo -e "\n🎯 Next steps:"
-echo "1. Switch to each VS Code window"
-echo "2. Start Claude in each terminal"
-echo "3. Assign tasks from the shared todo list"
-echo "4. Happy parallel developing! 🚀"
+echo "1. Each VS Code window will prompt to 'Reopen in Container'"
+echo "2. Click 'Reopen in Container' for each window"
+echo "3. Agent colors and settings will load automatically"
+echo "4. Check daily plan and task assignments"
+echo "5. Start development in your focus area"
+echo "6. Happy parallel developing! 🚀"
 
 # Show initial status
 echo -e "\n📊 Initial Status:"
