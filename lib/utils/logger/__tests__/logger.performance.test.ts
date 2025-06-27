@@ -1,11 +1,17 @@
 /**
- * Performance tests for logger utility
+ * @module test/lib/utils/logger/logger.performance
  * 
- * Tests cover:
- * - Throughput under high load
- * - Memory usage patterns
- * - Redaction performance
- * - Child logger creation overhead
+ * Performance benchmarks and stress tests for the logger utility
+ * 
+ * Tests performance characteristics including:
+ * - Throughput under high-frequency logging (10k+ logs/sec)
+ * - Concurrent logging efficiency with multiple tasks
+ * - Memory usage patterns and leak prevention
+ * - Redaction performance with sensitive data
+ * - Deep object serialization overhead
+ * - measureTime function overhead analysis
+ * - Production mode performance verification
+ * - Child logger creation and disposal efficiency
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';

@@ -1,12 +1,19 @@
 /**
- * Unit tests for the structured logger utility
+ * @module test/lib/utils/logger/logger
  * 
- * Tests cover:
- * - Environment-specific configuration
- * - Security features (redaction)
- * - Performance tracking
- * - Error handling
- * - Child logger creation
+ * Core logger functionality unit tests
+ * 
+ * Tests the main logger utility including:
+ * - Environment-specific configuration (dev/prod/test modes)
+ * - Security features (field redaction, hostname removal)
+ * - Performance measurement and tracking
+ * - Error serialization and handling
+ * - Child logger creation with context inheritance
+ * - Request ID management (generation, storage, retrieval)
+ * - Log sampling for high-volume scenarios
+ * - AsyncLocalStorage context propagation
+ * - Resource management and memory monitoring
+ * - OpenTelemetry integration hooks
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';

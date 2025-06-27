@@ -1,11 +1,16 @@
 /**
- * Integration tests for logger utility
+ * @module test/lib/utils/logger/logger.integration
  * 
- * Tests cover:
- * - Real-world scenarios with multiple components
- * - Async context propagation
- * - Error handling across boundaries
- * - Performance in realistic conditions
+ * Integration tests for logger utility across multiple components
+ * 
+ * Tests real-world scenarios including:
+ * - Request context propagation across async operations
+ * - Multi-component logging coordination
+ * - Error handling chains through logging layers
+ * - Performance tracking aggregation
+ * - Concurrent request isolation with AsyncLocalStorage
+ * - Database, API, and filesystem operation simulation
+ * - Complex nested operations with context preservation
  */
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';

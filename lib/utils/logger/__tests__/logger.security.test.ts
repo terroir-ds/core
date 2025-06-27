@@ -1,6 +1,17 @@
 /**
- * Security tests for the logger module
- * Tests data redaction, rate limiting, and input validation
+ * @module test/lib/utils/logger/logger.security
+ * 
+ * Security-focused tests for the logger utility
+ * 
+ * Tests security features including:
+ * - Sensitive field redaction (passwords, API keys, tokens)
+ * - Nested data redaction with deep object traversal
+ * - Provider-specific API key patterns (Stripe, GitHub, AWS)
+ * - Email address redaction
+ * - Circular reference handling
+ * - Input validation for large objects and unusual data types
+ * - Error resilience during redaction
+ * - Production mode security hardening
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';

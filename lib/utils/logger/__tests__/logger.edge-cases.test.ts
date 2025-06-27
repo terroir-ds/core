@@ -1,11 +1,17 @@
 /**
- * Edge case tests for logger utility
+ * @module test/lib/utils/logger/logger.edge-cases
  * 
- * Tests cover:
- * - Boundary conditions
- * - Error recovery
- * - Unusual input types
- * - Environment edge cases
+ * Edge case and boundary condition tests for the logger utility
+ * 
+ * Tests unusual scenarios including:
+ * - Special data types (BigInt, Symbol, typed arrays, Maps/Sets)
+ * - Performance edge cases (instant operations, concurrent calls)
+ * - Logger lifecycle management and cleanup
+ * - Extreme values (empty strings, very long keys, special characters)
+ * - Sampling edge cases (invalid rates, boundary conditions)
+ * - AsyncLocalStorage error handling and deep nesting
+ * - Environment-specific behaviors
+ * - Memory leak prevention and performance stress tests
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';

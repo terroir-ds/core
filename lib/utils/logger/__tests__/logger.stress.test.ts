@@ -1,11 +1,18 @@
 /**
- * Stress tests for logger utility
+ * @module test/lib/utils/logger/logger.stress
  * 
- * Tests cover:
- * - Extreme load conditions
- * - Error recovery
- * - Resource exhaustion scenarios
- * - Edge cases and boundary conditions
+ * Stress and resilience tests for the logger utility
+ * 
+ * Tests extreme conditions including:
+ * - Burst logging (50k+ logs) without crashing
+ * - Large message handling (up to 1MB)
+ * - Rapid child logger creation (10k+ loggers)
+ * - Error recovery with simulated failures
+ * - Circular reference handling at various depths
+ * - Request ID exhaustion and concurrent operations
+ * - Edge cases with unusual data types
+ * - Sustained load performance (5+ seconds continuous)
+ * - Maximum object depth handling
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
