@@ -1,6 +1,41 @@
 /**
- * Global test setup and utilities
- * This file is loaded before all tests
+ * @module test/setup
+ * 
+ * Global test setup and utilities for the Terroir Core Design System.
+ * 
+ * This file is loaded before all tests and provides:
+ * - Environment variable management
+ * - Unhandled rejection handling
+ * - Module and mock cleanup
+ * - Global test utilities
+ * 
+ * Features:
+ * - Stores and restores original environment variables
+ * - Manages unhandled promise rejections gracefully
+ * - Suppresses PromiseRejectionHandledWarning warnings
+ * - Provides global test utilities for environment management
+ * - Ensures clean state between tests
+ * 
+ * @example Using global test utilities
+ * ```typescript
+ * describe('Environment-dependent tests', () => {
+ *   beforeEach(() => {
+ *     resetTestEnvironment();
+ *   });
+ *   
+ *   it('should handle production mode', () => {
+ *     setTestEnv({ NODE_ENV: 'production' });
+ *     expect(process.env.NODE_ENV).toBe('production');
+ *   });
+ * });
+ * ```
+ * 
+ * The setup automatically:
+ * - Sets NODE_ENV to 'test'
+ * - Sets LOG_LEVEL to 'debug'
+ * - Sets LOG_PRETTY to 'false'
+ * - Clears all mocks and timers between tests
+ * - Restores original environment after each test
  */
 
 import { beforeEach, afterEach, afterAll, vi } from 'vitest';

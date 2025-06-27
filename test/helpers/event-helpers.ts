@@ -1,6 +1,65 @@
 /**
- * Test helpers for event handling and EventTarget testing
- * Provides utilities for testing event-based APIs
+ * @module test/helpers/event-helpers
+ * 
+ * Test helpers for event handling and EventTarget testing in the Terroir Core Design System.
+ * 
+ * Provides comprehensive utilities for testing event-based APIs including mock
+ * EventTargets, event listener tracking, custom event creation, and cleanup
+ * verification. These helpers ensure thorough testing of event-driven code with
+ * proper listener management.
+ * 
+ * @example Creating mock EventTarget
+ * ```typescript
+ * import { createMockEventTarget } from '@test/helpers/event-helpers';
+ * 
+ * it('should handle events', async () => {
+ *   const target = createMockEventTarget();
+ *   const handler = vi.fn();
+ *   
+ *   target.addEventListener('test', handler);
+ *   await target.dispatchAndWait(new Event('test'));
+ *   
+ *   expect(handler).toHaveBeenCalledOnce();
+ *   expect(target.hasListener('test')).toBe(true);
+ * });
+ * ```
+ * 
+ * @example Tracking event listeners
+ * ```typescript
+ * import { spyOnEventListeners } from '@test/helpers/event-helpers';
+ * 
+ * it('should track listener calls', () => {
+ *   const element = document.createElement('div');
+ *   const { addSpy, getCallsForType } = spyOnEventListeners(element);
+ *   
+ *   element.addEventListener('click', handler1);
+ *   element.addEventListener('click', handler2);
+ *   
+ *   const clickCalls = getCallsForType('click');
+ *   expect(clickCalls).toHaveLength(2);
+ * });
+ * ```
+ * 
+ * @example Verifying cleanup
+ * ```typescript
+ * import { assertEventListenersCleanedUp } from '@test/helpers/event-helpers';
+ * 
+ * it('should clean up all listeners', async () => {
+ *   const target = new EventTarget();
+ *   
+ *   await assertEventListenersCleanedUp(
+ *     target,
+ *     () => {
+ *       target.addEventListener('test', handler);
+ *       target.addEventListener('abort', abortHandler);
+ *     },
+ *     () => {
+ *       target.removeEventListener('test', handler);
+ *       target.removeEventListener('abort', abortHandler);
+ *     }
+ *   );
+ * });
+ * ```
  */
 
 /// <reference lib="dom" />

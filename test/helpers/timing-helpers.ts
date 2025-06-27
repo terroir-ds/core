@@ -1,6 +1,59 @@
 /**
- * Test helpers for timing and performance measurements
- * Provides utilities for testing time-sensitive operations
+ * @module test/helpers/timing-helpers
+ * 
+ * Test helpers for timing and performance measurements in the Terroir Core Design System.
+ * 
+ * Provides comprehensive utilities for testing time-sensitive operations including
+ * concurrency tracking, time mocking, performance measurement, and rate limiting.
+ * These helpers ensure accurate testing of performance-critical code and timing-dependent
+ * behavior.
+ * 
+ * @example Tracking concurrency
+ * ```typescript
+ * import { createConcurrencyTracker } from '@test/helpers/timing-helpers';
+ * 
+ * it('should limit concurrent operations', async () => {
+ *   const tracker = createConcurrencyTracker();
+ *   
+ *   await Promise.all([
+ *     tracker.track(() => delay(100)),
+ *     tracker.track(() => delay(100)),
+ *     tracker.track(() => delay(100))
+ *   ]);
+ *   
+ *   expect(tracker.getMaxConcurrent()).toBe(3);
+ * });
+ * ```
+ * 
+ * @example Mocking Date.now
+ * ```typescript
+ * import { mockDateNow } from '@test/helpers/timing-helpers';
+ * 
+ * it('should track elapsed time', () => {
+ *   const time = mockDateNow(1000);
+ *   
+ *   const start = Date.now(); // 1000
+ *   time.advance(500);
+ *   const end = Date.now(); // 1500
+ *   
+ *   expect(end - start).toBe(500);
+ *   time.restore();
+ * });
+ * ```
+ * 
+ * @example Measuring performance
+ * ```typescript
+ * import { measureExecutionTiming } from '@test/helpers/timing-helpers';
+ * 
+ * it('should complete within time limit', async () => {
+ *   const { result, duration } = await measureExecutionTiming(
+ *     () => processData()
+ *   );
+ *   
+ *   expect(duration).toBeLessThan(1000);
+ *   expect(result).toBeDefined();
+ * });
+ * ```
  */
 
 import { vi } from 'vitest';

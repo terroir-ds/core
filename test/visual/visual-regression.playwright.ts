@@ -1,3 +1,37 @@
+/**
+ * @module test/visual/visual-regression
+ * 
+ * Visual regression tests for the Terroir Core Design System components.
+ * 
+ * Uses Playwright for automated visual testing of design system components
+ * across different states, themes, and viewport sizes. These tests ensure
+ * visual consistency and catch unintended style changes.
+ * 
+ * @example Running visual tests
+ * ```bash
+ * # Run all visual tests
+ * pnpm test:visual
+ * 
+ * # Update snapshots
+ * pnpm test:visual --update-snapshots
+ * 
+ * # Run specific test
+ * pnpm test:visual --grep "color palette"
+ * ```
+ * 
+ * Test coverage includes:
+ * - Color system and palettes
+ * - Contrast ratio grids
+ * - Typography scales
+ * - Component states
+ * - Dark mode variations
+ * - Responsive layouts
+ * - Accessibility states
+ * 
+ * Snapshots are stored in:
+ * - test/visual/visual-regression.playwright.ts-snapshots/
+ */
+
 import { test, expect } from '@playwright/test';
 
 // Example visual regression tests for design system components

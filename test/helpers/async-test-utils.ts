@@ -1,6 +1,55 @@
 /**
- * Shared test utilities for async operations
- * Provides common patterns for testing promises, timers, and cancellation
+ * @module test/helpers/async-test-utils
+ * 
+ * Shared test utilities for async operations in the Terroir Core Design System.
+ * 
+ * Provides comprehensive testing utilities for asynchronous code including
+ * promise tracking, timer manipulation, mock creation, and state assertions.
+ * These utilities help write reliable tests for async operations with proper
+ * timing control and state verification.
+ * 
+ * @example Using fake timers
+ * ```typescript
+ * import { useFakeTimers, advanceAndSettle } from '@test/helpers/async-test-utils';
+ * 
+ * describe('Timer tests', () => {
+ *   useFakeTimers(); // Automatically sets up and tears down
+ *   
+ *   it('should handle delayed operation', async () => {
+ *     const promise = delay(1000);
+ *     await advanceAndSettle(1000);
+ *     await expect(promise).resolves.toBeUndefined();
+ *   });
+ * });
+ * ```
+ * 
+ * @example Tracking promise states
+ * ```typescript
+ * import { trackPromiseState, assertPending } from '@test/helpers/async-test-utils';
+ * 
+ * it('should track promise lifecycle', async () => {
+ *   const promise = fetchData();
+ *   const state = trackPromiseState(promise);
+ *   
+ *   expect(state.isPending()).toBe(true);
+ *   await promise;
+ *   expect(state.isResolved()).toBe(true);
+ * });
+ * ```
+ * 
+ * @example Creating controlled async operations
+ * ```typescript
+ * import { createControllableOperation } from '@test/helpers/async-test-utils';
+ * 
+ * it('should handle manual resolution', async () => {
+ *   const { operation, resolve } = createControllableOperation<string>();
+ *   const promise = operation();
+ *   
+ *   // Later...
+ *   resolve('success');
+ *   await expect(promise).resolves.toBe('success');
+ * });
+ * ```
  */
 
 import { beforeEach, afterEach, vi } from 'vitest';

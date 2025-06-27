@@ -1,9 +1,62 @@
 /**
- * Test utilities for handling expected errors and promise rejections
+ * @module test/helpers/error-handling
  * 
- * Note: The project uses a global unhandled rejection handler in test setup,
- * so manual error handling is no longer needed. These utilities are provided
- * for assertion and testing convenience only.
+ * Test utilities for handling expected errors and promise rejections.
+ * 
+ * Provides comprehensive error testing utilities for the Terroir Core Design System
+ * test suite. These helpers simplify testing error conditions, promise rejections,
+ * and error properties. The project uses a global unhandled rejection handler in
+ * test setup, so manual error handling is no longer needed for cleanup.
+ * 
+ * @example Testing promise rejections
+ * ```typescript
+ * import { expectRejection, verifyRejection } from '@test/helpers/error-handling';
+ * 
+ * it('should reject with specific error', async () => {
+ *   await expectRejection(
+ *     failingOperation(),
+ *     'Operation failed'
+ *   );
+ *   
+ *   // Or with more detailed checks
+ *   await verifyRejection(failingOperation(), {
+ *     message: /timeout/i,
+ *     name: 'TimeoutError',
+ *     code: 'ETIMEDOUT'
+ *   });
+ * });
+ * ```
+ * 
+ * @example Capturing errors for inspection
+ * ```typescript
+ * import { captureExpectedError } from '@test/helpers/error-handling';
+ * 
+ * it('should include context in error', async () => {
+ *   const error = await captureExpectedError(
+ *     () => processInvalidData()
+ *   );
+ *   
+ *   expect(error.cause).toBeDefined();
+ *   expect(error.context).toHaveProperty('userId');
+ * });
+ * ```
+ * 
+ * @example Suppressing console errors
+ * ```typescript
+ * import { suppressConsoleErrors } from '@test/helpers/error-handling';
+ * 
+ * it('should log errors during operation', () => {
+ *   const restore = suppressConsoleErrors();
+ *   
+ *   performOperationThatLogs();
+ *   
+ *   expect(console.error).toHaveBeenCalledWith(
+ *     expect.stringContaining('Expected error')
+ *   );
+ *   
+ *   restore();
+ * });
+ * ```
  */
 
 import { vi, expect } from 'vitest';
