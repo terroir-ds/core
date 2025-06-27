@@ -128,6 +128,20 @@ fix(logger): prevent memory leak in async context
 docs(readme): update installation instructions
 ```
 
+### Git Operations for Special Directories
+
+**Multi-Agent Coordination Files**: The `.claude` directory is listed in `.gitignore` to support agent development workflows. When modifying files in `.claude/multi-agent/`, you must use the force flag:
+
+```bash
+# Adding or modifying multi-agent coordination files
+git add -f .claude/multi-agent/your-file.md
+
+# Or for multiple files
+git add -f .claude/multi-agent/*.md
+```
+
+This ensures that multi-agent coordination files remain in version control while allowing agents to use symbolic links without conflicts.
+
 ### Testing
 
 - Write unit tests for all new functionality

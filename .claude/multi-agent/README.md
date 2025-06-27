@@ -185,6 +185,23 @@ Your Machine
 - Other agents check every 30 minutes
 - Collaborate on resolution
 
+## Git Operations in Multi-Agent Directory
+
+**Important**: The `.claude` directory is listed in `.gitignore` to support agent symbolic links. When making changes to files in `.claude/multi-agent/`, you must use the force flag:
+
+```bash
+# Adding or modifying files in .claude/multi-agent/
+git add -f .claude/multi-agent/your-file.md
+
+# Or for multiple files
+git add -f .claude/multi-agent/*.md
+```
+
+This requirement ensures that:
+- Agent worktrees can use symbolic links to `.claude` without conflicts
+- The multi-agent coordination files remain in version control
+- Changes to these files are intentional and tracked
+
 ## Scripts
 
 - `scripts/host-setup.sh` - Complete host machine setup (run once from main repo)
