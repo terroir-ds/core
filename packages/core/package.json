@@ -21,6 +21,7 @@
   },
   "license": "MIT",
   "author": "Terroir Core Contributors",
+  "sideEffects": false,
   "type": "module",
   "exports": {
     ".": {
@@ -34,25 +35,21 @@
     "./utils": {
       "types": "./dist/utils/index.d.ts",
       "import": "./dist/utils/index.js"
-    },
-    "./tokens": {
-      "import": "./dist/tokens/index.js"
-    },
-    "./css": "./dist/css/tokens.css"
+    }
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
     "dist",
-    "src",
-    "README.md",
-    "CHANGELOG.md"
+    "README.md"
   ],
   "scripts": {
-    "build": "pnpm clean && pnpm build:ts",
+    "build": "pnpm clean && tsc",
     "build:ts": "tsc",
     "clean": "del dist",
     "dev": "tsc --watch",
+    "prepublishOnly": "pnpm test && pnpm build",
+    "postpublish": "echo 'Published @terroir/core version:' $npm_package_version",
     "test": "vitest run",
     "test:watch": "vitest watch",
     "typecheck": "tsc --noEmit"
