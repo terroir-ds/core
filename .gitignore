@@ -40,6 +40,8 @@ assets/icons/optimized/
 # IDE
 .vscode/*
 !.vscode/extensions.json
+!.vscode/cspell.json
+!.vscode/README.md
 # Note: settings.json is now ignored to preserve agent-specific settings
 # To update shared settings, temporarily comment out the line below
 .vscode/settings.json
