@@ -86,9 +86,11 @@ export default [
       '**/coverage/**',
       '**/*.config.js',
       '**/*.config.ts',
+      '**/*.config.mjs',
       '.claude/**',
       'pnpm-lock.yaml',
       'scripts/check-node-compat.js',
+      'packages/docs-site/.astro/**',
     ],
   },
 ];
