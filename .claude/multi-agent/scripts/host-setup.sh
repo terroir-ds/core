@@ -25,6 +25,23 @@ echo "📁 Repository: $REPO_DIR"
 echo "📁 Parent directory: $PARENT_DIR"
 echo ""
 
+# Check for old terroir-shared setup
+if [ -d "$PARENT_DIR/terroir-shared" ]; then
+    echo "⚠️  Found existing terroir-shared directory from old setup."
+    echo "   You should run the migration script first:"
+    echo ""
+    echo "   $REPO_DIR/.claude/multi-agent/scripts/migrate-from-shared.sh"
+    echo ""
+    echo "   This will migrate your coordination files to terroir-core."
+    echo ""
+    read -p "Continue anyway? (y/N) " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        echo "Setup cancelled. Please run migration first."
+        exit 1
+    fi
+fi
+
 # Check if branches exist, create if not
 echo "🌿 Creating feature branches..."
 git branch feat/utilities 2>/dev/null || echo "  feat/utilities already exists"
