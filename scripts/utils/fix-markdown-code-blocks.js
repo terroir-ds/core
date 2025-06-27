@@ -50,6 +50,10 @@ const contextToLanguage = {
 };
 
 // Detect language from code content
+/**
+ * @param {string} code
+ * @returns {string}
+ */
 function detectLanguage(code) {
   const trimmed = code.trim();
   
@@ -89,6 +93,10 @@ function detectLanguage(code) {
 }
 
 // Get language from file context
+/**
+ * @param {string} filePath
+ * @returns {string|null}
+ */
 function getLanguageFromContext(filePath) {
   for (const [pattern, lang] of Object.entries(contextToLanguage)) {
     if (filePath.includes(pattern)) {
@@ -99,6 +107,11 @@ function getLanguageFromContext(filePath) {
 }
 
 // Find markdown files recursively
+/**
+ * @param {string} dir
+ * @param {string[]} files
+ * @returns {string[]}
+ */
 function findMarkdownFiles(dir, files = []) {
   const ignorePatterns = ['node_modules', '.claude', 'dist', 'build', 'coverage'];
   
@@ -150,6 +163,7 @@ async function fixCodeBlocks() {
     // Process matches in reverse to maintain positions
     for (let i = matches.length - 1; i >= 0; i--) {
       const match = matches[i];
+      if (!match || match.index === undefined) continue;
       const startPos = match.index;
       
       // Find the closing ```

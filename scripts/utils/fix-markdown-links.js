@@ -38,6 +38,10 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 // Convert heading text to a valid fragment ID
+/**
+ * @param {string} heading
+ * @returns {string}
+ */
 function headingToFragment(heading) {
   return heading
     .toLowerCase()
@@ -46,6 +50,10 @@ function headingToFragment(heading) {
     .replace(/^-+|-+$/g, '');  // Trim hyphens from start/end
 }
 
+/**
+ * @param {string} filePath
+ * @returns {number}
+ */
 function fixLinkFragments(filePath) {
   const content = readFileSync(filePath, 'utf8');
   
@@ -71,6 +79,7 @@ function fixLinkFragments(filePath) {
   
   for (let i = matches.length - 1; i >= 0; i--) {
     const match = matches[i];
+    if (!match || match.index === undefined) continue;
     const linkText = match[1];
     const fragment = match[2];
     const startPos = match.index;
@@ -79,21 +88,21 @@ function fixLinkFragments(filePath) {
     // Check if fragment exists
     if (!headings.has(fragment)) {
       // Try to find a close match
-      const normalizedFragment = headingToFragment(linkText);
+      const normalizedFragment = linkText ? headingToFragment(linkText) : '';
       
       if (headings.has(normalizedFragment)) {
         // Fix the link
         newContent = `${newContent.substring(0, startPos)  
-                    }[${linkText}](#${normalizedFragment})${  
+                    }[${linkText || ''}](#${normalizedFragment})${  
                     newContent.substring(endPos)}`;
         fixedCount++;
       } else {
         // Try to find by partial match
         let found = false;
         for (const [headingFragment, data] of headings) {
-          if (data.text.toLowerCase() === linkText.toLowerCase()) {
+          if (data && data.text && data.text.toLowerCase() === linkText.toLowerCase()) {
             newContent = `${newContent.substring(0, startPos)  
-                        }[${linkText}](#${headingFragment})${  
+                        }[${linkText || ''}](#${headingFragment})${  
                         newContent.substring(endPos)}`;
             fixedCount++;
             found = true;
@@ -128,7 +137,7 @@ for (const file of files) {
     const filePath = resolve(file);
     totalFixed += fixLinkFragments(filePath);
   } catch (error) {
-    console.error(`Error processing ${file}:`, error.message);
+    console.error(`Error processing ${file}:`, error instanceof Error ? error.message : String(error));
   }
 }
 
