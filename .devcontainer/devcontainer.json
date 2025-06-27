@@ -8,10 +8,8 @@
   },
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 
-  // Mount the .env file if it exists
-  "mounts": [
-    "source=${localWorkspaceFolder}/.env,target=/workspaces/${localWorkspaceFolderBasename}/.env,type=bind,consistency=cached"
-  ],
+  // Mount parent directory to ensure both agent and core are accessible for git worktrees
+  "mounts": ["source=${localWorkspaceFolder}/..,target=/workspaces,type=bind,consistency=cached"],
 
   // Features to add to the dev container. More info: https://containers.dev/features.
   "features": {
@@ -35,7 +33,7 @@
   "forwardPorts": [],
 
   // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "bash scripts/utils/post-create.sh && pnpm install && pnpm exec playwright install chromium firefox webkit",
+  "postCreateCommand": "echo 'Current directory:' && pwd && echo 'Looking for .env:' && ls -la .env 2>/dev/null || echo '.env not found' && echo '---' && LOG_LEVEL=3 bash scripts/utils/post-create.sh && pnpm install --force && pnpm exec playwright install chromium firefox webkit",
 
   // Configure tool-specific properties.
   "customizations": {
