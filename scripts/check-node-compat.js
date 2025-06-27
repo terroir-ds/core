@@ -70,7 +70,7 @@ try {
   
   let found = false;
   for (const feature of node20Features) {
-    const results = execSync(`grep -l "${feature}" lib/**/*.ts scripts/**/*.js 2>/dev/null || true`, { encoding: 'utf-8' }).trim();
+    const results = execSync(`grep -l "${feature}" packages/*/src/**/*.ts scripts/**/*.js 2>/dev/null || true`, { encoding: 'utf-8' }).trim();
     if (results) {
       console.log(`  ⚠️  Found usage of '${feature}' in:`);
       results.split('\n').forEach(file => console.log(`     ${file}`));

@@ -118,8 +118,8 @@ function fixLinkFragments(filePath) {
 
 // Files to fix
 const files = [
-  'lib/utils/errors/docs/error-handling.md',
-  'lib/utils/errors/docs/testing-errors.md'
+  'packages/core/src/utils/errors/docs/error-handling.md',
+  'packages/core/src/utils/errors/docs/testing-errors.md'
 ];
 
 let totalFixed = 0;

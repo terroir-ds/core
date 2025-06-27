@@ -3,7 +3,7 @@
   "name": "Terroir Core Design System",
   "readme": "../README.md",
   "entryPoints": [
-    "../lib/index.ts"
+    "../packages/core/src/index.ts"
   ],
   "entryPointStrategy": "expand",
   "out": "../docs/api",

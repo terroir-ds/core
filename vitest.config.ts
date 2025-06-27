@@ -31,11 +31,11 @@ import path from 'path';
 export default defineConfig({
   resolve: {
     alias: {
-      '@terroir/core': path.resolve(__dirname, './lib/index.ts'),
-      '@lib': path.resolve(__dirname, './lib'),
-      '@utils': path.resolve(__dirname, './lib/utils'),
-      '@colors': path.resolve(__dirname, './lib/colors'),
-      '@config': path.resolve(__dirname, './lib/config'),
+      '@terroir/core': path.resolve(__dirname, './packages/core/src/index.ts'),
+      '@lib': path.resolve(__dirname, './packages/core/src'),
+      '@utils': path.resolve(__dirname, './packages/core/src/utils'),
+      '@colors': path.resolve(__dirname, './packages/core/src/colors'),
+      '@config': path.resolve(__dirname, './packages/core/src/config'),
       '@scripts': path.resolve(__dirname, './scripts'),
       '@packages': path.resolve(__dirname, './packages'),
       '@test': path.resolve(__dirname, './test'),
@@ -68,7 +68,7 @@ export default defineConfig({
       },
       
       // Focus coverage on source files only
-      include: ['lib/**/*.{js,ts}'],
+      include: ['packages/*/src/**/*.{js,ts}'],
       exclude: [
         ...coverageConfigDefaults.exclude,
         '**/__tests__/**',

@@ -35,7 +35,7 @@
  * @todo Generate HTML report with visual matrix
  */
 
-import { logger } from '../lib/utils/logger/index.js';
+import { logger } from '../packages/core/src/utils/logger/index.js';
 
 logger.info('Contrast testing not yet implemented');
 process.exit(0);

@@ -1,7 +1,7 @@
 {
-  "name": "@terroir/core",
-  "version": "0.1.0",
-  "private": false,
+  "name": "terroir-core-monorepo",
+  "version": "0.0.0",
+  "private": true,
   "description": "A comprehensive, accessible design system built with Material Color Utilities",
   "keywords": [
     "design-system",
@@ -42,8 +42,8 @@
     "assets:icons": "node scripts/build-svg-assets.js",
     "assets:images": "node scripts/generate-images.js",
     "assets:watch": "nodemon -w assets -e svg,png,jpg -x 'pnpm assets:build'",
-    "build": "pnpm clean && pnpm build:ts && pnpm tokens:build && pnpm assets:build && pnpm packages:build",
-    "build:ts": "tsc",
+    "build": "pnpm clean && pnpm packages:build && pnpm tokens:build && pnpm assets:build",
+    "build:ts": "pnpm -r build",
     "changeset": "changeset",
     "changeset:add": "changeset add",
     "changeset:publish": "pnpm build && changeset publish",
@@ -112,15 +112,6 @@
       "pnpm exec sort-package-json"
     ]
   },
-  "dependencies": {
-    "@t3-oss/env-core": "^0.13.8",
-    "husky": "^9.1.7",
-    "p-debounce": "^4.0.0",
-    "p-retry": "^6.2.1",
-    "p-throttle": "^7.0.0",
-    "serialize-error": "^12.0.0",
-    "zod": "^3.25.67"
-  },
   "devDependencies": {
     "@anthropic-ai/claude-code": "^1.0.35",
     "@changesets/changelog-github": "^0.5.1",
@@ -128,7 +119,6 @@
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "@eslint/js": "^9.29.0",
-    "@material/material-color-utilities": "^0.3.0",
     "@microsoft/tsdoc": "^0.15.1",
     "@playwright/test": "^1.53.1",
     "@semantic-release/changelog": "^6.0.3",
@@ -142,6 +132,7 @@
     "@vitest/coverage-v8": "^3.2.4",
     "del-cli": "^6.0.0",
     "eslint": "^9.29.0",
+    "husky": "^9.1.7",
     "jsdom": "^26.1.0",
     "lint-staged": "^16.1.2",
     "markdownlint-cli2": "^0.18.1",
