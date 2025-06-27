@@ -1,6 +1,35 @@
 #!/usr/bin/env node
+
 /**
- * Fix markdown link fragments to match actual headings
+ * @module scripts/utils/fix-markdown-links
+ * 
+ * Markdown link fragment validation and fixing utility.
+ * 
+ * Validates and fixes internal markdown link fragments (#anchor-links) to ensure
+ * they match actual headings in the document. Automatically corrects broken
+ * fragment identifiers using fuzzy matching to find the intended heading.
+ * 
+ * @example Run link fragment fixer
+ * ```bash
+ * node scripts/utils/fix-markdown-links.js [file.md]
+ * ```
+ * 
+ * Features:
+ * - Validates all internal link fragments
+ * - Converts headings to proper fragment IDs
+ * - Fuzzy matches broken links to likely headings
+ * - Preserves link text while fixing fragments
+ * - Reports all fixes made
+ * 
+ * Fragment ID rules:
+ * - Convert to lowercase
+ * - Remove special characters
+ * - Replace spaces with hyphens
+ * - Trim hyphens from start/end
+ * 
+ * Exit codes:
+ * - 0: Success (with or without fixes)
+ * - 1: File not found or read error
  */
 
 /* eslint-disable no-console */

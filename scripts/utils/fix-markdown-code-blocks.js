@@ -1,6 +1,36 @@
 #!/usr/bin/env node
+
 /**
- * Fix markdown code blocks by adding appropriate language specifiers
+ * @module scripts/utils/fix-markdown-code-blocks
+ * 
+ * Markdown code block language detection and fixing utility.
+ * 
+ * Automatically detects and adds appropriate language specifiers to code blocks
+ * in markdown files that are missing them. Uses content analysis and file context
+ * to determine the most likely language for each code block.
+ * 
+ * @example Run code block fixer
+ * ```bash
+ * node scripts/utils/fix-markdown-code-blocks.js
+ * ```
+ * 
+ * Features:
+ * - Recursively finds all markdown files
+ * - Detects language from code content patterns
+ * - Uses file context for better language hints
+ * - Preserves existing code blocks with languages
+ * - Reports number of fixes per file
+ * 
+ * Language detection:
+ * - Shell/Bash: Commands starting with $, npm/pnpm commands
+ * - JSON: Valid JSON structures
+ * - TypeScript/JavaScript: import/export/const/function/class keywords
+ * - YAML: Key-value pairs with indentation
+ * - Text: Directory structures, fallback for unknown
+ * 
+ * Exit codes:
+ * - 0: Success (with or without fixes)
+ * - 1: Error during processing
  */
 
 /* eslint-disable no-console */

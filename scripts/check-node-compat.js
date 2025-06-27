@@ -1,7 +1,29 @@
 #!/usr/bin/env node
 
 /**
- * Simple Node.js compatibility check
+ * @module scripts/check-node-compat
+ * 
+ * Node.js version compatibility checker for the Terroir Core Design System.
+ * 
+ * Validates that all dependencies and code are compatible with Node.js 18+,
+ * ensuring the project can run on Node.js 18, 20, and 22. Checks package
+ * engine requirements and searches for Node.js version-specific features.
+ * 
+ * @example Run compatibility check
+ * ```bash
+ * pnpm check:node-compat
+ * # or
+ * node scripts/check-node-compat.js
+ * ```
+ * 
+ * Checks performed:
+ * - Package engine requirements for key dependencies
+ * - Usage of Node.js 20+ specific features in code
+ * - Provides recommendations for package.json and CI setup
+ * 
+ * Exit codes:
+ * - 0: All checks passed, project is compatible
+ * - 1: Compatibility issues found (currently always exits 0)
  */
 
 import { execSync } from 'child_process';

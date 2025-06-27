@@ -1,8 +1,35 @@
 #!/usr/bin/env node
 
 /**
- * Build script to generate color tokens from brand colors
- * Uses the public color generation API
+ * @module scripts/generate-colors
+ * 
+ * Color token generation script for the Terroir Core Design System.
+ * 
+ * Generates a complete color system from brand colors using Material Color
+ * Utilities. Creates perceptually uniform color palettes with continuous
+ * tone scales (0-100) and validates WCAG contrast requirements. The output
+ * is formatted for Style Dictionary consumption.
+ * 
+ * @example Run color generation
+ * ```bash
+ * pnpm generate:colors
+ * # or
+ * node scripts/generate-colors.js
+ * ```
+ * 
+ * Features:
+ * - Reads brand color from tokens/base/color.json
+ * - Generates primary, secondary, tertiary, neutral, and error palettes
+ * - Creates light and dark theme schemes
+ * - Validates WCAG AA contrast ratios
+ * - Outputs Style Dictionary formatted tokens
+ * 
+ * Output:
+ * - tokens/generated/colors.json - Generated color tokens
+ * 
+ * Exit codes:
+ * - 0: Success
+ * - 1: Generation failed
  */
 
 import { generateColorSystem } from '@colors/index.js';
