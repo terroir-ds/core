@@ -182,10 +182,18 @@ for i in 1 2 3; do
     # This ensures agents maintain their custom settings
     mkdir -p .vscode
     
-    # Start with shared settings if they exist
-    if [ -f "../terroir-core/.vscode/settings.json" ]; then
-        cp "../terroir-core/.vscode/settings.json" .vscode/settings.json
-    else
+    # Copy all VS Code configuration files from main repo
+    if [ -d "../terroir-core/.vscode" ]; then
+        # Copy only files that agents should have
+        for file in settings.json cspell.json extensions.json README.md; do
+            if [ -f "../terroir-core/.vscode/$file" ]; then
+                cp "../terroir-core/.vscode/$file" ".vscode/$file"
+            fi
+        done
+    fi
+    
+    # Ensure we have a settings.json to work with
+    if [ ! -f ".vscode/settings.json" ]; then
         echo '{}' > .vscode/settings.json
     fi
     
