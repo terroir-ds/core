@@ -44,7 +44,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: ['./test/setup.ts'],
+    setupFiles: [path.resolve(__dirname, './test/setup.ts')],
     onConsoleLog: (log) => {
       // Suppress expected abort error warnings in tests
       if (log.includes('PromiseRejectionHandledWarning') || log.includes('AbortError: Operation aborted')) {

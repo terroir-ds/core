@@ -505,13 +505,13 @@ A task is complete when:
 
 ### Development Standards
 
-**IMPORTANT**: Follow the project's development standards documented in `/docs/standards/`:
+**IMPORTANT**: Follow the project's development standards documented in `/docs/resources/standards/`:
 
-- **[Error Handling](./docs/standards/error-handling.md)** - Always use typed errors with context
-- **[Logging](./docs/standards/logging.md)** - Use structured logger, never console
-- **[Code Quality](./docs/standards/code-quality.md)** - Run `pnpm fix` before commits
-- **[Testing](./docs/standards/testing.md)** - Co-locate tests with source
-- **[Documentation](./docs/standards/documentation.md)** - Keep docs close to code
+- **[Error Handling](./docs/resources/standards/error-handling.md)** - Always use typed errors with context
+- **[Logging](./docs/resources/standards/logging.md)** - Use structured logger, never console
+- **[Code Quality](./docs/resources/standards/code-quality.md)** - Run `pnpm fix` before commits
+- **[Testing](./docs/resources/standards/testing.md)** - Co-locate tests with source
+- **[Documentation](./docs/resources/standards/documentation.md)** - Keep docs close to code
 
 Quick examples:
 
@@ -530,7 +530,7 @@ console.log('Debug info');
 ```text
 ### Test Organization
 
-See [Testing Standards](./docs/standards/testing.md) for comprehensive testing guidelines.
+See [Testing Standards](./docs/resources/standards/testing.md) for comprehensive testing guidelines.
 
 **Key principle**: Co-locate tests with source code in `__tests__` subdirectories.
 
@@ -549,19 +549,19 @@ git commit -m "feat(tokens): add new color system"
 
 ### Code Quality
 
-See [Code Quality Standards](./docs/standards/code-quality.md) for comprehensive linting and fixing guidelines.
+See [Code Quality Standards](./docs/resources/standards/code-quality.md) for comprehensive linting and fixing guidelines.
 
 **Quick reminder**: Always run `pnpm fix` before commits to automatically fix formatting issues.
 
 ### Logging
 
-See [Logging Standards](./docs/standards/logging.md) for structured logging practices.
+See [Logging Standards](./docs/resources/standards/logging.md) for structured logging practices.
 
 **Quick reminder**: Never use `console.log` - always use the structured logger from `@utils/logger`.
 
 ### File Organization
 
-See [Documentation Standards](./docs/standards/documentation.md) and [Testing Standards](./docs/standards/testing.md) for detailed patterns.
+See [Documentation Standards](./docs/resources/standards/documentation.md) and [Testing Standards](./docs/resources/standards/testing.md) for detailed patterns.
 
 **Quick reminders**:
 - Co-locate tests in `__tests__` subdirectories
@@ -570,7 +570,7 @@ See [Documentation Standards](./docs/standards/documentation.md) and [Testing St
 
 ### Import Conventions
 
-See [Import Conventions](./docs/standards/import-conventions.md) for path alias usage.
+See [Import Conventions](./docs/resources/standards/import-conventions.md) for path alias usage.
 
 **Quick reminder**: Always use path aliases (`@utils/logger`) instead of relative imports (`../../../lib/utils/logger`).
 
