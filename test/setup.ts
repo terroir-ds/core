@@ -47,6 +47,13 @@ const originalEnv = process.env;
 const originalUnhandledRejection = process.listeners('unhandledRejection');
 const originalRejectionHandled = process.listeners('rejectionHandled');
 
+// Increase max listeners to prevent warnings in tests
+// Tests can create many event listeners, especially when running in parallel
+// Note: We set this directly here rather than importing from shared utilities
+// to avoid circular dependencies during test setup
+const originalMaxListeners = process.getMaxListeners();
+process.setMaxListeners(100);
+
 // Track unhandled rejections for cleanup
 const unhandledRejections = new Map<Promise<unknown>, { reason: unknown; promise: Promise<unknown> }>();
 
@@ -162,6 +169,9 @@ afterAll(() => {
   
   // Clear any remaining tracked rejections
   unhandledRejections.clear();
+  
+  // Restore original max listeners
+  process.setMaxListeners(originalMaxListeners);
 });
 
 // Make test utilities globally available
