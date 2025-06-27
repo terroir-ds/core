@@ -49,6 +49,11 @@ assets/icons/optimized/
 *~
 .DS_Store
 
+# Devcontainer
+# Note: devcontainer.json is now ignored to preserve agent-specific configuration
+# To update shared devcontainer config, temporarily comment out the line below
+.devcontainer/devcontainer.json
+
 # Claude and multi-agent coordination
 .claude
 .claude/*
