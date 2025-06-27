@@ -1,5 +1,20 @@
 /**
- * @fileoverview Tests for timer management utilities
+ * @module test/lib/utils/async/helpers/timers
+ * 
+ * Unit tests for timer management utilities
+ * 
+ * Tests timer functionality including:
+ * - createManagedTimer with abort signal support
+ * - createManagedInterval for repeated callbacks
+ * - debounce for delaying function execution
+ * - throttle with rate limiting and queueing
+ * - createSimpleThrottle for backward compatibility
+ * - poll for condition-based waiting
+ * - Timer cleanup and cancellation
+ * - Error handling in callbacks
+ * - Abort signal integration
+ * - Strict mode throttling
+ * - Timeout behavior
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';

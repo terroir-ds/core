@@ -1,5 +1,19 @@
 /**
- * Tests for timeout utilities
+ * @module test/lib/utils/async/timeout
+ * 
+ * Unit tests for timeout management utilities
+ * 
+ * Tests timeout functionality including:
+ * - withTimeout for adding timeouts to existing promises
+ * - timeout for creating timeout-only promises
+ * - raceWithTimeout for racing promises with timeout
+ * - TimeoutError custom error class
+ * - Customizable error messages and classes
+ * - Fallback values on timeout
+ * - Abort signal integration
+ * - Resource cleanup (timers and listeners)
+ * - Performance with concurrent timeouts
+ * - Edge cases (empty arrays, already aborted)
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';

@@ -1,5 +1,20 @@
 /**
- * @fileoverview Tests for rate limiting utilities
+ * @module test/lib/utils/async/helpers/rate-limit
+ * 
+ * Unit tests for rate limiting utilities
+ * 
+ * Tests rate limiting functionality including:
+ * - TokenBucket algorithm with refill rates
+ * - RateLimiter with execute and wrap methods
+ * - createRateLimiter helper function
+ * - SlidingWindowRateLimiter for time-based limits
+ * - Token acquisition (sync and async)
+ * - Wait time calculations
+ * - Burst capacity handling
+ * - Abort signal support
+ * - Window sliding behavior
+ * - Reset functionality
+ * - Parameter validation
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';

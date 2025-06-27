@@ -1,5 +1,17 @@
 /**
- * @fileoverview Tests for abort signal helpers
+ * @module test/lib/utils/async/helpers/abort
+ * 
+ * Unit tests for abort signal helper functions
+ * 
+ * Tests abort signal utilities including:
+ * - checkAborted for verifying signal state
+ * - createAbortError for creating consistent abort errors
+ * - isAbortError for error type detection
+ * - createTimeoutAbortController with auto-abort
+ * - combineAbortSignals for merging multiple signals
+ * - Native AbortSignal.any compatibility
+ * - Timeout cleanup on early abort
+ * - Edge cases (undefined signals, empty arrays)
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';

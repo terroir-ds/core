@@ -1,5 +1,18 @@
 /**
- * @fileoverview Tests for cleanup management utilities
+ * @module test/lib/utils/async/helpers/cleanup
+ * 
+ * Unit tests for cleanup management utilities
+ * 
+ * Tests cleanup functionality including:
+ * - createCleanupManager for tracking cleanup operations
+ * - createAutoCleanupManager with automatic error handling
+ * - combineCleanups for merging multiple cleanup functions
+ * - createEventCleanup for event listener cleanup
+ * - createTimeoutCleanup for timeout cleanup
+ * - createIntervalCleanup for interval cleanup
+ * - Error handling and logging during cleanup
+ * - Preventing duplicate cleanup execution
+ * - Filtering undefined cleanup functions
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';

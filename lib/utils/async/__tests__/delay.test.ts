@@ -1,5 +1,18 @@
 /**
- * Tests for delay utilities
+ * @module test/lib/utils/async/delay
+ * 
+ * Unit tests for delay and timing utilities
+ * 
+ * Tests delay functionality including:
+ * - Basic delay with configurable timeout
+ * - delayValue for returning values after delay
+ * - randomDelay with min/max range support
+ * - debouncedDelay with cancel and flush operations
+ * - Abort signal support and cleanup
+ * - Event listener management to prevent leaks
+ * - maxWait option for debouncing
+ * - Performance with concurrent delays
+ * - Edge cases (zero delay, negative values)
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';

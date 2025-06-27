@@ -1,5 +1,18 @@
 /**
- * Tests for signal utilities
+ * @module test/lib/utils/async/signals
+ * 
+ * Unit tests for AbortSignal utilities
+ * 
+ * Tests signal management including:
+ * - combineSignals for merging multiple abort signals
+ * - timeoutSignal for automatic timeout aborts
+ * - eventSignal for event-based aborts
+ * - isAbortError for error type detection
+ * - waitForAbort for promise-based abort waiting
+ * - manualSignal for programmatic signal control
+ * - Listener cleanup to prevent memory leaks
+ * - Native AbortSignal.any fallback behavior
+ * - Integration with combined signals and timeouts
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';

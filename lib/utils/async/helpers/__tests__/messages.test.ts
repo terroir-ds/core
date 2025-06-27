@@ -1,5 +1,18 @@
 /**
- * @fileoverview Tests for async error messages
+ * @module test/lib/utils/async/helpers/messages
+ * 
+ * Unit tests for async error message utilities
+ * 
+ * Tests message generation including:
+ * - AsyncErrorMessages for error conditions
+ * - AsyncWarnings for warning conditions
+ * - AsyncDebugMessages for debug information
+ * - getErrorMessage helper for dynamic messages
+ * - Parameter validation messages
+ * - Type error messages
+ * - Rate limiting messages
+ * - Message consistency and formatting
+ * - Dynamic message generation with parameters
  */
 
 import { describe, it, expect } from 'vitest';

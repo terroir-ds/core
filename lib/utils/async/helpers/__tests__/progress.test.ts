@@ -1,5 +1,18 @@
 /**
- * @fileoverview Tests for progress tracking utilities
+ * @module test/lib/utils/async/helpers/progress
+ * 
+ * Unit tests for progress tracking utilities
+ * 
+ * Tests progress tracking including:
+ * - ProgressTracker class with rate calculation
+ * - createSimpleProgressTracker for basic tracking
+ * - createProgressBar for visual progress display
+ * - Completion percentage calculation
+ * - Rate and time estimation based on recent completions
+ * - Callback throttling for performance
+ * - Handling edge cases (zero total, overflow)
+ * - Progress reset functionality
+ * - Custom progress bar characters and width
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';

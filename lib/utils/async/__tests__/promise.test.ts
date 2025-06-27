@@ -1,5 +1,18 @@
 /**
- * Tests for promise manipulation utilities
+ * @module test/lib/utils/async/promise
+ * 
+ * Unit tests for promise manipulation utilities
+ * 
+ * Tests promise utilities including:
+ * - defer for creating deferred promises
+ * - retry with exponential backoff and custom predicates
+ * - promiseWithFallback for timeout handling
+ * - allSettledWithTimeout for bounded parallel operations
+ * - firstSuccessful for trying multiple promise factories
+ * - Abort signal support across all utilities
+ * - Error aggregation with AggregateError
+ * - Integration between utilities (retry + defer)
+ * - Edge cases (empty arrays, zero delays)
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';

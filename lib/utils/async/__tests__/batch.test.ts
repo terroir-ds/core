@@ -1,5 +1,17 @@
 /**
- * Tests for batch processing utilities
+ * @module test/lib/utils/async/batch
+ * 
+ * Unit tests for batch processing utilities
+ * 
+ * Tests batch processing functionality including:
+ * - processBatch with concurrency control and order preservation
+ * - processChunked for splitting items into chunks
+ * - mapConcurrent for concurrent mapping operations
+ * - processRateLimited with token bucket rate limiting
+ * - Error handling and recovery strategies
+ * - Progress reporting and abort signal support
+ * - Performance with large datasets (1000+ items)
+ * - Burst capacity handling for rate limiting
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';

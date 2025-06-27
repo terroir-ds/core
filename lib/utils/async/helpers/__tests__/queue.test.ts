@@ -1,5 +1,20 @@
 /**
- * @fileoverview Tests for concurrent queue utilities
+ * @module test/lib/utils/async/helpers/queue
+ * 
+ * Unit tests for concurrent queue processing utilities
+ * 
+ * Tests queue functionality including:
+ * - ConcurrentQueue with configurable concurrency
+ * - processQueue helper for simplified usage
+ * - PriorityQueue with custom priority functions
+ * - createWorkQueue for simple work processing
+ * - Error handling and stopOnError behavior
+ * - Progress tracking callbacks
+ * - Abort signal support
+ * - Order preservation options
+ * - Pause/resume functionality
+ * - Queue status monitoring
+ * - Batch operations
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';

@@ -1,5 +1,19 @@
 /**
- * @fileoverview Tests for promise race utilities
+ * @module test/lib/utils/async/helpers/race
+ * 
+ * Unit tests for promise race utilities
+ * 
+ * Tests race functionality including:
+ * - createTimeoutPromise for timeout rejection
+ * - raceWithCleanup for resource cleanup
+ * - raceWithIndex returning winner index and timing
+ * - raceWithTimeouts for individual promise timeouts
+ * - raceUntil for conditional racing
+ * - raceWithCancellation using AbortSignals
+ * - raceFirstN for getting multiple results
+ * - Error handling and graceful cleanup
+ * - Edge cases (empty arrays, all failures)
+ * - Performance timing measurements
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
