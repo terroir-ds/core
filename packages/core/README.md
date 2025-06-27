@@ -4,14 +4,13 @@ Core design tokens and utilities for the Terroir Design System.
 
 ## Installation
 
-```bash
+````bash
 npm install @terroir/core
 # or
 pnpm add @terroir/core
 # or
 yarn add @terroir/core
-```
-
+```bash
 ## Features
 
 - **Material Color Utilities**: Advanced color system generation
@@ -36,8 +35,7 @@ const colors = await generateColorSystem({
 // Access color palettes
 console.log(colors.primary[50]); // Light tone
 console.log(colors.primary[90]); // Dark tone
-```
-
+```bash
 ### Async Utilities
 
 ```typescript
@@ -51,8 +49,7 @@ const data = await retry(
   () => fetchFromAPI(),
   { retries: 3, factor: 2 }
 );
-```
-
+```bash
 ### Error Handling
 
 ```typescript
@@ -66,7 +63,7 @@ try {
   }
   await handleError(error);
 }
-```
+````
 
 ## API Documentation
 
