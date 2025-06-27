@@ -33,7 +33,7 @@ This script will:
 1. Create feature branches (based on current branch)
 2. Set up git worktrees for each agent
 3. Create shared coordination directory
-4. Configure symbolic links
+4. Prepare for container coordination
 5. Copy necessary files (.devcontainer, scripts, .env)
 6. Set up git exclusions
 7. Create agent-specific VS Code settings
@@ -56,9 +56,11 @@ parent-directory/
 ```
 
 ### Symbolic Links
-Each agent directory has symbolic links to:
-- `.claude` → `../terroir-shared/.claude`
-- `.agent-coordination` → `../terroir-shared/.agent-coordination`
+Symbolic links are created automatically inside each agent container:
+- `.claude` → `/workspaces/terroir-shared/.claude`
+- `.agent-coordination` → `/workspaces/terroir-shared/.agent-coordination`
+
+These links are created by the post-create script when the container starts, ensuring they use the correct container paths.
 
 ### Files Copied to Each Agent
 - `.devcontainer/` - Container configuration
@@ -150,10 +152,11 @@ If the host setup script fails, you can set up manually:
    cp -r .claude/* ../terroir-shared/.claude/
    ```
 
-3. **Set up symbolic links** (for each agent):
+3. **Prepare for container links** (for each agent):
    ```bash
-   ln -sf ../terroir-shared/.claude .claude
-   ln -sf ../terroir-shared/.agent-coordination .agent-coordination
+   # Remove any existing directories that would conflict
+   rm -rf .claude .agent-coordination
+   # Links will be created automatically inside containers
    ```
 
 4. **Copy files** (for each agent):

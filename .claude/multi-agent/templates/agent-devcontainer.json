@@ -7,9 +7,10 @@
   },
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 
-  // Mount the main terroir-core directory for git worktree access
+  // Mount both terroir-core and terroir-shared for git worktree access and coordination
   "mounts": [
-    "source=${localWorkspaceFolder}/../terroir-core,target=/workspaces/terroir-core,type=bind,consistency=cached"
+    "source=${localWorkspaceFolder}/../terroir-core,target=/workspaces/terroir-core,type=bind,consistency=cached",
+    "source=${localWorkspaceFolder}/../terroir-shared,target=/workspaces/terroir-shared,type=bind,consistency=cached"
   ],
 
   // Features to add to the dev container. More info: https://containers.dev/features.

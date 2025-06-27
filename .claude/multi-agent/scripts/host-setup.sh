@@ -67,8 +67,8 @@ if [ -d "$REPO_DIR/.claude" ]; then
     echo "✅ Copied .claude contents to shared location"
 fi
 
-# Create symbolic links and workspace-specific settings
-echo -e "\n🔗 Creating symbolic links and agent-specific VS Code settings..."
+# Configure agent-specific settings
+echo -e "\n⚙️ Configuring agent-specific VS Code settings..."
 for i in 1 2 3; do
     AGENT_DIR="$PARENT_DIR/terroir-agent$i"
     cd "$AGENT_DIR"
@@ -77,9 +77,8 @@ for i in 1 2 3; do
     rm -rf .claude .agent-coordination 2>/dev/null || true
     rm -rf .devcontainer/.devcontainer 2>/dev/null || true
     
-    # Create symbolic links
-    ln -s ../terroir-shared/.claude .claude
-    ln -s ../terroir-shared/.agent-coordination .agent-coordination
+    # Note: Symbolic links to shared directories will be created inside the container
+    # by post-create.sh to ensure they use the correct container paths
     
     # Copy .env file if it exists in main repo (needed for devcontainer)
     if [ -f "../terroir-core/.env" ]; then
@@ -260,7 +259,7 @@ SETTINGS_EOF
     # Clean up temporary file
     rm -f .vscode/agent-overrides.json
     
-    echo "✅ Linked shared directories and configured Agent $i theme"
+    echo "✅ Configured Agent $i theme and settings"
 done
 
 # No need for workspace files - using direct folder opening with settings overrides
