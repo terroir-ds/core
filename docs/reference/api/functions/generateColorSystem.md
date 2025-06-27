@@ -1,6 +1,6 @@
 [**Terroir Core Design System v0.1.0**](../README.md)
 
-***
+---
 
 [Terroir Core Design System](../globals.md) / generateColorSystem
 
@@ -28,11 +28,10 @@ Generated color system with palettes and themes
 
 ## Examples
 
-```ts
+````ts
 // Simple usage with hex color
 const colors = await generateColorSystem('#1976d2');
-```
-
+```typescript
 ```ts
 // Advanced usage with options
 const colors = await generateColorSystem({
@@ -40,4 +39,4 @@ const colors = await generateColorSystem({
   contrastLevel: 0.5,
   variant: 'vibrant'
 });
-```
+````

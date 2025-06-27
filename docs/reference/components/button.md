@@ -14,7 +14,7 @@ Terroir Core buttons automatically handle color contrast, focus management, and 
 
 The simplest way to use a button with default styling:
 
-```tsx
+````tsx
 import { Button } from '@terroir/react';
 
 function Example() {
@@ -24,8 +24,7 @@ function Example() {
     </Button>
   );
 }
-```
-
+```text
 ### Common Patterns
 
 #### Primary Actions
@@ -35,8 +34,7 @@ Use the primary variant for the main action on a page or form:
 <Button variant="primary" onClick={handleSubmit}>
   Submit Form
 </Button>
-```
-
+```text
 #### Secondary Actions
 Use secondary variant for alternative or less important actions:
 
@@ -44,8 +42,7 @@ Use secondary variant for alternative or less important actions:
 <Button variant="secondary" onClick={handleCancel}>
   Cancel
 </Button>
-```
-
+```text
 #### Destructive Actions
 Use the destructive variant for actions that delete or remove data:
 
@@ -53,8 +50,7 @@ Use the destructive variant for actions that delete or remove data:
 <Button variant="destructive" onClick={handleDelete}>
   Delete Item
 </Button>
-```
-
+```text
 ## API Reference
 
 ### Props
@@ -80,29 +76,25 @@ High-emphasis button for primary actions like submitting forms or confirming cho
 
 ```tsx
 <Button variant="primary">Save Changes</Button>
-```
-
+```text
 #### Secondary
 Medium-emphasis button for secondary actions like canceling or going back.
 
 ```tsx
 <Button variant="secondary">Cancel</Button>
-```
-
+```text
 #### Destructive
 High-emphasis button for dangerous actions that require user attention.
 
 ```tsx
 <Button variant="destructive">Delete Account</Button>
-```
-
+```text
 #### Ghost
 Low-emphasis button for tertiary actions or subtle interactions.
 
 ```tsx
 <Button variant="ghost">Learn More</Button>
-```
-
+```yaml
 ### Sizes
 
 - **Small (`sm`)**: Use in compact interfaces, toolbars, or alongside text
@@ -113,8 +105,7 @@ Low-emphasis button for tertiary actions or subtle interactions.
 <Button size="sm">Small</Button>
 <Button size="md">Medium</Button>
 <Button size="lg">Large</Button>
-```
-
+```text
 ## Styling
 
 ### CSS Custom Properties
@@ -128,19 +119,18 @@ Customize button appearance using these CSS variables:
   --button-font-size: var(--font-size-md);
   --button-font-weight: var(--font-weight-semibold);
   --button-border-radius: var(--radius-md);
-  
+
   /* Variant-specific */
   --button-background: var(--color-primary-60);
   --button-text: var(--color-primary-10);
   --button-border: transparent;
-  
+
   /* States */
   --button-hover-background: var(--color-primary-70);
   --button-active-background: var(--color-primary-50);
   --button-focus-ring: var(--color-primary-60);
 }
-```
-
+```text
 ### Theming
 
 Buttons automatically adapt to light and dark themes:
@@ -154,8 +144,7 @@ Buttons automatically adapt to light and dark themes:
 <ThemeProvider theme="dark">
   <Button>Dark Theme</Button>
 </ThemeProvider>
-```
-
+```text
 ## Accessibility
 
 ### Keyboard Navigation
@@ -184,8 +173,7 @@ Buttons automatically adapt to light and dark themes:
 >
   Save
 </Button>
-```
-
+```text
 ### Best Practices
 
 - ✅ Always provide clear, actionable button text
@@ -232,22 +220,21 @@ function SaveButton() {
     </Button>
   );
 }
-```
-
+```text
 ### Loading States
 
 ```tsx
 function SubmitButton() {
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const handleSubmit = async () => {
     setIsLoading(true);
     await submitForm();
     setIsLoading(false);
   };
-  
+
   return (
-    <Button 
+    <Button
       onClick={handleSubmit}
       loading={isLoading}
       disabled={isLoading}
@@ -256,8 +243,7 @@ function SubmitButton() {
     </Button>
   );
 }
-```
-
+```text
 ### Button Groups
 
 ```tsx
@@ -271,8 +257,7 @@ function ActionBar() {
     </ButtonGroup>
   );
 }
-```
-
+```text
 ### As Link
 
 ```tsx
@@ -282,16 +267,15 @@ function ActionBar() {
 </Button>
 
 // External link with icon
-<Button 
-  href="https://example.com" 
+<Button
+  href="https://example.com"
   target="_blank"
   rel="noopener noreferrer"
 >
   Visit Site
   <ExternalIcon aria-label="Opens in new window" />
 </Button>
-```
-
+```text
 ## Migration Guide
 
 ### From v1.x to v2.x
@@ -302,7 +286,7 @@ function ActionBar() {
 
 // v2.x (new)
 <Button variant="primary" size="sm" />
-```
+````
 
 ### Breaking Changes
 
@@ -316,14 +300,17 @@ function ActionBar() {
 ### Common Issues
 
 #### Button not clickable
+
 **Problem**: Button appears but doesn't respond to clicks
 **Solution**: Check if button is disabled or if a parent element is intercepting clicks
 
 #### Custom styles not applying
+
 **Problem**: CSS overrides aren't working
 **Solution**: Use CSS custom properties or increase specificity with `className`
 
 #### TypeScript errors with onClick
+
 **Problem**: Type errors when passing click handlers
 **Solution**: Ensure handler signature matches `(event: MouseEvent<HTMLButtonElement>) => void`
 
@@ -342,7 +329,7 @@ A: Add analytics in your onClick handler or use a wrapper component
 
 - [IconButton](./icon-button.md) - Button with only an icon
 - [ButtonGroup](./button-group.md) - Group related buttons together
-- [Link](./link.md) - For navigation instead of actions
+- [Link Component](./link.md) - For navigation instead of actions
 - [ToggleButton](./toggle-button.md) - For on/off states
 
 ## Resources
@@ -354,4 +341,4 @@ A: Add analytics in your onClick handler or use a wrapper component
 
 ---
 
-*Last updated: December 2024*
+### Last updated: December 2024

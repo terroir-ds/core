@@ -33,7 +33,7 @@ A new logger instance with the additional context
 
 ## Examples
 
-```typescript
+````typescript
 // In auth module
 const authLogger = createLogger({ module: 'auth' });
 
@@ -42,8 +42,7 @@ authLogger.info('User login attempt');
 
 authLogger.error({ userId, error }, 'Login failed');
 // Includes module context automatically
-```
-
+```typescript
 ```typescript
 function handleRequest(req: Request) {
   const reqLogger = createLogger({
@@ -55,4 +54,4 @@ function handleRequest(req: Request) {
   reqLogger.info('Processing request');
   // All logs include request context
 }
-```
+````

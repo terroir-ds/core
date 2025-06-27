@@ -7,28 +7,37 @@ Welcome to the Terroir Core Design System documentation. This documentation is o
 Our documentation follows a clear information architecture:
 
 ### 🚀 [Getting Started](./getting-started/README.md)
+
 Your entry point to Terroir Core - installation, quick start, and basic concepts.
 
 ### 🎯 [Foundations](./foundations/README.md)
+
 Core principles, design systems, and the "why" behind our approach:
+
 - [Design Principles](./foundations/design-principles.md) - Our fundamental beliefs and values
 - [Color System](./foundations/color-system.md) - Scientific color generation with Material Color Utilities
 - [Accessibility](./foundations/accessibility.md) - How we ensure inclusive design
 
 ### 📖 [Guides](./guides/README.md)
+
 Practical tutorials and workflows for common tasks:
+
 - [Contributing](./guides/contributing/README.md) - Development workflow and standards
 - [Development](./guides/development/README.md) - Building with Terroir Core
 - [Testing](./guides/testing/README.md) - Quality assurance and validation
 
 ### 📚 [Reference](./reference/README.md)
+
 Technical specifications and API documentation:
+
 - [API Reference](./reference/api/README.md) - Complete TypeScript API documentation
 - [Tokens](./reference/tokens/README.md) - Design token specifications
 - [Components](./reference/components/README.md) - Component APIs and props
 
 ### 🛠️ [Resources](./resources/README.md)
+
 Additional materials, standards, and community resources:
+
 - [Standards](./resources/standards/README.md) - Development standards and best practices
 - [Architecture](./resources/architecture/README.md) - System architecture documentation
 
@@ -57,13 +66,17 @@ See [Contributing Guide](./guides/contributing/README.md) for development workfl
 ## Quick Navigation
 
 ### New to Terroir Core?
+
 Start with [Getting Started](./getting-started/README.md) for installation and basic concepts.
 
 ### Looking for specific APIs?
+
 Check the [Reference](./reference/README.md) section for technical specifications.
 
 ### Need implementation guidance?
+
 Browse [Guides](./guides/README.md) for step-by-step tutorials.
 
 ### Want to understand our approach?
+
 Explore [Foundations](./foundations/README.md) for design principles and concepts.

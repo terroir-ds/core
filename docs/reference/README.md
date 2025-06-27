@@ -5,16 +5,19 @@ This section contains technical specifications, API documentation, and reference
 ## API Documentation
 
 ### [API Reference](./api/README.md)
+
 Complete API documentation generated from TypeScript definitions, including functions, interfaces, and type definitions.
 
 ## Token Reference
 
 ### [Tokens](./tokens/README.md)
+
 Complete specification of all design tokens, including values, usage guidelines, and platform-specific formats.
 
 ## Component Reference
 
 ### [Components](./components/README.md)
+
 Technical specifications for all components, including props, APIs, accessibility features, and examples.
 
 ## What You'll Find Here

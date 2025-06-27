@@ -21,15 +21,19 @@ Terroir Core is a comprehensive, accessible design system built with modern web 
 ## Why Choose Terroir Core?
 
 ### Accessibility First
+
 Every color combination is tested for WCAG compliance, ensuring your designs work for everyone.
 
 ### Scientific Color System
+
 Built on Google's Material Color Utilities, providing perceptually uniform color generation based on human vision research.
 
 ### Performance Focused
+
 Build-time token generation means zero runtime overhead and optimized bundle sizes.
 
 ### Developer Experience
+
 Full TypeScript support, comprehensive documentation, and automated testing help you build with confidence.
 
 ## What You'll Learn

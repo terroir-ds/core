@@ -5,34 +5,43 @@ This section contains practical tutorials, workflows, and best practices for wor
 ## Development Guides
 
 ### [Contributing](./contributing/README.md)
+
 How to contribute to Terroir Core, including development workflow, testing requirements, and code standards.
 
 ### [Development](./development/README.md)
+
 Development workflows, tooling setup, and best practices for building with Terroir Core.
 
 ### [Testing](./testing/README.md)
+
 Testing strategies, accessibility validation, and quality assurance processes.
 
 ## Design Guides
 
 ### [Theming](./theming/README.md)
+
 How to create custom themes, override tokens, and maintain brand consistency.
 
 ### [Component Design](./component-design/README.md)
+
 Guidelines for designing new components that integrate with the design system.
 
 ### [Accessibility Implementation](./accessibility-implementation/README.md)
+
 Practical guidance for implementing accessible designs with Terroir Core.
 
 ## Integration Guides
 
 ### [Framework Integration](./framework-integration/README.md)
+
 How to integrate Terroir Core with different frameworks (React, Vue, Angular, etc.).
 
 ### [Build Pipeline Integration](./build-integration/README.md)
+
 Integrating Terroir Core into your build process for optimal performance.
 
 ### [Migration Guides](./migration/README.md)
+
 Step-by-step guides for migrating from other design systems or upgrading versions.
 
 ## Guide Types

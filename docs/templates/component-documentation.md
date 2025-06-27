@@ -4,13 +4,14 @@ This template provides a consistent structure for documenting components in the 
 
 ---
 
-# [Component Name]
+## [Component Name]
 
 [One-sentence description of what this component is and its primary purpose]
 
 ## Overview
 
 [2-3 paragraph overview explaining:]
+
 - What problem this component solves
 - When to use this component
 - Key features and benefits
@@ -21,7 +22,7 @@ This template provides a consistent structure for documenting components in the 
 
 [Show the simplest possible usage example]
 
-```tsx
+````tsx
 import { ComponentName } from '@terroir/react';
 
 function Example() {
@@ -31,8 +32,7 @@ function Example() {
     </ComponentName>
   );
 }
-```
-
+```text
 ### Common Patterns
 
 [Show 2-3 common usage patterns with explanations]
@@ -42,15 +42,13 @@ function Example() {
 
 ```tsx
 // Code example
-```
-
+```text
 #### Pattern 2: [Name]
 [Brief explanation of when/why to use this pattern]
 
 ```tsx
 // Code example
-```
-
+```text
 ## API Reference
 
 ### Props
@@ -73,15 +71,13 @@ function Example() {
 
 ```tsx
 <ComponentName variant="primary">Primary content</ComponentName>
-```
-
+```text
 #### Secondary
 [Description and use case for secondary variant]
 
 ```tsx
 <ComponentName variant="secondary">Secondary content</ComponentName>
-```
-
+```yaml
 ### Sizes
 
 [If applicable, show size variations with visual examples or descriptions]
@@ -103,8 +99,7 @@ The component exposes these CSS custom properties for customization:
   --component-border: var(--color-primary-40);
   --component-spacing: var(--space-md);
 }
-```
-
+```text
 ### Theming
 
 [Explain how the component responds to theme changes]
@@ -119,8 +114,7 @@ The component exposes these CSS custom properties for customization:
 <ThemeProvider theme="dark">
   <ComponentName />
 </ThemeProvider>
-```
-
+```text
 ## Accessibility
 
 ### Keyboard Navigation
@@ -149,8 +143,7 @@ The component exposes these CSS custom properties for customization:
   aria-expanded={isExpanded}
   role="button"
 />
-```
-
+```text
 ### Best Practices
 
 - ✅ Always provide meaningful labels for screen readers
@@ -188,7 +181,7 @@ The component exposes these CSS custom properties for customization:
 ```tsx
 function FormExample() {
   const [error, setError] = useState<string>();
-  
+
   return (
     <ComponentName
       aria-invalid={!!error}
@@ -203,14 +196,13 @@ function FormExample() {
     </ComponentName>
   );
 }
-```
-
+```text
 ### Loading States
 
 ```tsx
 function LoadingExample() {
   const [isLoading, setIsLoading] = useState(false);
-  
+
   return (
     <ComponentName
       disabled={isLoading}
@@ -220,8 +212,7 @@ function LoadingExample() {
     </ComponentName>
   );
 }
-```
-
+```text
 ### Responsive Behavior
 
 ```tsx
@@ -235,8 +226,7 @@ function LoadingExample() {
 >
   Responsive content
 </ComponentName>
-```
-
+```text
 ## Migration Guide
 
 ### From v1.x to v2.x
@@ -249,7 +239,7 @@ function LoadingExample() {
 
 // v2.x (new)
 <ComponentName variant="primary" />
-```
+````
 
 ### Breaking Changes
 
@@ -262,14 +252,17 @@ function LoadingExample() {
 ### Common Issues
 
 #### Component not rendering
+
 **Problem**: Component appears blank or doesn't render
 **Solution**: Ensure you've imported the component correctly and wrapped your app with `ThemeProvider`
 
 #### Styling not applied
+
 **Problem**: Component appears unstyled
 **Solution**: Check that CSS is imported: `import '@terroir/react/styles.css'`
 
 #### TypeScript errors
+
 **Problem**: Type errors when using the component
 **Solution**: Update `@terroir/react` to the latest version
 
@@ -299,4 +292,4 @@ A: Yes, all Terroir Core components meet WCAG 2.1 AA standards. See [Accessibili
 
 ---
 
-*Last updated: [Date]*
+_Last updated: [Date]_

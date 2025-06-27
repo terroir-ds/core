@@ -56,19 +56,17 @@ The original error if the function fails
 
 ## Examples
 
-```typescript
+````typescript
 const result = await measureTime('database query', async () => db.query('SELECT * FROM users'));
 // Logs: "database query took 45ms" on success
 // Logs error with duration on failure
-```
-
+```typescript
 ```typescript
 const data = await measureTime('API fetch', async () => fetch('/api/data').then((r) => r.json()), {
   endpoint: '/api/data',
   method: 'GET',
 });
-```
-
+```typescript
 ```typescript
 try {
   await measureTime('risky operation', async () => riskyOperation(), { retries: 3 });
@@ -76,4 +74,4 @@ try {
   // Error is logged with duration before being re-thrown
   handleError(error);
 }
-```
+````

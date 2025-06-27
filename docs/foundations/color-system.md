@@ -25,7 +25,7 @@ At the core of our system is the HCT (Hue, Chroma, Tone) color space, which corr
 
 Unlike HSL, where changing lightness can dramatically alter perceived hue, HCT maintains perceptual consistency:
 
-```typescript
+````typescript
 // In HSL, these feel like different colors
 hsl(240, 100%, 20%) // Very dark blue
 hsl(240, 100%, 80%) // Light blue that looks purple
@@ -33,8 +33,7 @@ hsl(240, 100%, 80%) // Light blue that looks purple
 // In HCT, these maintain consistent hue perception
 hct(240, 80, 20) // Dark blue
 hct(240, 80, 80) // Light blue (same blue family)
-```
-
+```text
 ## Palette Generation
 
 Our color system generates five coordinated palettes from a single source color:
@@ -70,8 +69,7 @@ const colors = await generateColorSystem({
 const darkBlue = colors.primary.tone(20);
 const mediumBlue = colors.primary.tone(60);
 const lightBlue = colors.primary.tone(90);
-```
-
+```text
 This continuous access enables:
 - **Precise contrast control** for accessibility requirements
 - **Smooth color transitions** in animations and gradients
@@ -115,8 +113,7 @@ Raw HCT values and tone specifications:
   "color.primary.chroma": 80,
   "color.primary.20": "#1a237e"
 }
-```
-
+```text
 ### Semantic Tokens
 Purpose-driven color assignments:
 ```json
@@ -124,8 +121,7 @@ Purpose-driven color assignments:
   "color.accent": "{color.primary.60}",
   "color.on-accent": "{color.primary.10}"
 }
-```
-
+```text
 ### Component Tokens
 Component-specific color usage:
 ```json
@@ -133,8 +129,7 @@ Component-specific color usage:
   "button.primary.background": "{color.accent}",
   "button.primary.text": "{color.on-accent}"
 }
-```
-
+```text
 ## Implementation Examples
 
 ### CSS Custom Properties
@@ -148,8 +143,7 @@ Component-specific color usage:
   background-color: var(--color-primary-60);
   color: var(--color-on-primary-60);
 }
-```
-
+```text
 ### React Components
 ```typescript
 import { useTheme } from '@terroir/core/react';
@@ -167,7 +161,7 @@ function Button() {
     </button>
   );
 }
-```
+````
 
 ## Related Concepts
 

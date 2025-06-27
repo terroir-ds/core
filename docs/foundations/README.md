@@ -5,15 +5,19 @@ This section covers the core principles, concepts, and systems that form the fou
 ## Core Concepts
 
 ### [Design Principles](./design-principles.md)
+
 The fundamental beliefs and values that guide every decision in Terroir Core.
 
 ### [Color System](./color-system.md)
+
 How we generate scientifically-based color palettes using Material Color Utilities and the HCT color space.
 
 ### [Typography](./typography.md)
+
 Our approach to readable, accessible, and harmonious text across all platforms.
 
 ### [Accessibility](./accessibility.md)
+
 How we ensure WCAG compliance and inclusive design practices throughout the system.
 
 ## Design Philosophy

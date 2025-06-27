@@ -9,6 +9,7 @@ These fundamental principles guide every decision in Terroir Core, from token ar
 Every design decision prioritizes inclusive access. We believe great design works for everyone.
 
 **What This Means:**
+
 - Every color combination tested for WCAG compliance
 - Focus indicators on all interactive elements
 - Semantic HTML structure throughout
@@ -22,6 +23,7 @@ Accessibility isn't an add-on or afterthought—it's the foundation of good desi
 Optimize for speed without sacrificing functionality. Fast experiences feel better and reach more users.
 
 **What This Means:**
+
 - Build-time token resolution (zero runtime overhead)
 - Tree-shakable architecture
 - Optimized asset delivery
@@ -35,6 +37,7 @@ Performance is a feature. Slow experiences exclude users on slower devices and n
 Make the right thing the easy thing. When tools are intuitive, teams build better products.
 
 **What This Means:**
+
 - TypeScript definitions for everything
 - Comprehensive documentation
 - Clear error messages
@@ -48,6 +51,7 @@ Developer experience directly impacts user experience. Happy developers build be
 Base decisions on research and data, not trends. Leverage proven principles from human-computer interaction and visual perception.
 
 **What This Means:**
+
 - Material Color Utilities for perceptually uniform color generation
 - Evidence-based accessibility guidelines
 - Performance budgets based on real user metrics
@@ -59,18 +63,21 @@ Design trends come and go, but human perception and cognition remain constant. B
 ## Application in Practice
 
 ### Token Design
+
 - **Accessibility First**: Every token validated for contrast and legibility
 - **Performance**: Build-time generation eliminates runtime calculations
 - **Developer Experience**: Semantic naming that matches mental models
 - **Scientific**: Based on Material Design's research into color perception
 
 ### Component Architecture
+
 - **Accessibility First**: ARIA patterns and keyboard navigation built-in
 - **Performance**: Minimal DOM overhead and efficient rendering
 - **Developer Experience**: Consistent APIs and comprehensive TypeScript support
 - **Scientific**: Based on established interaction design patterns
 
 ### Documentation Strategy
+
 - **Accessibility First**: Clear hierarchy and screen reader optimization
 - **Performance**: Fast search and lightweight pages
 - **Developer Experience**: Progressive disclosure and contextual help

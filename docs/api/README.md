@@ -1,6 +1,6 @@
-**Terroir Core Design System v0.1.0**
+## Terroir Core Design System v0.1.0
 
-***
+---
 
 # Terroir Core Design System
 
@@ -17,7 +17,7 @@ A comprehensive design system built with Style Dictionary, featuring Material Co
 
 ## Quick Start
 
-```bash
+````bash
 # Install dependencies
 pnpm install
 
@@ -109,7 +109,7 @@ import { Button } from '@terroir/core/react';
 
 ```bash
 git submodule add https://github.com/your-org/terroir-core design-system
-```
+````
 
 ## Contributing
 

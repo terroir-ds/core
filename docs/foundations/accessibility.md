@@ -5,6 +5,7 @@ Accessibility isn't just compliance—it's the foundation of inclusive design th
 ## Our Accessibility Philosophy
 
 We believe accessibility should be:
+
 - **Automatic**: The default behavior, not an opt-in feature
 - **Comprehensive**: Covering all aspects of inclusive design
 - **Testable**: With automated validation and clear success criteria
@@ -15,18 +16,21 @@ We believe accessibility should be:
 All Terroir Core components and tokens meet or exceed WCAG 2.1 AA standards, with AAA support where feasible.
 
 ### Color and Contrast
+
 - **Automated contrast validation** for all color combinations
 - **Dynamic contrast adjustment** based on user preferences
 - **High contrast theme variants** for enhanced visibility
 - **Color-blind friendly palettes** tested with simulation tools
 
 ### Interactive Elements
+
 - **Minimum touch target size** of 44×44 pixels
 - **Focus indicators** with 3:1 contrast ratio minimum
 - **Keyboard navigation** for all interactive components
 - **Screen reader optimization** with proper ARIA labels
 
 ### Content Structure
+
 - **Semantic HTML** as the foundation for all components
 - **Logical heading hierarchy** in documentation and examples
 - **Alternative text** for all informational images
@@ -37,7 +41,8 @@ All Terroir Core components and tokens meet or exceed WCAG 2.1 AA standards, wit
 Accessibility testing is integrated into our development workflow:
 
 ### Build-Time Validation
-```bash
+
+````bash
 # Color contrast validation
 pnpm test:contrast
 
@@ -46,8 +51,7 @@ pnpm test:a11y
 
 # Full accessibility audit
 pnpm test --filter accessibility
-```
-
+```text
 ### Runtime Testing
 - **axe-core integration** for automated accessibility scanning
 - **Playwright tests** for keyboard navigation and focus management
@@ -73,8 +77,7 @@ const colors = await generateColorSystem({
 // Colors automatically provide accessible text colors
 const backgroundColor = colors.primary.tone(60);
 const textColor = colors.primary.tone(10); // Guaranteed contrast
-```
-
+```text
 ### Component Design
 ```typescript
 // ✅ Good: Built-in accessibility features
@@ -88,8 +91,7 @@ import { Button } from '@terroir/core/react';
 >
   Submit Form
 </Button>
-```
-
+```text
 ### Focus Management
 All interactive components include:
 - **Visible focus indicators** that meet contrast requirements
@@ -129,8 +131,7 @@ Respecting user preferences for motion:
     transition-duration: 0.01ms !important;
   }
 }
-```
-
+```yaml
 ### Motion Guidelines
 - **Essential motion only**: Animations serve a functional purpose
 - **Smooth transitions**: Using CSS transforms for better performance
@@ -197,8 +198,7 @@ We measure accessibility through:
     </ErrorMessage>
   )}
 </FormField>
-```
-
+```text
 ### Modal Accessibility
 ```typescript
 <Modal
@@ -222,7 +222,7 @@ We measure accessibility through:
     </Button>
   </ModalFooter>
 </Modal>
-```
+````
 
 ## Related Resources
 

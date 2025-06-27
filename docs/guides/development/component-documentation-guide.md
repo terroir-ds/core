@@ -5,6 +5,7 @@ This guide explains how to write effective component documentation using our sta
 ## Why Consistent Documentation Matters
 
 Good component documentation:
+
 - **Reduces support burden** by answering common questions upfront
 - **Accelerates adoption** by showing clear examples
 - **Prevents misuse** by documenting anti-patterns
@@ -16,10 +17,9 @@ Good component documentation:
 
 Copy the [component documentation template](../../templates/component-documentation.md) to create new component docs:
 
-```bash
+````bash
 cp docs/templates/component-documentation.md docs/reference/components/my-component.md
-```
-
+```text
 ### 2. Structure Overview
 
 The template follows a logical flow from high-level concepts to specific details:
@@ -64,8 +64,7 @@ function Example() {
     </Button>
   );
 }
-```
-
+```yaml
 #### API Reference
 - Document ALL props, even obvious ones
 - Include TypeScript types
@@ -89,13 +88,12 @@ function Example() {
 
 ❌ **Bad**: "The button can have different sizes"
 
-✅ **Good**: 
+✅ **Good**:
 ```tsx
 <Button size="sm">Small</Button>
 <Button size="md">Medium</Button>
 <Button size="lg">Large</Button>
-```
-
+```text
 ### 2. Document the Why
 
 Don't just explain what a prop does, explain when to use it:
@@ -117,8 +115,7 @@ Show what NOT to do:
 // ✅ Do place them separately
 <Button>Delete</Button>
 <Link href="/help">Learn more about deletion</Link>
-```
-
+```text
 ### 4. Real-World Examples
 
 Include practical, real-world usage:
@@ -127,7 +124,7 @@ Include practical, real-world usage:
 // Form submission with loading state
 function SubmitButton() {
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
@@ -136,9 +133,9 @@ function SubmitButton() {
       setIsLoading(false);
     }
   };
-  
+
   return (
-    <Button 
+    <Button
       onClick={handleSubmit}
       loading={isLoading}
       disabled={isLoading}
@@ -147,8 +144,7 @@ function SubmitButton() {
     </Button>
   );
 }
-```
-
+```yaml
 ## Component Categories
 
 Different component types need different documentation focus:
@@ -254,8 +250,7 @@ Always provide full context:
 ❌ **Bad**:
 ```tsx
 <Button variant={variant}>Click</Button>
-```
-
+```text
 ✅ **Good**:
 ```tsx
 import { Button } from '@terroir/react';
@@ -265,9 +260,10 @@ function Example() {
     <Button variant="primary">Click</Button>
   );
 }
-```
+````
 
 ### 3. Missing Edge Cases
+
 Document limitations and edge cases:
 
 - Maximum/minimum values
@@ -276,6 +272,7 @@ Document limitations and edge cases:
 - Mobile differences
 
 ### 4. Outdated Information
+
 - Review docs with each release
 - Update examples for new patterns
 - Remove deprecated features

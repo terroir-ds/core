@@ -13,15 +13,14 @@ Before installing Terroir Core, ensure you have:
 
 If you don't have pnpm installed:
 
-```bash
+````bash
 # Install pnpm globally
 npm install -g pnpm
 
 # Or using Node.js Corepack (recommended)
 corepack enable
 corepack prepare pnpm@latest --activate
-```
-
+```text
 ## Quick Installation
 
 ### Option 1: NPM Package (Recommended)
@@ -35,8 +34,7 @@ pnpm add @terroir/react
 
 # Install development dependencies for token generation
 pnpm add -D @terroir/build-tools
-```
-
+```text
 ### Option 2: Git Submodule
 
 For projects that want to customize tokens directly:
@@ -51,8 +49,7 @@ pnpm install
 
 # Build tokens
 pnpm build
-```
-
+```text
 ## Framework-Specific Setup
 
 ### React Projects
@@ -63,8 +60,7 @@ pnpm add @terroir/core @terroir/react
 
 # Install CSS processing tools
 pnpm add -D postcss autoprefixer
-```
-
+```text
 ### Vue Projects
 
 ```bash
@@ -73,15 +69,13 @@ pnpm add @terroir/core
 
 # CSS processing
 pnpm add -D postcss autoprefixer
-```
-
+```text
 ### Vanilla JavaScript
 
 ```bash
 # Core tokens only
 pnpm add @terroir/core
-```
-
+```text
 ## Verification
 
 Verify your installation works:
@@ -93,7 +87,7 @@ import { generateColorSystem } from '@terroir/core/colors';
 
 console.log('✅ Terroir Core installed successfully!');
 console.log('Available tokens:', Object.keys(tokens));
-```
+````
 
 ## Next Steps
 
@@ -108,20 +102,24 @@ Now that Terroir Core is installed:
 ### Common Issues
 
 **`Cannot resolve @terroir/core`**
+
 - Ensure you're using the correct package name
 - Check that the package was installed in your dependencies
 
 **`Module not found: 'pnpm'`**
+
 - Install pnpm globally: `npm install -g pnpm`
 - Or use npx: `npx pnpm install`
 
-**TypeScript errors**
+#### TypeScript errors
+
 - Ensure you have `@types/node` installed
 - Check that your tsconfig.json includes proper module resolution
 
 ### Getting Help
 
 If you encounter issues:
+
 1. Check the [troubleshooting guide](../guides/troubleshooting.md)
 2. Search [existing issues](https://github.com/terroir-ds/core/issues)
 3. Ask in [GitHub Discussions](https://github.com/terroir-ds/core/discussions)
@@ -129,16 +127,19 @@ If you encounter issues:
 ## Platform Support
 
 ### Browsers
+
 - Chrome 90+
 - Firefox 88+
 - Safari 14+
 - Edge 90+
 
 ### Node.js
+
 - Node.js 18+ (LTS recommended)
 - NPM 8+ or pnpm 8+
 
 ### Frameworks
+
 - React 17+
 - Vue 3+
 - Angular 12+

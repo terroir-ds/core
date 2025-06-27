@@ -18,14 +18,13 @@ Comprehensive JSDoc standards for the Terroir Core Design System. All public API
 
 Every TypeScript/JavaScript file should start with a file header:
 
-```typescript
+````typescript
 /**
  * @fileoverview Brief description of the file's purpose
  * @module @terroir/core/path/to/module
  * @category Category Name
  */
-```
-
+```text
 ### Functions
 
 All exported functions must be documented:
@@ -33,13 +32,13 @@ All exported functions must be documented:
 ```typescript
 /**
  * Brief description of what the function does (one line)
- * 
+ *
  * Detailed description explaining:
  * - Purpose and use cases
  * - Important behavior details
  * - Performance considerations
  * - Side effects (if any)
- * 
+ *
  * @category Utils
  * @param {string} input - Parameter description with constraints
  * @param {Options} [options] - Optional parameters (note the brackets)
@@ -47,17 +46,17 @@ All exported functions must be documented:
  * @returns {Promise<Result>} What the function returns and when
  * @throws {ValidationError} When validation fails - include specific conditions
  * @throws {TimeoutError} When operation times out after options.timeout ms
- * 
+ *
  * @example <caption>Basic usage</caption>
  * ```typescript
  * import { functionName } from '@terroir/core';
- * 
+ *
  * const result = await functionName('input', {
  *   timeout: 3000
  * });
  * console.log(result); // Expected output
  * ```
- * 
+ *
  * @example <caption>Error handling</caption>
  * ```typescript
  * try {
@@ -68,10 +67,10 @@ All exported functions must be documented:
  *   }
  * }
  * ```
- * 
+ *
  * @see {@link relatedFunction} - For similar functionality
  * @see {@link https://example.com/docs} - External documentation
- * 
+ *
  * @since 1.0.0
  */
 export async function functionName(
@@ -80,8 +79,7 @@ export async function functionName(
 ): Promise<Result> {
   // Implementation
 }
-```
-
+```text
 ### Classes
 
 Document classes and their methods:
@@ -89,12 +87,12 @@ Document classes and their methods:
 ```typescript
 /**
  * Brief description of the class purpose
- * 
+ *
  * Detailed description including:
  * - When to use this class
  * - Key features and benefits
  * - Important implementation notes
- * 
+ *
  * @category Core
  * @example
  * ```typescript
@@ -102,16 +100,16 @@ Document classes and their methods:
  *   option1: 'value',
  *   option2: 42
  * });
- * 
+ *
  * await instance.doSomething();
  * ```
- * 
+ *
  * @since 1.0.0
  */
 export class ClassName {
   /**
    * Creates a new instance
-   * 
+   *
    * @param {Config} config - Configuration options
    * @param {string} config.option1 - Description of option1
    * @param {number} [config.option2=0] - Optional with default
@@ -123,11 +121,11 @@ export class ClassName {
 
   /**
    * Method description
-   * 
+   *
    * @param {string} param - Parameter description
    * @returns {Promise<void>} Return description
    * @throws {OperationError} When operation fails
-   * 
+   *
    * @example
    * ```typescript
    * await instance.doSomething('value');
@@ -137,8 +135,7 @@ export class ClassName {
     // Implementation
   }
 }
-```
-
+```text
 ### Interfaces and Types
 
 Document all exported types:
@@ -146,7 +143,7 @@ Document all exported types:
 ```typescript
 /**
  * Configuration options for the feature
- * 
+ *
  * @category Types
  * @example
  * ```typescript
@@ -182,20 +179,19 @@ export interface FeatureConfig {
 
 /**
  * Possible states for the component
- * 
+ *
  * @category Types
  */
-export type ComponentState = 
+export type ComponentState =
   /** Component is idle and ready */
-  | 'idle' 
+  | 'idle'
   /** Component is processing */
   | 'loading'
   /** Component encountered an error */
   | 'error'
   /** Component completed successfully */
   | 'success';
-```
-
+```text
 ### Enums
 
 Document enums and their members:
@@ -203,7 +199,7 @@ Document enums and their members:
 ```typescript
 /**
  * Log levels for the logging system
- * 
+ *
  * @category Logging
  * @example
  * ```typescript
@@ -222,8 +218,7 @@ export enum LogLevel {
   /** Critical errors that require immediate attention */
   FATAL = 4
 }
-```
-
+```text
 ### React Components
 
 Use specialized tags for components:
@@ -231,51 +226,50 @@ Use specialized tags for components:
 ```typescript
 /**
  * Button component with multiple variants and states
- * 
+ *
  * @component
  * @category Components
- * 
+ *
  * @example <caption>Basic button</caption>
  * ```tsx
  * <Button variant="primary" onClick={handleClick}>
  *   Click me
  * </Button>
  * ```
- * 
+ *
  * @example <caption>Loading state</caption>
  * ```tsx
  * <Button loading loadingText="Processing...">
  *   Submit
  * </Button>
  * ```
- * 
+ *
  * @prop {ButtonVariant} variant - Visual style variant
  * @prop {ButtonSize} [size='medium'] - Size variant
  * @prop {boolean} [loading=false] - Shows loading state
  * @prop {string} [loadingText='Loading...'] - Text during loading
  * @prop {() => void} onClick - Click handler
- * 
+ *
  * @slot default - Button content
  * @slot icon - Optional icon slot
- * 
+ *
  * @cssProperties
  * `--button-padding` - Internal padding (default: var(--spacing-3))
  * `--button-radius` - Border radius (default: var(--radius-md))
  * `--button-font-size` - Font size (default: var(--font-size-base))
- * 
+ *
  * @accessibility
  * - Keyboard: Space/Enter to activate
  * - Screen reader: Announces state changes
  * - Focus: Visible focus indicator (4px ring)
  * - ARIA: Uses button role with proper states
- * 
+ *
  * @since 1.0.0
  */
 export const Button: React.FC<ButtonProps> = (props) => {
   // Implementation
 };
-```
-
+```text
 ## Categories
 
 Use consistent categories for organization:
@@ -350,19 +344,18 @@ Use consistent categories for organization:
  * ```typescript
  * // Import statement
  * import { feature } from '@terroir/core';
- * 
+ *
  * // Setup (if needed)
  * const config = { option: 'value' };
- * 
+ *
  * // Usage
  * const result = await feature(input, config);
- * 
+ *
  * // Expected output
  * console.log(result); // { success: true, data: {...} }
  * ```
  */
-```
-
+```text
 ## Best Practices
 
 ### Do's
@@ -394,8 +387,7 @@ Use TypeDoc validation to ensure quality:
     "notDocumented": false
   }
 }
-```
-
+```text
 ## Template Files
 
 ### Function Template
@@ -403,67 +395,65 @@ Use TypeDoc validation to ensure quality:
 ```typescript
 /**
  * [Brief description]
- * 
+ *
  * [Detailed description]
- * 
+ *
  * @category [Category]
  * @param {Type} name - [Description]
  * @returns {Type} [Description]
  * @throws {ErrorType} [When/why]
- * 
+ *
  * @example
  * ```typescript
  * [Example code]
  * ```
- * 
+ *
  * @see {@link relatedItem}
  * @since 1.0.0
  */
-```
-
+```text
 ### Class Template
 
 ```typescript
 /**
  * [Brief description]
- * 
+ *
  * [Detailed description]
- * 
+ *
  * @category [Category]
  * @example
  * ```typescript
  * [Example code]
  * ```
- * 
+ *
  * @since 1.0.0
  */
-```
-
+```text
 ### Component Template
 
 ```typescript
 /**
  * [Brief description]
- * 
+ *
  * @component
  * @category Components
- * 
+ *
  * @example
  * ```tsx
  * [Example code]
  * ```
- * 
+ *
  * @prop {Type} name - [Description]
- * 
+ *
  * @cssProperties
  * [CSS custom properties]
- * 
+ *
  * @accessibility
  * [Accessibility notes]
- * 
+ *
  * @since 1.0.0
  */
-```
+````
 
 ## Review Checklist
 

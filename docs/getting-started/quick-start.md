@@ -5,6 +5,7 @@ Build your first component with Terroir Core in just 5 minutes! This guide will 
 ## What You'll Build
 
 By the end of this guide, you'll have:
+
 - ✅ A fully-themed button component
 - ✅ Automatic accessibility features
 - ✅ Color system integration
@@ -14,11 +15,10 @@ By the end of this guide, you'll have:
 
 First, import the tokens and utilities you'll need:
 
-```typescript
+````typescript
 import { tokens } from '@terroir/core';
 import { generateColorSystem } from '@terroir/core/colors';
-```
-
+```text
 ## Step 2: Generate Your Color System
 
 Create a color system based on your brand color:
@@ -32,8 +32,7 @@ const colors = await generateColorSystem({
 
 console.log('Generated colors:', colors);
 // Output: { primary: {...}, secondary: {...}, neutral: {...} }
-```
-
+```text
 ## Step 3: Create Your Component
 
 ### HTML + CSS Version
@@ -47,35 +46,35 @@ console.log('Generated colors:', colors);
       /* Use generated color tokens */
       background-color: var(--color-primary-60);
       color: var(--color-primary-10);
-      
+
       /* Use spacing tokens */
       padding: var(--space-md) var(--space-lg);
-      
+
       /* Use typography tokens */
       font-family: var(--font-family-base);
       font-size: var(--font-size-md);
       font-weight: var(--font-weight-semibold);
-      
+
       /* Built-in accessibility */
       border: none;
       border-radius: var(--radius-md);
       cursor: pointer;
       min-height: 44px; /* Touch target size */
-      
+
       /* Smooth interactions */
       transition: all 200ms ease;
     }
-    
+
     .button:hover {
       background-color: var(--color-primary-70);
       transform: translateY(-1px);
     }
-    
+
     .button:focus {
       outline: 2px solid var(--color-primary-60);
       outline-offset: 2px;
     }
-    
+
     .button:active {
       transform: translateY(0);
       background-color: var(--color-primary-50);
@@ -88,8 +87,7 @@ console.log('Generated colors:', colors);
   </button>
 </body>
 </html>
-```
-
+```text
 ### React Version
 
 ```tsx
@@ -103,39 +101,39 @@ interface ButtonProps {
   onClick?: () => void;
 }
 
-export function Button({ 
-  variant = 'primary', 
-  size = 'md', 
-  children, 
-  onClick 
+export function Button({
+  variant = 'primary',
+  size = 'md',
+  children,
+  onClick
 }: ButtonProps) {
   const theme = useTheme();
-  
+
   const styles = {
     // Color system integration
     backgroundColor: theme.colors.primary.tone(60),
     color: theme.colors.primary.tone(10),
-    
+
     // Spacing system
     padding: `${theme.space.md} ${theme.space.lg}`,
-    
+
     // Typography system
     fontFamily: theme.fonts.base,
     fontSize: theme.fontSizes.md,
     fontWeight: theme.fontWeights.semibold,
-    
+
     // Accessibility built-in
     border: 'none',
     borderRadius: theme.radii.md,
     cursor: 'pointer',
     minHeight: '44px',
-    
+
     // Smooth interactions
     transition: 'all 200ms ease',
   };
-  
+
   return (
-    <button 
+    <button
       style={styles}
       onClick={onClick}
       // Accessibility attributes automatically included
@@ -144,13 +142,12 @@ export function Button({
     </button>
   );
 }
-```
-
+```text
 ### Vue Version
 
 ```vue
 <template>
-  <button 
+  <button
     class="terroir-button"
     :class="[`terroir-button--${variant}`, `terroir-button--${size}`]"
     @click="$emit('click')"
@@ -187,16 +184,16 @@ const buttonStyles = computed(() => ({
   background-color: var(--button-bg);
   color: var(--button-text);
   padding: var(--button-padding);
-  
+
   border: none;
   border-radius: var(--radius-md);
   cursor: pointer;
   min-height: 44px;
-  
+
   font-family: var(--font-family-base);
   font-size: var(--font-size-md);
   font-weight: var(--font-weight-semibold);
-  
+
   transition: all 200ms ease;
 }
 
@@ -210,8 +207,7 @@ const buttonStyles = computed(() => ({
   outline-offset: 2px;
 }
 </style>
-```
-
+```yaml
 ## Step 4: Test Your Component
 
 ### Accessibility Testing
@@ -229,8 +225,7 @@ pnpm test:a11y
 
 # Test keyboard navigation
 # Tab to button, press Enter/Space to activate
-```
-
+```text
 ### Visual Testing
 
 ```bash
@@ -239,8 +234,7 @@ pnpm storybook:dev
 
 # Run visual regression tests
 pnpm test:visual
-```
-
+```text
 ## Step 5: Customize and Extend
 
 ### Add Variants
@@ -259,8 +253,7 @@ const sizes = {
   md: { padding: `${tokens.space.md} ${tokens.space.lg}` },
   lg: { padding: `${tokens.space.lg} ${tokens.space.xl}` }
 };
-```
-
+```text
 ### Add States
 
 ```typescript
@@ -271,7 +264,7 @@ const buttonStates = {
   active: colors.primary.tone(50),
   disabled: colors.neutral.tone(90)
 };
-```
+````
 
 ## What You've Learned
 

@@ -12,7 +12,7 @@ Welcome to the Terroir Core contributing guide! This section covers everything y
 
 ### Setting Up Your Environment
 
-```bash
+````bash
 # Clone the repository
 git clone https://github.com/terroir-ds/core.git
 cd terroir-core
@@ -25,8 +25,7 @@ pnpm setup
 
 # Start development mode
 pnpm dev
-```
-
+```bash
 ### Making Changes
 
 1. **Create a feature branch** from `main`
@@ -146,11 +145,12 @@ pnpm test:visual       # Visual regression tests
 pnpm tokens:watch      # Watch token changes
 pnpm storybook:dev     # Component documentation
 pnpm docs:dev          # Documentation site
-```
+````
 
 ## Questions?
 
 Don't hesitate to ask! We're here to help:
+
 - Open a GitHub Discussion for general questions
 - Check existing issues for similar problems
 - Tag maintainers if you need direct help
