@@ -94,6 +94,13 @@ for i in 1 2 3; do
         echo "✅ Copied latest devcontainer config for Agent $i"
     fi
     
+    # Copy latest scripts to ensure agents have updated post-create.sh
+    if [ -d "../terroir-core/scripts" ]; then
+        rm -rf scripts
+        cp -r "../terroir-core/scripts" scripts
+        echo "✅ Copied latest scripts for Agent $i"
+    fi
+    
     # Fix git worktree path for container environment
     # The parent directory gets mounted at /workspaces in the container
     # Main repo is at /workspaces/terroir-core (not /workspaces/core)
