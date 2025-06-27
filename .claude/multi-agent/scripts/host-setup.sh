@@ -147,25 +147,31 @@ for i in 1 2 3; do
         HOST_GIT_DIR="../terroir-core/.git/worktrees/terroir-agent$i"
         if [ -d "$HOST_GIT_DIR" ]; then
             mkdir -p "$HOST_GIT_DIR/info"
-            # Check if already excluded to avoid duplicates
-            if ! grep -q "^\.vscode/settings\.json$" "$HOST_GIT_DIR/info/exclude" 2>/dev/null; then
-                echo ".vscode/settings.json" >> "$HOST_GIT_DIR/info/exclude"
+            
+            # Clean up any duplicate entries first
+            if [ -f "$HOST_GIT_DIR/info/exclude" ]; then
+                # Create a temporary file with unique entries
+                sort -u "$HOST_GIT_DIR/info/exclude" > "$HOST_GIT_DIR/info/exclude.tmp"
+                mv "$HOST_GIT_DIR/info/exclude.tmp" "$HOST_GIT_DIR/info/exclude"
+                echo "✅ Cleaned up duplicate entries in git exclude file"
             fi
-            if ! grep -q "^\.env$" "$HOST_GIT_DIR/info/exclude" 2>/dev/null; then
-                echo ".env" >> "$HOST_GIT_DIR/info/exclude"
-            fi
-            if ! grep -q "^\.devcontainer/$" "$HOST_GIT_DIR/info/exclude" 2>/dev/null; then
-                echo ".devcontainer/" >> "$HOST_GIT_DIR/info/exclude"
-            fi
-            if ! grep -q "^scripts/$" "$HOST_GIT_DIR/info/exclude" 2>/dev/null; then
-                echo "scripts/" >> "$HOST_GIT_DIR/info/exclude"
-            fi
-            if ! grep -q "^\.claude$" "$HOST_GIT_DIR/info/exclude" 2>/dev/null; then
-                echo ".claude" >> "$HOST_GIT_DIR/info/exclude"
-            fi
-            if ! grep -q "^\.agent-coordination$" "$HOST_GIT_DIR/info/exclude" 2>/dev/null; then
-                echo ".agent-coordination" >> "$HOST_GIT_DIR/info/exclude"
-            fi
+            
+            # Add exclusions if not already present
+            EXCLUSIONS=(
+                ".vscode/settings.json"
+                ".env"
+                ".devcontainer/"
+                "scripts/"
+                ".claude"
+                ".agent-coordination"
+            )
+            
+            for exclusion in "${EXCLUSIONS[@]}"; do
+                if ! grep -q "^${exclusion}$" "$HOST_GIT_DIR/info/exclude" 2>/dev/null; then
+                    echo "$exclusion" >> "$HOST_GIT_DIR/info/exclude"
+                fi
+            done
+            
             echo "✅ Added git exclusions for agent-specific files"
         else
             echo "⚠️  Git directory not found: $HOST_GIT_DIR"
