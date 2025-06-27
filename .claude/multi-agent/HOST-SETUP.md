@@ -45,22 +45,20 @@ The host setup script performed these operations:
 ### Directory Structure Created
 ```
 parent-directory/
-├── terroir-core/          # Your main repository
+├── terroir-core/          # Your main repository (source of truth)
+│   ├── .claude/           # Task coordination
+│   └── .agent-coordination/ # Locks, claims, blocks
 ├── terroir-agent1/        # Worktree for utilities (feat/utilities)
 ├── terroir-agent2/        # Worktree for infrastructure (feat/infrastructure)
-├── terroir-agent3/        # Worktree for documentation (feat/documentation)
-└── terroir-shared/        # Shared coordination directory
-    ├── .claude/           # Shared task coordination
-    ├── .agent-coordination/ # Locks, claims, blocks
-    └── .vscode/           # Shared VS Code settings
+└── terroir-agent3/        # Worktree for documentation (feat/documentation)
 ```
 
-### Symbolic Links
-Symbolic links are created automatically inside each agent container:
-- `.claude` → `/workspaces/terroir-shared/.claude`
-- `.agent-coordination` → `/workspaces/terroir-shared/.agent-coordination`
+### Coordination Setup
+Agent containers automatically link to terroir-core's directories:
+- `.claude` → `/workspaces/terroir-core/.claude`
+- `.agent-coordination` → `/workspaces/terroir-core/.agent-coordination`
 
-These links are created by the post-create script when the container starts, ensuring they use the correct container paths.
+These symbolic links are created by the post-create script when agent containers start, using terroir-core as the source of truth.
 
 ### Files Copied to Each Agent
 - `.devcontainer/` - Container configuration
@@ -115,8 +113,8 @@ You'll end up with:
 ### About Dev Containers
 - Each container is isolated but uses the same image/configuration
 - They can't interfere with each other
-- Each mounts only its specific worktree
-- The shared `.claude` directory enables coordination
+- Each agent mounts its own worktree plus terroir-core for coordination
+- The `.claude` and `.agent-coordination` directories in terroir-core enable coordination
 
 ### Container Resources
 - Each container will use separate resources
@@ -146,17 +144,16 @@ If the host setup script fails, you can set up manually:
    git worktree add ../terroir-agent3 feat/documentation
    ```
 
-2. **Create shared directory**:
+2. **Create coordination directories** (in main repo):
    ```bash
-   mkdir -p ../terroir-shared/{.claude,.agent-coordination,.vscode}
-   cp -r .claude/* ../terroir-shared/.claude/
+   mkdir -p .agent-coordination/{locks,claims,blocks}
    ```
 
-3. **Prepare for container links** (for each agent):
+3. **Prepare agent directories** (for each agent):
    ```bash
    # Remove any existing directories that would conflict
    rm -rf .claude .agent-coordination
-   # Links will be created automatically inside containers
+   # Symbolic links will be created automatically inside containers
    ```
 
 4. **Copy files** (for each agent):

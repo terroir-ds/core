@@ -54,18 +54,12 @@ else
     echo "  terroir-agent3 already exists"
 fi
 
-# Create shared directory
-echo -e "\n📁 Creating shared coordination directory..."
-mkdir -p "$PARENT_DIR/terroir-shared/.claude"
-mkdir -p "$PARENT_DIR/terroir-shared/.agent-coordination/locks"
-mkdir -p "$PARENT_DIR/terroir-shared/.agent-coordination/claims"
-mkdir -p "$PARENT_DIR/terroir-shared/.agent-coordination/blocks"
-
-# Copy .claude contents if they exist
-if [ -d "$REPO_DIR/.claude" ]; then
-    cp -r "$REPO_DIR/.claude/"* "$PARENT_DIR/terroir-shared/.claude/" 2>/dev/null || true
-    echo "✅ Copied .claude contents to shared location"
-fi
+# Create coordination directories in main repo (source of truth)
+echo -e "\n📁 Creating coordination directories in terroir-core..."
+mkdir -p "$REPO_DIR/.agent-coordination/locks"
+mkdir -p "$REPO_DIR/.agent-coordination/claims"
+mkdir -p "$REPO_DIR/.agent-coordination/blocks"
+echo "✅ Created .agent-coordination structure in terroir-core"
 
 # Configure agent-specific settings
 echo -e "\n⚙️ Configuring agent-specific VS Code settings..."
@@ -77,7 +71,7 @@ for i in 1 2 3; do
     rm -rf .claude .agent-coordination 2>/dev/null || true
     rm -rf .devcontainer/.devcontainer 2>/dev/null || true
     
-    # Note: Symbolic links to shared directories will be created inside the container
+    # Note: Symbolic links to terroir-core directories will be created inside the container
     # by post-create.sh to ensure they use the correct container paths
     
     # Copy .env file if it exists in main repo (needed for devcontainer)
@@ -265,50 +259,48 @@ done
 # No need for workspace files - using direct folder opening with settings overrides
 echo "✅ Agent-specific VS Code configurations complete"
 
-# Create initial coordination files
-echo -e "\n📄 Creating initial coordination files..."
+# Create initial agent registry file if it doesn't exist
+if [ ! -f "$REPO_DIR/.claude/tasks/AGENT-REGISTRY.md" ]; then
+    echo -e "\n📄 Creating initial agent registry..."
+    mkdir -p "$REPO_DIR/.claude/tasks"
+    cat > "$REPO_DIR/.claude/tasks/AGENT-REGISTRY.md" << 'EOF'
+# Agent Task Registry
 
-# Copy the comprehensive README if it exists
-if [ -f "$REPO_DIR/.claude/multi-agent/templates/TERROIR-SHARED-README.md" ]; then
-    cp "$REPO_DIR/.claude/multi-agent/templates/TERROIR-SHARED-README.md" "$PARENT_DIR/terroir-shared/README.md"
-    echo "✅ Copied comprehensive README to terroir-shared"
-else
-    # Fallback to simple README
-    cat > "$PARENT_DIR/terroir-shared/README.md" << 'EOF'
-# Terroir Shared Coordination Directory
+Last Updated: $(date)
 
-This directory enables coordination between multiple development agents.
-See .claude/multi-agent/README.md in the main repo for full documentation.
+## Active Agents
 
-## Quick Status Check
-```bash
-ls -la .agent-coordination/locks/     # Active file locks
-ls -la .agent-coordination/claims/    # File ownership claims  
-ls -la .agent-coordination/blocks/    # Current blockers
-```
+| Agent | Branch | Focus Area | Current Task |
+|-------|--------|------------|--------------|
+| Main | main | Integration & Orchestration | Coordinating multi-agent development |
+| Agent 1 | feat/utilities | Utility Development | Awaiting assignment |
+| Agent 2 | feat/infrastructure | Infrastructure & DevOps | Awaiting assignment |
+| Agent 3 | feat/documentation | Documentation | Awaiting assignment |
 
-## Agent Workspaces
-- terroir-core (main) - Integration & monitoring
-- terroir-agent1 - Utilities development
-- terroir-agent2 - Infrastructure & DevOps
-- terroir-agent3 - Documentation
+## Task Assignments
 
-## Sync Schedule
-- 10:00 AM - Morning sync
-- 2:00 PM - Midday check
-- 6:00 PM - End of day merge
+### In Progress
+- [ ] Initial setup and coordination (Main)
+
+### Queued
+- [ ] Extract utility functions from logger (@utils/security)
+- [ ] Set up GitHub Actions CI/CD
+- [ ] Create TypeDoc configuration
+
+### Completed
+- [x] Multi-agent development environment setup
 EOF
+    echo "✅ Created agent registry"
 fi
 
 # Summary
 echo -e "\n✅ Setup Complete!"
 echo -e "\n📂 Directory Structure:"
 echo "   $PARENT_DIR/"
-echo "   ├── terroir-core/        (original)"
-echo "   ├── terroir-agent1/      (utilities)"
-echo "   ├── terroir-agent2/      (infrastructure)"
-echo "   ├── terroir-agent3/      (documentation)"
-echo "   └── terroir-shared/      (coordination)"
+echo "   ├── terroir-core/        (main - source of truth)"
+echo "   ├── terroir-agent1/      (utilities worktree)"
+echo "   ├── terroir-agent2/      (infrastructure worktree)"
+echo "   └── terroir-agent3/      (documentation worktree)"
 
 echo -e "\n🚀 Next Steps:"
 echo "1. Open VS Code windows directly (each will have agent-specific colors):"

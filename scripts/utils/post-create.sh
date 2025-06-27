@@ -1621,38 +1621,22 @@ main() {
     mkdir -p ~/.ssh
     chmod 700 ~/.ssh
     
-    # Handle multi-agent coordination setup
-    # This applies to both the main repo and agent worktrees when terroir-shared is mounted
-    if [ -d "/workspaces/terroir-shared" ]; then
-        log_info "Detected multi-agent setup, configuring coordination links..."
+    # Handle multi-agent coordination setup for agent worktrees
+    # Agents link to terroir-core's directories (the source of truth)
+    if [[ "${PWD}" =~ terroir-agent[0-9]+ ]] || [[ "${WORKSPACE_FOLDER:-}" =~ terroir-agent[0-9]+ ]]; then
+        log_info "Detected agent worktree environment, setting up coordination links..."
         
-        # For the main repo, we need to preserve the existing .claude directory
-        # but link the multi-agent subdirectory
-        if [[ "${PWD}" =~ terroir-core ]] || [[ "${WORKSPACE_FOLDER:-}" =~ terroir-core ]]; then
-            # Main repo: preserve existing .claude, link multi-agent subdirectory if needed
-            if [ -d "/workspaces/terroir-shared/.claude" ] && [ -d ".claude" ]; then
-                # Ensure multi-agent directory exists in shared
-                mkdir -p /workspaces/terroir-shared/.claude/multi-agent
-                # Link specific subdirectories as needed
-                log_info "Main repo detected - preserving existing .claude directory structure"
-            fi
-            
-            # Always create agent-coordination link for main repo
-            if [ -d "/workspaces/terroir-shared/.agent-coordination" ] && [ ! -e ".agent-coordination" ]; then
-                ln -sf /workspaces/terroir-shared/.agent-coordination .agent-coordination
-                log_info "Created symbolic link to shared .agent-coordination directory"
-            fi
-        else
-            # Agent worktree: create full symbolic links
-            if [ -d "/workspaces/terroir-shared/.claude" ] && [ ! -e ".claude" ]; then
-                ln -sf /workspaces/terroir-shared/.claude .claude
-                log_info "Created symbolic link to shared .claude directory"
-            fi
-            
-            if [ -d "/workspaces/terroir-shared/.agent-coordination" ] && [ ! -e ".agent-coordination" ]; then
-                ln -sf /workspaces/terroir-shared/.agent-coordination .agent-coordination
-                log_info "Created symbolic link to shared .agent-coordination directory"
-            fi
+        # Create symbolic links to terroir-core's coordination directories
+        if [ -d "/workspaces/terroir-core/.claude" ] && [ ! -e ".claude" ]; then
+            ln -sf /workspaces/terroir-core/.claude .claude
+            log_info "Created symbolic link to terroir-core's .claude directory"
+        fi
+        
+        if [ -d "/workspaces/terroir-core/.agent-coordination" ] && [ ! -e ".agent-coordination" ]; then
+            # Create the directory in terroir-core if it doesn't exist
+            mkdir -p /workspaces/terroir-core/.agent-coordination
+            ln -sf /workspaces/terroir-core/.agent-coordination .agent-coordination
+            log_info "Created symbolic link to terroir-core's .agent-coordination directory"
         fi
     fi
     

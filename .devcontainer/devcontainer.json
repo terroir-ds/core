@@ -8,10 +8,9 @@
   },
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 
-  // Mount the shared coordination directory for the main orchestrator
-  "mounts": [
-    "source=${localWorkspaceFolder}/../terroir-shared,target=/workspaces/terroir-shared,type=bind,consistency=cached"
-  ],
+  // No custom mounts needed for the main repository
+  // Agent worktrees will mount this repo for git access and coordination
+  "mounts": [],
 
   // Features to add to the dev container. More info: https://containers.dev/features.
   "features": {

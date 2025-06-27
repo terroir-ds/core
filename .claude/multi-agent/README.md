@@ -39,8 +39,10 @@ code ../terroir-agent3
 
 ```
 Your Machine
-├── terroir-core (main repo)
-│   └── .claude/ (shared coordination)
+├── terroir-core (main repo - source of truth)
+│   ├── .claude/ (coordination & tasks)
+│   ├── .agent-coordination/ (locks, claims, blocks)
+│   └── Branch: main
 ├── terroir-agent1 (utilities focus)
 │   ├── VS Code Window 1
 │   ├── Dev Container 1
@@ -78,9 +80,9 @@ Your Machine
 ## Coordination Protocol
 
 ### Task Management
-1. All agents share `.claude/tasks/` directory
-2. Agents claim tasks by updating `AGENT-REGISTRY.md`
-3. Lock files prevent conflicts on shared resources
+1. All agents share `.claude/tasks/` directory from terroir-core
+2. Agents claim tasks by updating `AGENT-REGISTRY.md` in terroir-core
+3. Lock files in `.agent-coordination/` prevent conflicts on shared resources
 
 ### Sync Schedule
 - **10:00 AM**: Morning sync and planning
@@ -187,10 +189,10 @@ Your Machine
 
 - `scripts/host-setup.sh` - Complete host machine setup (run once from main repo)
   - Creates git worktrees on specified branches
-  - Sets up shared coordination directory
-  - Configures symbolic links
+  - Sets up coordination directories in terroir-core
   - Copies devcontainer, scripts, and environment files
   - Configures git to exclude agent-specific files
+  - Creates agent-specific VS Code settings
 - `sync-agents.sh` - Synchronize agent work at scheduled times
 - `check-conflicts.sh` - Detect potential merge issues
 - `stop-agents.sh` - Clean shutdown of environments
