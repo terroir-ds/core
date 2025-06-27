@@ -1,3 +1,4 @@
+
 /**
  * @module test/lib/utils/logger/logger
  * 
@@ -341,7 +342,7 @@ describe('Logger Utility', () => {
   describe('Request ID Management', () => {
     beforeEach(() => {
       // Ensure clean state
-      if (globalThis.__terroir) {
+      if (globalThis.__terroir && 'requestId' in globalThis.__terroir) {
         delete globalThis.__terroir.requestId;
       }
     });

@@ -1,3 +1,4 @@
+
 /**
  * @module @utils/logger
  * 
@@ -934,7 +935,9 @@ export const setRequestId = (requestId: string): void => {
   }
   
   // Also maintain backward compatibility
-  globalThis.__terroir = globalThis.__terroir || {};
+  if (!globalThis.__terroir) {
+    globalThis.__terroir = {};
+  }
   globalThis.__terroir.requestId = requestId;
 };
 
@@ -955,7 +958,7 @@ export const clearRequestId = (): void => {
     delete state.requestId;
   }
   
-  if (globalThis.__terroir) {
+  if (globalThis.__terroir && 'requestId' in globalThis.__terroir) {
     delete globalThis.__terroir.requestId;
   }
 };
