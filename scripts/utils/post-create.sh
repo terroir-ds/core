@@ -36,6 +36,35 @@ readonly SCRIPT_VERSION="3.2.0"
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly SCRIPT_NAME="$(basename "${BASH_SOURCE[0]}")"
 
+# Load environment variables from .env file early
+if [ -f "/workspaces/core/.env" ]; then
+    # Parse .env file securely for critical variables needed early
+    while IFS= read -r line; do
+        # Skip comments and empty lines
+        [[ "$line" =~ ^#.*$ ]] && continue
+        [[ -z "$line" ]] && continue
+        
+        # Parse key=value pairs
+        if [[ "$line" =~ ^([^=]+)=(.*)$ ]]; then
+            key="${BASH_REMATCH[1]}"
+            value="${BASH_REMATCH[2]}"
+            
+            # Remove quotes from value
+            value="${value%\"}"
+            value="${value#\"}"
+            value="${value%\'}"
+            value="${value#\'}"
+            
+            # Only set specific variables needed early
+            case "$key" in
+                OP_SERVICE_ACCOUNT_TOKEN)
+                    export "$key=$value"
+                    ;;
+            esac
+        fi
+    done < "/workspaces/core/.env"
+fi
+
 # Network and retry configuration
 readonly MAX_RETRIES=3
 readonly RETRY_DELAY=2
