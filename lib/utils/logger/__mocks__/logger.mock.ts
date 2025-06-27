@@ -1,4 +1,60 @@
 /**
+ * @module @utils/logger/__mocks__/logger.mock
+ * 
+ * Mock implementations for the logger module in the Terroir Core Design System.
+ * 
+ * Provides comprehensive mock utilities for testing components that use logging
+ * without producing actual log output. These mocks capture all logging calls
+ * for assertion in tests while maintaining the same API as the real logger.
+ * 
+ * @example Basic mock usage
+ * ```typescript
+ * import { createMockLogger } from '@utils/logger/__mocks__/logger.mock';
+ * 
+ * it('should log errors', () => {
+ *   const mockLogger = createMockLogger();
+ *   
+ *   processWithLogging(mockLogger);
+ *   
+ *   expect(mockLogger.error).toHaveBeenCalledWith(
+ *     { code: 'PROCESS_ERROR' },
+ *     'Process failed'
+ *   );
+ * });
+ * ```
+ * 
+ * @example Mocking the entire module
+ * ```typescript
+ * import { mockLoggerModule } from '@utils/logger/__mocks__/logger.mock';
+ * 
+ * beforeEach(() => {
+ *   mockLoggerModule();
+ * });
+ * 
+ * it('should use mocked logger', async () => {
+ *   const { logger } = await import('@utils/logger');
+ *   
+ *   logger.info('test');
+ *   expect(logger.info).toHaveBeenCalledWith('test');
+ * });
+ * ```
+ * 
+ * @example Capturing log output
+ * ```typescript
+ * import { createTestLogStream } from '@utils/logger/__mocks__/logger.mock';
+ * 
+ * it('should capture structured logs', () => {
+ *   const { stream, output } = createTestLogStream();
+ *   
+ *   stream.write(JSON.stringify({ level: 30, msg: 'test' }));
+ *   
+ *   expect(output[0]).toMatchObject({
+ *     level: 30,
+ *     msg: 'test'
+ *   });
+ * });
+ * ```
+ * 
  * Mock implementations for logger module
  * Used for testing components that use logging
  */

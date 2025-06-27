@@ -1,4 +1,56 @@
 /**
+ * @module @lib/config/__mocks__/config.mock
+ * 
+ * Mock implementations for the configuration module in the Terroir Core Design System.
+ * 
+ * Provides comprehensive mock utilities for testing components that depend on
+ * environment configuration without relying on actual environment variables.
+ * These mocks allow tests to run in isolation with predictable configuration
+ * values while maintaining the same API as the real config module.
+ * 
+ * @example Basic mock usage
+ * ```typescript
+ * import { createConfigMock } from '@lib/config/__mocks__/config.mock';
+ * 
+ * it('should handle production config', () => {
+ *   const config = createConfigMock({ NODE_ENV: 'production' });
+ *   
+ *   expect(config.isProduction()).toBe(true);
+ *   expect(config.isDevelopment()).toBe(false);
+ * });
+ * ```
+ * 
+ * @example Mocking the entire module
+ * ```typescript
+ * import { mockConfigProduction } from '@lib/config/__mocks__/config.mock';
+ * 
+ * beforeEach(() => {
+ *   mockConfigProduction();
+ * });
+ * 
+ * it('should use production config', async () => {
+ *   const { env, isProduction } = await import('@lib/config');
+ *   
+ *   expect(env.NODE_ENV).toBe('production');
+ *   expect(isProduction()).toBe(true);
+ * });
+ * ```
+ * 
+ * @example Testing with custom environment
+ * ```typescript
+ * import { createConfigMock } from '@lib/config/__mocks__/config.mock';
+ * 
+ * it('should handle custom log levels', () => {
+ *   const config = createConfigMock({ 
+ *     LOG_LEVEL: 'debug',
+ *     STRICT_CONTRAST: false 
+ *   });
+ *   
+ *   expect(config.env.LOG_LEVEL).toBe('debug');
+ *   expect(config.env.STRICT_CONTRAST).toBe(false);
+ * });
+ * ```
+ * 
  * Mock implementations for @lib/config module
  * Used for testing components that depend on environment configuration
  */
