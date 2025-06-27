@@ -138,6 +138,10 @@ for i in 1 2 3; do
         mkdir -p .git/info
         echo ".vscode/settings.json" >> .git/info/exclude
         echo ".env" >> .git/info/exclude
+        echo ".devcontainer/" >> .git/info/exclude
+        echo "scripts/" >> .git/info/exclude
+        echo ".claude" >> .git/info/exclude
+        echo ".agent-coordination" >> .git/info/exclude
     elif [ -f ".git" ]; then
         # Git worktree - use host path to real git dir
         HOST_GIT_DIR="../terroir-core/.git/worktrees/terroir-agent$i"
@@ -155,6 +159,12 @@ for i in 1 2 3; do
             fi
             if ! grep -q "^scripts/$" "$HOST_GIT_DIR/info/exclude" 2>/dev/null; then
                 echo "scripts/" >> "$HOST_GIT_DIR/info/exclude"
+            fi
+            if ! grep -q "^\.claude$" "$HOST_GIT_DIR/info/exclude" 2>/dev/null; then
+                echo ".claude" >> "$HOST_GIT_DIR/info/exclude"
+            fi
+            if ! grep -q "^\.agent-coordination$" "$HOST_GIT_DIR/info/exclude" 2>/dev/null; then
+                echo ".agent-coordination" >> "$HOST_GIT_DIR/info/exclude"
             fi
             echo "✅ Added git exclusions for agent-specific files"
         else
