@@ -145,10 +145,21 @@ for i in 1 2 3; do
         fi
     fi
     
-    # Create agent-specific settings that override the shared repo settings
+    # Always recreate agent-specific settings (even after merges)
+    # This ensures agents maintain their custom settings
+    mkdir -p .vscode
+    
+    # Start with shared settings if they exist
+    if [ -f "../terroir-core/.vscode/settings.json" ]; then
+        cp "../terroir-core/.vscode/settings.json" .vscode/settings.json
+    else
+        echo '{}' > .vscode/settings.json
+    fi
+    
+    # Create a temporary file with agent-specific overrides
     case $i in
         1) # Agent 1 - Green theme (Utilities)
-            cat > .vscode/settings.json << 'SETTINGS_EOF'
+            cat > .vscode/agent-overrides.json << 'SETTINGS_EOF'
 {
   "workbench.colorCustomizations": {
     "titleBar.activeBackground": "#1a4d1a",
@@ -167,7 +178,7 @@ for i in 1 2 3; do
 SETTINGS_EOF
             ;;
         2) # Agent 2 - Blue theme (Infrastructure)
-            cat > .vscode/settings.json << 'SETTINGS_EOF'
+            cat > .vscode/agent-overrides.json << 'SETTINGS_EOF'
 {
   "workbench.colorCustomizations": {
     "titleBar.activeBackground": "#1a2d4d",
@@ -184,7 +195,7 @@ SETTINGS_EOF
 SETTINGS_EOF
             ;;
         3) # Agent 3 - Purple theme (Documentation)
-            cat > .vscode/settings.json << 'SETTINGS_EOF'
+            cat > .vscode/agent-overrides.json << 'SETTINGS_EOF'
 {
   "workbench.colorCustomizations": {
     "titleBar.activeBackground": "#3d1a4d",
@@ -201,6 +212,31 @@ SETTINGS_EOF
 SETTINGS_EOF
             ;;
     esac
+    
+    # Merge shared settings with agent overrides
+    # Using node/jq if available, otherwise simple replacement
+    if command -v node >/dev/null 2>&1; then
+        # Use node to merge JSON files
+        node -e "
+            const fs = require('fs');
+            const shared = JSON.parse(fs.readFileSync('.vscode/settings.json', 'utf8'));
+            const overrides = JSON.parse(fs.readFileSync('.vscode/agent-overrides.json', 'utf8'));
+            const merged = { ...shared, ...overrides };
+            // Deep merge for nested objects like workbench.colorCustomizations
+            for (const key in overrides) {
+                if (typeof overrides[key] === 'object' && typeof shared[key] === 'object') {
+                    merged[key] = { ...shared[key], ...overrides[key] };
+                }
+            }
+            fs.writeFileSync('.vscode/settings.json', JSON.stringify(merged, null, 2));
+        "
+    else
+        # Fallback: just use agent overrides (less ideal but works)
+        cp .vscode/agent-overrides.json .vscode/settings.json
+    fi
+    
+    # Clean up temporary file
+    rm -f .vscode/agent-overrides.json
     
     echo "✅ Linked shared directories and configured Agent $i theme"
 done

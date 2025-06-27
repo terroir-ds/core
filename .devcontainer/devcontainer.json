@@ -21,7 +21,7 @@
 
   // Update PATH to include node_modules/.bin and configure 1Password
   "remoteEnv": {
-    "PATH": "/workspaces/core/node_modules/.bin:${containerEnv:PATH}",
+    "PATH": "/workspaces/${localWorkspaceFolderBasename}/node_modules/.bin:${containerEnv:PATH}",
     // 1Password Service Account Token - Required for authentication
     // Create a service account at: https://developer.1password.com/docs/service-accounts/
     "OP_SERVICE_ACCOUNT_TOKEN": "${localEnv:OP_SERVICE_ACCOUNT_TOKEN}",
