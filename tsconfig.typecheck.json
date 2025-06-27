@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    "coverage",
+    "scripts/utils/*.js",
+    "packages/docs-site",
+    "**/node_modules/**"
+  ]
+}

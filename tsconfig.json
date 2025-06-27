@@ -59,7 +59,8 @@
   },
 
   "include": [
-    "scripts/**/*",
+    "scripts/**/*.ts",
+    "scripts/**/*.js",
     "packages/*/src/**/*",
     "types/**/*",
     "test/**/*",
@@ -67,7 +68,16 @@
     "*.config.ts"
   ],
 
-  "exclude": ["node_modules", "dist", "build", "coverage"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    "coverage",
+    "scripts/utils/*.js",
+    "packages/docs-site/.astro",
+    "packages/docs-site/node_modules",
+    "**/node_modules"
+  ],
 
   "ts-node": {
     "esm": true,
