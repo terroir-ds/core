@@ -1,5 +1,11 @@
 /**
- * Retry logic and resilience patterns
+ * @module @utils/errors/retry
+ * 
+ * Retry logic and resilience patterns for the Terroir Core Design System.
+ * 
+ * Implements comprehensive retry strategies including exponential backoff,
+ * circuit breaker pattern, and timeout handling. All retry operations support
+ * cancellation via AbortSignal and provide detailed logging for debugging.
  * 
  * Features:
  * - Exponential backoff with jitter
@@ -7,6 +13,56 @@
  * - Timeout handling
  * - Cancellation support
  * - Resource cleanup
+ * - Batch retry operations
+ * 
+ * @example Basic retry with exponential backoff
+ * ```typescript
+ * import { retry } from '@utils/errors/retry';
+ * 
+ * const result = await retry(
+ *   async () => fetchDataFromAPI(),
+ *   {
+ *     maxAttempts: 3,
+ *     initialDelay: 1000,
+ *     backoffFactor: 2,
+ *     jitter: true
+ *   }
+ * );
+ * ```
+ * 
+ * @example Circuit breaker pattern
+ * ```typescript
+ * import { CircuitBreaker, retryWithCircuitBreaker } from '@utils/errors/retry';
+ * 
+ * const breaker = new CircuitBreaker({
+ *   failureThreshold: 5,
+ *   cooldownPeriod: 60000,
+ *   name: 'PaymentAPI'
+ * });
+ * 
+ * const result = await retryWithCircuitBreaker(
+ *   () => processPayment(data),
+ *   breaker,
+ *   { maxAttempts: 3 }
+ * );
+ * ```
+ * 
+ * @example Batch operations with retry
+ * ```typescript
+ * import { batchRetry } from '@utils/errors/retry';
+ * 
+ * const results = await batchRetry(
+ *   userIds,
+ *   (id) => fetchUserData(id),
+ *   {
+ *     maxAttempts: 3,
+ *     concurrency: 5,
+ *     onRetry: (error, attempt) => {
+ *       logger.warn(`Retry ${attempt} for user fetch`, { error });
+ *     }
+ *   }
+ * );
+ * ```
  */
 
 import { NetworkError } from './base-error.js';

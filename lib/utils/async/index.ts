@@ -1,6 +1,53 @@
 /**
- * Async utilities for the Terroir Core Design System
- * Provides robust async operations with proper cancellation and error handling
+ * @module @utils/async
+ * 
+ * Comprehensive async utilities for the Terroir Core Design System.
+ * 
+ * Provides robust async operations with proper cancellation, error handling,
+ * timeout management, and progress tracking. All utilities support AbortSignal
+ * for cancellation and follow consistent error handling patterns.
+ * 
+ * @example Import all async utilities
+ * ```typescript
+ * import { withTimeout, delay, processBatch, retry } from '@utils/async';
+ * ```
+ * 
+ * @example Timeout management
+ * ```typescript
+ * import { withTimeout } from '@utils/async';
+ * 
+ * const result = await withTimeout(
+ *   fetchData(),
+ *   { timeout: 5000, errorMessage: 'Data fetch timed out' }
+ * );
+ * ```
+ * 
+ * @example Batch processing with cancellation
+ * ```typescript
+ * import { processBatch } from '@utils/async';
+ * 
+ * const controller = new AbortController();
+ * const results = await processBatch(items, processItem, {
+ *   concurrency: 5,
+ *   signal: controller.signal,
+ *   onProgress: (progress) => console.log(`${progress.percent}% complete`)
+ * });
+ * ```
+ * 
+ * @example Retry with exponential backoff
+ * ```typescript
+ * import { retry } from '@utils/async';
+ * 
+ * const data = await retry(
+ *   () => fetchFromAPI(),
+ *   {
+ *     maxAttempts: 3,
+ *     delay: 1000,
+ *     backoff: 'exponential',
+ *     shouldRetry: (error) => error.code === 'NETWORK_ERROR'
+ *   }
+ * );
+ * ```
  */
 
 // Re-export shared async types

@@ -1,6 +1,55 @@
 /**
- * AbortSignal utilities for async operations
- * Provides helpers for signal management and combination
+ * @module @utils/async/signals
+ * 
+ * AbortSignal utilities for async operation cancellation.
+ * 
+ * Provides comprehensive utilities for working with AbortSignal and AbortController,
+ * including signal combination, timeout signals, event-based signals, and error
+ * handling. Supports both modern (Node.js 18+) and legacy environments with
+ * appropriate fallbacks.
+ * 
+ * @example Combining multiple signals
+ * ```typescript
+ * import { combineSignals } from '@utils/async/signals';
+ * 
+ * const timeoutController = new AbortController();
+ * const userController = new AbortController();
+ * 
+ * const combined = combineSignals([
+ *   timeoutController.signal,
+ *   userController.signal
+ * ]);
+ * 
+ * // Aborts when either signal aborts
+ * fetch(url, { signal: combined });
+ * ```
+ * 
+ * @example Creating timeout signals
+ * ```typescript
+ * import { timeoutSignal } from '@utils/async/signals';
+ * 
+ * const signal = timeoutSignal(5000, 'Operation timed out');
+ * 
+ * try {
+ *   await fetch(url, { signal });
+ * } catch (error) {
+ *   if (isAbortError(error)) {
+ *     console.log('Request was cancelled');
+ *   }
+ * }
+ * ```
+ * 
+ * @example Event-based cancellation
+ * ```typescript
+ * import { eventSignal } from '@utils/async/signals';
+ * 
+ * // Cancel on window close
+ * const signal = eventSignal(window, 'beforeunload');
+ * 
+ * // Cancel on custom event
+ * const emitter = new EventEmitter();
+ * const signal2 = eventSignal(emitter, 'cancel');
+ * ```
  */
 
 import { isAbortError as isAbortErrorBase } from '@utils/types/async.types.js';
