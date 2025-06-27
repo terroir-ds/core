@@ -37,7 +37,16 @@ readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly SCRIPT_NAME="$(basename "${BASH_SOURCE[0]}")"
 
 # Load environment variables from .env file early
-if [ -f "/workspaces/core/.env" ]; then
+# Try multiple possible locations for the .env file
+ENV_FILE=""
+for possible_env in "$SCRIPT_DIR/../../.env" "/workspaces/core/.env" "/workspaces/terroir-core/.env" "$(pwd)/.env"; do
+    if [ -f "$possible_env" ]; then
+        ENV_FILE="$possible_env"
+        break
+    fi
+done
+
+if [ -n "$ENV_FILE" ]; then
     # Parse .env file securely for critical variables needed early
     while IFS= read -r line; do
         # Skip comments and empty lines
@@ -59,10 +68,11 @@ if [ -f "/workspaces/core/.env" ]; then
             case "$key" in
                 OP_SERVICE_ACCOUNT_TOKEN)
                     export "$key=$value"
+                    echo "Loaded OP_SERVICE_ACCOUNT_TOKEN from $ENV_FILE" >&2
                     ;;
             esac
         fi
-    done < "/workspaces/core/.env"
+    done < "$ENV_FILE"
 fi
 
 # Network and retry configuration
@@ -762,9 +772,17 @@ atomic_append() {
 
 # Load environment variables from .env file
 load_env_file() {
-    # Load environment variables securely
-    if [ -f "/workspaces/core/.env" ]; then
-        log_info "Loading environment variables from .env file"
+    # Find .env file using same logic as early loading
+    local env_file=""
+    for possible_env in "$SCRIPT_DIR/../../.env" "/workspaces/core/.env" "/workspaces/terroir-core/.env" "$(pwd)/.env"; do
+        if [ -f "$possible_env" ]; then
+            env_file="$possible_env"
+            break
+        fi
+    done
+    
+    if [ -n "$env_file" ]; then
+        log_info "Loading environment variables from .env file: $env_file"
         
         # Parse .env file securely
         while IFS= read -r line; do
@@ -791,7 +809,9 @@ load_env_file() {
                         ;;
                 esac
             fi
-        done < "/workspaces/core/.env"
+        done < "$env_file"
+    else
+        log_warn "No .env file found in expected locations"
     fi
 }
 
