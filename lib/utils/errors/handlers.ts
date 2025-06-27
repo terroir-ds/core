@@ -1,11 +1,79 @@
 /**
- * Error handling utilities and helpers
+ * @module @utils/errors/handlers
+ * 
+ * Error handling utilities and recovery strategies for the Terroir Core Design System.
+ * 
+ * Provides comprehensive error handling infrastructure including global handlers,
+ * recovery strategies, error boundaries, and graceful shutdown. Integrates with
+ * the structured logging system to ensure all errors are properly tracked and
+ * can be recovered from when possible.
  * 
  * Features:
- * - Global error handlers
+ * - Global error handler registry
  * - Promise rejection handling
- * - Error formatting
  * - Error recovery strategies
+ * - Error boundaries for async operations
+ * - Graceful shutdown handling
+ * - Error formatting and extraction
+ * - Assertion utilities
+ * 
+ * @example Global error handlers
+ * ```typescript
+ * import { setupGlobalErrorHandlers, registerErrorHandler } from '@utils/errors/handlers';
+ * 
+ * // Set up default handlers
+ * setupGlobalErrorHandlers();
+ * 
+ * // Register custom handler
+ * registerErrorHandler('metrics', async (error) => {
+ *   await sendErrorMetrics(error);
+ * });
+ * ```
+ * 
+ * @example Error recovery
+ * ```typescript
+ * import { registerRecoveryStrategy, tryRecover } from '@utils/errors/handlers';
+ * 
+ * // Register recovery strategy
+ * registerRecoveryStrategy('NETWORK_ERROR', async (error) => {
+ *   await reconnectNetwork();
+ *   return { recovered: true };
+ * });
+ * 
+ * // Use recovery
+ * try {
+ *   await fetchData();
+ * } catch (error) {
+ *   const result = await tryRecover(error, defaultData);
+ *   return result;
+ * }
+ * ```
+ * 
+ * @example Error boundaries
+ * ```typescript
+ * import { errorBoundary } from '@utils/errors/handlers';
+ * 
+ * const data = await errorBoundary(
+ *   async () => fetchUserData(userId),
+ *   {
+ *     fallback: () => getCachedData(userId),
+ *     onError: (error) => logger.warn('Using cached data', { error }),
+ *     context: { userId }
+ *   }
+ * );
+ * ```
+ * 
+ * @example Assertions
+ * ```typescript
+ * import { assert, assertDefined } from '@utils/errors/handlers';
+ * 
+ * function processUser(user: User | undefined) {
+ *   assertDefined(user, 'User is required');
+ *   assert(user.id > 0, 'Invalid user ID', 'INVALID_USER_ID');
+ *   
+ *   // user is now guaranteed to be defined with valid ID
+ * }
+ * ```
  */
 
 import { isBaseError, wrapError, ErrorSeverity } from './base-error.js';
@@ -29,7 +97,27 @@ const errorHandlers = new Map<string, ErrorHandler>();
 const recoveryStrategies = new Map<string, RecoveryStrategy>();
 
 /**
- * Register a global error handler
+ * Registers a global error handler that will be called for all errors.
+ * 
+ * Error handlers are useful for centralized error processing like sending
+ * metrics, alerting, or custom logging. Multiple handlers can be registered
+ * and they will all be called concurrently when an error occurs.
+ * 
+ * @param name - Unique name for the handler
+ * @param handler - Function to handle errors
+ * 
+ * @example
+ * ```typescript
+ * registerErrorHandler('metrics', async (error, context) => {
+ *   await sendToMetricsService({
+ *     errorId: error.errorId,
+ *     severity: error.severity,
+ *     ...context
+ *   });
+ * });
+ * ```
+ * 
+ * @public
  */
 export function registerErrorHandler(name: string, handler: ErrorHandler): void {
   errorHandlers.set(name, handler);
@@ -53,7 +141,25 @@ export function registerRecoveryStrategy(errorCode: string, strategy: RecoverySt
 }
 
 /**
- * Handle error with all registered handlers
+ * Handles an error by logging it and calling all registered error handlers.
+ * 
+ * Automatically wraps non-BaseError instances, logs based on severity,
+ * and executes all registered handlers concurrently. Handlers that fail
+ * won't prevent other handlers from running.
+ * 
+ * @param error - The error to handle
+ * @param context - Additional context for logging
+ * 
+ * @example
+ * ```typescript
+ * try {
+ *   await riskyOperation();
+ * } catch (error) {
+ *   await handleError(error, { operation: 'riskyOperation', userId });
+ * }
+ * ```
+ * 
+ * @public
  */
 export async function handleError(error: unknown, context?: LogContext): Promise<void> {
   const wrappedError = isBaseError(error) ? error : wrapError(error);
@@ -87,7 +193,29 @@ export async function handleError(error: unknown, context?: LogContext): Promise
 }
 
 /**
- * Try to recover from an error
+ * Attempts to recover from an error using registered recovery strategies.
+ * 
+ * Looks up a recovery strategy based on the error code and executes it.
+ * If recovery succeeds, returns the recovered value. If recovery fails
+ * or no strategy exists, returns the default value.
+ * 
+ * @param error - The error to recover from
+ * @param defaultValue - Value to return if recovery fails
+ * @returns The recovered value or default
+ * 
+ * @example
+ * ```typescript
+ * // Register strategy
+ * registerRecoveryStrategy('DB_CONNECTION_LOST', async () => {
+ *   await reconnectDatabase();
+ *   return true;
+ * });
+ * 
+ * // Use recovery
+ * const result = await tryRecover(error, cachedData);
+ * ```
+ * 
+ * @public
  */
 export async function tryRecover<T>(error: unknown, defaultValue?: T): Promise<T | undefined> {
   const wrappedError = isBaseError(error) ? error : wrapError(error);
@@ -120,7 +248,33 @@ export async function tryRecover<T>(error: unknown, defaultValue?: T): Promise<T
 }
 
 /**
- * Create a function that handles its own errors
+ * Wraps a function to automatically handle its errors.
+ * 
+ * Creates a new function that catches and handles any errors thrown by
+ * the original function. Useful for adding consistent error handling
+ * to multiple functions.
+ * 
+ * @param fn - Function to wrap
+ * @param options - Error handling options
+ * @param options.defaultValue - Value to return on error
+ * @param options.context - Additional logging context
+ * @param options.rethrow - Whether to rethrow after handling
+ * @returns Wrapped function with same signature
+ * 
+ * @example
+ * ```typescript
+ * const safeGetUser = withErrorHandling(
+ *   async (id: string) => getUserById(id),
+ *   {
+ *     defaultValue: null,
+ *     context: { service: 'user-service' }
+ *   }
+ * );
+ * 
+ * const user = await safeGetUser('123'); // Returns null on error
+ * ```
+ * 
+ * @public
  */
 export function withErrorHandling<T extends (...args: unknown[]) => unknown>(
   fn: T,
@@ -188,7 +342,25 @@ export async function errorBoundary<T>(
 }
 
 /**
- * Setup global error handlers for Node.js
+ * Sets up global error handlers for Node.js process events.
+ * 
+ * Installs handlers for:
+ * - Uncaught exceptions (logs and exits)
+ * - Unhandled promise rejections (logs)
+ * - Node.js warnings (logs)
+ * - SIGTERM/SIGINT signals (graceful shutdown)
+ * 
+ * Should be called once at application startup.
+ * 
+ * @example
+ * ```typescript
+ * // In your main entry point
+ * import { setupGlobalErrorHandlers } from '@utils/errors/handlers';
+ * 
+ * setupGlobalErrorHandlers();
+ * ```
+ * 
+ * @public
  */
 export function setupGlobalErrorHandlers(): void {
   // Handle uncaught exceptions
@@ -285,7 +457,36 @@ async function gracefulShutdown(): Promise<void> {
 }
 
 /**
- * Format error for display
+ * Formats an error for human-readable display.
+ * 
+ * Creates a detailed string representation of an error including its
+ * properties, context, cause chain, and stack trace. Useful for logging
+ * or displaying errors in development.
+ * 
+ * @param error - Error to format
+ * @param options - Formatting options
+ * @param options.stack - Include stack trace (default: true)
+ * @param options.cause - Include cause chain (default: true)
+ * @param options.context - Include error context (default: true)
+ * @returns Formatted error string
+ * 
+ * @example
+ * ```typescript
+ * catch (error) {
+ *   console.error(formatError(error, { stack: false }));
+ *   // Output:
+ *   // ValidationError: Invalid email format
+ *   //   Error ID: 123e4567-e89b-12d3-a456-426614174000
+ *   //   Code: INVALID_EMAIL
+ *   //   Severity: LOW
+ *   //   Category: VALIDATION
+ *   //   Context:
+ *   //     email: "not-an-email"
+ *   //     field: "email"
+ * }
+ * ```
+ * 
+ * @public
  */
 export function formatError(error: unknown, options?: {
   stack?: boolean;

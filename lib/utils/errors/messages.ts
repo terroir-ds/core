@@ -1,15 +1,87 @@
 /**
- * Centralized error messages for Terroir Core Design System
+ * @module @utils/errors/messages
+ * 
+ * Centralized error messages for the Terroir Core Design System.
+ * 
+ * Provides a comprehensive catalog of error message templates that ensure
+ * consistent messaging across the entire application. Messages are organized
+ * by category and designed to be easily localizable for future i18n support.
  * 
  * Benefits:
- * - Consistent messaging across the system
+ * - Consistent error messaging across the system
  * - Test stability (copy changes don't break tests)
  * - Future i18n support ready
  * - Easy maintenance and updates
+ * - Type-safe message keys
+ * - Categorized for easy filtering
+ * 
+ * @example Basic usage
+ * ```typescript
+ * import { getMessage } from '@utils/errors/messages';
+ * 
+ * // Simple messages
+ * const msg1 = getMessage('PERMISSION_DENIED');
+ * // "Permission denied"
+ * 
+ * // Messages with parameters
+ * const msg2 = getMessage('OPERATION_FAILED', 3);
+ * // "Operation failed after 3 attempt(s)"
+ * 
+ * const msg3 = getMessage('RESOURCE_NOT_FOUND', 'User', '123');
+ * // "User not found: 123"
+ * ```
+ * 
+ * @example With error classes
+ * ```typescript
+ * import { ValidationError } from '@utils/errors';
+ * import { getMessage } from '@utils/errors/messages';
+ * 
+ * throw new ValidationError(
+ *   getMessage('VALIDATION_REQUIRED', 'email'),
+ *   { code: 'EMAIL_REQUIRED' }
+ * );
+ * ```
+ * 
+ * @example Category filtering
+ * ```typescript
+ * import { ERROR_MESSAGE_CATEGORIES } from '@utils/errors/messages';
+ * 
+ * // Get all validation message keys
+ * const validationKeys = ERROR_MESSAGE_CATEGORIES.VALIDATION;
+ * 
+ * // Check if error is network-related
+ * if (ERROR_MESSAGE_CATEGORIES.NETWORK.includes(error.code)) {
+ *   enableRetry();
+ * }
+ * ```
+ * 
+ * @example Future i18n support
+ * ```typescript
+ * import { createLocalizedMessages } from '@utils/errors/messages';
+ * 
+ * // Ready for future localization
+ * const messages = createLocalizedMessages('fr');
+ * const msg = messages.messages.PERMISSION_DENIED;
+ * ```
  */
 
 /**
- * Core error message templates
+ * Core error message templates catalog.
+ * 
+ * Contains all error messages used throughout the application, organized
+ * by category. Messages can be simple strings or functions that accept
+ * parameters for dynamic content.
+ * 
+ * @example
+ * ```typescript
+ * // Static message
+ * ERROR_MESSAGES.PERMISSION_DENIED // "Permission denied"
+ * 
+ * // Dynamic message
+ * ERROR_MESSAGES.OPERATION_FAILED(3) // "Operation failed after 3 attempt(s)"
+ * ```
+ * 
+ * @public
  */
 export const ERROR_MESSAGES = {
   // Retry/Network errors
@@ -121,7 +193,24 @@ export const ERROR_MESSAGES = {
 } as const;
 
 /**
- * Error message categories for grouping and filtering
+ * Error message categories for grouping and filtering.
+ * 
+ * Groups error message keys by their category, making it easy to
+ * identify error types and apply category-specific handling.
+ * 
+ * @example
+ * ```typescript
+ * // Check if error is retryable
+ * if (ERROR_MESSAGE_CATEGORIES.NETWORK.includes(errorCode)) {
+ *   return retry(operation);
+ * }
+ * 
+ * // Get all validation errors for documentation
+ * const validationErrors = ERROR_MESSAGE_CATEGORIES.VALIDATION
+ *   .map(key => ({ key, message: ERROR_MESSAGES[key] }));
+ * ```
+ * 
+ * @public
  */
 export const ERROR_MESSAGE_CATEGORIES = {
   RETRY: [
@@ -210,8 +299,30 @@ export const ERROR_MESSAGE_CATEGORIES = {
 } as const;
 
 /**
- * Helper function to get message by key
- * Future-ready for i18n implementation
+ * Gets an error message by key with type safety.
+ * 
+ * Retrieves a message template and applies any provided arguments.
+ * This abstraction layer is future-ready for i18n implementation,
+ * allowing easy swapping of message catalogs based on locale.
+ * 
+ * @param key - The message key from ERROR_MESSAGES
+ * @param args - Arguments to pass to message functions
+ * @returns The formatted error message
+ * 
+ * @example
+ * ```typescript
+ * // Static message
+ * getMessage('AUTH_REQUIRED'); // "Authentication required"
+ * 
+ * // Dynamic message with single parameter
+ * getMessage('OPERATION_TIMEOUT', 5000); // "Operation timed out after 5000ms"
+ * 
+ * // Dynamic message with multiple parameters
+ * getMessage('VALIDATION_TYPE', 'age', 'number', 'string'); 
+ * // "age must be number, got string"
+ * ```
+ * 
+ * @public
  */
 export function getMessage(
   key: keyof typeof ERROR_MESSAGES,
@@ -240,7 +351,26 @@ export interface I18nErrorMessages {
 }
 
 /**
- * Create localized error messages (future implementation)
+ * Creates a localized error message catalog.
+ * 
+ * Currently returns English messages, but provides the interface
+ * for future internationalization support. When i18n is implemented,
+ * this function will load locale-specific message files.
+ * 
+ * @param locale - The locale code (default: 'en')
+ * @returns Localized message catalog
+ * 
+ * @example Future usage
+ * ```typescript
+ * // Load French messages
+ * const frMessages = createLocalizedMessages('fr');
+ * 
+ * // Use in error handling
+ * const errorMessage = frMessages.messages.PERMISSION_DENIED;
+ * // Future: "Autorisation refusée"
+ * ```
+ * 
+ * @public
  */
 export function createLocalizedMessages(locale: string = 'en'): I18nErrorMessages {
   // For now, return English messages
@@ -252,8 +382,25 @@ export function createLocalizedMessages(locale: string = 'en'): I18nErrorMessage
 }
 
 /**
- * Validate that all message functions can be called
- * Useful for testing message completeness
+ * Validates that all message templates are properly defined.
+ * 
+ * Tests each message template with sample parameters to ensure
+ * they can be called without errors. Useful for testing message
+ * completeness in unit tests or during development.
+ * 
+ * @returns True if all messages are valid, false otherwise
+ * 
+ * @example
+ * ```typescript
+ * // In tests
+ * describe('Error Messages', () => {
+ *   it('should have valid message templates', () => {
+ *     expect(validateMessages()).toBe(true);
+ *   });
+ * });
+ * ```
+ * 
+ * @public
  */
 export function validateMessages(): boolean {
   try {

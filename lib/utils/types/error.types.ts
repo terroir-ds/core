@@ -1,11 +1,62 @@
 /**
- * Error handling types for Terroir Core Design System
+ * @module @utils/types/error
+ * 
+ * Type definitions for the error handling system.
+ * 
+ * Provides comprehensive type definitions for structured error handling,
+ * including error categorization, severity levels, retry strategies, and
+ * circuit breaker patterns. These types ensure consistent error handling
+ * across the entire application.
+ * 
+ * @example Error creation with types
+ * ```typescript
+ * import type { ErrorOptions, ErrorSeverity } from '@utils/types/error';
+ * 
+ * const options: ErrorOptions = {
+ *   severity: ErrorSeverity.HIGH,
+ *   retryable: true,
+ *   context: {
+ *     operation: 'fetchUserData',
+ *     userId: '123'
+ *   }
+ * };
+ * 
+ * throw new NetworkError('Failed to fetch user', options);
+ * ```
+ * 
+ * @example Retry configuration
+ * ```typescript
+ * import type { RetryOptions } from '@utils/types/error';
+ * 
+ * const retryConfig: RetryOptions = {
+ *   maxAttempts: 3,
+ *   initialDelay: 1000,
+ *   backoffFactor: 2,
+ *   jitter: true,
+ *   shouldRetry: (error) => error instanceof NetworkError
+ * };
+ * ```
  */
 
 import type { LogContext } from './logger.types.js';
 
 /**
- * Error severity levels
+ * Error severity levels for prioritization and alerting.
+ * 
+ * Used to categorize errors by their impact on the system:
+ * - `LOW`: Minor issues, can be ignored in production
+ * - `MEDIUM`: Should be investigated but not urgent
+ * - `HIGH`: Requires attention, may impact users
+ * - `CRITICAL`: System failure, immediate action required
+ * 
+ * @example
+ * ```typescript
+ * if (error.severity === ErrorSeverity.CRITICAL) {
+ *   await alertOncallEngineer(error);
+ * }
+ * ```
+ * 
+ * @public
  */
 export enum ErrorSeverity {
   LOW = 'low',
@@ -15,7 +66,32 @@ export enum ErrorSeverity {
 }
 
 /**
- * Error categories for classification
+ * Error categories for classification and handling.
+ * 
+ * Categorizes errors by their domain for appropriate handling:
+ * - `VALIDATION`: Input validation failures
+ * - `CONFIGURATION`: Config/environment issues
+ * - `NETWORK`: Network/connectivity problems
+ * - `PERMISSION`: Auth/authorization failures
+ * - `RESOURCE`: Missing/unavailable resources
+ * - `BUSINESS_LOGIC`: Domain rule violations
+ * - `INTEGRATION`: Third-party service issues
+ * - `UNKNOWN`: Uncategorized errors
+ * 
+ * @example
+ * ```typescript
+ * switch (error.category) {
+ *   case ErrorCategory.NETWORK:
+ *   case ErrorCategory.INTEGRATION:
+ *     return retry(operation);
+ *   case ErrorCategory.VALIDATION:
+ *     return showValidationErrors(error);
+ *   default:
+ *     return handleGenericError(error);
+ * }
+ * ```
+ * 
+ * @public
  */
 export enum ErrorCategory {
   VALIDATION = 'validation',
@@ -69,7 +145,31 @@ export interface ErrorOptions {
 }
 
 /**
- * Retry configuration options
+ * Configuration options for retry behavior.
+ * 
+ * Controls how operations are retried on failure, including backoff
+ * strategies, timeouts, and cancellation. Used by the retry utilities
+ * to implement resilient operations.
+ * 
+ * @example
+ * ```typescript
+ * const options: RetryOptions = {
+ *   maxAttempts: 5,
+ *   initialDelay: 100,
+ *   maxDelay: 5000,
+ *   backoffFactor: 2,
+ *   jitter: true,
+ *   timeout: 30000,
+ *   shouldRetry: (error, attempt) => {
+ *     return attempt < 3 && isRetryableError(error);
+ *   },
+ *   onRetry: (error, attempt, delay) => {
+ *     logger.info(`Retry attempt ${attempt} after ${delay}ms`);
+ *   }
+ * };
+ * ```
+ * 
+ * @public
  */
 export interface RetryOptions {
   /** Maximum number of attempts */
@@ -95,7 +195,26 @@ export interface RetryOptions {
 }
 
 /**
- * Circuit breaker configuration options
+ * Configuration options for circuit breaker pattern.
+ * 
+ * Implements the circuit breaker pattern to prevent cascading failures.
+ * The circuit opens after reaching failure threshold, rejects requests
+ * during cooldown, then enters half-open state to test recovery.
+ * 
+ * @example
+ * ```typescript
+ * const config: CircuitBreakerOptions = {
+ *   failureThreshold: 5,      // Open after 5 failures
+ *   successThreshold: 2,      // Close after 2 successes  
+ *   timeWindow: 60000,        // Count failures in 1 minute window
+ *   cooldownPeriod: 30000,    // Wait 30s before half-open
+ *   name: 'PaymentService'
+ * };
+ * 
+ * const breaker = new CircuitBreaker(config);
+ * ```
+ * 
+ * @public
  */
 export interface CircuitBreakerOptions {
   /** Number of failures before opening circuit */

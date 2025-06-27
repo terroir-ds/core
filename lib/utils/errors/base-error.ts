@@ -1,12 +1,72 @@
 /**
- * Base error classes for Terroir Core Design System
+ * @module @utils/errors/base-error
+ * 
+ * Base error classes for the Terroir Core Design System.
+ * 
+ * Provides a comprehensive error handling system with structured errors,
+ * error chaining, categorization, and serialization support. All errors
+ * extend from BaseError to provide consistent error handling across the
+ * application.
  * 
  * Features:
- * - Error.cause for error chaining (Node 16.9+)
- * - Structured error context
- * - Serialization support (enhanced with serialize-error)
- * - Stack trace enhancement
- * - Error categorization
+ * - Native Error.cause support for error chaining (Node 16.9+)
+ * - Structured error context with unique IDs
+ * - Automatic serialization with circular reference handling
+ * - Error categorization and severity levels
+ * - Retryable error detection
+ * - HTTP error mapping
+ * - Type-safe error handling
+ * 
+ * @example Basic error creation
+ * ```typescript
+ * import { ValidationError } from '@utils/errors';
+ * 
+ * throw new ValidationError('Invalid email format', {
+ *   code: 'INVALID_EMAIL',
+ *   context: { 
+ *     email: 'not-an-email',
+ *     field: 'email' 
+ *   }
+ * });
+ * ```
+ * 
+ * @example Error chaining
+ * ```typescript
+ * try {
+ *   await fetchUserData(userId);
+ * } catch (error) {
+ *   throw new ResourceError('Failed to load user', {
+ *     cause: error,
+ *     code: 'USER_LOAD_FAILED',
+ *     context: { userId }
+ *   });
+ * }
+ * ```
+ * 
+ * @example HTTP error handling
+ * ```typescript
+ * const response = await fetch('/api/users');
+ * if (!response.ok) {
+ *   throw await createErrorFromResponse(response, {
+ *     operation: 'fetchUsers'
+ *   });
+ * }
+ * ```
+ * 
+ * @example Error inspection
+ * ```typescript
+ * catch (error) {
+ *   if (isRetryableError(error)) {
+ *     return retry(operation);
+ *   }
+ *   
+ *   if (error instanceof ValidationError) {
+ *     return res.status(400).json(error.toPublicJSON());
+ *   }
+ *   
+ *   logger.error(error.toLogContext(), 'Operation failed');
+ * }
+ * ```
  */
 
 /// <reference lib="dom" />
@@ -31,7 +91,32 @@ export {
 } from '../types/error.types.js';
 
 /**
- * Base error class with modern Node.js features
+ * Abstract base error class providing structured error handling.
+ * 
+ * All application errors should extend this class to ensure consistent
+ * error handling, logging, and serialization. Provides automatic error
+ * IDs, timestamps, severity levels, and context tracking.
+ * 
+ * @abstract
+ * @extends {Error}
+ * 
+ * @example Creating a custom error class
+ * ```typescript
+ * export class DatabaseError extends BaseError {
+ *   constructor(message: string, options?: ErrorOptions) {
+ *     super(message, {
+ *       ...options,
+ *       category: ErrorCategory.INTEGRATION,
+ *       severity: ErrorSeverity.HIGH,
+ *       statusCode: 503,
+ *       code: options?.code ?? 'DATABASE_ERROR',
+ *       retryable: true
+ *     });
+ *   }
+ * }
+ * ```
+ * 
+ * @public
  */
 export abstract class BaseError extends Error {
   /** Unique error instance ID */
@@ -78,7 +163,22 @@ export abstract class BaseError extends Error {
   }
 
   /**
-   * Get the root cause of the error chain
+   * Gets the root cause of the error chain.
+   * 
+   * Traverses the error chain via the `cause` property to find
+   * the original error that triggered the sequence.
+   * 
+   * @returns The root cause error or unknown value
+   * 
+   * @example
+   * ```typescript
+   * const rootCause = error.getRootCause();
+   * if (rootCause instanceof NetworkError) {
+   *   console.log('Root issue was network-related');
+   * }
+   * ```
+   * 
+   * @public
    */
   getRootCause(): Error | unknown {
     let cause: Error | unknown = this.cause;
@@ -167,7 +267,36 @@ export abstract class BaseError extends Error {
 }
 
 /**
- * Validation error for input validation failures
+ * Error for input validation failures.
+ * 
+ * Use this error when user input or data doesn't meet validation
+ * requirements. Automatically sets appropriate defaults for validation
+ * scenarios (400 status, low severity, non-retryable).
+ * 
+ * @extends {BaseError}
+ * 
+ * @example Field validation
+ * ```typescript
+ * if (!isValidEmail(email)) {
+ *   throw new ValidationError('Invalid email format', {
+ *     code: 'INVALID_EMAIL',
+ *     context: { email, field: 'email' }
+ *   });
+ * }
+ * ```
+ * 
+ * @example Multiple validation errors
+ * ```typescript
+ * const errors = [];
+ * if (!data.name) errors.push(new ValidationError('Name is required'));
+ * if (!data.email) errors.push(new ValidationError('Email is required'));
+ * 
+ * if (errors.length > 0) {
+ *   throw new MultiError(errors, 'Validation failed');
+ * }
+ * ```
+ * 
+ * @public
  */
 export class ValidationError extends BaseError {
   constructor(message: string, options: ErrorOptions = {}) {
@@ -348,21 +477,79 @@ export class MultiError extends AggregateError {
 }
 
 /**
- * Type guard to check if value is an Error
+ * Type guard to check if a value is an Error instance.
+ * 
+ * @param value - Value to check
+ * @returns True if value is an Error
+ * 
+ * @example
+ * ```typescript
+ * try {
+ *   await operation();
+ * } catch (error) {
+ *   if (isError(error)) {
+ *     logger.error({ stack: error.stack }, error.message);
+ *   } else {
+ *     logger.error('Unknown error', { error });
+ *   }
+ * }
+ * ```
+ * 
+ * @public
  */
 export function isError(value: unknown): value is Error {
   return value instanceof Error;
 }
 
 /**
- * Type guard to check if value is a BaseError
+ * Type guard to check if a value is a BaseError instance.
+ * 
+ * @param value - Value to check
+ * @returns True if value is a BaseError
+ * 
+ * @example
+ * ```typescript
+ * catch (error) {
+ *   if (isBaseError(error)) {
+ *     // Access BaseError properties
+ *     logger.error(error.toLogContext(), 'Operation failed');
+ *     return res.status(error.statusCode).json(error.toPublicJSON());
+ *   }
+ * }
+ * ```
+ * 
+ * @public
  */
 export function isBaseError(value: unknown): value is BaseError {
   return value instanceof BaseError;
 }
 
 /**
- * Type guard to check if error is retryable
+ * Determines if an error should be retried.
+ * 
+ * Checks if the error is explicitly marked as retryable (BaseError)
+ * or matches common retryable network error patterns.
+ * 
+ * @param error - Error to check
+ * @returns True if the error is retryable
+ * 
+ * @example
+ * ```typescript
+ * async function fetchWithRetry(url: string, maxRetries = 3) {
+ *   for (let i = 0; i < maxRetries; i++) {
+ *     try {
+ *       return await fetch(url);
+ *     } catch (error) {
+ *       if (!isRetryableError(error) || i === maxRetries - 1) {
+ *         throw error;
+ *       }
+ *       await delay(1000 * Math.pow(2, i)); // Exponential backoff
+ *     }
+ *   }
+ * }
+ * ```
+ * 
+ * @public
  */
 export function isRetryableError(error: unknown): boolean {
   if (error instanceof BaseError) {
@@ -409,7 +596,48 @@ export function wrapError(error: unknown, message?: string, options?: ErrorOptio
 }
 
 /**
- * Create error from HTTP response
+ * Creates an appropriate error instance from an HTTP response.
+ * 
+ * Automatically maps HTTP status codes to the correct error type,
+ * extracts error details from the response body, and includes
+ * response metadata in the error context.
+ * 
+ * @param response - The HTTP response object
+ * @param context - Additional context to include in the error
+ * 
+ * @returns A BaseError subclass appropriate for the status code
+ * 
+ * @example Basic usage
+ * ```typescript
+ * const response = await fetch('/api/users/123');
+ * if (!response.ok) {
+ *   throw await createErrorFromResponse(response);
+ * }
+ * ```
+ * 
+ * @example With additional context
+ * ```typescript
+ * const response = await fetch(`/api/users/${userId}`);
+ * if (!response.ok) {
+ *   throw await createErrorFromResponse(response, {
+ *     operation: 'fetchUser',
+ *     userId,
+ *     timestamp: Date.now()
+ *   });
+ * }
+ * ```
+ * 
+ * @example Status code mapping
+ * ```typescript
+ * // 400 -> ValidationError
+ * // 401/403 -> PermissionError
+ * // 404 -> ResourceError
+ * // 422 -> BusinessLogicError
+ * // 429/502/503/504 -> NetworkError (retryable)
+ * // 500+ -> IntegrationError
+ * ```
+ * 
+ * @public
  */
 export async function createErrorFromResponse(response: Response, context?: ErrorContext): Promise<BaseError> {
   let message = `HTTP ${response.status}: ${response.statusText}`;

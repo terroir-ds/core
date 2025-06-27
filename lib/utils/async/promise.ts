@@ -1,6 +1,37 @@
 /**
- * Promise manipulation utilities
- * Provides advanced promise patterns and helpers
+ * @module @utils/async/promise
+ * 
+ * Promise manipulation utilities for the Terroir Core Design System.
+ * Provides advanced promise patterns including deferred promises, retry logic,
+ * fallback handling, and race conditions with proper cancellation support.
+ * 
+ * @example Retry with exponential backoff
+ * ```typescript
+ * import { retry } from '@utils/async/promise';
+ * 
+ * const data = await retry(
+ *   async () => fetch('/api/data').then(r => r.json()),
+ *   {
+ *     attempts: 3,
+ *     delay: (attempt) => Math.pow(2, attempt) * 1000 // 1s, 2s, 4s
+ *   }
+ * );
+ * ```
+ * 
+ * @example Deferred promise for external control
+ * ```typescript
+ * import { defer } from '@utils/async/promise';
+ * 
+ * const deferred = defer<string>();
+ * 
+ * // Somewhere else in code
+ * someEvent.on('complete', (result) => {
+ *   deferred.resolve(result);
+ * });
+ * 
+ * // Wait for the result
+ * const result = await deferred.promise;
+ * ```
  */
 
 import type {
@@ -15,20 +46,133 @@ import { getMessage } from '@utils/errors/messages.js';
 import { checkAborted } from './helpers/abort.js';
 import { AsyncValidationError } from './errors.js';
 
-// Re-export Deferred for backward compatibility
+/**
+ * Deferred promise that can be resolved/rejected externally
+ * @typeParam T - The type of the resolved value
+ * 
+ * @public
+ */
 export type Deferred<T> = DeferredBase<T>;
 
+/**
+ * Options for retry operations
+ * 
+ * @public
+ */
 export interface RetryOptions extends CancellableOptions {
+  /**
+   * Total number of attempts (including the first try)
+   * @defaultValue 3
+   */
   attempts?: number;
+  
+  /**
+   * Delay between retries in milliseconds
+   * Can be a number or function that calculates delay based on attempt
+   * @defaultValue 1000
+   * 
+   * @example
+   * ```typescript
+   * // Fixed delay
+   * { delay: 2000 } // 2 seconds between retries
+   * 
+   * // Exponential backoff
+   * { delay: (attempt) => Math.pow(2, attempt) * 1000 }
+   * ```
+   */
   delay?: RetryDelay;
+  
+  /**
+   * Predicate to determine if an error should trigger a retry
+   * Return false to stop retrying and throw the error
+   * @defaultValue () => true
+   * 
+   * @example
+   * ```typescript
+   * // Only retry network errors
+   * {
+   *   shouldRetry: (error) => {
+   *     return error.code === 'NETWORK_ERROR';
+   *   }
+   * }
+   * ```
+   */
   shouldRetry?: RetryPredicate;
 }
 
+/**
+ * Options for firstSuccessful operations
+ * 
+ * @public
+ */
 export interface FirstSuccessfulOptions extends CancellableOptions {}
 
 /**
- * Create a deferred promise
- * Useful when you need to control promise resolution externally
+ * Creates a deferred promise with external control over resolution.
+ * 
+ * A deferred promise provides a way to create a promise and control its
+ * resolution from outside the promise constructor. This is useful for
+ * bridging callback-based APIs to promises or controlling async flow.
+ * 
+ * @typeParam T - The type of the resolved value
+ * 
+ * @returns Object with promise and control methods
+ * @returns returns.promise - The promise to await
+ * @returns returns.resolve - Function to resolve the promise
+ * @returns returns.reject - Function to reject the promise
+ * 
+ * @example Bridging callback API to promise
+ * ```typescript
+ * function promisifiedCallback() {
+ *   const deferred = defer<string>();
+ *   
+ *   legacyAPI.doSomething((error, result) => {
+ *     if (error) {
+ *       deferred.reject(error);
+ *     } else {
+ *       deferred.resolve(result);
+ *     }
+ *   });
+ *   
+ *   return deferred.promise;
+ * }
+ * ```
+ * 
+ * @example Coordinating multiple async operations
+ * ```typescript
+ * const ready = defer<void>();
+ * 
+ * // Component 1
+ * async function initializeDatabase() {
+ *   await connectDB();
+ *   ready.resolve();
+ * }
+ * 
+ * // Component 2
+ * async function startServer() {
+ *   await ready.promise; // Wait for DB
+ *   server.listen(3000);
+ * }
+ * ```
+ * 
+ * @example With timeout
+ * ```typescript
+ * const deferred = defer<Data>();
+ * 
+ * // Set a timeout
+ * setTimeout(() => {
+ *   deferred.reject(new Error('Operation timed out'));
+ * }, 5000);
+ * 
+ * // Resolve when data arrives
+ * socket.on('data', (data) => {
+ *   deferred.resolve(data);
+ * });
+ * 
+ * const data = await deferred.promise;
+ * ```
+ * 
+ * @public
  */
 export function defer<T>(): DeferredBase<T> {
   let resolve!: (value: T | PromiseLike<T>) => void;
@@ -43,9 +187,82 @@ export function defer<T>(): DeferredBase<T> {
 }
 
 /**
- * Retry a promise-returning function using p-retry
- * @param fn - Function that returns a promise
+ * Retries a promise-returning function with configurable attempts and delays.
+ * 
+ * This function wraps p-retry to provide a robust retry mechanism with
+ * exponential backoff, custom retry logic, and proper cancellation support.
+ * Failed attempts are retried based on the configuration until success or
+ * maximum attempts are reached.
+ * 
+ * @typeParam T - The type of the successful result
+ * 
+ * @param fn - Function that returns a promise to retry
  * @param options - Retry configuration
+ * @param options.attempts - Total number of attempts (default: 3)
+ * @param options.delay - Delay between retries in ms (default: 1000)
+ * @param options.shouldRetry - Predicate to determine if retry should occur
+ * @param options.signal - AbortSignal for cancellation
+ * 
+ * @returns Result of the successful attempt
+ * 
+ * @throws The last error if all attempts fail
+ * @throws {DOMException} If aborted via signal
+ * 
+ * @example Basic retry with fixed delay
+ * ```typescript
+ * const data = await retry(
+ *   async () => fetch('/api/data').then(r => r.json()),
+ *   { attempts: 3, delay: 1000 }
+ * );
+ * ```
+ * 
+ * @example Exponential backoff
+ * ```typescript
+ * const result = await retry(
+ *   async () => unreliableOperation(),
+ *   {
+ *     attempts: 5,
+ *     delay: (attempt) => Math.min(1000 * Math.pow(2, attempt), 10000)
+ *   }
+ * );
+ * ```
+ * 
+ * @example Conditional retry
+ * ```typescript
+ * const data = await retry(
+ *   async () => fetchWithTimeout(),
+ *   {
+ *     attempts: 3,
+ *     shouldRetry: (error, attempt) => {
+ *       // Don't retry 4xx errors
+ *       if (error.status >= 400 && error.status < 500) {
+ *         return false;
+ *       }
+ *       // Retry up to 3 times for other errors
+ *       return attempt < 3;
+ *     }
+ *   }
+ * );
+ * ```
+ * 
+ * @example With cancellation
+ * ```typescript
+ * const controller = new AbortController();
+ * 
+ * const promise = retry(
+ *   async () => longRunningOperation(),
+ *   { 
+ *     attempts: 10,
+ *     delay: 2000,
+ *     signal: controller.signal 
+ *   }
+ * );
+ * 
+ * // Cancel after 30 seconds
+ * setTimeout(() => controller.abort(), 30000);
+ * ```
+ * 
+ * @public
  */
 export async function retry<T>(
   fn: AsyncFactory<T>,

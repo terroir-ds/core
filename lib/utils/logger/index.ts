@@ -1,13 +1,86 @@
 /**
- * Structured logging utility for Terroir Core Design System
+ * @module @utils/logger
+ * 
+ * Structured logging utility for the Terroir Core Design System.
+ * 
+ * Provides a high-performance, security-conscious logging system built on pino,
+ * with automatic context propagation, environment-aware configuration, and 
+ * OpenTelemetry support. Designed for both development ergonomics and 
+ * production reliability.
  * 
  * Features:
- * - Environment-aware configuration
- * - Consistent log formatting
- * - Performance optimized with pino
- * - TypeScript-friendly API
- * - Security: No sensitive data logging
- * - Follows OpenTelemetry conventions
+ * - Environment-aware configuration (dev, test, production)
+ * - Automatic request context propagation
+ * - Performance optimized with object pooling
+ * - TypeScript-friendly API with full type safety
+ * - Security: Automatic redaction of sensitive data
+ * - OpenTelemetry trace correlation
+ * - Rate limiting to prevent log flooding
+ * - Pretty printing in development
+ * 
+ * @example Basic usage
+ * ```typescript
+ * import { logger } from '@utils/logger';
+ * 
+ * // Simple logging
+ * logger.info('Application started');
+ * logger.error('Failed to connect to database', { error });
+ * 
+ * // With structured data
+ * logger.info({ userId: 123, action: 'login' }, 'User logged in');
+ * ```
+ * 
+ * @example With request context
+ * ```typescript
+ * import { logger, withLogContext } from '@utils/logger';
+ * 
+ * // In your request handler
+ * app.use((req, res, next) => {
+ *   withLogContext(
+ *     { requestId: req.id, userId: req.user?.id },
+ *     () => next()
+ *   );
+ * });
+ * 
+ * // Logs will automatically include requestId and userId
+ * logger.info('Processing request'); // Includes context
+ * ```
+ * 
+ * @example Child loggers for modules
+ * ```typescript
+ * // In a module
+ * const log = logger.child({ module: 'auth' });
+ * 
+ * log.info('Validating token'); // Includes module: 'auth'
+ * log.error({ error }, 'Token validation failed');
+ * ```
+ * 
+ * @example Performance tracking
+ * ```typescript
+ * const timer = logger.startTimer();
+ * 
+ * // Do some work
+ * await processData();
+ * 
+ * timer.done({ operation: 'processData' }, 'Data processed');
+ * // Logs: "Data processed" with duration in ms
+ * ```
+ * 
+ * @example Error logging with sanitization
+ * ```typescript
+ * try {
+ *   await riskyOperation();
+ * } catch (error) {
+ *   // Sensitive data is automatically redacted
+ *   logger.error(
+ *     { 
+ *       error, 
+ *       user: { id: 123, password: 'secret' } // password will be redacted
+ *     }, 
+ *     'Operation failed'
+ *   );
+ * }
+ * ```
  */
 
 import { AsyncLocalStorage } from 'node:async_hooks';
@@ -591,21 +664,80 @@ const logger: Logger = new Proxy({} as Logger, {
 // Utility functions for common logging patterns
 
 /**
- * Log the start of a process or script
+ * Logs the start of a process or operation.
+ * 
+ * Standardizes the logging of process initialization with consistent
+ * formatting and phase tracking.
+ * 
+ * @param processName - Name of the process being started
+ * @param context - Additional context to include in the log
+ * 
+ * @example
+ * ```typescript
+ * logStart('database migration');
+ * // Logs: "Starting database migration" with phase: 'start'
+ * 
+ * logStart('API server', { port: 3000, env: 'production' });
+ * // Includes additional context in the log
+ * ```
+ * 
+ * @public
  */
 export const logStart = (processName: string, context: LogContext = {}): void => {
   logger.info({ ...context, phase: 'start' }, `Starting ${processName}`);
 };
 
 /**
- * Log successful completion
+ * Logs successful completion of a process.
+ * 
+ * Provides consistent success logging with visual indicator (✓) and
+ * status tracking for process completion.
+ * 
+ * @param processName - Name of the completed process
+ * @param context - Additional context to include in the log
+ * 
+ * @example
+ * ```typescript
+ * logStart('data import');
+ * await importData();
+ * logSuccess('data import');
+ * // Logs: "✓ data import completed successfully"
+ * 
+ * logSuccess('user registration', { userId: 123, duration: 250 });
+ * ```
+ * 
+ * @public
  */
 export const logSuccess = (processName: string, context: LogContext = {}): void => {
   logger.info({ ...context, phase: 'complete', status: 'success' }, `✓ ${processName} completed successfully`);
 };
 
 /**
- * Log performance metrics
+ * Logs performance metrics for an operation.
+ * 
+ * Standardizes performance logging with consistent structure for
+ * monitoring and analysis of operation durations.
+ * 
+ * @param operation - Name of the operation being measured
+ * @param duration - Duration in milliseconds
+ * @param context - Additional context to include in the log
+ * 
+ * @example
+ * ```typescript
+ * const start = performance.now();
+ * await processData();
+ * const duration = performance.now() - start;
+ * 
+ * logPerformance('data processing', duration);
+ * // Logs: "data processing took 1234ms"
+ * 
+ * logPerformance('API call', 250, { 
+ *   endpoint: '/users',
+ *   method: 'GET' 
+ * });
+ * ```
+ * 
+ * @public
  */
 export const logPerformance = (operation: string, duration: number, context: LogContext = {}): void => {
   logger.info({
@@ -619,8 +751,43 @@ export const logPerformance = (operation: string, duration: number, context: Log
 };
 
 /**
- * Create a child logger with additional context
- * Tracks child loggers for resource management
+ * Creates a child logger with additional context.
+ * 
+ * Child loggers inherit all configuration from the parent logger
+ * while adding their own context. This is useful for adding
+ * module-specific or request-specific context. Child loggers
+ * are tracked for resource management.
+ * 
+ * @param context - Context to include in all logs from this logger
+ * @returns A new logger instance with the additional context
+ * 
+ * @example Module-specific logger
+ * ```typescript
+ * // In auth module
+ * const authLogger = createLogger({ module: 'auth' });
+ * 
+ * authLogger.info('User login attempt');
+ * // Logs with: { module: 'auth', msg: 'User login attempt' }
+ * 
+ * authLogger.error({ userId, error }, 'Login failed');
+ * // Includes module context automatically
+ * ```
+ * 
+ * @example Request-specific logger
+ * ```typescript
+ * function handleRequest(req: Request) {
+ *   const reqLogger = createLogger({
+ *     requestId: req.id,
+ *     path: req.path,
+ *     method: req.method
+ *   });
+ *   
+ *   reqLogger.info('Processing request');
+ *   // All logs include request context
+ * }
+ * ```
+ * 
+ * @public
  */
 export const createLogger = (context: LogContext): Logger => {
   const childLogger = logger.child(context);
@@ -635,7 +802,56 @@ export const createLogger = (context: LogContext): Logger => {
 };
 
 /**
- * Measure and log execution time
+ * Measures and logs the execution time of an async operation.
+ * 
+ * Wraps an async function to automatically measure its execution
+ * time and log the result with performance metrics. Handles both
+ * successful completion and errors.
+ * 
+ * @typeParam T - The return type of the async function
+ * 
+ * @param operation - Name of the operation being measured
+ * @param fn - Async function to execute and measure
+ * @param context - Additional context to include in logs
+ * 
+ * @returns The result of the async function
+ * 
+ * @throws The original error if the function fails
+ * 
+ * @example Basic usage
+ * ```typescript
+ * const result = await measureTime(
+ *   'database query',
+ *   async () => db.query('SELECT * FROM users')
+ * );
+ * // Logs: "database query took 45ms" on success
+ * // Logs error with duration on failure
+ * ```
+ * 
+ * @example With context
+ * ```typescript
+ * const data = await measureTime(
+ *   'API fetch',
+ *   async () => fetch('/api/data').then(r => r.json()),
+ *   { endpoint: '/api/data', method: 'GET' }
+ * );
+ * ```
+ * 
+ * @example Error handling
+ * ```typescript
+ * try {
+ *   await measureTime(
+ *     'risky operation',
+ *     async () => riskyOperation(),
+ *     { retries: 3 }
+ *   );
+ * } catch (error) {
+ *   // Error is logged with duration before being re-thrown
+ *   handleError(error);
+ * }
+ * ```
+ * 
+ * @public
  */
 export const measureTime = async <T>(
   operation: string, 
@@ -661,7 +877,33 @@ export const measureTime = async <T>(
 };
 
 /**
- * Generate a unique request ID for correlation
+ * Generates a unique request ID for log correlation.
+ * 
+ * Creates a unique identifier that can be used to correlate logs
+ * across multiple services or operations. The format is designed
+ * to be sortable by time and globally unique.
+ * 
+ * @returns A unique request ID in format: "timestamp-randomstring"
+ * 
+ * @example Basic usage
+ * ```typescript
+ * const requestId = generateRequestId();
+ * // Returns: "1703123456789-abc123d"
+ * 
+ * const logger = createLogger({ requestId });
+ * logger.info('Processing request');
+ * ```
+ * 
+ * @example In middleware
+ * ```typescript
+ * app.use((req, res, next) => {
+ *   req.id = req.headers['x-request-id'] || generateRequestId();
+ *   req.logger = createLogger({ requestId: req.id });
+ *   next();
+ * });
+ * ```
+ * 
+ * @public
  */
 export const generateRequestId = (): string => {
   return `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
@@ -870,12 +1112,58 @@ export const createSampledLogger = (
 };
 
 /**
- * Run a function with a specific logging context
- * This context will be automatically included in all logs within the async boundary
+ * Runs an async function with a specific logging context.
  * 
- * @param context - The logging context to apply
+ * This function uses AsyncLocalStorage to propagate logging context
+ * through the entire async call chain. All logs within the function
+ * and its descendants will automatically include the provided context.
+ * This is particularly useful for request tracking and distributed tracing.
+ * 
+ * @typeParam T - The return type of the async function
+ * 
+ * @param context - The logging context to apply within the async boundary
  * @param fn - The async function to run with the context
- * @returns The result of the function
+ * 
+ * @returns The result of the async function
+ * 
+ * @example Request handler with context
+ * ```typescript
+ * app.post('/api/users', async (req, res) => {
+ *   await runWithContext(
+ *     { 
+ *       requestId: req.id,
+ *       userId: req.user?.id,
+ *       path: req.path 
+ *     },
+ *     async () => {
+ *       // All logs here include the context
+ *       logger.info('Creating user');
+ *       
+ *       const user = await createUser(req.body);
+ *       // Even nested function calls get the context
+ *       
+ *       logger.info('User created successfully');
+ *       res.json(user);
+ *     }
+ *   );
+ * });
+ * ```
+ * 
+ * @example Batch processing with context
+ * ```typescript
+ * for (const batch of batches) {
+ *   await runWithContext(
+ *     { batchId: batch.id, size: batch.items.length },
+ *     async () => {
+ *       logger.info('Processing batch');
+ *       await processBatch(batch);
+ *       logger.info('Batch complete');
+ *     }
+ *   );
+ * }
+ * ```
+ * 
+ * @public
  */
 export const runWithContext = async <T>(
   context: LogContext,
@@ -896,18 +1184,87 @@ export const runWithContext = async <T>(
 };
 
 /**
- * Get the current async context
- * Returns undefined if not running within a context
+ * Gets the current async logging context.
+ * 
+ * Retrieves the logging context from AsyncLocalStorage that was set
+ * by runWithContext. Returns undefined if not running within a context.
+ * This is useful for accessing request-specific data in deeply nested functions.
+ * 
+ * @returns The current logging context or undefined
+ * 
+ * @example Accessing context in utility functions
+ * ```typescript
+ * function logDatabaseQuery(query: string) {
+ *   const context = getAsyncContext();
+ *   logger.info({
+ *     ...context,
+ *     query,
+ *     module: 'database'
+ *   }, 'Executing query');
+ * }
+ * 
+ * // When called within runWithContext, includes that context
+ * ```
+ * 
+ * @example Conditional context usage
+ * ```typescript
+ * function processItem(item: Item) {
+ *   const context = getAsyncContext();
+ *   
+ *   if (context?.requestId) {
+ *     logger.info({ requestId: context.requestId }, 'Processing item');
+ *   } else {
+ *     logger.info('Processing item (no request context)');
+ *   }
+ * }
+ * ```
+ * 
+ * @public
  */
 export const getAsyncContext = (): LogContext | undefined => {
   return asyncLocalStorage.getStore();
 };
 
 /**
- * Update the current async context with additional fields
- * This merges the new fields with the existing context
+ * Updates the current async context with additional fields.
+ * 
+ * Merges new fields into the existing async context. This is useful
+ * for progressively adding context as more information becomes available
+ * during request processing. Only works when running within runWithContext.
  * 
  * @param updates - Fields to add or update in the context
+ * 
+ * @example Progressive context building
+ * ```typescript
+ * await runWithContext({ requestId: '123' }, async () => {
+ *   logger.info('Starting request'); // Has requestId
+ *   
+ *   const user = await authenticate();
+ *   updateAsyncContext({ userId: user.id });
+ *   
+ *   logger.info('User authenticated'); // Has requestId and userId
+ *   
+ *   const org = await loadOrganization(user);
+ *   updateAsyncContext({ orgId: org.id });
+ *   
+ *   logger.info('Processing request'); // Has all context
+ * });
+ * ```
+ * 
+ * @example Conditional updates
+ * ```typescript
+ * function addUserContext(user?: User) {
+ *   if (user) {
+ *     updateAsyncContext({
+ *       userId: user.id,
+ *       userRole: user.role,
+ *       userTier: user.subscriptionTier
+ *     });
+ *   }
+ * }
+ * ```
+ * 
+ * @public
  */
 export const updateAsyncContext = (updates: LogContext): void => {
   const currentContext = asyncLocalStorage.getStore();

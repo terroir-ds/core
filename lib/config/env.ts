@@ -1,16 +1,67 @@
 /**
- * Environment configuration with type-safe validation
+ * @module @lib/config/env
  * 
- * Uses @t3-oss/env-core for build-time and runtime validation
- * All environment variables must be defined here for type safety
+ * Environment configuration with type-safe validation for the Terroir Core Design System.
+ * 
+ * Uses @t3-oss/env-core to provide build-time and runtime validation of environment
+ * variables with full TypeScript support. All environment variables must be defined
+ * here to ensure type safety and prevent runtime errors.
+ * 
+ * @example Basic usage
+ * ```typescript
+ * import { env, isDevelopment } from '@lib/config/env';
+ * 
+ * // Type-safe access to env vars
+ * console.log(`Running in ${env.NODE_ENV} mode`);
+ * console.log(`Log level: ${env.LOG_LEVEL}`);
+ * 
+ * // Use helper functions
+ * if (isDevelopment()) {
+ *   console.log('Development mode features enabled');
+ * }
+ * ```
+ * 
+ * @example Conditional features
+ * ```typescript
+ * import { env } from '@lib/config/env';
+ * 
+ * // Enable features based on env
+ * if (env.OPTIMIZE_IMAGES) {
+ *   await optimizeImages();
+ * }
+ * 
+ * if (env.OTEL_SERVICE_NAME) {
+ *   setupOpenTelemetry({
+ *     serviceName: env.OTEL_SERVICE_NAME,
+ *     endpoint: env.OTEL_EXPORTER_OTLP_ENDPOINT
+ *   });
+ * }
+ * ```
+ * 
+ * @example Testing configuration
+ * ```typescript
+ * import { env, isTest } from '@lib/config/env';
+ * 
+ * const contrastThreshold = env.STRICT_CONTRAST ? 4.5 : 3.0;
+ * const visualThreshold = env.VISUAL_REGRESSION_THRESHOLD;
+ * 
+ * if (isTest()) {
+ *   // Use test-specific configuration
+ * }
+ * ```
  */
 
 import { createEnv } from '@t3-oss/env-core';
 import { z } from 'zod';
 
 /**
- * Centralized environment configuration
- * Validates and provides type-safe access to all env vars
+ * Centralized environment configuration with validation.
+ * 
+ * Provides type-safe access to all environment variables with
+ * automatic validation at build and runtime. Missing required
+ * variables will cause build/startup failures with clear error messages.
+ * 
+ * @public
  */
 export const env = createEnv({
   /**
@@ -131,26 +182,93 @@ export const env = createEnv({
 });
 
 /**
- * Helper to check if we're in development mode
+ * Checks if the application is running in development mode.
+ * 
+ * @returns True if NODE_ENV is 'development'
+ * 
+ * @example
+ * ```typescript
+ * if (isDevelopment()) {
+ *   // Enable development features
+ *   enableHotReload();
+ *   showDebugPanel();
+ * }
+ * ```
+ * 
+ * @public
  */
 export const isDevelopment = () => env.NODE_ENV === 'development';
 
 /**
- * Helper to check if we're in production mode
+ * Checks if the application is running in production mode.
+ * 
+ * @returns True if NODE_ENV is 'production'
+ * 
+ * @example
+ * ```typescript
+ * if (isProduction()) {
+ *   // Enable production optimizations
+ *   enableCaching();
+ *   minifyAssets();
+ * }
+ * ```
+ * 
+ * @public
  */
 export const isProduction = () => env.NODE_ENV === 'production';
 
 /**
- * Helper to check if we're in test mode
+ * Checks if the application is running in test mode.
+ * 
+ * @returns True if NODE_ENV is 'test'
+ * 
+ * @example
+ * ```typescript
+ * if (isTest()) {
+ *   // Use test database
+ *   connectToTestDB();
+ *   // Disable rate limiting
+ *   disableRateLimits();
+ * }
+ * ```
+ * 
+ * @public
  */
 export const isTest = () => env.NODE_ENV === 'test';
 
 /**
- * Helper to check if we're in CI environment
+ * Checks if the application is running in a CI environment.
+ * 
+ * @returns True if CI environment variable is set to 'true'
+ * 
+ * @example
+ * ```typescript
+ * if (isCI()) {
+ *   // Use CI-specific configuration
+ *   console.log('Running in CI environment');
+ *   // Disable interactive prompts
+ *   setNonInteractive(true);
+ * }
+ * ```
+ * 
+ * @public
  */
 export const isCI = () => env.CI === true;
 
 /**
- * Export type for use in other modules
+ * Type definition for the environment configuration.
+ * Use this type when passing env config to other modules.
+ * 
+ * @example
+ * ```typescript
+ * import type { Env } from '@lib/config/env';
+ * 
+ * function configureApp(env: Env) {
+ *   // Type-safe env access
+ *   logger.setLevel(env.LOG_LEVEL);
+ * }
+ * ```
+ * 
+ * @public
  */
 export type Env = typeof env;

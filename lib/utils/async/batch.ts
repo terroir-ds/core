@@ -1,6 +1,39 @@
 /**
- * Batch processing utilities for async operations
- * Provides concurrent processing with control over parallelism
+ * @module @utils/async/batch
+ * 
+ * Batch processing utilities for async operations in the Terroir Core Design System.
+ * Provides concurrent processing with control over parallelism, chunking, rate limiting,
+ * and progress reporting for efficient handling of large datasets.
+ * 
+ * @example Process multiple items concurrently
+ * ```typescript
+ * import { processBatch } from '@utils/async/batch';
+ * 
+ * const urls = ['url1', 'url2', 'url3', ...];
+ * 
+ * const results = await processBatch(
+ *   urls,
+ *   async (url) => fetch(url).then(r => r.json()),
+ *   { 
+ *     concurrency: 3,
+ *     onProgress: (completed, total) => {
+ *       console.log(`Progress: ${completed}/${total}`);
+ *     }
+ *   }
+ * );
+ * ```
+ * 
+ * @example Rate-limited API calls
+ * ```typescript
+ * import { processRateLimited } from '@utils/async/batch';
+ * 
+ * // Max 10 requests per second with burst of 20
+ * const results = await processRateLimited(
+ *   items,
+ *   async (item) => callAPI(item),
+ *   { maxPerSecond: 10, burst: 20 }
+ * );
+ * ```
  */
 
 import type {
@@ -15,26 +48,146 @@ import { TokenBucket } from './helpers/rate-limit.js';
 import { AsyncErrorMessages } from './helpers/messages.js';
 import { AsyncAbortError, AsyncValidationError } from './errors.js';
 
+/**
+ * Options for batch processing operations
+ * 
+ * @public
+ */
 export interface BatchOptions extends CancellableProgressOptions {
+  /**
+   * Maximum number of items to process concurrently
+   * @defaultValue 5
+   */
   concurrency?: number;
+  
+  /**
+   * Whether to preserve the order of results matching input order
+   * When false, results return as they complete
+   * @defaultValue true
+   */
   preserveOrder?: boolean;
+  
+  /**
+   * Whether to stop processing on first error
+   * When false, continues processing and includes errors in results
+   * @defaultValue false
+   */
   stopOnError?: boolean;
 }
 
-// Re-export BatchResult for backward compatibility
+/**
+ * Result of a batch operation including both successes and failures
+ * @typeParam T - Input item type
+ * @typeParam R - Result type for successful operations
+ * 
+ * @public
+ */
 export type BatchResult<T, R> = BatchResultBase<T, R, Error>;
 
+/**
+ * Options for chunked processing
+ * 
+ * @public
+ */
 export interface ChunkedOptions extends CancellableOptions {
+  /**
+   * Number of items to process in each chunk
+   */
   chunkSize: number;
 }
 
+/**
+ * Options for rate-limited processing
+ * 
+ * @public
+ */
 export interface RateLimitOptions extends CancellableOptions {
+  /**
+   * Maximum operations per second
+   */
   maxPerSecond: number;
+  
+  /**
+   * Burst capacity for temporary spikes
+   * Allows temporarily exceeding the rate limit
+   * @defaultValue maxPerSecond * 2
+   */
   burst?: number;
 }
 
 /**
- * Process items in batches with concurrency control
+ * Processes an array of items concurrently with controlled parallelism.
+ * 
+ * This function provides efficient batch processing with configurable concurrency,
+ * error handling, and progress reporting. Results include both successful values
+ * and errors, allowing for partial failure handling.
+ * 
+ * @typeParam T - The type of input items
+ * @typeParam R - The type of successful results
+ * 
+ * @param items - Array of items to process
+ * @param processor - Async function to process each item
+ * @param options - Optional configuration
+ * @param options.concurrency - Maximum concurrent operations (default: 5)
+ * @param options.preserveOrder - Preserve input order in results (default: true)
+ * @param options.stopOnError - Stop on first error (default: false)
+ * @param options.onProgress - Progress callback
+ * @param options.signal - AbortSignal for cancellation
+ * 
+ * @returns Array of results with either value or error for each item
+ * 
+ * @throws {AsyncAbortError} If aborted via signal
+ * 
+ * @example Basic batch processing
+ * ```typescript
+ * const urls = ['url1', 'url2', 'url3'];
+ * 
+ * const results = await processBatch(
+ *   urls,
+ *   async (url) => fetch(url).then(r => r.json()),
+ *   { concurrency: 2 }
+ * );
+ * 
+ * // Handle results
+ * for (const result of results) {
+ *   if (result.error) {
+ *     console.error(`Failed to fetch ${result.item}:`, result.error);
+ *   } else {
+ *     console.log(`Data from ${result.item}:`, result.value);
+ *   }
+ * }
+ * ```
+ * 
+ * @example With progress tracking
+ * ```typescript
+ * const files = await getFilesToProcess();
+ * 
+ * const results = await processBatch(
+ *   files,
+ *   async (file) => processFile(file),
+ *   {
+ *     concurrency: 4,
+ *     onProgress: (completed, total) => {
+ *       const percent = Math.round((completed / total) * 100);
+ *       updateProgressBar(percent);
+ *     }
+ *   }
+ * );
+ * ```
+ * 
+ * @example Stop on first error
+ * ```typescript
+ * const critical = await processBatch(
+ *   items,
+ *   async (item) => validateCriticalItem(item),
+ *   {
+ *     stopOnError: true,
+ *     preserveOrder: false // Get results as they complete
+ *   }
+ * );
+ * ```
+ * 
+ * @public
  */
 export async function processBatch<T, R>(
   items: T[],
