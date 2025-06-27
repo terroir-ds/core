@@ -30,12 +30,52 @@ echo "✅ Backup created at: $BACKUP_DIR"
 
 # 2. Migrate .claude contents
 if [ -d "$PARENT_DIR/terroir-shared/.claude" ]; then
-    echo -e "\n📋 Migrating .claude directory contents..."
+    echo -e "\n📋 Analyzing .claude directory contents..."
     
     # Check for any files that might have been modified in terroir-shared
     if [ -d "$PARENT_DIR/terroir-shared/.claude/tasks" ]; then
-        echo "  - Checking for task updates..."
-        # Copy any files that are newer in terroir-shared
+        echo "  - Comparing task files..."
+        # Compare each file and show what would happen
+        for file in "$PARENT_DIR/terroir-shared/.claude/tasks"/*; do
+            if [ -f "$file" ]; then
+                filename=$(basename "$file")
+                if [ -f "$REPO_DIR/.claude/tasks/$filename" ]; then
+                    # Compare timestamps
+                    if [ "$file" -nt "$REPO_DIR/.claude/tasks/$filename" ]; then
+                        echo "    ⚠️  $filename is NEWER in terroir-shared"
+                        echo "       terroir-shared: $(stat -c %y "$file" 2>/dev/null || stat -f %Sm "$file")"
+                        echo "       terroir-core:   $(stat -c %y "$REPO_DIR/.claude/tasks/$filename" 2>/dev/null || stat -f %Sm "$REPO_DIR/.claude/tasks/$filename")"
+                        echo "       → Would copy from terroir-shared to terroir-core"
+                    else
+                        echo "    ✓ $filename is current in terroir-core (no action needed)"
+                    fi
+                else
+                    echo "    + $filename exists only in terroir-shared"
+                    echo "       → Would copy to terroir-core"
+                fi
+            fi
+        done
+        
+        # Check for files only in terroir-core
+        for file in "$REPO_DIR/.claude/tasks"/*; do
+            if [ -f "$file" ]; then
+                filename=$(basename "$file")
+                if [ ! -f "$PARENT_DIR/terroir-shared/.claude/tasks/$filename" ]; then
+                    echo "    ✓ $filename exists only in terroir-core (preserving)"
+                fi
+            fi
+        done
+        
+        echo ""
+        read -p "Proceed with migration? (y/N) " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            echo "Migration cancelled."
+            exit 1
+        fi
+        
+        # Now actually do the migration
+        echo "  - Migrating files..."
         for file in "$PARENT_DIR/terroir-shared/.claude/tasks"/*; do
             if [ -f "$file" ]; then
                 filename=$(basename "$file")
