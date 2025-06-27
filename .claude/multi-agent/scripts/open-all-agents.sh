@@ -13,7 +13,7 @@ echo "===================================="
 
 # Check if agent directories exist
 if [ ! -d "$PARENT_DIR/terroir-agent1" ]; then
-    echo "❌ Agent directories not found. Run host-setup.sh first!"
+    echo "❌ Agent directories not found. Run scripts/host-setup.sh first!"
     exit 1
 fi
 

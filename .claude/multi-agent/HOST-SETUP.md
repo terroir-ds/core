@@ -19,14 +19,14 @@ First, you'll need to work on your host machine:
 
 ## Step 2: Run the Host Setup Script
 
-The `host-setup.sh` script automates the entire setup process:
+The `scripts/host-setup.sh` script automates the entire setup process:
 
 ```bash
 # Navigate to your repository
 cd ~/path/to/terroir-core
 
 # Run the setup script
-./.claude/multi-agent/host-setup.sh
+./.claude/multi-agent/scripts/host-setup.sh
 ```
 
 This script will:

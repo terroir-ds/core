@@ -17,7 +17,7 @@ This system enables parallel development using multiple Claude agents working si
 ```bash
 # 1. Run host setup script (one time, from host machine)
 cd ~/path/to/terroir-core
-./.claude/multi-agent/host-setup.sh
+./.claude/multi-agent/scripts/host-setup.sh
 
 # 2. Open each agent folder directly in VS Code
 # No workspace files needed - just open the folders:
@@ -185,7 +185,7 @@ Your Machine
 
 ## Scripts
 
-- `host-setup.sh` - Complete host machine setup (run once from main repo)
+- `scripts/host-setup.sh` - Complete host machine setup (run once from main repo)
   - Creates git worktrees on specified branches
   - Sets up shared coordination directory
   - Configures symbolic links

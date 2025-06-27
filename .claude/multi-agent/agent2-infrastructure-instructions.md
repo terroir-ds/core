@@ -25,6 +25,11 @@ Coordinate before modifying:
 - `tsconfig.json` - When configuring build paths
 - `.gitignore` - When adding build artifacts
 
+### Files You Cannot Modify
+- `.vscode/settings.json` - Agent-specific settings are preserved via .gitignore
+  - If you need VS Code settings changed, request it from the main orchestrator
+  - The orchestrator will update shared settings and run host-setup.sh
+
 ### Current Priority Tasks
 
 1. **GitHub Actions CI/CD Pipeline**

@@ -4,7 +4,7 @@
 
 ```bash
 # One-time setup (from host machine, in main repo)
-./.claude/multi-agent/host-setup.sh
+./.claude/multi-agent/scripts/host-setup.sh
 
 # Open agent folders (no workspace files needed)
 code ../terroir-agent1

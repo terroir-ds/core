@@ -85,7 +85,5 @@ ENV PATH=${PNPM_HOME}:$PATH
 RUN corepack prepare pnpm@10.12.3 --activate \
   && pnpm setup
 
-WORKDIR /workspaces/core
-
 # Note: Playwright browsers will be installed via postCreateCommand
 # to avoid bloating the image size

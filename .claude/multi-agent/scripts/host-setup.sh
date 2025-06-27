@@ -164,8 +164,13 @@ for i in 1 2 3; do
   "workbench.colorCustomizations": {
     "titleBar.activeBackground": "#1a4d1a",
     "titleBar.activeForeground": "#ffffff",
+    "titleBar.inactiveBackground": "#0d260d",
+    "titleBar.inactiveForeground": "#cccccc",
     "statusBar.background": "#1a4d1a",
-    "statusBar.foreground": "#ffffff"
+    "statusBar.foreground": "#ffffff",
+    "activityBar.background": "#1a4d1a",
+    "activityBar.foreground": "#ffffff",
+    "activityBar.inactiveForeground": "#cccccc"
   },
   "window.title": "🟢 Agent 1 - Utilities - ${folderName}",
   "terminal.integrated.env.linux": {
@@ -183,8 +188,13 @@ SETTINGS_EOF
   "workbench.colorCustomizations": {
     "titleBar.activeBackground": "#1a2d4d",
     "titleBar.activeForeground": "#ffffff",
+    "titleBar.inactiveBackground": "#0d1626",
+    "titleBar.inactiveForeground": "#cccccc",
     "statusBar.background": "#1a2d4d",
-    "statusBar.foreground": "#ffffff"
+    "statusBar.foreground": "#ffffff",
+    "activityBar.background": "#1a2d4d",
+    "activityBar.foreground": "#ffffff",
+    "activityBar.inactiveForeground": "#cccccc"
   },
   "window.title": "🔵 Agent 2 - Infrastructure - ${folderName}",
   "terminal.integrated.env.linux": {
@@ -200,8 +210,13 @@ SETTINGS_EOF
   "workbench.colorCustomizations": {
     "titleBar.activeBackground": "#3d1a4d",
     "titleBar.activeForeground": "#ffffff",
+    "titleBar.inactiveBackground": "#1f0d26",
+    "titleBar.inactiveForeground": "#cccccc",
     "statusBar.background": "#3d1a4d",
-    "statusBar.foreground": "#ffffff"
+    "statusBar.foreground": "#ffffff",
+    "activityBar.background": "#3d1a4d",
+    "activityBar.foreground": "#ffffff",
+    "activityBar.inactiveForeground": "#cccccc"
   },
   "window.title": "🟣 Agent 3 - Documentation - ${folderName}",
   "terminal.integrated.env.linux": {
@@ -307,5 +322,10 @@ echo "4. Each agent will have:"
 echo "   - Shared settings from the main repo (.vscode/settings.json)"
 echo "   - Agent-specific color overrides (not committed to git)"
 echo "   - Environment variables for easy agent identification"
+echo ""
+echo "📝 Note about VS Code settings:"
+echo "   - .vscode/settings.json is now in .gitignore to preserve agent settings"
+echo "   - To update shared settings: edit in main repo, then re-run this script"
+echo "   - Agents should NOT edit .vscode/settings.json directly"
 echo ""
 echo "Happy parallel developing! 🎉"
