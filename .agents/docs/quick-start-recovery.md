@@ -108,10 +108,12 @@ pnpm build
 2. Tell Claude: "I was working on [task]. Please check the current state and continue."
 
 ### Scenario 2: System Reboot
+
 1. Use the quick start above
 2. Tell Claude: "System rebooted. Please check agent-status.md and current tasks, then continue where we left off."
 
 ### Scenario 3: Unknown State
+
 1. Use the quick start above
 2. Tell Claude: "Please review recent commits, check current tasks, and give me a status summary before continuing."
 
@@ -147,6 +149,7 @@ ls -la /workspaces/terroir-agent*/
 ## Contact for Help
 
 If an agent is severely broken or confused:
+
 1. Check the main `.claude/multi-agent/` documentation
 2. Coordinate with other agents through `.agent-coordination/`
 3. Consider a full restart with fresh context

@@ -25,6 +25,7 @@ This directory contains all documentation for the Terroir Core multi-agent devel
 ## Document Naming Convention
 
 All documentation follows lowercase kebab-case naming:
+
 - ✅ `quick-start.md`
 - ❌ `QUICK_START.md`
 - ❌ `QuickStart.md`
@@ -32,6 +33,7 @@ All documentation follows lowercase kebab-case naming:
 ## Organization
 
 Documents are organized by purpose:
+
 - **Quick Start**: Getting started quickly
 - **Usage**: How to use the system day-to-day
 - **Technical**: Deep dives into specific aspects

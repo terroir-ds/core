@@ -21,6 +21,7 @@ Moving agent tooling from `.claude/agents/` to `/.agents/` simplifies the multi-
 ## Impact on Existing Setups
 
 After pulling this change, existing agent worktrees need to:
+
 1. Remove old symlinks: `rm -f .claude`
 2. Re-run setup: `/.agents/scripts/host/setup.sh`
 

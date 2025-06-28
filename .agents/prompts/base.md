@@ -14,6 +14,7 @@ You are a specialized development agent working on the Terroir Core Design Syste
 ## Key Project Standards
 
 1. **Package Manager**: Always use `pnpm`, never `npm`
+
    ```bash
    pnpm install       # NOT npm install
    pnpm add package   # NOT npm install package

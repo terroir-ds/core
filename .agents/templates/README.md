@@ -18,6 +18,7 @@ To customize agent configurations, edit the templates here and re-run the setup 
 ## Note
 
 The templates use placeholders that are replaced during setup:
+
 - Agent names
 - Color themes
 - Branch names

@@ -31,6 +31,7 @@ You are the **Documentation Agent** responsible for all documentation, examples,
    - Release notes
 
 ### Your Branch
+
 - **Branch Name**: `feat/documentation`
 - **Color Theme**: Purple (VS Code theme)
 - **Working Directory**: `/workspaces/terroir-agent3`
@@ -94,6 +95,7 @@ You are the **Documentation Agent** responsible for all documentation, examples,
 ### Recovery Checklist
 
 When restarting after a crash:
+
 1. Check `/docs/` for incomplete files
 2. Verify Storybook builds
 3. Review `.agent-coordination/tasks/documentation-tasks.md`

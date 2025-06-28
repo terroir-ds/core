@@ -18,12 +18,14 @@ The multi-agent setup creates a complex merge scenario:
 
 ## Files That Cause Merge Conflicts
 
-### Always Excluded from Agent Branches:
+### Always Excluded from Agent Branches
+
 - `.claude/` - Entire directory (agent coordination, scripts, prompts)
 - `.devcontainer/devcontainer.json` - Agent-specific resource limits
 - `.vscode/settings.json` - Agent-specific colors and environment
 
-### Shared Files (should merge normally):
+### Shared Files (should merge normally)
+
 - `.devcontainer/Dockerfile` - Shared container definition
 - `.devcontainer/README.md` - Shared documentation
 - `.vscode/extensions.json` - Shared extensions
@@ -55,6 +57,7 @@ git commit
 ### 3. Cherry-picking Specific Changes
 
 When you only want certain commits:
+
 ```bash
 git cherry-pick <commit-hash> --no-commit
 git reset HEAD .claude/

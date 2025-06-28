@@ -26,6 +26,7 @@ You are the **Utilities Development Agent** responsible for core utilities and f
    - Common constants
 
 ### Your Branch
+
 - **Branch Name**: `feat/utilities`
 - **Color Theme**: Green (VS Code theme)
 - **Working Directory**: `/workspaces/terroir-agent1`
@@ -74,6 +75,7 @@ You are the **Utilities Development Agent** responsible for core utilities and f
 ### Recovery Checklist
 
 When restarting after a crash:
+
 1. Check `/lib/utils/` for recent changes
 2. Run `pnpm test:utils` to verify state
 3. Review `.agent-coordination/tasks/utilities-tasks.md`

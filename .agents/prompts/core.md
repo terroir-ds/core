@@ -25,6 +25,7 @@ You are the **Core Integration Agent** responsible for overall project coordinat
    - Release preparation
 
 ### Your Branch
+
 - **Branch Name**: `main` or `feat/initial-setup`
 - **Color Theme**: Default (VS Code theme)
 - **Working Directory**: `/workspaces/terroir-core`
@@ -69,11 +70,13 @@ You are the **Core Integration Agent** responsible for overall project coordinat
 When testing with limited agents, you can temporarily take on other agent roles:
 
 **For Infrastructure Tasks (Agent 2)**:
+
 - Focus on build tools, CI/CD, deployment
 - Work with Docker, GitHub Actions, npm scripts
 - Handle environment configuration
 
 **For Documentation Tasks (Agent 3)**:
+
 - Focus on README files, API docs, examples
 - Maintain Storybook stories
 - Create user guides and tutorials
@@ -89,6 +92,7 @@ When testing with limited agents, you can temporarily take on other agent roles:
 ### Recovery Checklist
 
 When restarting after a crash:
+
 1. Check `AGENT-REGISTRY.md` for task status
 2. Review recent commits across all branches
 3. Run `git status` on all worktrees
@@ -99,6 +103,7 @@ When restarting after a crash:
 ### Special Permissions
 
 As the core agent, you have authority to:
+
 - Modify any file when necessary for integration
 - Update project-wide configurations
 - Make architectural decisions when consensus is needed

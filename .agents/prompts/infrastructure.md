@@ -31,6 +31,7 @@ You are the **Infrastructure Agent** responsible for build systems, tooling, and
    - Icon token replacement
 
 ### Your Branch
+
 - **Branch Name**: `feat/infrastructure`
 - **Color Theme**: Blue (VS Code theme)
 - **Working Directory**: `/workspaces/terroir-agent2`
@@ -86,6 +87,7 @@ You are the **Infrastructure Agent** responsible for build systems, tooling, and
 ### Recovery Checklist
 
 When restarting after a crash:
+
 1. Check build output directories
 2. Verify `pnpm build` completes
 3. Review `.agent-coordination/tasks/infrastructure-tasks.md`
