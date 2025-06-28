@@ -1,27 +1,47 @@
-# Base Agent Prompts
+# Agent Prompts
 
-This directory contains the base prompts that all agents should use as a foundation.
+This directory contains prompts for all agents in the multi-agent development system.
 
 ## Directory Structure
 
 ````text
-base/
+prompts/
 ├── README.md           # This file
-├── base-prompt.md      # The core prompt all agents inherit
+├── base.md             # The core prompt all agents inherit
+├── core.md             # Core agent (VS Code) specific instructions
+├── utilities.md        # Utilities agent instructions
+├── infrastructure.md   # Infrastructure agent instructions
+├── documentation.md    # Documentation agent instructions
 └── context-template.md # Template for adding current context
 ```bash
 ## Usage
 
-1. Start with `base-prompt.md`
-2. Add agent-specific instructions from `../agents/`
+1. Use `base.md` as the foundation for all agents
+2. Add agent-specific instructions from the corresponding file (e.g., `utilities.md`)
 3. Optionally add current context using `context-template.md`
-4. Copy the combined prompt into Claude
+4. The prompt is automatically generated when using:
+   ```bash
+   # From host:
+   ./agent-manager.sh prompt 1
+
+   # From container:
+   .agents/scripts/prompt.sh 1
+````
 
 ## Quick Start
 
-For a crashed/restarted agent:
+For a crashed/restarted agent, generate a new prompt:
 
 ```bash
-cat base/base-prompt.md agents/[agent-name].md > current-prompt.md
-# Then copy current-prompt.md content to Claude
-````
+# This includes saved session context automatically
+.agents/scripts/prompt.sh [agent-number]
+```
+
+## Prompt Contents
+
+- **base.md**: Common instructions all agents follow (git practices, session management, recovery)
+- **core.md**: Instructions for the main VS Code agent
+- **utilities.md**: Focus on utility functions and shared code
+- **infrastructure.md**: Build systems, CI/CD, and tooling
+- **documentation.md**: Documentation, examples, and guides
+- **context-template.md**: Template for adding specific task context

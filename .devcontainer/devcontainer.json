@@ -16,10 +16,10 @@
     "memory": "4gb",
     "storage": "32gb"
   },
-  
+
   // runArgs: Actually enforces resource limits in local Docker
   "runArgs": [
-    "--init",  // Helps prevent zombie processes and file locking issues
+    "--init", // Helps prevent zombie processes and file locking issues
     "--memory=4g",
     "--memory-swap=4g",
     "--cpus=4.0"

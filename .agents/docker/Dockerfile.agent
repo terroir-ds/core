@@ -1,13 +1,61 @@
 # Lightweight Docker image for multi-agent terminal-based development
 # Optimized for resource efficiency while maintaining developer productivity
 
-FROM mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm
+FROM node:22-bookworm
 
 # Install essential development tools
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
   && apt-get -y install --no-install-recommends \
+    # Dependencies for Chromium
+    libnss3 \
+    libnspr4 \
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libcups2 \
+    libdrm2 \
+    libxkbcommon0 \
+    libatspi2.0-0 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxfixes3 \
+    libxrandr2 \
+    libgbm1 \
+    libasound2 \
+    libx264-164 \
+    # Dependencies for Firefox
+    libgtk-3-0 \
+    libxtst6 \
+    libavif15 \
+    # Dependencies for WebKit
+    libwoff1 \
+    libopus0 \
+    libwebp7 \
+    libwebpdemux2 \
+    libenchant-2-2 \
+    libgudev-1.0-0 \
+    libsecret-1-0 \
+    libhyphen0 \
+    libmanette-0.2-0 \
+    libgdk-pixbuf2.0-0 \
+    libegl1 \
+    libnotify4 \
+    libxslt1.1 \
+    libevent-2.1-7 \
+    libgles2 \
+    libvpx7 \
+    libepoxy0 \
+    libgstreamer1.0-0 \
+    libgstreamer-gl1.0-0 \
+    libgstreamer-plugins-base1.0-0 \
+    libgstreamer-plugins-bad1.0-0 \
+    libgtk-4-1 \
+    libgraphene-1.0-0 \
+    libharfbuzz-icu0 \
+    flite1-dev \
+    libflite1 \
     # Version control
     git \
+    openssh-client \
     # Better shell experience
     zsh \
     zsh-autosuggestions \
@@ -20,6 +68,7 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     fd-find \
     bat \
     exa \
+    xclip \
     # File operations
     rsync \
     # JSON/YAML processing
@@ -34,44 +83,107 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     build-essential \
     # Python (for some tooling)
     python3-pip \
+    # Admin tools
+    sudo \
   && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
-# Install oh-my-zsh for better terminal experience
-RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-
-# Configure zsh with a minimal but productive setup
-RUN echo 'export ZSH="$HOME/.oh-my-zsh"' >> ~/.zshrc \
-  && echo 'ZSH_THEME="agnoster"' >> ~/.zshrc \
-  && echo 'plugins=(git node npm docker zsh-autosuggestions zsh-syntax-highlighting)' >> ~/.zshrc \
-  && echo 'source $ZSH/oh-my-zsh.sh' >> ~/.zshrc \
-  && echo 'alias ll="exa -la"' >> ~/.zshrc \
-  && echo 'alias cat="bat"' >> ~/.zshrc \
-  && echo 'alias find="fd"' >> ~/.zshrc \
-  && echo 'alias grep="rg"' >> ~/.zshrc
+# Install 1Password CLI
+RUN curl -sS https://downloads.1password.com/linux/keys/1password.asc | \
+    gpg --dearmor --output /usr/share/keyrings/1password-archive-keyring.gpg \
+  && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/$(dpkg --print-architecture) stable main" | \
+    tee /etc/apt/sources.list.d/1password.list \
+  && mkdir -p /etc/debsig/policies/AC2D62742012EA22/ \
+  && curl -sS https://downloads.1password.com/linux/debian/debsig/1password.pol | \
+    tee /etc/debsig/policies/AC2D62742012EA22/1password.pol \
+  && mkdir -p /usr/share/debsig/keyrings/AC2D62742012EA22 \
+  && curl -sS https://downloads.1password.com/linux/keys/1password.asc | \
+    gpg --dearmor --output /usr/share/debsig/keyrings/AC2D62742012EA22/debsig.gpg \
+  && apt-get update && apt-get install 1password-cli \
+  && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 # Set up Node.js environment
 ARG USERNAME=node
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
+# Ensure node user exists with correct UID/GID
+RUN if ! id -u $USERNAME > /dev/null 2>&1; then \
+      groupadd --gid $USER_GID $USERNAME && \
+      useradd --uid $USER_UID --gid $USER_GID -m -s /bin/bash $USERNAME; \
+    fi
+
+# Add node user to sudoers
+RUN echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
+    && chmod 0440 /etc/sudoers.d/$USERNAME
+
 # Enable corepack as root
 RUN corepack enable
 
+# Switch to node user before installing oh-my-zsh
 USER $USERNAME
+
+# Install oh-my-zsh for the node user
+RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+
+# Configure zsh with a minimal but productive setup
+RUN echo 'export ZSH="$HOME/.oh-my-zsh"' >> ~/.zshrc \
+  && echo 'ZSH_THEME="robbyrussell"' >> ~/.zshrc \
+  && echo 'plugins=(git node npm docker)' >> ~/.zshrc \
+  && echo 'source $ZSH/oh-my-zsh.sh' >> ~/.zshrc \
+  && echo 'alias ll="exa -la"' >> ~/.zshrc \
+  && echo 'alias cat="bat"' >> ~/.zshrc \
+  && echo 'alias find="fd"' >> ~/.zshrc \
+  && echo 'alias grep="rg"' >> ~/.zshrc
 
 # Configure shell and package manager
 ENV SHELL=/bin/zsh
 ENV PNPM_HOME=/home/${USERNAME}/.local/share/pnpm
 ENV PATH=${PNPM_HOME}:$PATH
 
-# Prepare pnpm
+# Prepare pnpm and configure store location
 RUN corepack prepare pnpm@10.12.3 --activate \
-  && pnpm setup
+  && pnpm setup \
+  && pnpm config set store-dir /workspaces/terroir-core/.pnpm-store
 
-# Add agent-specific prompt customization
-RUN echo 'export AGENT_ROLE="${AGENT_ROLE:-agent}"' >> ~/.zshrc \
+# Add agent-specific prompt customization and PATH updates
+RUN echo '# Agent configuration' >> ~/.zshrc \
+  && echo 'export AGENT_ROLE="${AGENT_ROLE:-agent}"' >> ~/.zshrc \
   && echo 'export AGENT_COLOR="${AGENT_COLOR:-cyan}"' >> ~/.zshrc \
+  && echo '# Add current directory node_modules/.bin to PATH' >> ~/.zshrc \
+  && echo '# This ensures each worktree uses its own dependencies' >> ~/.zshrc \
+  && echo 'add_node_modules_to_path() {' >> ~/.zshrc \
+  && echo '    if [[ -d "$PWD/node_modules/.bin" ]]; then' >> ~/.zshrc \
+  && echo '        export PATH="$PWD/node_modules/.bin:${PATH##*$PWD/node_modules/.bin:}"' >> ~/.zshrc \
+  && echo '    fi' >> ~/.zshrc \
+  && echo '}' >> ~/.zshrc \
+  && echo '# Call on directory change' >> ~/.zshrc \
+  && echo 'autoload -U add-zsh-hook' >> ~/.zshrc \
+  && echo 'add-zsh-hook chpwd add_node_modules_to_path' >> ~/.zshrc \
+  && echo '# Call once for initial directory' >> ~/.zshrc \
+  && echo 'add_node_modules_to_path' >> ~/.zshrc \
+  && echo '# Custom prompt with agent role' >> ~/.zshrc \
+  && echo 'autoload -U colors && colors' >> ~/.zshrc \
+  && echo 'setopt PROMPT_SUBST' >> ~/.zshrc \
   && echo 'PROMPT="%{$fg[$AGENT_COLOR]%}[$AGENT_ROLE]%{$reset_color%} $PROMPT"' >> ~/.zshrc
 
-# Set zsh as default shell
-CMD ["/bin/zsh"]
+# Create .ssh directory with proper permissions
+RUN mkdir -p /home/${USERNAME}/.ssh && \
+    chmod 700 /home/${USERNAME}/.ssh && \
+    chown -R ${USERNAME}:${USERNAME} /home/${USERNAME}/.ssh
+
+# Set zsh as default shell and ensure SSH agent persistence
+RUN echo '# SSH agent persistence' >> /home/${USERNAME}/.zshrc && \
+    echo 'if [ -f ~/.ssh/agent.env ]; then' >> /home/${USERNAME}/.zshrc && \
+    echo '    . ~/.ssh/agent.env >/dev/null' >> /home/${USERNAME}/.zshrc && \
+    echo '    if ! ps -p $SSH_AGENT_PID >/dev/null 2>&1; then' >> /home/${USERNAME}/.zshrc && \
+    echo '        ssh-agent -s > ~/.ssh/agent.env' >> /home/${USERNAME}/.zshrc && \
+    echo '        . ~/.ssh/agent.env >/dev/null' >> /home/${USERNAME}/.zshrc && \
+    echo '    fi' >> /home/${USERNAME}/.zshrc && \
+    echo '    export SSH_AUTH_SOCK SSH_AGENT_PID' >> /home/${USERNAME}/.zshrc && \
+    echo 'fi' >> /home/${USERNAME}/.zshrc
+
+# Set default shell
+SHELL ["/bin/zsh", "-c"]
+
+# Run agent initialization on container start
+ENTRYPOINT ["/bin/zsh", "-c", "if [ -f /workspaces/terroir-core/.agents/docker/init-container.sh ]; then /workspaces/terroir-core/.agents/docker/init-container.sh; fi; exec /bin/zsh"]

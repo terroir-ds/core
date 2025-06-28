@@ -1,96 +1,132 @@
 # Multi-Agent Development System
 
-This directory contains the complete multi-agent development tooling for Terroir Core.
+A Docker-based multi-agent development system for Terroir Core that enables parallel development across different features.
 
-## Directory Structure
-
-````text
-.agents/
-├── docs/              # All documentation
-├── prompts/           # Agent prompt templates
-├── scripts/           # Automation scripts
-│   ├── host/         # Run from host machine
-│   └── container/    # Run inside containers
-└── templates/        # Configuration templates
-```bash
 ## Quick Start
 
-See [docs/quick-start.md](docs/quick-start.md) for the fastest way to get started.
+````bash
+# 1. Navigate to the Docker directory
+cd .agents/docker
+
+# 2. Build and start an agent
+./agent-manager.sh start 1
+
+# 3. Connect to the agent
+./agent-manager.sh connect 1
+
+# 4. Generate a Claude prompt
+./agent-manager.sh prompt 1    # From host (recommended)
+```bash
+## Architecture
+
+```text
+.agents/
+├── config/           # Agent configuration
+│   └── agent-mapping.conf    # Maps numbers to purposes
+├── docker/          # Docker setup
+│   ├── docker-compose.yml    # Container definitions
+│   ├── Dockerfile.agent      # Agent container image
+│   └── agent-manager.sh      # Container management
+├── prompts/         # Agent prompt templates
+├── scripts/         # Shared scripts (work in both contexts)
+└── docs/            # Documentation
+```bash
+## Key Components
+
+### 1. Agent Configuration (`config/agent-mapping.conf`)
+
+Maps agent numbers to their current purposes:
+- Agent 0: Core (VS Code)
+- Agent 1: Utilities
+- Agent 2: Infrastructure
+- Agent 3: Documentation
+
+### 2. Docker Setup (`docker/`)
+
+- **docker-compose.yml**: Defines agent containers with git worktrees
+- **Dockerfile.agent**: Lightweight Node.js environment (~50MB per agent)
+- **agent-manager.sh**: Single entry point for all Docker operations
+- **init-container.sh**: Automatic container initialization
+
+### 3. Container Management
+
+```bash
+# Start/stop agents
+./agent-manager.sh start 1       # Start by number
+./agent-manager.sh start utilities   # Start by purpose
+./agent-manager.sh stop 1
+
+# Connect to running agent
+./agent-manager.sh connect 1
+
+# Check all agents status
+./agent-manager.sh status
+
+# Generate prompt (copies to clipboard)
+./agent-manager.sh prompt 1
+
+# View logs
+./agent-manager.sh logs 1
+
+# Rebuild when Dockerfile changes
+./agent-manager.sh rebuild 1
+```bash
+### 4. Scripts (`scripts/`)
+
+Available in both host and container contexts:
+
+- **load-agent-config.sh**: Configuration loader (used by other scripts)
+- **prompt.sh**: Generate Claude prompts
+- **session.sh**: Save/restore session continuity
+- **status.sh**: Quick agent status check
+
+## Agent Purposes
+
+Agent purposes can evolve over time. To change:
+
+1. Edit `config/agent-mapping.conf`
+2. Update the purpose name
+3. Everything automatically uses the new name
+
+Example:
+
+```bash
+# Change agent 1 from utilities to color-management
+1:color-mgmt:feat/color-management:green
+````
+
+## Key Benefits
+
+### Resource Efficiency
+
+- **VS Code + 3 Docker agents**: ~2.5GB total memory
+- **4 VS Code instances**: ~8-10GB memory
+- **Savings**: ~70% memory reduction
+
+### Developer Productivity
+
+- **Parallel Development**: Work on multiple features simultaneously
+- **No Context Switching**: Each agent maintains its own focus
+- **Git Worktrees**: No merge conflicts during development
+- **Fast Iteration**: 2-second container restarts vs 30-60s for VS Code
+
+### Stability
+
+- **Isolated Environments**: No VS Code extension conflicts
+- **Clean Separation**: Each agent has its own process space
+- **Persistent State**: Work survives container restarts
 
 ## Documentation
 
-All documentation is in the [docs/](docs/) directory:
+- **[Getting Started](docs/getting-started.md)** - Quick introduction and daily workflows
+- **[Setup Guide](docs/setup-guide.md)** - Complete installation instructions
+- **[Architecture](docs/architecture.md)** - Technical design and trade-offs
 
-- Quick start guides
-- Usage instructions
-- Technical details
-- Troubleshooting
+## The Mental Model
 
-## Scripts Organization
+Think of it as having a small development team:
 
-Scripts are organized by where they should be run:
-
-## 📁 host/ - Run from Host Machine
-
-These scripts should be run from your host machine (outside containers):
-
-- **`host-setup.sh`** - Initial multi-agent setup (run once)
-- **`start-agents.sh`** - Launch all agent VS Code windows at start of day
-- **`stop-agents.sh`** - Stop all agent environments
-- **`open-all-agents.sh`** - Open VS Code windows for all agents
-- **`migrate-from-shared.sh`** - One-time migration from old setup
-
-### Usage
-
-```bash
-# From main repo on host:
-./.claude/multi-agent/scripts/host/host-setup.sh
-./.claude/multi-agent/scripts/host/start-agents.sh
-```bash
-## 📁 container/ - Run Inside Agent Containers
-
-These scripts run inside the agent containers and are accessible via `.claude` symlink:
-
-- **`generate-agent-prompt.sh [1|2|3]`** - Generate Claude prompt for specific agent
-- **`generate-agent-prompt-1.sh`** - Generate prompt for Agent 1 (Utilities)
-- **`generate-agent-prompt-2.sh`** - Generate prompt for Agent 2 (Infrastructure)
-- **`generate-agent-prompt-3.sh`** - Generate prompt for Agent 3 (Documentation)
-- **`sync-agents.sh`** - Synchronize work between agents
-- **`check-conflicts.sh`** - Check for merge conflicts
-- **`apply-extension-fixes.sh`** - Apply VS Code extension fixes
-- **`diagnose-extension-crash.sh`** - Diagnose VS Code issues
-
-### Usage
-
-```bash
-# From inside any agent container:
-.claude/multi-agent/scripts/container/generate-agent-prompt.sh 1
-.claude/multi-agent/scripts/container/sync-agents.sh
-```bash
-## Quick Reference
-
-### Starting Your Day (Host)
-
-```bash
-cd ~/terroir-core
-./.claude/multi-agent/scripts/host/start-agents.sh
-```bash
-### Starting Claude Session (Container)
-
-```bash
-# In Agent 1 container:
-.claude/multi-agent/scripts/container/generate-agent-prompt.sh 1
-# Copy output and paste as first message to Claude
-```bash
-### Syncing Work (Container)
-
-```bash
-.claude/multi-agent/scripts/container/sync-agents.sh
-````
-
-## Why This Organization?
-
-- **Clarity**: No confusion about where to run scripts
-- **Safety**: Container scripts can't accidentally modify host system
-- **Access**: Container scripts are available via `.claude` symlink
-- **Separation**: Host setup scripts aren't cluttering agent workspaces
+- **You (Core Agent)**: Tech lead in VS Code, doing architecture and integration
+- **Agent 1-3**: Junior developers in Docker containers, handling specific tasks
+- **Git Worktrees**: Each developer on their own branch, no conflicts
+- **Shared Tools**: Everyone uses the same scripts and configurations

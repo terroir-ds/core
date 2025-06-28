@@ -1,5 +1,3 @@
-version: '3.8'
-
 # Shared configuration for all agent containers
 x-agent-base: &agent-base
   build:
@@ -7,15 +5,6 @@ x-agent-base: &agent-base
     dockerfile: Dockerfile.agent
   stdin_open: true
   tty: true
-  working_dir: /workspace
-  volumes:
-    # Mount the main workspace
-    - ../../:/workspace:cached
-    # Share git config and SSH keys for authentication
-    - ~/.gitconfig:/home/node/.gitconfig:ro
-    - ~/.ssh:/home/node/.ssh:ro
-    # Share pnpm cache for faster installs
-    - ~/.pnpm-store:/home/node/.pnpm-store:cached
   environment:
     # Enable color support
     - TERM=xterm-256color
@@ -46,72 +35,65 @@ x-agent-base: &agent-base
     - SETGID
 
 services:
-  # Test runner agent - focuses on running tests and test coverage
-  test-agent:
+  # Agent 1 - Currently: utilities development
+  agent1:
     <<: *agent-base
-    container_name: terroir-test-agent
-    hostname: test-agent
+    container_name: terroir-agent1
+    hostname: agent1
+    working_dir: /workspaces/terroir-agent1
+    # Keep container around after stop
+    restart: 'no'
+    volumes:
+      # Common core directory used by all git worktrees (includes .pnpm-store)
+      - ${HOME}/Development/Design/terroir-core:/workspaces/terroir-core
+      # Agent-specific worktree
+      - ${HOME}/Development/Design/terroir-agent1:/workspaces/terroir-agent1
     environment:
-      - AGENT_ROLE=test
+      - AGENT_NUMBER=1
+      # These will be dynamically set based on current mapping
+      - AGENT_ROLE=utilities
       - AGENT_COLOR=green
-      - TERM=xterm-256color
-      - COLORTERM=truecolor
-      - NODE_ENV=test
-      - NODE_OPTIONS=--max-old-space-size=3072
+      # Pass through 1Password token from environment
+      - OP_SERVICE_ACCOUNT_TOKEN=${OP_SERVICE_ACCOUNT_TOKEN:-}
+      # Git config items for 1Password
+      - GIT_CONFIG_ITEM=${GIT_CONFIG_ITEM:-}
+      - GIT_SIGNING_KEY_ITEM=${GIT_SIGNING_KEY_ITEM:-}
 
-  # Documentation agent - handles documentation tasks and generation
-  docs-agent:
+  # Agent 2 - Currently: infrastructure development
+  agent2:
     <<: *agent-base
-    container_name: terroir-docs-agent
-    hostname: docs-agent
+    container_name: terroir-agent2
+    hostname: agent2
+    working_dir: /workspaces/terroir-agent2
+    restart: 'no'
+    volumes:
+      - ${HOME}/Development/Design/terroir-core:/workspaces/terroir-core
+      - ${HOME}/Development/Design/terroir-agent2:/workspaces/terroir-agent2
     environment:
-      - AGENT_ROLE=docs
+      - AGENT_NUMBER=2
+      - AGENT_ROLE=infrastructure
       - AGENT_COLOR=blue
-      - TERM=xterm-256color
-      - COLORTERM=truecolor
-      - NODE_ENV=development
-      - NODE_OPTIONS=--max-old-space-size=3072
+      - OP_SERVICE_ACCOUNT_TOKEN=${OP_SERVICE_ACCOUNT_TOKEN:-}
+      - GIT_CONFIG_ITEM=${GIT_CONFIG_ITEM:-}
+      - GIT_SIGNING_KEY_ITEM=${GIT_SIGNING_KEY_ITEM:-}
 
-  # Build agent - handles build processes and optimization
-  build-agent:
+  # Agent 3 - Currently: documentation
+  agent3:
     <<: *agent-base
-    container_name: terroir-build-agent
-    hostname: build-agent
+    container_name: terroir-agent3
+    hostname: agent3
+    working_dir: /workspaces/terroir-agent3
+    restart: 'no'
+    volumes:
+      - ${HOME}/Development/Design/terroir-core:/workspaces/terroir-core
+      - ${HOME}/Development/Design/terroir-agent3:/workspaces/terroir-agent3
     environment:
-      - AGENT_ROLE=build
-      - AGENT_COLOR=yellow
-      - TERM=xterm-256color
-      - COLORTERM=truecolor
-      - NODE_ENV=production
-      - NODE_OPTIONS=--max-old-space-size=3072
-
-  # Refactor agent - handles code refactoring and improvements
-  refactor-agent:
-    <<: *agent-base
-    container_name: terroir-refactor-agent
-    hostname: refactor-agent
-    environment:
-      - AGENT_ROLE=refactor
-      - AGENT_COLOR=magenta
-      - TERM=xterm-256color
-      - COLORTERM=truecolor
-      - NODE_ENV=development
-      - NODE_OPTIONS=--max-old-space-size=3072
-
-  # Optional: Performance agent - for performance testing and optimization
-  perf-agent:
-    <<: *agent-base
-    container_name: terroir-perf-agent
-    hostname: perf-agent
-    profiles:
-      - optional
-    environment:
-      - AGENT_ROLE=perf
-      - AGENT_COLOR=red
-      - TERM=xterm-256color
-      - COLORTERM=truecolor
-      - NODE_ENV=production
-      - NODE_OPTIONS=--max-old-space-size=3072
+      - AGENT_NUMBER=3
+      - AGENT_ROLE=documentation
+      - AGENT_COLOR=purple
+      - OP_SERVICE_ACCOUNT_TOKEN=${OP_SERVICE_ACCOUNT_TOKEN:-}
+      - GIT_CONFIG_ITEM=${GIT_CONFIG_ITEM:-}
+      - GIT_SIGNING_KEY_ITEM=${GIT_SIGNING_KEY_ITEM:-}
 
 networks:
   agent-network:

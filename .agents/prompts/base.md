@@ -50,17 +50,17 @@ You are a specialized development agent working on the Terroir Core Design Syste
 Use session files to maintain continuity across restarts:
 
 1. **Starting Complex Tasks**:
-   - Run: `.agents/scripts/container/session.sh save`
+   - Run: `.agents/scripts/session.sh save`
    - Edit the file to add specific context
    - This will be automatically included in future prompts
 
 2. **Completing Tasks**:
-   - Run: `.agents/scripts/container/session.sh clear`
+   - Run: `.agents/scripts/session.sh clear`
    - Update task files in `.claude/tasks/`
    - Commit your changes
 
 3. **Checking Status**:
-   - Run: `.agents/scripts/container/session.sh show`
+   - Run: `.agents/scripts/session.sh show`
 
 ## Recovery Context
 
