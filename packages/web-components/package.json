@@ -1,0 +1,61 @@
+{
+  "name": "@terroir/web-components",
+  "version": "0.0.1",
+  "description": "Web Components for the Terroir Design System",
+  "keywords": [
+    "design-system",
+    "web-components",
+    "custom-elements",
+    "ui",
+    "accessibility"
+  ],
+  "homepage": "https://github.com/terroir-ds/core/tree/main/packages/web-components#readme",
+  "bugs": {
+    "url": "https://github.com/terroir-ds/core/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/terroir-ds/core.git",
+    "directory": "packages/web-components"
+  },
+  "license": "MIT",
+  "author": "Terroir Core Contributors",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "echo 'Web Components package not yet implemented'",
+    "clean": "del dist",
+    "dev": "echo 'Web Components package not yet implemented'",
+    "fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
+    "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "lint:fix": "pnpm fix",
+    "test": "echo 'Web Components package not yet implemented'",
+    "test:coverage": "vitest run --coverage",
+    "test:type": "tsc --noEmit",
+    "test:watch": "vitest watch",
+    "typecheck": "pnpm test:type"
+  },
+  "dependencies": {
+    "@terroir/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@custom-elements-manifest/analyzer": "^0.10.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}
