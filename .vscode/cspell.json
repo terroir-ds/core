@@ -98,7 +98,8 @@
     "foobarwoo",
     "sannysoft",
     "testuser",
-    "sess"
+    "sess",
+    "xclip"
   ],
   "ignorePaths": [
     "node_modules",
