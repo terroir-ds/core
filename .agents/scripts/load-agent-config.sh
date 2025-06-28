@@ -26,18 +26,31 @@ if [ ! -f "$MAPPING_FILE" ]; then
 fi
 
 # Create associative arrays (works in both bash 4+ and zsh)
-if [ -n "$BASH_VERSION" ]; then
+if [ -n "${BASH_VERSION:-}" ]; then
     # Bash
     declare -A AGENT_PURPOSE
     declare -A AGENT_BRANCH  
     declare -A AGENT_COLOR
     declare -A PURPOSE_TO_NUM
-else
+elif [ -n "${ZSH_VERSION:-}" ]; then
     # Zsh
     typeset -A AGENT_PURPOSE
     typeset -A AGENT_BRANCH  
     typeset -A AGENT_COLOR
     typeset -A PURPOSE_TO_NUM
+else
+    # Fallback - try to detect
+    if command -v typeset >/dev/null 2>&1; then
+        typeset -A AGENT_PURPOSE
+        typeset -A AGENT_BRANCH  
+        typeset -A AGENT_COLOR
+        typeset -A PURPOSE_TO_NUM
+    else
+        declare -A AGENT_PURPOSE
+        declare -A AGENT_BRANCH  
+        declare -A AGENT_COLOR
+        declare -A PURPOSE_TO_NUM
+    fi
 fi
 
 while IFS=: read -r num purpose branch color; do
@@ -99,7 +112,10 @@ get_agent_info() {
 export AGENT_PURPOSE AGENT_BRANCH AGENT_COLOR PURPOSE_TO_NUM
 
 # If using bash, export functions
-if [ -n "$BASH_VERSION" ]; then
+if [ -n "${BASH_VERSION:-}" ]; then
     export -f resolve_agent_number
     export -f get_agent_info
 fi
+
+# Make functions available in current shell (for zsh)
+# Functions are automatically available when sourced in zsh

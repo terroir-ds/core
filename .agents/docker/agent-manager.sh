@@ -79,7 +79,7 @@ get_agent_number() {
     local input=$1
     local num=$(resolve_agent_number "$input")
     
-    if [ -z "$num" ] || [ "$num" == "0" ]; then
+    if [ -z "$num" ] || [ "$num" = "0" ]; then
         echo "Error: Invalid agent '$input'. Core agent (0) doesn't run in Docker." >&2
         return 1
     fi
@@ -161,7 +161,7 @@ show_status() {
     
     # Show agents in numerical order
     for num in $(echo "${!AGENT_PURPOSE[@]}" | tr ' ' '\n' | sort -n); do
-        if [ "$num" == "0" ]; then
+        if [ "$num" = "0" ]; then
             echo -e "  Core (0): ${GREEN}VS Code${NC} (not dockerized)"
             continue
         fi
@@ -246,7 +246,7 @@ generate_prompt() {
     local agent_num=$(get_agent_number "$agent") || return 1
     
     # Special handling for core
-    if [ "$agent_num" == "0" ]; then
+    if [ "$agent_num" = "0" ]; then
         # Core runs locally, not in container
         echo -e "${GREEN}🏠 Generating Core agent prompt...${NC}"
         cd "$BASE_DIR/scripts"
