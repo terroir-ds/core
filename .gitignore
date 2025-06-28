@@ -51,6 +51,7 @@ assets/icons/optimized/
 
 # Claude
 .claude/
+.claude
 .agent-coordination
 
 # Environment
