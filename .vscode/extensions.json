@@ -2,12 +2,20 @@
   "recommendations": [
     "esbenp.prettier-vscode",
     "dbaeumer.vscode-eslint",
-    "usernamehw.errorlens",
-    "mikestead.dotenv",
-    "yoavbls.pretty-ts-errors",
-    "eamodio.gitlens",
-    "vscode-icons-team.vscode-icons",
-    "DavidAnson.vscode-markdownlint"
+    "DavidAnson.vscode-markdownlint",
+    "streetsidesoftware.code-spell-checker"
   ],
-  "unwantedRecommendations": []
+  "unwantedRecommendations": [
+    "aaron-bond.better-comments",
+    "ms-vscode.vscode-typescript-next",
+    "yzhang.markdown-all-in-one",
+    "christian-kohler.npm-intellisense",
+    "yoavbls.pretty-ts-errors",
+    "vscode-icons-team.vscode-icons",
+    "cweijan.dbclient-jdbc",
+    "cweijan.vscode-redis-client",
+    "anthropic.claude-code",
+    "github.vscode-pull-request-github",
+    "mikestead.dotenv"
+  ]
 }
