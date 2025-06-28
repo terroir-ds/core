@@ -1,14 +1,14 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Unified prompt generation script
 # Usage: prompt.sh [core|1|2|3|<purpose-name>]
 
 AGENT=$1
 PRINT_MODE=${2:-}
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-BASE_DIR="$(cd "$SCRIPT_DIR/../.." && pwd)"
+BASE_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # Source the agent configuration
-source "$BASE_DIR/scripts/load-agent-config.sh"
+source "$SCRIPT_DIR/load-agent-config.sh"
 
 # Resolve agent from input
 AGENT_NUM=$(resolve_agent_number "$AGENT")

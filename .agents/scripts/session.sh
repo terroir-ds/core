@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # session.sh - Manage agent session files
 # Usage: session.sh [save|clear|show] [agent]
 
