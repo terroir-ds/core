@@ -1,0 +1,101 @@
+# Shared configuration for all agent containers
+x-agent-base: &agent-base
+  build:
+    context: .
+    dockerfile: Dockerfile.agent
+  stdin_open: true
+  tty: true
+  environment:
+    # Enable color support
+    - TERM=xterm-256color
+    - COLORTERM=truecolor
+    # Node.js optimization
+    - NODE_ENV=development
+    - NODE_OPTIONS=--max-old-space-size=3072
+  # Resource constraints
+  deploy:
+    resources:
+      limits:
+        cpus: '2.0'
+        memory: 4G
+      reservations:
+        cpus: '0.5'
+        memory: 1G
+  # Network isolation
+  networks:
+    - agent-network
+  # Security options
+  security_opt:
+    - no-new-privileges:true
+  cap_drop:
+    - ALL
+  cap_add:
+    - CHOWN
+    - SETUID
+    - SETGID
+
+services:
+  # Agent 1 - Currently: utilities development
+  agent1:
+    <<: *agent-base
+    container_name: terroir-agent1
+    hostname: agent1
+    working_dir: /workspaces/terroir-agent1
+    # Keep container around after stop
+    restart: 'no'
+    volumes:
+      # Common core directory used by all git worktrees (includes .pnpm-store)
+      - ${HOME}/Development/Design/terroir-core:/workspaces/terroir-core
+      # Agent-specific worktree
+      - ${HOME}/Development/Design/terroir-agent1:/workspaces/terroir-agent1
+    environment:
+      - AGENT_NUMBER=1
+      # These will be dynamically set based on current mapping
+      - AGENT_ROLE=utilities
+      - AGENT_COLOR=green
+      # Pass through 1Password token from environment
+      - OP_SERVICE_ACCOUNT_TOKEN=${OP_SERVICE_ACCOUNT_TOKEN:-}
+      # Git config items for 1Password
+      - GIT_CONFIG_ITEM=${GIT_CONFIG_ITEM:-}
+      - GIT_SIGNING_KEY_ITEM=${GIT_SIGNING_KEY_ITEM:-}
+
+  # Agent 2 - Currently: infrastructure development
+  agent2:
+    <<: *agent-base
+    container_name: terroir-agent2
+    hostname: agent2
+    working_dir: /workspaces/terroir-agent2
+    restart: 'no'
+    volumes:
+      - ${HOME}/Development/Design/terroir-core:/workspaces/terroir-core
+      - ${HOME}/Development/Design/terroir-agent2:/workspaces/terroir-agent2
+    environment:
+      - AGENT_NUMBER=2
+      - AGENT_ROLE=infrastructure
+      - AGENT_COLOR=blue
+      - OP_SERVICE_ACCOUNT_TOKEN=${OP_SERVICE_ACCOUNT_TOKEN:-}
+      - GIT_CONFIG_ITEM=${GIT_CONFIG_ITEM:-}
+      - GIT_SIGNING_KEY_ITEM=${GIT_SIGNING_KEY_ITEM:-}
+
+  # Agent 3 - Currently: documentation
+  agent3:
+    <<: *agent-base
+    container_name: terroir-agent3
+    hostname: agent3
+    working_dir: /workspaces/terroir-agent3
+    restart: 'no'
+    volumes:
+      - ${HOME}/Development/Design/terroir-core:/workspaces/terroir-core
+      - ${HOME}/Development/Design/terroir-agent3:/workspaces/terroir-agent3
+    environment:
+      - AGENT_NUMBER=3
+      - AGENT_ROLE=documentation
+      - AGENT_COLOR=purple
+      - OP_SERVICE_ACCOUNT_TOKEN=${OP_SERVICE_ACCOUNT_TOKEN:-}
+      - GIT_CONFIG_ITEM=${GIT_CONFIG_ITEM:-}
+      - GIT_SIGNING_KEY_ITEM=${GIT_SIGNING_KEY_ITEM:-}
+
+networks:
+  agent-network:
+    driver: bridge
+    name: terroir-agent-network

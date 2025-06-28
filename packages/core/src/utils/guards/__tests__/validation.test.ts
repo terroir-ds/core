@@ -18,7 +18,6 @@
 import { describe, it, expect } from 'vitest';
 import {
   // Types
-  type ValidationResult,
   type EmailValidationOptions,
   type UrlValidationOptions,
   type PhoneValidationOptions,
@@ -127,8 +126,8 @@ describe('Email Validation', () => {
       expect(result.valid).toBe(false);
       expect(result.value).toBeUndefined();
       expect(result.errors).toHaveLength(1);
-      expect(result.errors![0]).toBeInstanceOf(ValidationError);
-      expect(result.errors![0].code).toBe('EMAIL_INVALID_FORMAT');
+      expect(result.errors?.[0]).toBeInstanceOf(ValidationError);
+      expect(result.errors?.[0]?.code).toBe('EMAIL_INVALID_FORMAT');
     });
 
     it('should validate against custom options', () => {
@@ -140,26 +139,26 @@ describe('Email Validation', () => {
       // Test plus sign restriction
       const plusResult = validateEmail('user+tag@example.com', options);
       expect(plusResult.valid).toBe(false);
-      expect(plusResult.errors![0].code).toBe('EMAIL_PLUS_NOT_ALLOWED');
+      expect(plusResult.errors?.[0]?.code).toBe('EMAIL_PLUS_NOT_ALLOWED');
 
       // Test length restriction
       const longResult = validateEmail('very.long.email@example.com', options);
       expect(longResult.valid).toBe(false);
-      expect(longResult.errors![0].code).toBe('EMAIL_TOO_LONG');
+      expect(longResult.errors?.[0]?.code).toBe('EMAIL_TOO_LONG');
     });
 
     it('should handle type errors', () => {
       const result = validateEmail(123);
       
       expect(result.valid).toBe(false);
-      expect(result.errors![0].code).toBe('EMAIL_TYPE_ERROR');
+      expect(result.errors?.[0]?.code).toBe('EMAIL_TYPE_ERROR');
     });
 
     it('should handle empty emails', () => {
       const result = validateEmail('');
       
       expect(result.valid).toBe(false);
-      expect(result.errors![0].code).toBe('EMAIL_EMPTY');
+      expect(result.errors?.[0]?.code).toBe('EMAIL_EMPTY');
     });
 
     it('should validate TLD requirement', () => {
@@ -167,7 +166,7 @@ describe('Email Validation', () => {
       
       const result = validateEmail('user@localhost', options);
       expect(result.valid).toBe(false);
-      expect(result.errors![0].code).toBe('EMAIL_NO_TLD');
+      expect(result.errors?.[0]?.code).toBe('EMAIL_NO_TLD');
     });
 
     it('should allow emails without TLD when configured', () => {
@@ -234,7 +233,7 @@ describe('URL Validation', () => {
       const result = validateUrl('invalid-url');
       
       expect(result.valid).toBe(false);
-      expect(result.errors![0].code).toBe('URL_INVALID_FORMAT');
+      expect(result.errors?.[0]?.code).toBe('URL_INVALID_FORMAT');
     });
 
     it('should validate protocol restrictions', () => {
@@ -244,7 +243,7 @@ describe('URL Validation', () => {
 
       const httpResult = validateUrl('http://example.com', options);
       expect(httpResult.valid).toBe(false);
-      expect(httpResult.errors![0].code).toBe('URL_PROTOCOL_NOT_ALLOWED');
+      expect(httpResult.errors?.[0]?.code).toBe('URL_PROTOCOL_NOT_ALLOWED');
 
       const httpsResult = validateUrl('https://example.com', options);
       expect(httpsResult.valid).toBe(true);
@@ -257,7 +256,7 @@ describe('URL Validation', () => {
 
       const localhostResult = validateUrl('https://localhost:3000', options);
       expect(localhostResult.valid).toBe(false);
-      expect(localhostResult.errors![0].code).toBe('URL_LOCALHOST_NOT_ALLOWED');
+      expect(localhostResult.errors?.[0]?.code).toBe('URL_LOCALHOST_NOT_ALLOWED');
 
       const regularResult = validateUrl('https://example.com', options);
       expect(regularResult.valid).toBe(true);
@@ -270,7 +269,7 @@ describe('URL Validation', () => {
 
       const ipResult = validateUrl('https://192.168.1.1', options);
       expect(ipResult.valid).toBe(false);
-      expect(ipResult.errors![0].code).toBe('URL_IP_NOT_ALLOWED');
+      expect(ipResult.errors?.[0]?.code).toBe('URL_IP_NOT_ALLOWED');
     });
 
     it('should handle protocol requirement', () => {
@@ -287,7 +286,7 @@ describe('URL Validation', () => {
       const result = validateUrl(123);
       
       expect(result.valid).toBe(false);
-      expect(result.errors![0].code).toBe('URL_TYPE_ERROR');
+      expect(result.errors?.[0]?.code).toBe('URL_TYPE_ERROR');
     });
   });
 });
@@ -376,17 +375,17 @@ describe('Phone Number Validation', () => {
 
       const ukResult = validatePhone('+44207946095', options);
       expect(ukResult.valid).toBe(false);
-      expect(ukResult.errors![0].code).toBe('PHONE_WRONG_COUNTRY');
+      expect(ukResult.errors?.[0]?.code).toBe('PHONE_WRONG_COUNTRY');
     });
 
     it('should handle type and length errors', () => {
       const typeResult = validatePhone(123);
       expect(typeResult.valid).toBe(false);
-      expect(typeResult.errors![0].code).toBe('PHONE_TYPE_ERROR');
+      expect(typeResult.errors?.[0]?.code).toBe('PHONE_TYPE_ERROR');
 
       const lengthResult = validatePhone('123');
       expect(lengthResult.valid).toBe(false);
-      expect(lengthResult.errors![0].code).toBe('PHONE_INVALID_LENGTH');
+      expect(lengthResult.errors?.[0]?.code).toBe('PHONE_INVALID_LENGTH');
     });
   });
 });
@@ -409,11 +408,11 @@ describe('Password Validation', () => {
 
       const shortResult = validatePassword('short', options);
       expect(shortResult.valid).toBe(false);
-      expect(shortResult.errors![0].code).toBe('PASSWORD_TOO_SHORT');
+      expect(shortResult.errors?.[0]?.code).toBe('PASSWORD_TOO_SHORT');
 
       const longResult = validatePassword('verylongpasswordthatexceedslimit', options);
       expect(longResult.valid).toBe(false);
-      expect(longResult.errors![0].code).toBe('PASSWORD_TOO_LONG');
+      expect(longResult.errors?.[0]?.code).toBe('PASSWORD_TOO_LONG');
     });
 
     it('should validate character requirements', () => {
@@ -440,7 +439,7 @@ describe('Password Validation', () => {
 
       const commonResult = validatePassword('password', options);
       expect(commonResult.valid).toBe(false);
-      expect(commonResult.errors![0].code).toBe('PASSWORD_TOO_COMMON');
+      expect(commonResult.errors?.[0]?.code).toBe('PASSWORD_TOO_COMMON');
 
       const uniqueResult = validatePassword('UniquePassword123!', options);
       expect(uniqueResult.valid).toBe(true);
@@ -450,7 +449,7 @@ describe('Password Validation', () => {
       const result = validatePassword(123);
       
       expect(result.valid).toBe(false);
-      expect(result.errors![0].code).toBe('PASSWORD_TYPE_ERROR');
+      expect(result.errors?.[0]?.code).toBe('PASSWORD_TYPE_ERROR');
     });
 
     it('should redact passwords in all outputs', () => {
@@ -459,7 +458,7 @@ describe('Password Validation', () => {
       expect(result.input).toBe('[REDACTED]');
       if (result.errors) {
         result.errors.forEach(error => {
-          expect(error.context.value).toBe('[REDACTED]');
+          expect(error.context['value']).toBe('[REDACTED]');
         });
       }
     });
@@ -498,7 +497,7 @@ describe('Credit Card Validation', () => {
       const result = validateCreditCard('4111111111111112');
       
       expect(result.valid).toBe(false);
-      expect(result.errors![0].code).toBe('CARD_LUHN_FAILED');
+      expect(result.errors?.[0]?.code).toBe('CARD_LUHN_FAILED');
     });
 
     it('should validate card type restrictions', () => {
@@ -511,24 +510,24 @@ describe('Credit Card Validation', () => {
 
       const amexResult = validateCreditCard(validCards.amex, options);
       expect(amexResult.valid).toBe(false);
-      expect(amexResult.errors![0].code).toBe('CARD_TYPE_NOT_ALLOWED');
+      expect(amexResult.errors?.[0]?.code).toBe('CARD_TYPE_NOT_ALLOWED');
     });
 
     it('should handle length validation', () => {
       const shortResult = validateCreditCard('411111111111');
       expect(shortResult.valid).toBe(false);
-      expect(shortResult.errors![0].code).toBe('CARD_INVALID_LENGTH');
+      expect(shortResult.errors?.[0]?.code).toBe('CARD_INVALID_LENGTH');
 
       const longResult = validateCreditCard('41111111111111111111');
       expect(longResult.valid).toBe(false);
-      expect(longResult.errors![0].code).toBe('CARD_INVALID_LENGTH');
+      expect(longResult.errors?.[0]?.code).toBe('CARD_INVALID_LENGTH');
     });
 
     it('should handle type errors', () => {
       const result = validateCreditCard(123);
       
       expect(result.valid).toBe(false);
-      expect(result.errors![0].code).toBe('CARD_TYPE_ERROR');
+      expect(result.errors?.[0]?.code).toBe('CARD_TYPE_ERROR');
     });
 
     it('should redact card numbers in all outputs', () => {
@@ -537,7 +536,7 @@ describe('Credit Card Validation', () => {
       expect(result.input).toBe('[REDACTED]');
       if (result.errors) {
         result.errors.forEach(error => {
-          expect(error.context.value).toBe('[REDACTED]');
+          expect(error.context['value']).toBe('[REDACTED]');
         });
       }
     });
@@ -560,7 +559,7 @@ describe('Custom Validators', () => {
 
       const invalidResult = validateAge(15);
       expect(invalidResult.valid).toBe(false);
-      expect(invalidResult.errors![0].code).toBe('INVALID_AGE');
+      expect(invalidResult.errors?.[0]?.code).toBe('INVALID_AGE');
     });
 
     it('should support dynamic error messages', () => {
@@ -572,7 +571,7 @@ describe('Custom Validators', () => {
 
       const result = validateRange(150);
       expect(result.valid).toBe(false);
-      expect(result.errors![0].message).toBe('Value 150 must be between 0 and 100');
+      expect(result.errors?.[0]?.message).toBe('Value 150 must be between 0 and 100');
     });
 
     it('should work with complex type predicates', () => {
@@ -654,7 +653,7 @@ describe('Custom Validators', () => {
 
       const result = validateSchema('not an object', schema);
       expect(result.valid).toBe(false);
-      expect(result.errors![0].code).toBe('SCHEMA_DATA_NOT_OBJECT');
+      expect(result.errors?.[0]?.code).toBe('SCHEMA_DATA_NOT_OBJECT');
     });
 
     it('should work with complex schemas', () => {
@@ -808,7 +807,7 @@ describe('Security Tests', () => {
     expect(() => {
       validateSchema(circular, {
         email: validateEmail,
-        self: (value: unknown) => ({ valid: true, value })
+        self: (value: unknown) => ({ valid: true, value, input: value })
       });
     }).not.toThrow();
   });

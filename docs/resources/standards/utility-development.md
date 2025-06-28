@@ -277,19 +277,19 @@ export function assertDefined<T>(value: T | undefined): asserts value is T;
 
 ### Email Validation Implementation Decision
 
-**Research Summary (2025-01-xx)**
+### Research Summary (2025-01-xx)
 
 - **Validator.js**: 13.15.15, 7k+ dependents, mature but not TypeScript-first
 - **Zod**: Already in project, excellent for schema validation
 - **Custom regex**: Battle-tested patterns, zero dependencies
 
-**Benchmarks**
+### Benchmarks
 
 - Custom regex: 0.05ms per validation
 - Validator.js: 0.12ms per validation  
 - Zod: 0.8ms per validation
 
-**Decision: Custom Implementation**
+### Decision: Custom Implementation
 
 - Use battle-tested RFC 5322 regex pattern
 - Leverage shared utilities for consistency

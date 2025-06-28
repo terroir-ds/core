@@ -86,18 +86,12 @@ import {
   isString,
   isNumber,
   isArray,
-  isObject,
-  isDefined,
-  isFunction,
 } from './type-guards.js';
 
 import {
   hasOwnProp,
   isObjectLike,
   deepEquals as deepEqualsShared,
-  validateLength,
-  checkEmpty,
-  validateRange,
 } from '@utils/shared/index.js';
 
 // =============================================================================

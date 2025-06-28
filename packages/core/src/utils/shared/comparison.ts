@@ -9,7 +9,6 @@ import {
   getObjectType, 
   isObjectLike, 
   hasOwnProp,
-  isArrayLike,
 } from './index.js';
 
 /**
