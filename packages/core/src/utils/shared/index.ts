@@ -438,9 +438,6 @@ export function memoize<TArgs extends unknown[], TReturn>(
 // RE-EXPORTS
 // =============================================================================
 
-// Export validation utilities
-export * from './validation.js';
-
 // Export comparison utilities
 export * from './comparison.js';
 
@@ -449,3 +446,6 @@ export * from './errors.js';
 
 // Export event listener utilities  
 export * from './event-listeners.js';
+
+// Export validation utilities
+export { validateLength, validateRange, checkEmpty } from './validation.js';

@@ -4,7 +4,7 @@ First off, thank you for considering contributing to Terroir Core! It's people l
 
 ## Code of Conduct
 
-This project and everyone participating in it is governed by our Code of Conduct. By participating, you are expected to uphold this code. Please report unacceptable behavior to conduct@terroir-ds.dev.
+This project and everyone participating in it is governed by our Code of Conduct. By participating, you are expected to uphold this code. Please report unacceptable behavior to <conduct@terroir-ds.dev>.
 
 ## How Can I Contribute?
 
@@ -51,17 +51,20 @@ Unsure where to begin contributing? You can start by looking through these issue
 ### Setting Up Your Development Environment
 
 1. **Fork and clone the repository**
+
    ```bash
    git clone https://github.com/your-username/terroir-core.git
    cd terroir-core
    ```
 
 2. **Install dependencies**
+
    ```bash
    pnpm install
    ```
 
 3. **Create a branch**
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
@@ -75,6 +78,7 @@ Unsure where to begin contributing? You can start by looking through these issue
    - Update documentation as needed
 
 2. **Run quality checks**
+
    ```bash
    # Run all checks before committing
    pnpm fix        # Auto-fix formatting issues
@@ -84,9 +88,11 @@ Unsure where to begin contributing? You can start by looking through these issue
    ```
 
 3. **Create a changeset**
+
    ```bash
    pnpm changeset
    ```
+
    Follow the prompts to describe your changes.
 
 ### Coding Standards
@@ -101,14 +107,13 @@ Unsure where to begin contributing? You can start by looking through these issue
 
 We follow [Conventional Commits](https://www.conventionalcommits.org/):
 
-```
+```text
 type(scope): description
 
 [optional body]
 
 [optional footer(s)]
-```
-
+```yaml
 Types:
 - `feat`: New feature
 - `fix`: Bug fix
@@ -122,12 +127,11 @@ Types:
 - `chore`: Other changes that don't modify src or test files
 
 Examples:
-```
+```text
 feat(colors): add Material You color generation
 fix(logger): prevent memory leak in async context
 docs(readme): update installation instructions
-```
-
+```text
 ### Git Operations for Special Directories
 
 **Multi-Agent Coordination Files**: The `.claude` directory is listed in `.gitignore` to support agent development workflows. When modifying files in `.claude/multi-agent/`, you must use the force flag:
@@ -138,8 +142,7 @@ git add -f .claude/multi-agent/your-file.md
 
 # Or for multiple files
 git add -f .claude/multi-agent/*.md
-```
-
+```bash
 This ensures that multi-agent coordination files remain in version control while allowing agents to use symbolic links without conflicts.
 
 ### Testing
@@ -159,7 +162,7 @@ This ensures that multi-agent coordination files remain in version control while
 
 ## Project Structure
 
-```
+```text
 terroir-core/
 ├── packages/           # Monorepo packages
 │   ├── core/          # Core utilities and tokens
@@ -168,8 +171,7 @@ terroir-core/
 ├── docs/              # Project documentation
 ├── scripts/           # Build and utility scripts
 └── .github/           # GitHub configuration
-```
-
+```text
 ## Style Guide
 
 ### TypeScript
@@ -208,6 +210,7 @@ const COLORS = ['primary', 'secondary', 'tertiary'] as const;
 ## Questions?
 
 Feel free to:
+
 - Open a GitHub Discussion for general questions
 - Join our community chat (coming soon)
 - Check existing issues and discussions
@@ -215,6 +218,7 @@ Feel free to:
 ## Recognition
 
 Contributors will be recognized in:
+
 - The project README
 - Release notes
 - The contributors page on our documentation site

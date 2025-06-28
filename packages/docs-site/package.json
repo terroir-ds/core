@@ -8,9 +8,16 @@
     "astro": "astro",
     "build": "astro build",
     "check": "astro check",
+    "clean": "del dist",
     "dev": "astro dev",
+    "fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
+    "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "lint:fix": "pnpm fix",
     "preview": "astro preview",
-    "start": "astro dev"
+    "start": "astro dev",
+    "test": "pnpm test:type",
+    "test:type": "astro check && tsc --noEmit",
+    "typecheck": "pnpm test:type"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.34.4",

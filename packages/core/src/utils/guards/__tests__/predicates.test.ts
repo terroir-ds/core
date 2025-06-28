@@ -17,10 +17,6 @@
 
 import { describe, it, expect } from 'vitest';
 import {
-  // Types
-  type Predicate,
-  type TypeGuardPredicate,
-  
   // Numeric predicates
   isPositive,
   isNegative,
@@ -691,13 +687,13 @@ describe('Logical Combinators', () => {
 
     it('should short-circuit on first failure', () => {
       let called = false;
-      const sideEffect = (x: unknown) => {
+      const sideEffect = (_x: unknown) => {
         called = true;
         return true;
       };
       
       const combined = and(
-        (x: unknown) => false, // Always fails
+        (_x: unknown) => false, // Always fails
         sideEffect
       );
       
@@ -725,13 +721,13 @@ describe('Logical Combinators', () => {
 
     it('should short-circuit on first success', () => {
       let called = false;
-      const sideEffect = (x: unknown) => {
+      const sideEffect = (_x: unknown) => {
         called = true;
         return false;
       };
       
       const combined = or(
-        (x: unknown) => true, // Always succeeds
+        (_x: unknown) => true, // Always succeeds
         sideEffect
       );
       

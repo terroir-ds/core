@@ -42,24 +42,16 @@ assets/icons/optimized/
 !.vscode/extensions.json
 !.vscode/cspell.json
 !.vscode/README.md
-# Note: settings.json is now ignored to preserve agent-specific settings
-# To update shared settings, temporarily comment out the line below
-.vscode/settings.json
+!.vscode/settings.json
 .idea/
 *.swp
 *.swo
 *~
 .DS_Store
 
-# Devcontainer
-# Note: devcontainer.json is now ignored to preserve agent-specific configuration
-# To update shared devcontainer config, temporarily comment out the line below
-.devcontainer/devcontainer.json
-
-# Claude and multi-agent coordination
+# Claude
+.claude/
 .claude
-.claude/*
-!.claude/multi-agent/
 .agent-coordination
 
 # Environment
@@ -126,3 +118,6 @@ Desktop.ini
 # NPM package files (for publishing)
 *.tgz
 terroir-core-*.tgz
+# Multi-agent tooling (shared across all branches)
+# Note: We track this in all branches for consistency
+# /.agents
