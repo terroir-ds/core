@@ -42,7 +42,6 @@ import {
   hasMinLength,
   hasProperties,
   and,
-  or,
   createValidator,
 } from '../index.js';
 
@@ -445,7 +444,7 @@ describe('Guards Integration Tests', () => {
               'Last name must be at least 2 characters'
             ),
             age: createValidator(
-              and(isNumber, isPositive, (n: number) => n >= 18),
+              and(isNumber, (n: unknown) => isPositive(n as number), (n: unknown) => (n as number) >= 18),
               'Must be 18 or older'
             )
           };
@@ -658,7 +657,7 @@ describe('Guards Integration Tests', () => {
           return 'Data must be an object';
         }
 
-        assertProperties(data, ['user', 'settings']);
+        assertProperties(data, ['user' as keyof typeof data, 'settings' as keyof typeof data]);
         const typedData = data as { user: unknown; settings: unknown };
 
         // Nested type checking
@@ -666,7 +665,7 @@ describe('Guards Integration Tests', () => {
           return 'User must be an object';
         }
 
-        assertProperties(typedData.user, ['name', 'email']);
+        assertProperties(typedData.user as any, ['name', 'email']);
         const user = typedData.user as { name: unknown; email: unknown };
 
         if (!isString(user.name)) {
