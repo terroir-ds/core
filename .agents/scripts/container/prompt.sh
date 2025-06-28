@@ -42,8 +42,8 @@ echo "$COLOR Preparing $AGENT_NAME Agent prompt..."
 
 # Generate combined prompt
 PROMPT_FILE="/tmp/${AGENT}-claude-prompt.txt"
-cat "$BASE_DIR/.agents/prompts/base.md" \
-    "$BASE_DIR/.agents/prompts/$AGENT_FILE" \
+cat "$BASE_DIR/prompts/base.md" \
+    "$BASE_DIR/prompts/$AGENT_FILE" \
     > "$PROMPT_FILE"
 
 # Add recovery context

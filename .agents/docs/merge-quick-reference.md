@@ -3,21 +3,23 @@
 ## 🚀 Quick Commands
 
 ### From Agent Branch (e.g., feat/utilities)
+
 ```bash
 # Get latest from core
-.claude/agents/scripts/host/merge-from-core.sh
+.agents/scripts/host/merge-from-core.sh
 
 # Check agent state
-.claude/agents/scripts/host/check-agent-state.sh
+.agents/scripts/host/check-agent-state.sh
 
 # Fix issues
-.claude/agents/scripts/host/check-agent-state.sh --fix
+.agents/scripts/host/check-agent-state.sh --fix
 ```
 
 ### From Core Branch (main/feat/initial-setup)
+
 ```bash
 # Merge agent work
-.claude/agents/scripts/host/merge-to-core.sh feat/utilities
+.agents/scripts/host/merge-to-core.sh feat/utilities
 ```
 
 ## ⚠️ Golden Rules
@@ -34,6 +36,7 @@
 ## 🔧 Common Issues
 
 ### "Files that should be core-only"
+
 ```bash
 # From agent branch
 git rm --cached .claude/
@@ -43,6 +46,7 @@ git commit -m "fix: remove core-only files from agent branch"
 ```
 
 ### Symlink broken
+
 ```bash
 # Recreate symlink
 rm -rf .claude
@@ -50,12 +54,13 @@ ln -sf /workspaces/terroir-core/.claude .claude
 ```
 
 ### After accidental merge
+
 ```bash
 # Reset to before merge
 git reset --hard HEAD~1
 
 # Use the proper script
-.claude/agents/scripts/host/merge-from-core.sh
+.agents/scripts/host/merge-from-core.sh
 ```
 
 ## 📋 Merge Checklist
@@ -66,6 +71,10 @@ git reset --hard HEAD~1
 - [ ] Check no core-only files included
 - [ ] Test build still works
 - [ ] Commit with descriptive message
+
+## 📝 Note: Migration Complete
+
+Agent tooling has been moved from `.claude/agents/` to `/.agents/` for simpler merges!
 
 ## 🎯 Best Practices
 
