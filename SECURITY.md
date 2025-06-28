@@ -57,6 +57,7 @@ When using Terroir Core in your projects:
 ### SVG Injection
 
 When using dynamic SVG token replacement, ensure that:
+
 - Token values are properly sanitized
 - User-provided content is never directly inserted into SVG templates
 - CSP headers are configured to prevent inline script execution
@@ -64,6 +65,7 @@ When using dynamic SVG token replacement, ensure that:
 ### Color Input Validation
 
 When accepting color values from users:
+
 - Validate color formats before processing
 - Use the built-in color validation utilities
 - Sanitize color values before use in CSS
@@ -71,6 +73,7 @@ When accepting color values from users:
 ## Contact
 
 For any security-related questions that don't need to be private, you can:
+
 - Open a discussion in our GitHub repository
 - Tag your issue with the `security` label (for non-sensitive issues only)
 
