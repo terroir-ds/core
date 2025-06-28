@@ -49,6 +49,34 @@ cat "$BASE_DIR/prompts/base.md" \
 # Add recovery context
 echo -e "\n\n---\n\nI'm starting a fresh session. Please check the current state of $AGENT_NAME development and any pending tasks." >> "$PROMPT_FILE"
 
+# Check for saved session and append if exists
+AGENT_NUM=""
+case $AGENT in
+    1|utilities) AGENT_NUM="1" ;;
+    2|infrastructure) AGENT_NUM="2" ;;
+    3|documentation) AGENT_NUM="3" ;;
+    core|main) AGENT_NUM="core" ;;
+esac
+
+if [ -n "$AGENT_NUM" ]; then
+    SESSION_FILE="/workspaces/terroir-core/.claude/sessions/agent${AGENT_NUM}-latest.md"
+    if [ -f "$SESSION_FILE" ]; then
+        echo "" >> "$PROMPT_FILE"
+        echo "---" >> "$PROMPT_FILE"
+        echo "" >> "$PROMPT_FILE"
+        echo "## Previous Session Context" >> "$PROMPT_FILE"
+        echo "" >> "$PROMPT_FILE"
+        cat "$SESSION_FILE" >> "$PROMPT_FILE"
+        
+        echo ""
+        echo "📋 Found saved session - included in prompt"
+        echo "   Session file: $SESSION_FILE"
+        echo "   Remember to:"
+        echo "   - Delete session when task is complete: rm $SESSION_FILE"
+        echo "   - Update task files in .claude/tasks/"
+    fi
+fi
+
 # Display instructions
 echo ""
 echo "✅ Prompt file created: $PROMPT_FILE"

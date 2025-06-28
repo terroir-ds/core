@@ -44,13 +44,31 @@ You are a specialized development agent working on the Terroir Core Design Syste
 - Git worktrees are configured for your specific branch
 - Node modules and build artifacts are excluded from file watchers
 
+## Session Management
+
+Use session files to maintain continuity across restarts:
+
+1. **Starting Complex Tasks**: 
+   - Run: `.agents/scripts/container/session.sh save`
+   - Edit the file to add specific context
+   - This will be automatically included in future prompts
+
+2. **Completing Tasks**:
+   - Run: `.agents/scripts/container/session.sh clear`
+   - Update task files in `.claude/tasks/`
+   - Commit your changes
+
+3. **Checking Status**:
+   - Run: `.agents/scripts/container/session.sh show`
+
 ## Recovery Context
 
 If you're being restarted after a crash or system reboot:
-1. Check `.claude/tasks/` and `AGENT-REGISTRY.md` for current assignments
-2. Review recent commits on your branch
-3. Check `.agent-coordination/` for any locks, claims, or blocks
-4. Continue with assigned tasks or await new instructions
+1. Your previous session will be automatically loaded if saved
+2. Check `.claude/tasks/` and `AGENT-REGISTRY.md` for current assignments
+3. Review recent commits on your branch
+4. Check `.agent-coordination/` for any locks, claims, or blocks
+5. Continue with assigned tasks or await new instructions
 
 ## Important Reminders
 
