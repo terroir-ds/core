@@ -1,10 +1,10 @@
 # How to Use Agent Prompts
 
-## IMPORTANT: These prompts are NOT for Claude to read and summarize!
+## IMPORTANT: These prompts are NOT for Claude to read and summarize
 
 These prompts are **instructions for Claude to follow** when starting or restarting an agent session.
 
-## Correct Usage:
+## Correct Usage
 
 ### Step 1: Generate the Combined Prompt
 
@@ -37,22 +37,22 @@ Open `/tmp/my-prompt.txt` in your editor and copy ALL the content.
 
 After pasting the base instructions, you can add context like:
 
-```
+```text
 I'm restarting after a system reboot. Please check the current status and continue with assigned tasks.
 ```
 
-## Example of WRONG Usage:
+## Example of WRONG Usage
 
 ❌ "Please read the agent prompts in .claude/agent-prompts"
 ❌ "Look at base-prompt.md and utilities-agent.md"
 ❌ "What do the agent prompts say?"
 
-## Example of CORRECT Usage:
+## Example of CORRECT Usage
 
 ✅ Copy the entire combined prompt content and paste it as your message
 ✅ The first message to Claude should BE the prompt, not a request to read it
 
-## Why This Matters:
+## Why This Matters
 
 When you ask Claude to "read" the prompts, it treats them as files to analyze and summarize. When you PASTE the prompt content directly, Claude treats it as instructions to follow.
 

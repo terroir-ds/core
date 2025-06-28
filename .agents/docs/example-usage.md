@@ -25,7 +25,9 @@ Your FIRST message to Claude should look like this:
 
 ---
 
-# INSTRUCTIONS: You are now Agent 1 in the Terroir Core Multi-Agent System
+## Agent Instructions
+
+You are now Agent 1 in the Terroir Core Multi-Agent System
 
 You are a specialized development agent working on the Terroir Core Design System project. You are part of a multi-agent development team with the following key responsibilities:
 
@@ -49,7 +51,7 @@ I'm starting a new session. Please check the current state of utilities developm
 
 ---
 
-## What Claude Will Do:
+## What Claude Will Do
 
 1. Recognize it's Agent 1 (Utilities)
 2. Check the current branch and working directory
@@ -57,31 +59,38 @@ I'm starting a new session. Please check the current state of utilities developm
 4. Check recent commits and file states
 5. Resume work based on the context
 
-## Common Mistakes to Avoid:
+## Common Mistakes to Avoid
 
-### ❌ WRONG - Asking Claude to read files:
-```
+### ❌ WRONG - Asking Claude to read files
+
+```text
 "Please read the agent prompts in .claude/agent-prompts and tell me what they say"
 ```
+
 Result: Claude will summarize the files instead of following them
 
-### ❌ WRONG - Mentioning the files:
-```
+### ❌ WRONG - Mentioning the files
+
+```text
 "Use the prompts from base-prompt.md and utilities-agent.md"
 ```
+
 Result: Claude will look for and read these files
 
-### ✅ CORRECT - Direct instruction:
-```
+### ✅ CORRECT - Direct instruction
+
+```text
 [PASTE ENTIRE PROMPT CONTENT]
 
 Continue with the logger enhancement task from yesterday.
 ```
+
 Result: Claude acts as Agent 1 and continues work
 
-## Quick Test:
+## Quick Test
 
 After starting an agent, you can verify it understood by asking:
+
 - "What agent number are you and what's your primary responsibility?"
 - "What branch should you be working on?"
 - "What color is your VS Code theme?"

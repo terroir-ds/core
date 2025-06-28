@@ -7,11 +7,13 @@ Running multiple VS Code devcontainers simultaneously can be resource-intensive.
 ## Resource Usage Breakdown
 
 ### Full Setup (4 Agents)
+
 - **Memory**: 8-10GB RAM
 - **CPU**: 4-8 cores under load
 - **Storage**: ~2GB per container
 
 ### Minimal Setup (Core + Agent 1)
+
 - **Memory**: 4-5GB RAM
 - **CPU**: 2-4 cores under load
 - **Storage**: ~1GB per container
@@ -59,6 +61,7 @@ Add to VS Code settings to limit TypeScript server memory:
 ### 4. Sequential Development
 
 Instead of parallel development:
+
 1. Work in Core workspace
 2. Open Agent 1 only when needed
 3. Close agents when tasks complete
@@ -66,6 +69,7 @@ Instead of parallel development:
 ### 5. Monitor Resources
 
 Use your operating system's native tools:
+
 - **macOS**: Activity Monitor
 - **Linux**: htop, top, or System Monitor
 - **Windows**: Task Manager or Resource Monitor

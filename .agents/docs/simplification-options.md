@@ -18,11 +18,13 @@ git sparse-checkout set --no-cone '/*' '!/.claude' '!/.devcontainer/devcontainer
 ```
 
 **Pros:**
+
 - Files don't exist in agent worktrees at all
 - No merge conflicts for excluded files
 - Git handles everything automatically
 
 **Cons:**
+
 - Requires Git 2.25+
 - Less intuitive for newcomers
 - Need to remember to set up for each worktree
@@ -42,10 +44,12 @@ fi
 ```
 
 **Pros:**
+
 - Automatic cleanup
 - Works with normal git workflow
 
 **Cons:**
+
 - Hooks aren't versioned
 - Can be surprising behavior
 - Still have merge issues
@@ -54,7 +58,7 @@ fi
 
 Keep all agent configs in a separate branch:
 
-```
+```text
 main
 ├── (all code)
 ├── .devcontainer/Dockerfile
@@ -67,11 +71,13 @@ config/agents (orphan branch)
 ```
 
 **Pros:**
+
 - Complete separation
 - No merge conflicts ever
 - Can version agent configs separately
 
 **Cons:**
+
 - More complex mental model
 - Need tooling to apply configs
 - Harder to keep in sync
@@ -87,11 +93,13 @@ RUN /scripts/configure-agent.sh $AGENT_ROLE
 ```
 
 **Pros:**
+
 - No git tracking issues
 - Configs always fresh
 - Single source of truth
 
 **Cons:**
+
 - Can't easily customize per-agent
 - Requires rebuild for changes
 - Harder to debug
@@ -110,6 +118,7 @@ Store agent configs outside the repo:
 ```
 
 **Pros:**
+
 - Completely outside git
 - No merge issues
 - Easy to customize

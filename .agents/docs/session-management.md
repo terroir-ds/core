@@ -50,32 +50,36 @@ git add -A && git commit -m "feat: complete task X"
 ## Current Working State
 
 ### Git Status
-```
+
+```text
 M lib/utils/logger.ts
 A lib/utils/security.ts
 ```
 
 ### Recent Commits
-```
+
+```text
 abc123 feat: add security utilities
 def456 refactor: improve logger performance
 ```
 
 ### Current Tasks from AGENT-REGISTRY
+
 | Agent | Branch | Focus Area | Current Task |
 |-------|--------|------------|--------------|
 | Agent 1 | feat/utilities | Utility Development | Implementing security utilities |
 
 ## Session Notes
+
 - Working on: Security utility functions for input validation
 - Progress: Completed sanitizeHtml and escapeString functions
 - Next steps: Add validateEmail and validateUrl functions
 - Blockers: Need to coordinate with Agent 2 on types
 
 ## Important Context
+
 The security utilities need to integrate with the error handling
 system. Using the ValidationError class from @utils/errors.
-```
 
 ## Best Practices
 
@@ -107,21 +111,25 @@ system. Using the ValidationError class from @utils/errors.
 ## Integration with Task Management
 
 Sessions complement the task registry:
+
 - **Task Registry** (`.claude/tasks/AGENT-REGISTRY.md`): High-level task assignments
 - **Session Files** (`.claude/sessions/`): Detailed work-in-progress state
 
 ## Troubleshooting
 
 ### Session Not Loading
+
 - Check file exists: `ls -la .claude/sessions/`
 - Verify agent number matches
 - Run prompt generator with correct agent number
 
 ### Session File Corrupted
+
 - Delete and recreate: `rm .claude/sessions/agent1-latest.md`
 - Save new session: `.agents/scripts/container/session.sh save`
 
 ### Multiple Sessions
+
 - System only uses `agent{N}-latest.md`
 - Old timestamped sessions are kept for history
 - Clear old sessions: `rm .claude/sessions/agent1-session-*.md`

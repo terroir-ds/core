@@ -22,6 +22,7 @@ cd /path/to/terroir-core
 ```
 
 This will:
+
 - Open Core workspace (main development)
 - Open Agent 1 workspace (auxiliary tasks)
 - Create necessary directories
@@ -30,6 +31,7 @@ This will:
 ### 2. Wait for Containers to Start
 
 Each VS Code window will:
+
 1. Build/start its devcontainer
 2. Install dependencies
 3. Configure extensions
@@ -39,18 +41,21 @@ This takes 2-3 minutes per container on first run.
 ### 3. Verify Setup
 
 You should have 2 VS Code windows:
+
 - **Core**: Main terroir-core workspace
 - **Agent 1**: Auxiliary workspace at `.claude/multi-agent/workspaces/agent-1`
 
 ## Usage Guidelines
 
 ### Core Workspace
+
 - Primary development
 - Main git operations
 - Running tests
 - Building the project
 
 ### Agent 1 Workspace
+
 - Documentation tasks
 - Testing features
 - Exploring code
@@ -59,6 +64,7 @@ You should have 2 VS Code windows:
 ## Resource Monitoring
 
 Monitor resource usage with your OS tools:
+
 - **macOS**: Activity Monitor
 - **Linux**: htop or System Monitor
 - **Windows**: Task Manager
@@ -101,16 +107,19 @@ rm -rf .claude/multi-agent/workspaces/*
 ## Troubleshooting
 
 ### VS Code won't open
+
 - Check Docker is running
 - Verify `code` command works
 - Check file permissions
 
 ### High memory usage
+
 - Close unused agents
 - Restart TypeScript servers
 - Reduce extensions
 
 ### Slow performance
+
 - Use SSD storage
 - Increase Docker resources
 - Close other applications

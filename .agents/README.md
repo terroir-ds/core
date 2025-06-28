@@ -1,4 +1,33 @@
-# Multi-Agent Scripts Organization
+# Multi-Agent Development System
+
+This directory contains the complete multi-agent development tooling for Terroir Core.
+
+## Directory Structure
+
+```text
+.agents/
+├── docs/              # All documentation
+├── prompts/           # Agent prompt templates
+├── scripts/           # Automation scripts
+│   ├── host/         # Run from host machine
+│   └── container/    # Run inside containers
+└── templates/        # Configuration templates
+```
+
+## Quick Start
+
+See [docs/quick-start.md](docs/quick-start.md) for the fastest way to get started.
+
+## Documentation
+
+All documentation is in the [docs/](docs/) directory:
+
+- Quick start guides
+- Usage instructions
+- Technical details
+- Troubleshooting
+
+## Scripts Organization
 
 Scripts are organized by where they should be run:
 
@@ -12,7 +41,8 @@ These scripts should be run from your host machine (outside containers):
 - **`open-all-agents.sh`** - Open VS Code windows for all agents
 - **`migrate-from-shared.sh`** - One-time migration from old setup
 
-### Usage:
+### Usage
+
 ```bash
 # From main repo on host:
 ./.claude/multi-agent/scripts/host/host-setup.sh
@@ -32,7 +62,8 @@ These scripts run inside the agent containers and are accessible via `.claude` s
 - **`apply-extension-fixes.sh`** - Apply VS Code extension fixes
 - **`diagnose-extension-crash.sh`** - Diagnose VS Code issues
 
-### Usage:
+### Usage
+
 ```bash
 # From inside any agent container:
 .claude/multi-agent/scripts/container/generate-agent-prompt.sh 1
@@ -41,20 +72,23 @@ These scripts run inside the agent containers and are accessible via `.claude` s
 
 ## Quick Reference
 
-### Starting Your Day (Host):
+### Starting Your Day (Host)
+
 ```bash
 cd ~/terroir-core
 ./.claude/multi-agent/scripts/host/start-agents.sh
 ```
 
-### Starting Claude Session (Container):
+### Starting Claude Session (Container)
+
 ```bash
 # In Agent 1 container:
 .claude/multi-agent/scripts/container/generate-agent-prompt.sh 1
 # Copy output and paste as first message to Claude
 ```
 
-### Syncing Work (Container):
+### Syncing Work (Container)
+
 ```bash
 .claude/multi-agent/scripts/container/sync-agents.sh
 ```

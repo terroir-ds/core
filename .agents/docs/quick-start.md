@@ -11,6 +11,7 @@ cd /path/to/terroir-core
 ```
 
 This gives you:
+
 - ✅ 50% less memory usage
 - ✅ Simpler workflow
 - ✅ All the power you need for most tasks
@@ -25,16 +26,19 @@ This gives you:
 ## 🎯 Simple Daily Workflow
 
 ### Morning
+
 ```bash
 # Start minimal setup
 ./.claude/multi-agent/scripts/host/start-minimal-agents.sh
 ```
 
 ### During Development
+
 - **Agent 1** (Green): Write your utilities/features
 - **Core**: Test integration and merge
 
 ### Evening
+
 ```bash
 # Save and stop
 ./.claude/multi-agent/scripts/host/stop-agents.sh
@@ -50,6 +54,7 @@ This gives you:
 ## 🆘 Quick Fixes
 
 **Running slow?**
+
 ```bash
 # Switch to minimal setup
 ./.claude/multi-agent/scripts/host/stop-agents.sh
@@ -57,11 +62,13 @@ This gives you:
 ```
 
 **Need to check resource usage?**
+
 ```bash
 ./.claude/multi-agent/scripts/host/resource-monitor.sh
 ```
 
 **Want to stop everything?**
+
 ```bash
 ./.claude/multi-agent/scripts/host/stop-agents.sh
 ```

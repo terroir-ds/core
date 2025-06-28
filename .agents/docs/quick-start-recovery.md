@@ -3,6 +3,7 @@
 ## Immediate Recovery (After Crash/Reboot)
 
 ### 1. Identify Your Agent
+
 ```bash
 # Check which agent directory you're in
 pwd
@@ -14,7 +15,8 @@ git branch --show-current
 
 ### 2. Generate Your Prompt
 
-#### Quick Method (Recommended):
+#### Quick Method (Recommended)
+
 ```bash
 # Run from any agent directory (scripts available via .claude symlink):
 .claude/multi-agent/scripts/start-agent.sh [1|2|3]
@@ -26,12 +28,14 @@ git branch --show-current
 ```
 
 This will:
+
 - Generate the combined prompt
 - Save it to `/tmp/agentN-claude-prompt.txt`
 - Open it in VS Code (if available)
 - Show you how to copy it
 
-#### Manual Method:
+#### Manual Method
+
 ```bash
 # For Agent 1:
 cat /workspaces/terroir-core/.claude/agent-prompts/base/base-prompt.md \
@@ -67,7 +71,8 @@ cat /tmp/context.md >> /tmp/agent-prompt.md
    - "Check status and resume work"
 
 **Example First Message:**
-```
+
+```text
 [PASTE ALL PROMPT CONTENT HERE]
 
 I'm restarting after a system reboot. Please check current tasks and continue.
@@ -98,6 +103,7 @@ pnpm build
 ## Common Recovery Scenarios
 
 ### Scenario 1: Mid-Task Crash
+
 1. Use the quick start above
 2. Tell Claude: "I was working on [task]. Please check the current state and continue."
 
