@@ -47,6 +47,7 @@ EXCLUDE_FILES=(
 # Directories to exclude from merge
 EXCLUDE_DIRS=(
     ".claude"
+    ".agent-coordination"
 )
 
 echo "🔍 Fetching latest changes..."
@@ -63,6 +64,49 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     echo "❌ Merge cancelled"
     exit 1
 fi
+
+echo ""
+echo "🔍 Checking symlinks before merge..."
+
+# Function to fix symlinks
+fix_symlinks() {
+    local fixed=false
+    
+    # Check .claude symlink
+    if [ -L ".claude" ]; then
+        echo "✅ .claude is a symlink"
+    elif [ -d ".claude" ]; then
+        echo "🔧 .claude is a directory, converting to symlink..."
+        rm -rf .claude
+        ln -sf /workspaces/terroir-core/.claude .claude
+        fixed=true
+    else
+        echo "🔧 .claude missing, creating symlink..."
+        ln -sf /workspaces/terroir-core/.claude .claude
+        fixed=true
+    fi
+    
+    # Check .agent-coordination symlink
+    if [ -L ".agent-coordination" ]; then
+        echo "✅ .agent-coordination is a symlink"
+    elif [ -d ".agent-coordination" ]; then
+        echo "🔧 .agent-coordination is a directory, converting to symlink..."
+        rm -rf .agent-coordination
+        ln -sf /workspaces/terroir-core/.agent-coordination .agent-coordination
+        fixed=true
+    else
+        echo "🔧 .agent-coordination missing, creating symlink..."
+        ln -sf /workspaces/terroir-core/.agent-coordination .agent-coordination
+        fixed=true
+    fi
+    
+    if [ "$fixed" = true ]; then
+        echo "✅ Symlinks fixed!"
+    fi
+}
+
+# Fix symlinks before merge
+fix_symlinks
 
 echo ""
 echo "🔀 Starting merge..."
@@ -108,13 +152,17 @@ fi
 # Merge succeeded without conflicts, apply exclusions
 echo "✅ Merge successful, applying agent-specific exclusions..."
 
-# Reset excluded directories
+# Reset excluded directories - they should be symlinks, not real directories
 for dir in "${EXCLUDE_DIRS[@]}"; do
-    if [ -d "$dir" ]; then
-        echo "   Excluding directory: $dir/"
+    # If it exists as a real directory (not symlink), remove it
+    if [ -d "$dir" ] && [ ! -L "$dir" ]; then
+        echo "   Removing merged directory: $dir/"
         git reset HEAD "$dir/" 2>/dev/null || true
-        git checkout HEAD -- "$dir/" 2>/dev/null || true
         rm -rf "$dir" 2>/dev/null || true
+    elif [ -L "$dir" ]; then
+        # If it's a symlink, just reset from git but keep the symlink
+        echo "   Preserving symlink: $dir"
+        git reset HEAD "$dir" 2>/dev/null || true
     fi
 done
 
@@ -126,6 +174,10 @@ for file in "${EXCLUDE_FILES[@]}"; do
         git checkout HEAD -- "$file" 2>/dev/null || true
     fi
 done
+
+echo ""
+echo "🔍 Checking symlinks after merge..."
+fix_symlinks
 
 echo ""
 echo "📊 Changes staged for commit:"
