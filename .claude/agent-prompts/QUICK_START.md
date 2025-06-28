@@ -17,12 +17,12 @@ git branch --show-current
 #### Quick Method (Recommended):
 ```bash
 # Run from any agent directory (scripts available via .claude symlink):
-.claude/multi-agent/scripts/start-agent.sh [1|2|3]
+.claude/multi-agent/scripts/container/generate-agent-prompt.sh [1|2|3]
 
 # Or use agent-specific scripts:
-.claude/multi-agent/scripts/start-agent1.sh  # For utilities
-.claude/multi-agent/scripts/start-agent2.sh  # For infrastructure
-.claude/multi-agent/scripts/start-agent3.sh  # For documentation
+.claude/multi-agent/scripts/container/generate-agent-prompt-1.sh  # For utilities
+.claude/multi-agent/scripts/container/generate-agent-prompt-2.sh  # For infrastructure
+.claude/multi-agent/scripts/container/generate-agent-prompt-3.sh  # For documentation
 ```
 
 This will:
