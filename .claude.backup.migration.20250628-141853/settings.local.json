@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(grep:*)",
+      "mcp__ide__getDiagnostics",
+      "Bash(pnpm test:coverage:*)",
+      "Bash(pnpm test:*)",
+      "Bash(pnpm exec eslint:*)",
+      "Bash(pnpm exec tsc:*)",
+      "Bash(pnpm vitest run:*)",
+      "Bash(pnpm eslint:*)",
+      "Bash(pnpm tsc:*)",
+      "Bash(npm test:*)",
+      "Bash(npm run test:unit:*)",
+      "Bash(npm run test:type:*)",
+      "Bash(npx vitest run:*)",
+      "Bash(npx eslint:*)",
+      "Bash(pnpm vitest:*)",
+      "Bash(rg:*)",
+      "Bash(pnpm run lint:*)",
+      "Bash(npx vitest:*)",
+      "Bash(pnpm exec vitest:*)",
+      "Bash(npx typedoc:*)",
+      "Bash(pnpm docs:api:*)",
+      "Bash(cat:*)",
+      "Bash(pnpm typecheck:*)",
+      "Bash(tree:*)"
+    ],
+    "deny": []
+  }
+}

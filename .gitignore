@@ -126,3 +126,6 @@ Desktop.ini
 # NPM package files (for publishing)
 *.tgz
 terroir-core-*.tgz
+# Multi-agent tooling (shared across all branches)
+# Note: We track this in all branches for consistency
+# /.agents
