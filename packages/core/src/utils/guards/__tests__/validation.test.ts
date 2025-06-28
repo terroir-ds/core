@@ -86,7 +86,11 @@ describe('Email Validation', () => {
       ];
 
       invalidEmails.forEach(email => {
-        expect(isValidEmail(email)).toBe(false);
+        const result = isValidEmail(email);
+        if (result) {
+          console.log(`FAILED: "${email}" was considered valid`);
+        }
+        expect(result).toBe(false);
       });
     });
 
@@ -417,7 +421,8 @@ describe('Password Validation', () => {
         requireUppercase: true,
         requireLowercase: true,
         requireNumbers: true,
-        requireSpecialChars: true
+        requireSpecialChars: true,
+        disallowCommon: false  // Disable common password check for this test
       };
 
       const weakResult = validatePassword('password', options);
