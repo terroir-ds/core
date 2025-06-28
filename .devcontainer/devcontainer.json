@@ -9,10 +9,20 @@
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 
   // Resource limits for stability (especially with multi-agent setup)
+  // hostRequirements: Only used by cloud services (Codespaces, Gitpod, etc.)
+  // Has no effect on local Docker Desktop - kept for future cloud compatibility
+  "hostRequirements": {
+    "cpus": 2,
+    "memory": "4gb",
+    "storage": "32gb"
+  },
+  
+  // runArgs: Actually enforces resource limits in local Docker
   "runArgs": [
-    "--memory=4g",      // Maximum 4GB RAM
-    "--memory-reservation=1g",  // Minimum 1GB RAM guaranteed
-    "--cpus=4"          // Maximum 4 CPU cores
+    "--init",  // Helps prevent zombie processes and file locking issues
+    "--memory=4g",
+    "--memory-swap=4g",
+    "--cpus=4.0"
   ],
 
   // No custom mounts needed for the main repository
@@ -41,7 +51,8 @@
   "forwardPorts": [],
 
   // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "bash scripts/utils/post-create.sh",
+  // Adding a delay helps prevent "Text file busy" errors during VS Code Server setup
+  "postCreateCommand": "sleep 2 && bash scripts/utils/post-create.sh",
 
   // Configure tool-specific properties.
   "customizations": {
