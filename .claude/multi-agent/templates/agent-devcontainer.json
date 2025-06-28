@@ -7,11 +7,21 @@
   },
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 
-  // Resource limits for stability across multiple containers
+  // Resource limits for stability (especially with multi-agent setup)
+  // hostRequirements: Only used by cloud services (Codespaces, Gitpod, etc.)
+  // Has no effect on local Docker Desktop - kept for future cloud compatibility
+  "hostRequirements": {
+    "cpus": 2,
+    "memory": "4gb",
+    "storage": "32gb"
+  },
+
+  // runArgs: Actually enforces resource limits in local Docker
   "runArgs": [
-    "--memory=4g",      // Maximum 4GB RAM per container
-    "--memory-reservation=1g",  // Minimum 1GB RAM guaranteed
-    "--cpus=4"          // Maximum 4 CPU cores
+    "--init", // Helps prevent zombie processes and file locking issues
+    "--memory=4g",
+    "--memory-swap=4g",
+    "--cpus=4.0"
   ],
 
   // Mount terroir-core for git worktree access and shared coordination
@@ -41,7 +51,8 @@
   "forwardPorts": [],
 
   // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "bash scripts/utils/post-create.sh",
+  // Adding a delay helps prevent "Text file busy" errors during VS Code Server setup
+  "postCreateCommand": "sleep 2 && bash scripts/utils/post-create.sh",
 
   // Configure tool-specific properties.
   "customizations": {
@@ -49,33 +60,11 @@
       "extensions": [
         "esbenp.prettier-vscode",
         "dbaeumer.vscode-eslint",
-        "ms-vscode.vscode-typescript-next",
-        "usernamehw.errorlens",
-        "yoavbls.pretty-ts-errors",
-        "GitHub.vscode-pull-request-github",
-        "eamodio.gitlens",
-        "william-voyek.vscode-postgres",
-        "cweijan.vscode-redis-client",
-        "ms-azuretools.vscode-docker",
-        "yzhang.markdown-all-in-one",
         "DavidAnson.vscode-markdownlint",
-        "streetsidesoftware.code-spell-checker",
-        "christian-kohler.npm-intellisense",
-        "mikestead.dotenv",
-        "github.vscode-github-actions"
+        "streetsidesoftware.code-spell-checker"
       ],
       "settings": {
-        "terminal.integrated.defaultProfile.linux": "zsh",
-        "editor.formatOnSave": true,
-        "editor.defaultFormatter": "esbenp.prettier-vscode",
-        "editor.codeActionsOnSave": {
-          "source.fixAll.eslint": "explicit"
-        },
-        "typescript.updateImportsOnFileMove.enabled": "always",
-        "typescript.suggest.autoImports": true,
-        "typescript.preferences.includePackageJsonAutoImports": "auto",
-        "typescript.tsdk": "node_modules/typescript/lib",
-        "typescript.enablePromptUseWorkspaceTsdk": true
+        "terminal.integrated.defaultProfile.linux": "zsh"
       }
     }
   }

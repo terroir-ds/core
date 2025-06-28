@@ -115,6 +115,11 @@ for i in 1 2 3; do
         # Use agent-specific devcontainer.json if template exists
         if [ -f "../terroir-core/.claude/multi-agent/templates/agent-devcontainer.json" ]; then
             cp "../terroir-core/.claude/multi-agent/templates/agent-devcontainer.json" .devcontainer/devcontainer.json
+            
+            # Remove devcontainer.json from git tracking in the worktree
+            # This prevents it from showing as modified
+            git rm --cached .devcontainer/devcontainer.json 2>/dev/null || true
+            
             echo "✅ Copied agent-specific devcontainer config for Agent $i"
         else
             echo "✅ Copied devcontainer config for Agent $i"
@@ -305,6 +310,19 @@ SETTINGS_EOF
     rm -f .vscode/agent-overrides.json
     
     echo "✅ Configured Agent $i theme and settings"
+done
+
+# Clean up any existing tracked devcontainer.json files in agent worktrees
+echo -e "\n🧹 Cleaning up tracked devcontainer.json files in agent worktrees..."
+for i in 1 2 3; do
+    AGENT_DIR="$PARENT_DIR/terroir-agent$i"
+    if [ -d "$AGENT_DIR/.devcontainer" ] && [ -f "$AGENT_DIR/.devcontainer/devcontainer.json" ]; then
+        # Check if it's tracked and remove from index if so
+        if git --git-dir="$REPO_DIR/.git/worktrees/terroir-agent$i" --work-tree="$AGENT_DIR" ls-files --error-unmatch .devcontainer/devcontainer.json >/dev/null 2>&1; then
+            git --git-dir="$REPO_DIR/.git/worktrees/terroir-agent$i" --work-tree="$AGENT_DIR" rm --cached .devcontainer/devcontainer.json >/dev/null 2>&1 || true
+            echo "✅ Removed devcontainer.json from git tracking for Agent $i"
+        fi
+    fi
 done
 
 # No need for workspace files - using direct folder opening with settings overrides
