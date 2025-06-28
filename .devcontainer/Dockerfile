@@ -52,6 +52,8 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     libflite1 \
     # Additional tools for development
     jq \
+    # Clipboard support for better DX with agent scripts
+    xclip \
   && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
 # Install 1Password CLI
