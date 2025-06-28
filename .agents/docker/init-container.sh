@@ -4,7 +4,12 @@ set -e
 # Agent initialization script
 # Sets up the environment for both container and host contexts
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Script directory (works with both bash and zsh)
+if [ -n "${BASH_SOURCE[0]:-}" ]; then
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+else
+    SCRIPT_DIR="$(cd "$(dirname "${0:a}")" && pwd)"
+fi
 AGENTS_DIR="$(dirname "$SCRIPT_DIR")"
 WORKSPACE_ROOT="$(dirname "$AGENTS_DIR")"
 
@@ -99,10 +104,9 @@ if [ -n "$AGENT_NUMBER" ]; then
   
   # Load agent configuration
   source "$AGENTS_DIR/scripts/load-agent-config.sh"
-  load_agent_config
   
-  PURPOSE="${agent_purposes[$AGENT_NUMBER]:-unknown}"
-  BRANCH_NAME="${agent_branches[$AGENT_NUMBER]:-unknown}"
+  PURPOSE="${AGENT_PURPOSE[$AGENT_NUMBER]:-unknown}"
+  BRANCH_NAME="${AGENT_BRANCH[$AGENT_NUMBER]:-unknown}"
   
   echo -e "✓ Purpose: $PURPOSE"
   echo -e "✓ Expected branch: $BRANCH_NAME"
