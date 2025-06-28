@@ -124,6 +124,7 @@ Store agent configs outside the repo:
 - Easy to customize
 
 **Cons:**
+
 - Not versioned
 - Need to document setup
 - Can get out of sync
@@ -135,16 +136,18 @@ Store agent configs outside the repo:
 3. **Add setup automation** in host setup script
 4. **Document clearly** in README
 
-### Implementation Steps:
+### Implementation Steps
 
 1. Update `setup.sh` to configure sparse checkout:
+
 ```bash
 git sparse-checkout init --cone
 git sparse-checkout set --no-cone '/*' '!/.claude'
 ```
 
 2. Use `.gitignore` for agent-specific files:
-```
+
+```gitignore
 # In agent worktrees
 .devcontainer/devcontainer.json
 .vscode/settings.json
