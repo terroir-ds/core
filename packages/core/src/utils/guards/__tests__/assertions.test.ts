@@ -353,7 +353,7 @@ describe('Specialized Assertions', () => {
     it('should handle regex flags', () => {
       try {
         assertPattern('HELLO', /^hello$/i);
-      } catch (error) {
+      } catch {
         // Should not throw, but if it did, flags should be included
       }
 
@@ -376,8 +376,8 @@ describe('Specialized Assertions', () => {
 
     it('should throw for objects missing properties', () => {
       const obj = { id: 1, name: 'John' };
-      expect(() => assertProperties(obj, ['id', 'name', 'email'])).toThrow(AssertionError);
-      expect(() => assertProperties(obj, ['missing'])).toThrow(AssertionError);
+      expect(() => assertProperties(obj, ['id', 'name', 'email' as keyof typeof obj])).toThrow(AssertionError);
+      expect(() => assertProperties(obj, ['missing' as keyof typeof obj])).toThrow(AssertionError);
     });
 
     it('should throw for non-objects', () => {
@@ -388,7 +388,7 @@ describe('Specialized Assertions', () => {
     it('should list missing properties in error message', () => {
       const obj = { id: 1, name: 'John' };
       try {
-        assertProperties(obj, ['id', 'name', 'email', 'phone']);
+        assertProperties(obj, ['id', 'name', 'email' as keyof typeof obj, 'phone' as keyof typeof obj]);
       } catch (error) {
         expect((error as AssertionError).message).toBe('Object missing required properties: email, phone');
       }
@@ -397,7 +397,7 @@ describe('Specialized Assertions', () => {
     it('should include property information in context', () => {
       const obj = { id: 1 };
       try {
-        assertProperties(obj, ['id', 'name', 'email']);
+        assertProperties(obj, ['id', 'name' as keyof typeof obj, 'email' as keyof typeof obj]);
       } catch (error) {
         expect((error as AssertionError).context).toMatchObject({
           missing: ['name', 'email'],
@@ -456,10 +456,10 @@ describe('Utility Assertions', () => {
   });
 
   describe('softAssert', () => {
-    let consoleMock: any;
+    // consoleMock was removed as it's not used in the test
 
     beforeEach(() => {
-      consoleMock = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      vi.spyOn(console, 'warn').mockImplementation(() => {});
     });
 
     it('should return true for truthy values without throwing', () => {
@@ -533,7 +533,7 @@ describe('Custom Assertions', () => {
       );
 
       try {
-        assertPositive(-1);
+        (assertPositive as (value: unknown) => void)(-1);
       } catch (error) {
         expect((error as AssertionError).message).toBe('Must be a positive number');
       }
@@ -547,7 +547,7 @@ describe('Custom Assertions', () => {
       );
 
       try {
-        assertInRange(150);
+        (assertInRange as (value: unknown) => void)(150);
       } catch (error) {
         expect((error as AssertionError).message).toBe('Value 150 must be between 0 and 100');
         expect((error as AssertionError).code).toBe('OUT_OF_RANGE');
@@ -586,7 +586,7 @@ describe('Custom Assertions', () => {
       );
 
       try {
-        assertString(123);
+        (assertString as (value: unknown) => void)(123);
       } catch (error) {
         expect((error as AssertionError).context).toMatchObject({
           value: '123',

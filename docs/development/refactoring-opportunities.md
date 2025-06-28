@@ -107,7 +107,7 @@ Significant duplication identified across guard utilities:
 
 ## Completed Refactorings
 
-_None yet - this is a new tracking document_
+### None yet - this is a new tracking document
 
 ---
 
