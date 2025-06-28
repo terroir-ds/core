@@ -1,14 +1,38 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Agent container management script
 
 set -euo pipefail
 
-# Script directory
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Script directory (works with both bash and zsh)
+if [ -n "${BASH_SOURCE[0]:-}" ]; then
+    # Bash
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+else
+    # Zsh
+    SCRIPT_DIR="$(cd "$(dirname "${0:a}")" && pwd)"
+fi
 BASE_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # Source the agent configuration
 source "$BASE_DIR/scripts/load-agent-config.sh"
+
+# Helper function to get agent properties by number
+get_agent_property() {
+    local agent_num="$1"
+    local property="$2"
+    
+    local idx=$(find_agent_index "$agent_num")
+    if [ -z "$idx" ]; then
+        return 1
+    fi
+    
+    case "$property" in
+        purpose) echo "${AGENT_PURPOSE[$idx]}" ;;
+        branch) echo "${AGENT_BRANCH[$idx]}" ;;
+        color) echo "${AGENT_COLOR[$idx]}" ;;
+        *) return 1 ;;
+    esac
+}
 
 # Colors for output
 RED='\033[0;31m'
@@ -35,9 +59,12 @@ show_help() {
     echo "  prompt [agent]   - Generate Claude prompt and copy to clipboard"
     echo ""
     echo "Agents:"
-    for num in $(echo "${!AGENT_PURPOSE[@]}" | tr ' ' '\n' | sort -n); do
+    local i
+    for i in "${!AGENT_NUMS[@]}"; do
+        local num="${AGENT_NUMS[$i]}"
+        local purpose="${AGENT_PURPOSE[$i]}"
         if [ "$num" != "0" ]; then
-            echo "  $num or ${AGENT_PURPOSE[$num]}"
+            echo "  $num or $purpose"
         fi
     done
     echo ""
@@ -52,7 +79,7 @@ get_agent_number() {
     local input=$1
     local num=$(resolve_agent_number "$input")
     
-    if [ -z "$num" ] || [ "$num" == "0" ]; then
+    if [ -z "$num" ] || [ "$num" = "0" ]; then
         echo "Error: Invalid agent '$input'. Core agent (0) doesn't run in Docker." >&2
         return 1
     fi
@@ -134,7 +161,7 @@ show_status() {
     
     # Show agents in numerical order
     for num in $(echo "${!AGENT_PURPOSE[@]}" | tr ' ' '\n' | sort -n); do
-        if [ "$num" == "0" ]; then
+        if [ "$num" = "0" ]; then
             echo -e "  Core (0): ${GREEN}VS Code${NC} (not dockerized)"
             continue
         fi
@@ -219,7 +246,7 @@ generate_prompt() {
     local agent_num=$(get_agent_number "$agent") || return 1
     
     # Special handling for core
-    if [ "$agent_num" == "0" ]; then
+    if [ "$agent_num" = "0" ]; then
         # Core runs locally, not in container
         echo -e "${GREEN}🏠 Generating Core agent prompt...${NC}"
         cd "$BASE_DIR/scripts"

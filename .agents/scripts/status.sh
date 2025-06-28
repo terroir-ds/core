@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Quick status check for current agent and coordination state
 
 echo "🔍 Agent Status Report - $(date +%H:%M:%S)"

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # session.sh - Manage agent session files
 # Usage: session.sh [save|clear|show] [agent]
 
@@ -37,7 +37,7 @@ if [ -z "$AGENT_NUM" ]; then
 fi
 
 # Get agent info
-if [ "$AGENT_NUM" == "0" ]; then
+if [ "$AGENT_NUM" = "0" ]; then
     AGENT_NAME="Core"
     AGENT_DESC="Core Integration"
 else
