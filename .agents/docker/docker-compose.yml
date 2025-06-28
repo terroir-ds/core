@@ -1,0 +1,119 @@
+version: '3.8'
+
+# Shared configuration for all agent containers
+x-agent-base: &agent-base
+  build:
+    context: .
+    dockerfile: Dockerfile.agent
+  stdin_open: true
+  tty: true
+  working_dir: /workspace
+  volumes:
+    # Mount the main workspace
+    - ../../:/workspace:cached
+    # Share git config and SSH keys for authentication
+    - ~/.gitconfig:/home/node/.gitconfig:ro
+    - ~/.ssh:/home/node/.ssh:ro
+    # Share pnpm cache for faster installs
+    - ~/.pnpm-store:/home/node/.pnpm-store:cached
+  environment:
+    # Enable color support
+    - TERM=xterm-256color
+    - COLORTERM=truecolor
+    # Node.js optimization
+    - NODE_ENV=development
+    - NODE_OPTIONS=--max-old-space-size=3072
+  # Resource constraints
+  deploy:
+    resources:
+      limits:
+        cpus: '2.0'
+        memory: 4G
+      reservations:
+        cpus: '0.5'
+        memory: 1G
+  # Network isolation
+  networks:
+    - agent-network
+  # Security options
+  security_opt:
+    - no-new-privileges:true
+  cap_drop:
+    - ALL
+  cap_add:
+    - CHOWN
+    - SETUID
+    - SETGID
+
+services:
+  # Test runner agent - focuses on running tests and test coverage
+  test-agent:
+    <<: *agent-base
+    container_name: terroir-test-agent
+    hostname: test-agent
+    environment:
+      - AGENT_ROLE=test
+      - AGENT_COLOR=green
+      - TERM=xterm-256color
+      - COLORTERM=truecolor
+      - NODE_ENV=test
+      - NODE_OPTIONS=--max-old-space-size=3072
+
+  # Documentation agent - handles documentation tasks and generation
+  docs-agent:
+    <<: *agent-base
+    container_name: terroir-docs-agent
+    hostname: docs-agent
+    environment:
+      - AGENT_ROLE=docs
+      - AGENT_COLOR=blue
+      - TERM=xterm-256color
+      - COLORTERM=truecolor
+      - NODE_ENV=development
+      - NODE_OPTIONS=--max-old-space-size=3072
+
+  # Build agent - handles build processes and optimization
+  build-agent:
+    <<: *agent-base
+    container_name: terroir-build-agent
+    hostname: build-agent
+    environment:
+      - AGENT_ROLE=build
+      - AGENT_COLOR=yellow
+      - TERM=xterm-256color
+      - COLORTERM=truecolor
+      - NODE_ENV=production
+      - NODE_OPTIONS=--max-old-space-size=3072
+
+  # Refactor agent - handles code refactoring and improvements
+  refactor-agent:
+    <<: *agent-base
+    container_name: terroir-refactor-agent
+    hostname: refactor-agent
+    environment:
+      - AGENT_ROLE=refactor
+      - AGENT_COLOR=magenta
+      - TERM=xterm-256color
+      - COLORTERM=truecolor
+      - NODE_ENV=development
+      - NODE_OPTIONS=--max-old-space-size=3072
+
+  # Optional: Performance agent - for performance testing and optimization
+  perf-agent:
+    <<: *agent-base
+    container_name: terroir-perf-agent
+    hostname: perf-agent
+    profiles:
+      - optional
+    environment:
+      - AGENT_ROLE=perf
+      - AGENT_COLOR=red
+      - TERM=xterm-256color
+      - COLORTERM=truecolor
+      - NODE_ENV=production
+      - NODE_OPTIONS=--max-old-space-size=3072
+
+networks:
+  agent-network:
+    driver: bridge
+    name: terroir-agent-network

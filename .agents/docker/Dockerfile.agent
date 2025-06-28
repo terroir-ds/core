@@ -1,0 +1,77 @@
+# Lightweight Docker image for multi-agent terminal-based development
+# Optimized for resource efficiency while maintaining developer productivity
+
+FROM mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm
+
+# Install essential development tools
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+  && apt-get -y install --no-install-recommends \
+    # Version control
+    git \
+    # Better shell experience
+    zsh \
+    zsh-autosuggestions \
+    zsh-syntax-highlighting \
+    # Terminal utilities
+    tmux \
+    htop \
+    tree \
+    ripgrep \
+    fd-find \
+    bat \
+    exa \
+    # File operations
+    rsync \
+    # JSON/YAML processing
+    jq \
+    yq \
+    # Process management
+    procps \
+    # Network utilities (for debugging)
+    curl \
+    wget \
+    # Build essentials (minimal)
+    build-essential \
+    # Python (for some tooling)
+    python3-pip \
+  && apt-get clean -y && rm -rf /var/lib/apt/lists/*
+
+# Install oh-my-zsh for better terminal experience
+RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+
+# Configure zsh with a minimal but productive setup
+RUN echo 'export ZSH="$HOME/.oh-my-zsh"' >> ~/.zshrc \
+  && echo 'ZSH_THEME="agnoster"' >> ~/.zshrc \
+  && echo 'plugins=(git node npm docker zsh-autosuggestions zsh-syntax-highlighting)' >> ~/.zshrc \
+  && echo 'source $ZSH/oh-my-zsh.sh' >> ~/.zshrc \
+  && echo 'alias ll="exa -la"' >> ~/.zshrc \
+  && echo 'alias cat="bat"' >> ~/.zshrc \
+  && echo 'alias find="fd"' >> ~/.zshrc \
+  && echo 'alias grep="rg"' >> ~/.zshrc
+
+# Set up Node.js environment
+ARG USERNAME=node
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+
+# Enable corepack as root
+RUN corepack enable
+
+USER $USERNAME
+
+# Configure shell and package manager
+ENV SHELL=/bin/zsh
+ENV PNPM_HOME=/home/${USERNAME}/.local/share/pnpm
+ENV PATH=${PNPM_HOME}:$PATH
+
+# Prepare pnpm
+RUN corepack prepare pnpm@10.12.3 --activate \
+  && pnpm setup
+
+# Add agent-specific prompt customization
+RUN echo 'export AGENT_ROLE="${AGENT_ROLE:-agent}"' >> ~/.zshrc \
+  && echo 'export AGENT_COLOR="${AGENT_COLOR:-cyan}"' >> ~/.zshrc \
+  && echo 'PROMPT="%{$fg[$AGENT_COLOR]%}[$AGENT_ROLE]%{$reset_color%} $PROMPT"' >> ~/.zshrc
+
+# Set zsh as default shell
+CMD ["/bin/zsh"]
