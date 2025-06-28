@@ -8,11 +8,11 @@ if [ -z "$AGENT_NUM" ]; then
     exit 1
 fi
 
-# Create sessions directory
-mkdir -p ../../prompts/sessions
+# Create sessions directory in .claude
+mkdir -p /workspaces/terroir-core/.claude/sessions
 
 # Generate session file
-SESSION_FILE="../../prompts/sessions/agent${AGENT_NUM}-session-$(date +%Y%m%d-%H%M%S).md"
+SESSION_FILE="/workspaces/terroir-core/.claude/sessions/agent${AGENT_NUM}-session-$(date +%Y%m%d-%H%M%S).md"
 
 cat > "$SESSION_FILE" << EOF
 # Agent $AGENT_NUM Session Context
@@ -50,7 +50,7 @@ fi)
 
 ## Recovery Instructions
 To resume this session:
-1. Run: \`.claude/multi-agent/scripts/container/generate-agent-prompt.sh $AGENT_NUM\`
+1. Run: \`.agents/scripts/container/prompt.sh $AGENT_NUM\`
 2. Add this context after the base prompt
 3. Continue with the work described above
 EOF
@@ -61,6 +61,6 @@ echo "To view: cat $SESSION_FILE"
 echo "To edit: code $SESSION_FILE"
 
 # Also save a "latest" symlink for easy access
-ln -sf "$SESSION_FILE" "../../prompts/sessions/agent${AGENT_NUM}-latest.md"
+ln -sf "$SESSION_FILE" "/workspaces/terroir-core/.claude/sessions/agent${AGENT_NUM}-latest.md"
 echo ""
 echo "Quick access: cat .claude/sessions/agent${AGENT_NUM}-latest.md"
