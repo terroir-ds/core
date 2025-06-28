@@ -21,7 +21,6 @@
   "eslint.lintTask.enable": true,
   "eslint.format.enable": true,
   "npm.packageManager": "npm",
-  "search-node-modules.path": "node_modules",
   "javascript.format.enable": true,
   "javascript.format.semicolons": "insert",
   "javascript.preferences.quoteStyle": "single",
@@ -35,5 +34,20 @@
   },
   "editor.fontFamily": "'Intel One Mono', 'Roboto Mono for Powerline', monospace",
   "editor.fontSize": 13,
-  "// Note: cSpell configuration is now in .vscode/cspell.json": "Agents can edit this file"
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/dist/**": true,
+    "**/coverage/**": true,
+    "**/.pnpm/**": true,
+    "**/terroir-agent*/**": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/coverage": true,
+    "**/.git": true,
+    "**/.pnpm": true
+  }
 }

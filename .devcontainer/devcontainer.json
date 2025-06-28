@@ -42,33 +42,11 @@
       "extensions": [
         "esbenp.prettier-vscode",
         "dbaeumer.vscode-eslint",
-        "ms-vscode.vscode-typescript-next",
-        "usernamehw.errorlens",
-        "yoavbls.pretty-ts-errors",
-        "GitHub.vscode-pull-request-github",
-        "eamodio.gitlens",
-        "william-voyek.vscode-postgres",
-        "cweijan.vscode-redis-client",
-        "ms-azuretools.vscode-docker",
-        "yzhang.markdown-all-in-one",
         "DavidAnson.vscode-markdownlint",
-        "streetsidesoftware.code-spell-checker",
-        "christian-kohler.npm-intellisense",
-        "mikestead.dotenv",
-        "github.vscode-github-actions"
+        "streetsidesoftware.code-spell-checker"
       ],
       "settings": {
-        "terminal.integrated.defaultProfile.linux": "zsh",
-        "editor.formatOnSave": true,
-        "editor.defaultFormatter": "esbenp.prettier-vscode",
-        "editor.codeActionsOnSave": {
-          "source.fixAll.eslint": "explicit"
-        },
-        "typescript.updateImportsOnFileMove.enabled": "always",
-        "typescript.suggest.autoImports": true,
-        "typescript.preferences.includePackageJsonAutoImports": "auto",
-        "typescript.tsdk": "node_modules/typescript/lib",
-        "typescript.enablePromptUseWorkspaceTsdk": true
+        "terminal.integrated.defaultProfile.linux": "zsh"
       }
     }
   }
