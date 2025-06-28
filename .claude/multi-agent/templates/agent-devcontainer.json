@@ -7,6 +7,13 @@
   },
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 
+  // Resource limits for stability across multiple containers
+  "runArgs": [
+    "--memory=4g",      // Maximum 4GB RAM per container
+    "--memory-reservation=1g",  // Minimum 1GB RAM guaranteed
+    "--cpus=4"          // Maximum 4 CPU cores
+  ],
+
   // Mount terroir-core for git worktree access and shared coordination
   "mounts": [
     "source=${localWorkspaceFolder}/../terroir-core,target=/workspaces/terroir-core,type=bind,consistency=cached"

@@ -8,6 +8,13 @@
   },
   "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 
+  // Resource limits for stability (especially with multi-agent setup)
+  "runArgs": [
+    "--memory=4g",      // Maximum 4GB RAM
+    "--memory-reservation=1g",  // Minimum 1GB RAM guaranteed
+    "--cpus=4"          // Maximum 4 CPU cores
+  ],
+
   // No custom mounts needed for the main repository
   // Agent worktrees will mount this repo for git access and coordination
   "mounts": [],
