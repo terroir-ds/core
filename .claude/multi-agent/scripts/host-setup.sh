@@ -88,8 +88,18 @@ for i in 1 2 3; do
     rm -rf .claude .agent-coordination 2>/dev/null || true
     rm -rf .devcontainer/.devcontainer 2>/dev/null || true
     
-    # Note: Symbolic links to terroir-core directories will be created inside the container
-    # by post-create.sh to ensure they use the correct container paths
+    # Create symbolic links to terroir-core directories
+    # Using container paths for consistency with devcontainer environment
+    ln -sf /workspaces/terroir-core/.claude .claude
+    ln -sf /workspaces/terroir-core/.agent-coordination .agent-coordination
+    
+    # Verify the symbolic links were created correctly
+    if [ -L ".claude" ] && [ -L ".agent-coordination" ]; then
+        echo "✅ Created symbolic links for Agent $i:"
+        ls -la | grep -E "^l.*(.claude|.agent-coordination)" | sed 's/^/    /'
+    else
+        echo "❌ Failed to create symbolic links for Agent $i"
+    fi
     
     # Copy .env file if it exists in main repo (needed for devcontainer)
     if [ -f "../terroir-core/.env" ]; then
@@ -358,6 +368,7 @@ echo ""
 echo "3. Click 'Reopen in Container' for each window"
 echo ""
 echo "4. Each agent will have:"
+echo "   - Symbolic links to shared .claude and .agent-coordination directories"
 echo "   - Shared settings from the main repo (.vscode/settings.json)"
 echo "   - Agent-specific color overrides (not committed to git)"
 echo "   - Environment variables for easy agent identification"
