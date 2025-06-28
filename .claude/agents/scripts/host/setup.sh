@@ -30,7 +30,7 @@ if [ -d "$PARENT_DIR/terroir-shared" ]; then
     echo "⚠️  Found existing terroir-shared directory from old setup."
     echo "   You should run the migration script first:"
     echo ""
-    echo "   $REPO_DIR/.claude/multi-agent/scripts/migrate-from-shared.sh"
+    echo "   $REPO_DIR/.claude/agents/scripts/migrate-from-shared.sh"
     echo ""
     echo "   This will migrate your coordination files to terroir-core."
     echo ""
@@ -113,8 +113,8 @@ for i in 1 2 3; do
         cp -r "../terroir-core/.devcontainer" .devcontainer
         
         # Use agent-specific devcontainer.json if template exists
-        if [ -f "../terroir-core/.claude/multi-agent/templates/agent-devcontainer.json" ]; then
-            cp "../terroir-core/.claude/multi-agent/templates/agent-devcontainer.json" .devcontainer/devcontainer.json
+        if [ -f "../terroir-core/.claude/agents/templates/devcontainer.json" ]; then
+            cp "../terroir-core/.claude/agents/templates/devcontainer.json" .devcontainer/devcontainer.json
             
             # Remove devcontainer.json from git tracking in the worktree
             # This prevents it from showing as modified
