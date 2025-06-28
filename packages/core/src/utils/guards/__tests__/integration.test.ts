@@ -104,6 +104,8 @@ describe('Guards Integration Tests', () => {
       // Use detailed validation for specific fields
       const errors: ValidationError[] = [];
       const typedData = data as any;
+      const profile = typedData.profile;
+      const preferences = typedData.preferences;
 
       // Email validation
       const emailResult = validateEmail(typedData.email);

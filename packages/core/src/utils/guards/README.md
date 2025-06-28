@@ -37,8 +37,7 @@ function processValue(value: unknown) {
   
   throw new Error('Invalid value');
 }
-```
-
+```bash
 ### Assertions (`assertions.ts`)
 
 Runtime assertions that throw on failure with proper type narrowing.
@@ -54,8 +53,7 @@ function calculatePercentage(value: number | undefined, total: number) {
   
   return (value / total) * 100;
 }
-```
-
+```bash
 ### Validation (`validation.ts`)
 
 Common validation patterns with detailed error reporting.
@@ -78,8 +76,7 @@ const validateCompanyEmail = composeValidators(
     ? { valid: true, value: email }
     : { valid: false, errors: [{ message: 'Must be company email' }] }
 );
-```
-
+```bash
 ### Predicates (`predicates.ts`)
 
 Reusable, composable predicate functions.
@@ -95,8 +92,7 @@ const isValidName = and(hasMinLength(2), not(isEmpty));
 const validUsers = users.filter(user => 
   isValidAge(user.age) && isValidName(user.name)
 );
-```
-
+```bash
 ## Performance
 
 All type guards are optimized for performance:
@@ -147,8 +143,7 @@ if (typeof value === 'string' && value != null) {
 if (isString(value) && isDefined(value)) {
   // ...
 }
-```
-
+```bash
 ## Migration Guide
 
 ### From Manual Type Checks
@@ -165,8 +160,7 @@ import { isString, isDefined, isArray } from '@utils/guards';
 if (isString(value)) { /* ... */ }
 if (isDefined(value)) { /* ... */ }
 if (isArray(value)) { /* ... */ }
-```
-
+```bash
 ### From Existing Error Handling
 
 ```typescript
