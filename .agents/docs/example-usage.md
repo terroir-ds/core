@@ -4,21 +4,19 @@
 
 ### Step 1: Combine the prompts on your machine
 
-```bash
+````bash
 cd /workspaces/terroir-agent1
 cat /workspaces/terroir-core/.claude/agent-prompts/base/base-prompt.md \
     /workspaces/terroir-core/.claude/agent-prompts/agents/utilities-agent.md \
     > /tmp/start-agent.txt
-```
-
+```text
 ### Step 2: Open and copy the content
 
 ```bash
 # Open in VS Code or your editor
 code /tmp/start-agent.txt
 # Select all (Ctrl+A) and Copy (Ctrl+C)
-```
-
+```yaml
 ### Step 3: Start new Claude session and paste
 
 Your FIRST message to Claude should look like this:
@@ -65,16 +63,14 @@ I'm starting a new session. Please check the current state of utilities developm
 
 ```text
 "Please read the agent prompts in .claude/agent-prompts and tell me what they say"
-```
-
+```text
 Result: Claude will summarize the files instead of following them
 
 ### ❌ WRONG - Mentioning the files
 
 ```text
 "Use the prompts from base-prompt.md and utilities-agent.md"
-```
-
+```text
 Result: Claude will look for and read these files
 
 ### ✅ CORRECT - Direct instruction
@@ -83,7 +79,7 @@ Result: Claude will look for and read these files
 [PASTE ENTIRE PROMPT CONTENT]
 
 Continue with the logger enhancement task from yesterday.
-```
+````
 
 Result: Claude acts as Agent 1 and continues work
 

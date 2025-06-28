@@ -4,12 +4,11 @@
 
 For most users, the minimal setup with Core + Agent 1 is recommended:
 
-```bash
+````bash
 # From your host machine (not in container):
 cd /path/to/terroir-core
 ./.claude/multi-agent/scripts/host/start-minimal-agents.sh
-```
-
+```text
 This gives you:
 
 - ✅ 50% less memory usage
@@ -30,8 +29,7 @@ This gives you:
 ```bash
 # Start minimal setup
 ./.claude/multi-agent/scripts/host/start-minimal-agents.sh
-```
-
+```yaml
 ### During Development
 
 - **Agent 1** (Green): Write your utilities/features
@@ -42,8 +40,7 @@ This gives you:
 ```bash
 # Save and stop
 ./.claude/multi-agent/scripts/host/stop-agents.sh
-```
-
+```text
 ## 💡 Pro Tips
 
 1. **Start small**: Use minimal setup first
@@ -59,18 +56,16 @@ This gives you:
 # Switch to minimal setup
 ./.claude/multi-agent/scripts/host/stop-agents.sh
 ./.claude/multi-agent/scripts/host/start-minimal-agents.sh
-```
-
+```text
 **Need to check resource usage?**
 
 ```bash
 ./.claude/multi-agent/scripts/host/resource-monitor.sh
-```
-
+```text
 **Want to stop everything?**
 
 ```bash
 ./.claude/multi-agent/scripts/host/stop-agents.sh
-```
+````
 
 Remember: **Minimal setup handles 90% of development needs!**

@@ -24,11 +24,10 @@ Running multiple VS Code devcontainers simultaneously can be resource-intensive.
 
 Instead of running all 4 agents, use the minimal setup:
 
-```bash
+````bash
 # From host machine
 ./.claude/multi-agent/scripts/host/start-minimal-agents.sh
-```
-
+```text
 This reduces resource usage by ~50%.
 
 ### 2. Reduce VS Code Extensions
@@ -45,8 +44,7 @@ Edit `.claude/multi-agent/templates/agent-devcontainer.json` to disable non-esse
     // Comment out others
   ]
 }
-```
-
+```text
 ### 3. Configure TypeScript Server
 
 Add to VS Code settings to limit TypeScript server memory:
@@ -56,8 +54,7 @@ Add to VS Code settings to limit TypeScript server memory:
   "typescript.tsserver.maxTsServerMemory": 2048,
   "typescript.tsserver.experimental.enableProjectDiagnostics": false
 }
-```
-
+```yaml
 ### 4. Sequential Development
 
 Instead of parallel development:
@@ -86,8 +83,7 @@ The devcontainer configurations now include resource limits by default:
     "--cpus=4"                  // Maximum 4 CPU cores
   ]
 }
-```
-
+```text
 These limits help prevent any single container from consuming all system resources, improving stability when running multiple VS Code instances.
 
 ### 7. Disable Unused Services
@@ -100,8 +96,7 @@ In devcontainer.json, remove unused features:
     // Remove unused features
   }
 }
-```
-
+```text
 ### 8. Use Lightweight Base Image
 
 Consider using a minimal Node.js image:
@@ -110,8 +105,7 @@ Consider using a minimal Node.js image:
 {
   "image": "mcr.microsoft.com/devcontainers/javascript-node:18-bullseye"
 }
-```
-
+```text
 ## Performance Tips
 
 ### VS Code Settings
@@ -124,18 +118,17 @@ Consider using a minimal Node.js image:
     "**/.git/objects/**": true,
     "**/dist/**": true
   },
-  
+
   // Disable telemetry
   "telemetry.telemetryLevel": "off",
-  
+
   // Limit search
   "search.exclude": {
     "**/node_modules": true,
     "**/dist": true
   }
 }
-```
-
+```yaml
 ### Development Workflow
 
 1. **Start Small**: Begin with Core only
@@ -188,4 +181,4 @@ docker system prune -a
 
 # Restart TypeScript servers
 pkill -f tsserver
-```
+````

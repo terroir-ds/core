@@ -8,7 +8,7 @@ These prompts are **instructions for Claude to follow** when starting or restart
 
 ### Step 1: Generate the Combined Prompt
 
-```bash
+````bash
 # DO NOT ask Claude to read these files!
 # Instead, combine them yourself:
 
@@ -20,8 +20,7 @@ cat base/base-prompt.md agents/infrastructure-agent.md > /tmp/my-prompt.txt
 
 # For Documentation Agent (Agent 3):
 cat base/base-prompt.md agents/documentation-agent.md > /tmp/my-prompt.txt
-```
-
+```text
 ### Step 2: Copy the Combined Prompt
 
 Open `/tmp/my-prompt.txt` in your editor and copy ALL the content.
@@ -39,7 +38,7 @@ After pasting the base instructions, you can add context like:
 
 ```text
 I'm restarting after a system reboot. Please check the current status and continue with assigned tasks.
-```
+````
 
 ## Example of WRONG Usage
 

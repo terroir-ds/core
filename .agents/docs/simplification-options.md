@@ -11,12 +11,11 @@
 
 Use git's sparse-checkout feature to exclude files at the git level:
 
-```bash
+````bash
 # In agent worktree
 git sparse-checkout init --cone
 git sparse-checkout set --no-cone '/*' '!/.claude' '!/.devcontainer/devcontainer.json' '!/.vscode/settings.json'
-```
-
+```yaml
 **Pros:**
 
 - Files don't exist in agent worktrees at all
@@ -41,8 +40,7 @@ if [[ $(git branch --show-current) =~ ^feat/(utilities|infrastructure|documentat
     ln -sf /workspaces/terroir-core/.claude .claude
     # Reset other agent-specific files
 fi
-```
-
+```yaml
 **Pros:**
 
 - Automatic cleanup
@@ -68,8 +66,7 @@ config/agents (orphan branch)
 ├── .claude/
 ├── devcontainer-templates/
 └── vscode-settings/
-```
-
+```yaml
 **Pros:**
 
 - Complete separation
@@ -90,8 +87,7 @@ Generate agent-specific files at container build time:
 # In Dockerfile
 ARG AGENT_ROLE
 RUN /scripts/configure-agent.sh $AGENT_ROLE
-```
-
+```yaml
 **Pros:**
 
 - No git tracking issues
@@ -115,8 +111,7 @@ Store agent configs outside the repo:
 │   └── settings.json
 ├── agent2/
 └── agent3/
-```
-
+```yaml
 **Pros:**
 
 - Completely outside git
@@ -143,15 +138,14 @@ Store agent configs outside the repo:
 ```bash
 git sparse-checkout init --cone
 git sparse-checkout set --no-cone '/*' '!/.claude'
-```
-
+```text
 2. Use `.gitignore` for agent-specific files:
 
 ```gitignore
 # In agent worktrees
 .devcontainer/devcontainer.json
 .vscode/settings.json
-```
+````
 
 3. Keep current symlink approach for .claude access
 

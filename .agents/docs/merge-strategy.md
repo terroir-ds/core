@@ -36,15 +36,14 @@ The multi-agent setup creates a complex merge scenario:
 
 ### 1. Merging Core → Agent (Updating agents with core changes)
 
-```bash
+````bash
 # On agent branch
 git merge feat/initial-setup --no-commit
 git reset HEAD .claude/
 git checkout HEAD -- .devcontainer/devcontainer.json
 git checkout HEAD -- .vscode/settings.json
 git commit
-```
-
+```text
 ### 2. Merging Agent → Core (Integrating agent work)
 
 ```bash
@@ -52,8 +51,7 @@ git commit
 git merge feat/utilities --no-commit
 # No exclusions needed - agent branches shouldn't have these files
 git commit
-```
-
+```text
 ### 3. Cherry-picking Specific Changes
 
 When you only want certain commits:
@@ -64,7 +62,7 @@ git reset HEAD .claude/
 git checkout HEAD -- .devcontainer/devcontainer.json
 git checkout HEAD -- .vscode/settings.json
 git commit
-```
+````
 
 ## Why This Happens
 

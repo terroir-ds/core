@@ -4,7 +4,7 @@
 
 ### From Agent Branch (e.g., feat/utilities)
 
-```bash
+````bash
 # Get latest from core
 .agents/scripts/host/merge-from-core.sh
 
@@ -13,15 +13,13 @@
 
 # Fix issues
 .agents/scripts/host/check-agent-state.sh --fix
-```
-
+```text
 ### From Core Branch (main/feat/initial-setup)
 
 ```bash
 # Merge agent work
 .agents/scripts/host/merge-to-core.sh feat/utilities
-```
-
+```text
 ## ⚠️ Golden Rules
 
 1. **NEVER** commit these in agent branches:
@@ -43,16 +41,14 @@ git rm --cached .claude/
 git rm --cached .devcontainer/devcontainer.json
 git rm --cached .vscode/settings.json
 git commit -m "fix: remove core-only files from agent branch"
-```
-
+```text
 ### Symlink broken
 
 ```bash
 # Recreate symlink
 rm -rf .claude
 ln -sf /workspaces/terroir-core/.claude .claude
-```
-
+```text
 ### After accidental merge
 
 ```bash
@@ -61,7 +57,7 @@ git reset --hard HEAD~1
 
 # Use the proper script
 .agents/scripts/host/merge-from-core.sh
-```
+````
 
 ## 📋 Merge Checklist
 

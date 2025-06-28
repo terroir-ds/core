@@ -16,11 +16,10 @@ This guide helps you quickly set up a minimal multi-agent environment with just 
 
 From your **host machine** (not inside a container):
 
-```bash
+````bash
 cd /path/to/terroir-core
 ./.claude/multi-agent/scripts/host/start-minimal-agents.sh
-```
-
+```yaml
 This will:
 
 - Open Core workspace (main development)
@@ -78,8 +77,7 @@ If you need more agents temporarily:
 ```bash
 # Run the full setup
 ./.claude/multi-agent/scripts/host/start-all-agents.sh
-```
-
+```text
 ### Stopping Agents
 
 Simply close the VS Code windows. Containers will stop automatically.
@@ -95,7 +93,7 @@ docker container prune
 
 # Clean workspace
 rm -rf .claude/multi-agent/workspaces/*
-```
+````
 
 ## Tips
 

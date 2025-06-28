@@ -14,7 +14,7 @@ The session management system helps agents maintain continuity across restarts, 
 
 ### Starting a Complex Task
 
-```bash
+````bash
 # 1. Agent saves session at start
 .agents/scripts/container/session.sh save
 
@@ -24,8 +24,7 @@ code /workspaces/terroir-core/.claude/sessions/agent1-latest.md
 # 3. If agent crashes/restarts, run prompt generator
 .agents/scripts/container/prompt.sh 1
 # Session context is automatically included!
-```
-
+```text
 ### Completing a Task
 
 ```bash
@@ -37,8 +36,7 @@ code /workspaces/terroir-core/.claude/tasks/AGENT-REGISTRY.md
 
 # 3. Commit changes
 git add -A && git commit -m "feat: complete task X"
-```
-
+```text
 ## Session File Format
 
 ```markdown
@@ -54,15 +52,13 @@ git add -A && git commit -m "feat: complete task X"
 ```text
 M lib/utils/logger.ts
 A lib/utils/security.ts
-```
-
+```text
 ### Recent Commits
 
 ```text
 abc123 feat: add security utilities
 def456 refactor: improve logger performance
-```
-
+```typescript
 ### Current Tasks from AGENT-REGISTRY
 
 | Agent | Branch | Focus Area | Current Task |
@@ -106,7 +102,7 @@ system. Using the ValidationError class from @utils/errors.
 
 # Generate prompt with session
 .agents/scripts/container/prompt.sh 1
-```
+````
 
 ## Integration with Task Management
 

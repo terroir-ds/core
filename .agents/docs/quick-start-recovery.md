@@ -4,15 +4,14 @@
 
 ### 1. Identify Your Agent
 
-```bash
+````bash
 # Check which agent directory you're in
 pwd
 # Should show: /workspaces/terroir-agent[1-3]
 
 # Check your branch
 git branch --show-current
-```
-
+```text
 ### 2. Generate Your Prompt
 
 #### Quick Method (Recommended)
@@ -25,8 +24,7 @@ git branch --show-current
 .claude/multi-agent/scripts/start-agent1.sh  # For utilities
 .claude/multi-agent/scripts/start-agent2.sh  # For infrastructure
 .claude/multi-agent/scripts/start-agent3.sh  # For documentation
-```
-
+```text
 This will:
 
 - Generate the combined prompt
@@ -41,8 +39,7 @@ This will:
 cat /workspaces/terroir-core/.claude/agent-prompts/base/base-prompt.md \
     /workspaces/terroir-core/.claude/agent-prompts/agents/utilities-agent.md \
     > /tmp/agent-prompt.md
-```
-
+```text
 ### 3. Add Current Context (Optional)
 
 If you need to add specific context about what you were working on:
@@ -56,8 +53,7 @@ code /tmp/context.md
 
 # Append to your prompt
 cat /tmp/context.md >> /tmp/agent-prompt.md
-```
-
+```yaml
 ### 4. Start Claude with the Prompt
 
 **CRITICAL**: Do NOT ask Claude to "read" these files!
@@ -76,8 +72,7 @@ cat /tmp/context.md >> /tmp/agent-prompt.md
 [PASTE ALL PROMPT CONTENT HERE]
 
 I'm restarting after a system reboot. Please check current tasks and continue.
-```
-
+```text
 ## Quick Status Check Commands
 
 ```bash
@@ -98,8 +93,7 @@ pnpm test
 
 # Check for build issues
 pnpm build
-```
-
+```text
 ## Common Recovery Scenarios
 
 ### Scenario 1: Mid-Task Crash
@@ -144,7 +138,7 @@ pnpm build
 
 # Check symbolic links
 ls -la /workspaces/terroir-agent*/
-```
+````
 
 ## Contact for Help
 
