@@ -5,8 +5,16 @@
  * Provides reusable patterns for common validation scenarios.
  */
 
-import { isString, isNumber, isArray } from '../guards/type-guards.js';
-import type { ValidationError as ValidationErrorType } from '../guards/validation.js';
+// Import only what we need from type-guards to avoid circular dependency
+import { isString, isArray } from '../guards/type-guards.js';
+
+// Define ValidationError type locally to avoid circular dependency
+interface ValidationErrorType {
+  code: string;
+  message: string;
+  path: (string | number)[];
+  context?: Record<string, unknown>;
+}
 
 /**
  * Length constraints for validation
@@ -257,7 +265,7 @@ export function createValidationContext(
   };
   
   if (expected) {
-    context.expected = expected;
+    context['expected'] = expected;
   }
   
   if (constraints) {

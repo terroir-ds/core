@@ -438,8 +438,8 @@ export function memoize<TArgs extends unknown[], TReturn>(
 // RE-EXPORTS
 // =============================================================================
 
-// Export validation utilities
-export * from './validation.js';
+// NOTE: Removed validation.js export to avoid circular dependency
+// The validation utilities in guards/validation.ts should import from shared/validation.ts directly
 
 // Export comparison utilities
 export * from './comparison.js';
