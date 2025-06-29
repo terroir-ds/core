@@ -15,11 +15,8 @@ import {
   isObjectLike,
   hasOwnProp,
   devWarn,
-  createAssertionError,
   createTypeError,
-  createRangeError,
   createLengthError,
-  createPropertyError,
   createMissingPropertiesError,
   validateLength,
   validateRange,
@@ -80,7 +77,7 @@ export function assert(
 ): asserts condition {
   if (!condition) {
     throw new AssertionError(message, { 
-      code,
+      ...(code && { code }),
       context: { condition: String(condition) }
     });
   }

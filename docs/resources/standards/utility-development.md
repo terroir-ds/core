@@ -11,6 +11,7 @@ This document establishes standards and best practices for developing utility mo
 **Principle**: All utilities must be designed with TypeScript as the primary consideration, not an afterthought.
 
 **Implementation**:
+
 - Write utilities in TypeScript, not JavaScript with added types
 - Leverage TypeScript's type system for compile-time safety
 - Provide proper type narrowing in type guards and assertions
@@ -18,6 +19,7 @@ This document establishes standards and best practices for developing utility mo
 - Ensure excellent IntelliSense and developer experience
 
 **Example**:
+
 ```typescript
 // ✅ Good: TypeScript-first design
 export function isArray<T = unknown>(value: unknown): value is T[] {
@@ -28,8 +30,7 @@ export function isArray<T = unknown>(value: unknown): value is T[] {
 export function isArray(value: any): boolean {
   return Array.isArray(value);
 }
-```
-
+```yaml
 ### 2. Dependency Evaluation Framework
 
 **Principle**: Every potential dependency must be thoroughly researched and evaluated before implementation.
@@ -71,7 +72,7 @@ export function isArray(value: any): boolean {
 **Implementation Standards**:
 
 #### Shared Module Structure
-```
+```text
 utils/
 ├── shared/           # Common utilities used across modules
 │   ├── index.ts     # Performance helpers, type patterns
@@ -81,8 +82,7 @@ utils/
 │   ├── [feature].ts # Feature implementations
 │   └── __tests__/   # Tests
 └── index.ts         # Convenience re-exports
-```
-
+```yaml
 #### Required Shared Utilities
 - **Performance optimizations**: Cached prototype methods, object pooling
 - **Common type patterns**: `isObjectLike`, `getObjectType`, `hasOwnProp`
@@ -103,8 +103,7 @@ export function isDate(value: unknown): value is Date {
   return typeof value === 'object' && value !== null && 
          Object.prototype.toString.call(value) === '[object Date]';
 }
-```
-
+```yaml
 ### 4. Performance-First Implementation
 
 **Principle**: Utilities must be optimized for performance, especially in hot paths.
@@ -137,8 +136,7 @@ export function isString(value: unknown): value is string {
 export function hasOwnProp(obj: unknown, key: string): boolean {
   return isObjectLike(obj) && hasOwnProperty.call(obj, key);
 }
-```
-
+```yaml
 ### 5. Battle-Tested Pattern Integration
 
 **Principle**: Leverage proven implementations from established libraries while maintaining our architectural goals.
@@ -159,8 +157,7 @@ export function isPlainObject(value: unknown): value is Record<string, unknown> 
   }
   // ... rest of proven logic
 }
-```
-
+```yaml
 #### Documentation Requirements
 - Credit original source/inspiration
 - Document any modifications made
@@ -183,8 +180,7 @@ export function isPlainObject(value: unknown): value is Record<string, unknown> 
 // ✅ Consistent: value first, options second
 export function validateEmail(email: string, options?: EmailOptions): ValidationResult;
 export function isInRange(value: number, min: number, max: number): boolean;
-```
-
+```text
 #### Return Type Consistency
 ```typescript
 // Type guards: boolean with type predicate
@@ -281,17 +277,20 @@ export function assertDefined<T>(value: T | undefined): asserts value is T;
 
 ### Email Validation Implementation Decision
 
-**Research Summary (2025-01-xx)**
+### Research Summary (2025-01-xx)
+
 - **Validator.js**: 13.15.15, 7k+ dependents, mature but not TypeScript-first
 - **Zod**: Already in project, excellent for schema validation
 - **Custom regex**: Battle-tested patterns, zero dependencies
 
-**Benchmarks**
+### Benchmarks
+
 - Custom regex: 0.05ms per validation
 - Validator.js: 0.12ms per validation  
 - Zod: 0.8ms per validation
 
-**Decision: Custom Implementation**
+### Decision: Custom Implementation
+
 - Use battle-tested RFC 5322 regex pattern
 - Leverage shared utilities for consistency
 - Provide Zod-compatible result format
@@ -300,11 +299,13 @@ export function assertDefined<T>(value: T | undefined): asserts value is T;
 ## Maintenance Standards
 
 ### Regular Reviews
+
 - **Monthly**: Review new dependencies in ecosystem
 - **Quarterly**: Performance benchmarks and bundle analysis
 - **Annually**: Major architecture review and updates
 
 ### Success Metrics
+
 - Consistent API across all utilities
 - Excellent TypeScript support and IntelliSense
 - Utilities perform better than or equal to alternatives

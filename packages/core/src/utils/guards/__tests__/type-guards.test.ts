@@ -41,12 +41,6 @@ import {
   isWeakMap,
   isWeakSet,
   
-  // Node.js specific type guards
-  isBuffer,
-  isStream,
-  isReadableStream,
-  isWritableStream,
-  
   // Utility type guards
   isEmptyObject,
   isEmptyArray,
@@ -625,7 +619,7 @@ describe('Custom Type Guard Creation', () => {
 
 describe('Performance Tests', () => {
   it('should handle large datasets efficiently', () => {
-    const largeArray = Array.from({ length: 10000 }, (_, i) => i);
+    // largeArray was removed as it's not used in the test
     const mixedArray = Array.from({ length: 10000 }, (_, i) => 
       i % 2 === 0 ? i : `item-${i}`
     );
@@ -735,6 +729,6 @@ describe('TypeScript Type Narrowing', () => {
     }
 
     expect(processOptional('test', s => s.toUpperCase())).toBe('TEST');
-    expect(processOptional(undefined, s => s.toUpperCase())).toBe('undefined');
+    expect(processOptional(undefined, (s: string) => s.toUpperCase())).toBe('undefined');
   });
 });

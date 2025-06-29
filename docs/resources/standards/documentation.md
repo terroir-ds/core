@@ -24,8 +24,7 @@ terroir-core/
 │   │   └── README.md         # Site setup guide
 │   └── react/                # React components (future)
 │       └── README.md         # Component library docs
-```
-
+```bash
 ### Import Path Documentation
 
 Always document both npm package imports and path aliases:
@@ -36,8 +35,7 @@ import { logger } from '@terroir/core/utils/logger';
 
 // Path alias import (for internal development)
 import { logger } from '@utils/logger';
-```
-
+```text
 ## Documentation Structure
 
 ### Keep Docs Close to Code
@@ -52,8 +50,7 @@ packages/core/src/utils/logger/
 ├── __mocks__/               # Mock implementations
 │   └── logger.mock.ts
 └── README.md                # Module documentation
-```
-
+```text
 ### Documentation Hierarchy
 
 1. **Inline Comments** - For complex logic
@@ -277,8 +274,7 @@ See the [documentation site](../docs-site/README.md) for interactive examples.
 <!-- From global docs -->
 
 See [@terroir/core](../packages/core/README.md) for utility functions.
-```
-
+```bash
 ### Shared Documentation
 
 Place shared concepts in `/docs/`:

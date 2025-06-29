@@ -1,0 +1,74 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/typescript-node
+{
+  "name": "Terroir Core Design System",
+  "build": {
+    // Use the Dockerfile in the current directory
+    "dockerfile": "Dockerfile"
+  },
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+
+  // Resource limits for stability (especially with multi-agent setup)
+  // hostRequirements: Only used by cloud services (Codespaces, Gitpod, etc.)
+  // Has no effect on local Docker Desktop - kept for future cloud compatibility
+  "hostRequirements": {
+    "cpus": 2,
+    "memory": "4gb",
+    "storage": "32gb"
+  },
+
+  // runArgs: Actually enforces resource limits in local Docker
+  "runArgs": [
+    "--init", // Helps prevent zombie processes and file locking issues
+    "--memory=4g",
+    "--memory-swap=4g",
+    "--cpus=4.0"
+  ],
+
+  // No custom mounts needed for the main repository
+  // Agent worktrees will mount this repo for git access and coordination
+  "mounts": [],
+
+  // Features to add to the dev container. More info: https://containers.dev/features.
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+
+  // Update PATH to include node_modules/.bin and configure 1Password
+  "remoteEnv": {
+    "PATH": "/workspaces/${localWorkspaceFolderBasename}/node_modules/.bin:${containerEnv:PATH}",
+    // 1Password Service Account Token - Required for authentication
+    // Create a service account at: https://developer.1password.com/docs/service-accounts/
+    "OP_SERVICE_ACCOUNT_TOKEN": "${localEnv:OP_SERVICE_ACCOUNT_TOKEN}",
+    // 1Password account identifier (optional, defaults to the service account's account)
+    "OP_ACCOUNT": "${localEnv:OP_ACCOUNT}",
+    // Item names in 1Password for Git configuration (optional)
+    "GIT_SIGNING_KEY_ITEM": "${localEnv:GIT_SIGNING_KEY_ITEM}",
+    "GIT_CONFIG_ITEM": "${localEnv:GIT_CONFIG_ITEM}"
+  },
+
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  "forwardPorts": [],
+
+  // Use 'postCreateCommand' to run commands after the container is created.
+  // Adding a delay helps prevent "Text file busy" errors during VS Code Server setup
+  "postCreateCommand": "sleep 2 && bash scripts/utils/post-create.sh",
+
+  // Configure tool-specific properties.
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "DavidAnson.vscode-markdownlint",
+        "streetsidesoftware.code-spell-checker"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh"
+      }
+    }
+  }
+
+  // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+  // "remoteUser": "root"
+}
