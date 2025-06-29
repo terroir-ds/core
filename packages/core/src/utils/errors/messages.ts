@@ -187,6 +187,54 @@ export const ERROR_MESSAGES = {
   HTTP_SERVER_ERROR: 'Server error',
   HTTP_CLIENT_ERROR: 'Client error',
   
+  // Logger-specific messages
+  LOG_OBJECT_TOO_LARGE: 'Log object too large',
+  LOG_SERIALIZE_FAILED: 'Failed to serialize log object',
+  LOG_TRUNCATED: 'truncated',
+  LOG_TRUNCATED_SIZE_LIMIT: '[TRUNCATED - EXCEEDS SIZE LIMIT]',
+  LOG_MAX_DEPTH_EXCEEDED: '[MAX DEPTH EXCEEDED]',
+  LOG_REDACTED_SENSITIVE: '[REDACTED - SENSITIVE CONTENT]',
+  LOG_TRUNCATED_SIMPLE: '[TRUNCATED]',
+  LOG_REDACTION_STACK_LIMIT: '[REDACTION STACK LIMIT EXCEEDED]',
+  LOG_REDACTED: '[REDACTED]',
+  LOG_HIGH_MEMORY_USAGE: (usage: string) => `High memory usage detected: ${usage}`,
+  LOG_MEMORY_USAGE: (usage: string) => `Memory usage: ${usage}`,
+  LOG_INVALID_REQUEST_ID: 'Invalid request ID format',
+  LOG_INVALID_SAMPLING_RATE: 'Sampling rate must be between 0 and 1',
+  
+  // Type validation messages
+  TYPE_MISMATCH: (expected: string, actual: string, path?: string) => 
+    path ? `Expected ${expected} at ${path}, got ${actual}` : `Expected ${expected}, got ${actual}`,
+  VALUE_OUT_OF_RANGE: (value: unknown, min?: number, max?: number) => {
+    const valueStr = String(value);
+    if (min !== undefined && max !== undefined) {
+      return `Value ${valueStr} is out of range [${min}, ${max}]`;
+    } else if (min !== undefined) {
+      return `Value ${valueStr} must be >= ${min}`;
+    } else if (max !== undefined) {
+      return `Value ${valueStr} must be <= ${max}`;
+    }
+    return `Value ${valueStr} is out of range`;
+  },
+  LENGTH_OUT_OF_RANGE: (actual: number, min?: number, max?: number) => {
+    if (min !== undefined && max !== undefined) {
+      return `Length ${actual} is out of range [${min}, ${max}]`;
+    } else if (min !== undefined) {
+      return `Length ${actual} must be >= ${min}`;
+    } else if (max !== undefined) {
+      return `Length ${actual} must be <= ${max}`;
+    }
+    return `Length ${actual} is out of range`;
+  },
+  PROPERTY_MISSING: (property: string, path?: string) => 
+    path ? `Missing required property '${property}' at ${path}` : `Missing required property '${property}'`,
+  PROPERTY_UNKNOWN: (property: string, path?: string) => 
+    path ? `Unknown property '${property}' at ${path}` : `Unknown property '${property}'`,
+  
+  // Async-specific messages  
+  DEBOUNCED_DELAY_CANCELLED: 'Debounced delay cancelled',
+  DELAY_MIN_MAX_INVALID: 'Minimum delay must not exceed maximum delay',
+  
   // General
   UNKNOWN_ERROR: 'Unknown error',
   MULTIPLE_ERRORS: 'Multiple errors occurred',
@@ -291,6 +339,32 @@ export const ERROR_MESSAGE_CATEGORIES = {
     'HTTP_RATE_LIMITED',
     'HTTP_SERVER_ERROR',
     'HTTP_CLIENT_ERROR',
+  ],
+  LOGGER: [
+    'LOG_OBJECT_TOO_LARGE',
+    'LOG_SERIALIZE_FAILED',
+    'LOG_TRUNCATED',
+    'LOG_TRUNCATED_SIZE_LIMIT',
+    'LOG_MAX_DEPTH_EXCEEDED',
+    'LOG_REDACTED_SENSITIVE',
+    'LOG_TRUNCATED_SIMPLE',
+    'LOG_REDACTION_STACK_LIMIT',
+    'LOG_REDACTED',
+    'LOG_HIGH_MEMORY_USAGE',
+    'LOG_MEMORY_USAGE',
+    'LOG_INVALID_REQUEST_ID',
+    'LOG_INVALID_SAMPLING_RATE',
+  ],
+  TYPE_VALIDATION: [
+    'TYPE_MISMATCH',
+    'VALUE_OUT_OF_RANGE',
+    'LENGTH_OUT_OF_RANGE',
+    'PROPERTY_MISSING',
+    'PROPERTY_UNKNOWN',
+  ],
+  ASYNC: [
+    'DEBOUNCED_DELAY_CANCELLED',
+    'DELAY_MIN_MAX_INVALID',
   ],
   GENERAL: [
     'UNKNOWN_ERROR',
