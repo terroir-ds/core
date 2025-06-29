@@ -4,7 +4,7 @@ This directory contains prompts for all agents in the multi-agent development sy
 
 ## Directory Structure
 
-````text
+```markdown
 prompts/
 ├── README.md           # This file
 ├── base.md             # The core prompt all agents inherit
@@ -13,20 +13,23 @@ prompts/
 ├── infrastructure.md   # Infrastructure agent instructions
 ├── components.md       # Components agent instructions
 └── context-template.md # Template for adding current context
-```bash
+```
+
 ## Usage
 
 1. Use `base.md` as the foundation for all agents
 2. Add agent-specific instructions from the corresponding file (e.g., `utilities.md`)
 3. Optionally add current context using `context-template.md`
 4. The prompt is automatically generated when using:
+
    ```bash
    # From host:
    ./agent-manager.sh prompt 1
 
    # From container:
    .agents/scripts/prompt.sh 1
-````
+
+```
 
 ## Quick Start
 

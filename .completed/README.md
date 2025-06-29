@@ -4,7 +4,7 @@ This directory contains the version-controlled history of completed work on the 
 
 ## Structure
 
-````bash
+```markdown
 .completed/
 ├── sprints/           # Completed sprint work organized by number
 │   ├── 001-foundation/
@@ -14,19 +14,23 @@ This directory contains the version-controlled history of completed work on the 
     ├── error-handling.md
     ├── test-structure.md
     └── api-design.md
-```bash
+```
+
 ## Sprint History
 
 ### Sprint 001: Foundation (2025-06-26 to 2025-07-02)
+
 - **Focus**: Basic functionality across all domains
 - **Pattern**: 5-pass development (Work → Right → Safe → Tested → Documented)
 - **Agents**: 4 parallel development tracks
 
 ### Sprint 002: Features (Planned)
+
 - **Focus**: Advanced features building on foundation
 - **Pattern**: TICK sprint - new functionality
 
 ### Sprint 003: Refactoring (Planned)
+
 - **Focus**: Apply standards discovered in Sprint 1-2
 - **Pattern**: TOCK sprint - optimization and standardization
 
@@ -41,19 +45,21 @@ Patterns are extracted from completed work and stored for reuse:
 ## How to Use
 
 ### Adding Completed Work
+
 1. Run `.claude/scripts/complete-sprint.sh [sprint-number]`
 2. Review generated summary
 3. Extract notable patterns
 4. Commit to version control
 
 ### Finding Patterns
+
 ```bash
 # Search for specific patterns
 grep -r "pattern-name" .completed/patterns/
 
 # List all patterns
 ls .completed/patterns/
-````
+```
 
 ## Metrics
 

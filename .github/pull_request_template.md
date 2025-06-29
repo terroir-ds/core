@@ -77,7 +77,7 @@ Fixes #(issue number)
 
 <!-- Run `pnpm size` and paste the output here -->
 
-```markdown
+```bash
 Output of pnpm size
 ```
 
