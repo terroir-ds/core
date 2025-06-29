@@ -63,14 +63,17 @@
   "dependencies": {
     "@material/material-color-utilities": "^0.3.0",
     "@t3-oss/env-core": "^0.13.8",
+    "object-hash": "^3.0.0",
     "p-debounce": "^4.0.0",
     "p-retry": "^6.2.1",
     "p-throttle": "^7.0.0",
     "serialize-error": "^12.0.0",
+    "xxhash-wasm": "^1.1.0",
     "zod": "^3.25.67"
   },
   "devDependencies": {
     "@types/node": "^24.0.4",
+    "@types/object-hash": "^3.0.6",
     "typescript": "^5.7.3"
   },
   "peerDependencies": {

@@ -16,8 +16,7 @@ cd .agents/docker
 
 # 4. Generate a Claude prompt
 ./agent-manager.sh prompt 1    # From host (recommended)
-```
-
+```bash
 ### macOS Note
 If you encounter errors about "invalid option" or "declare -A", run the scripts with zsh:
 ```bash

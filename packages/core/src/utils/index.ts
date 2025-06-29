@@ -124,3 +124,44 @@ export {
   type Predicate,
 } from './guards/index.js';
 
+// =============================================================================
+// SECURITY UTILITIES
+// =============================================================================
+
+// Security utilities (selective exports)
+export {
+  // Redaction
+  redact,
+  createRedactor,
+  redactPaths,
+  safeStringify,
+  mask,
+  
+  // Sanitization
+  sanitizeInput,
+  stripDangerous,
+  sanitizePath,
+  safeTruncate,
+  
+  // Hashing
+  hashObject,
+  hashString,
+  consistentHash,
+  deterministicId,
+  
+  // Patterns
+  SENSITIVE_FIELD_PATTERNS,
+  containsSensitiveContent,
+  
+  // Pre-configured utilities
+  apiRedactor,
+  logRedactor,
+  inputSanitizer,
+  htmlStripper,
+  
+  // Types
+  type RedactionOptions,
+  type SanitizationOptions,
+  type ObjectHashOptions,
+} from './security/index.js';
+
