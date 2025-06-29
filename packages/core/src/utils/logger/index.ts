@@ -90,6 +90,7 @@ import type { Logger, LoggerOptions, TransportTargetOptions } from 'pino';
 import path from 'node:path';
 import { env, isDevelopment, isTest, isCI } from '@lib/config/index.js';
 import type { LogContext, PerformanceMetrics } from '@utils/types/logger.types.js';
+import { LoggerMessages } from './messages.js';
 
 // Performance: Limit log message size to prevent memory issues
 const MAX_MESSAGE_LENGTH = 10000; // 10KB
@@ -239,13 +240,13 @@ function validateLogInput(obj: unknown): unknown {
     const size = JSON.stringify(obj).length;
     if (size > MAX_MESSAGE_LENGTH * 10) { // 100KB limit for objects
       return { 
-        error: 'Log object too large', 
+        error: LoggerMessages.OBJECT_TOO_LARGE(), 
         size, 
-        truncated: true 
+        truncated: LoggerMessages.TRUNCATED() 
       };
     }
   } catch {
-    return { error: 'Failed to serialize log object' };
+    return { error: LoggerMessages.SERIALIZE_FAILED() };
   }
   
   return obj;
@@ -310,7 +311,7 @@ const serializers: LoggerOptions['serializers'] = {
     const serialized = pino.stdSerializers.req(req as Parameters<typeof pino.stdSerializers.req>[0]);
     // Truncate large bodies
     if ('body' in serialized && serialized.body && JSON.stringify((serialized as Record<string, unknown>)['body']).length > MAX_MESSAGE_LENGTH) {
-      (serialized as Record<string, unknown>)['body'] = '[TRUNCATED - EXCEEDS SIZE LIMIT]';
+      (serialized as Record<string, unknown>)['body'] = LoggerMessages.TRUNCATED_SIZE_LIMIT();
     }
     return serialized;
   },
@@ -363,17 +364,17 @@ function deepRedact(obj: unknown, patterns: string[], depth = 0): unknown {
   
   // Check depth limit
   if (depth > MAX_OBJECT_DEPTH) {
-    return '[MAX DEPTH EXCEEDED]';
+    return LoggerMessages.MAX_DEPTH_EXCEEDED();
   }
   
   // Redact sensitive string content
   if (typeof obj === 'string') {
     if (containsSensitiveContent(obj)) {
-      return '[REDACTED - SENSITIVE CONTENT]';
+      return LoggerMessages.REDACTED_SENSITIVE();
     }
     // Truncate long strings
     if (obj.length > MAX_MESSAGE_LENGTH) {
-      return obj.substring(0, MAX_MESSAGE_LENGTH) + '[TRUNCATED]';
+      return obj.substring(0, MAX_MESSAGE_LENGTH) + LoggerMessages.TRUNCATED_SIMPLE();
     }
     return obj;
   }
@@ -395,7 +396,7 @@ function deepRedact(obj: unknown, patterns: string[], depth = 0): unknown {
       while (stack.length > 0) {
         // Prevent stack exhaustion attacks
         if (stack.length > MAX_STACK_SIZE) {
-          return '[REDACTION STACK LIMIT EXCEEDED]';
+          return LoggerMessages.REDACTION_STACK_LIMIT();
         }
         
         const current = stack.pop();
@@ -408,10 +409,10 @@ function deepRedact(obj: unknown, patterns: string[], depth = 0): unknown {
             if (value === null || value === undefined) {
               target[i] = value;
             } else if (typeof value === 'string') {
-              target[i] = containsSensitiveContent(value) ? '[REDACTED - SENSITIVE CONTENT]' : value;
+              target[i] = containsSensitiveContent(value) ? LoggerMessages.REDACTED_SENSITIVE() : value;
             } else if (typeof value === 'object') {
               if (currentDepth >= MAX_OBJECT_DEPTH) {
-                target[i] = '[MAX DEPTH EXCEEDED]';
+                target[i] = LoggerMessages.MAX_DEPTH_EXCEEDED();
               } else if (Array.isArray(value)) {
                 target[i] = [];
                 stack.push({ source: value, target: target[i] as unknown[], depth: currentDepth + 1 });
@@ -433,14 +434,14 @@ function deepRedact(obj: unknown, patterns: string[], depth = 0): unknown {
               );
               
               if (shouldRedactKey) {
-                target[key] = '[REDACTED]';
+                target[key] = LoggerMessages.REDACTED();
               } else if (value === null || value === undefined) {
                 target[key] = value;
               } else if (typeof value === 'string') {
-                target[key] = containsSensitiveContent(value) ? '[REDACTED - SENSITIVE CONTENT]' : value;
+                target[key] = containsSensitiveContent(value) ? LoggerMessages.REDACTED_SENSITIVE() : value;
               } else if (typeof value === 'object') {
                 if (currentDepth >= MAX_OBJECT_DEPTH) {
-                  target[key] = '[MAX DEPTH EXCEEDED]';
+                  target[key] = LoggerMessages.MAX_DEPTH_EXCEEDED();
                 } else if (Array.isArray(value)) {
                   target[key] = [];
                   stack.push({ source: value, target: target[key] as unknown[], depth: currentDepth + 1 });
@@ -466,7 +467,7 @@ function deepRedact(obj: unknown, patterns: string[], depth = 0): unknown {
     while (stack.length > 0) {
       // Prevent stack exhaustion attacks
       if (stack.length > MAX_STACK_SIZE) {
-        return '[REDACTION STACK LIMIT EXCEEDED]';
+        return LoggerMessages.REDACTION_STACK_LIMIT();
       }
       
       const current = stack.pop();
@@ -481,11 +482,11 @@ function deepRedact(obj: unknown, patterns: string[], depth = 0): unknown {
           );
           
           if (shouldRedactKey) {
-            target[key] = '[REDACTED]';
+            target[key] = LoggerMessages.REDACTED();
           } else if (value === null || value === undefined) {
             target[key] = value;
           } else if (typeof value === 'string') {
-            target[key] = containsSensitiveContent(value) ? '[REDACTED - SENSITIVE CONTENT]' : value;
+            target[key] = containsSensitiveContent(value) ? LoggerMessages.REDACTED_SENSITIVE() : value;
           } else if (typeof value === 'object') {
             if (currentDepth >= MAX_OBJECT_DEPTH) {
               target[key] = '[MAX DEPTH EXCEEDED]';
@@ -930,7 +931,7 @@ function isValidRequestId(id: string): boolean {
  */
 export const setRequestId = (requestId: string): void => {
   if (!isValidRequestId(requestId)) {
-    throw new Error('Invalid request ID format');
+    throw new Error(LoggerMessages.INVALID_REQUEST_ID());
   }
   
   const state = globalWithState[LOGGER_STATE_SYMBOL];
@@ -1054,7 +1055,7 @@ export const createSampledLogger = (
   
   // Validate sampling rate
   if (rate < 0 || rate > 1 || isNaN(rate)) {
-    throw new Error('Sampling rate must be between 0 and 1');
+    throw new Error(LoggerMessages.INVALID_SAMPLING_RATE());
   }
   
   // Always log if rate is 1
@@ -1331,9 +1332,9 @@ export const logMemoryUsage = (context?: LogContext, warnThresholdMB = 500): voi
   };
   
   if (stats.heapUsedMB > warnThresholdMB) {
-    logger.warn(logContext, `High memory usage detected: ${stats.heapUsedMB}MB`);
+    logger.warn(logContext, LoggerMessages.HIGH_MEMORY_USAGE(`${stats.heapUsedMB}MB`));
   } else {
-    logger.info(logContext, `Memory usage: ${stats.heapUsedMB}MB / ${stats.heapTotalMB}MB`);
+    logger.info(logContext, LoggerMessages.MEMORY_USAGE(`${stats.heapUsedMB}MB / ${stats.heapTotalMB}MB`));
   }
 };
 
