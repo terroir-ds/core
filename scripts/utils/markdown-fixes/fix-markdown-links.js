@@ -34,13 +34,20 @@
 
 /* eslint-disable no-console */
 
-import { readFileSync, writeFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { readFileSync, writeFileSync, readdirSync, statSync } from 'node:fs';
+import { resolve, join, extname } from 'node:path';
 
-// Convert heading text to a valid fragment ID
 /**
- * @param {string} heading
- * @returns {string}
+ * Convert heading text to a valid fragment ID following GitHub's conventions.
+ * This follows the same rules GitHub uses for generating heading anchors.
+ * 
+ * @param {string} heading - The heading text to convert
+ * @returns {string} Valid fragment identifier
+ * 
+ * @example
+ * headingToFragment('API Reference') // returns 'api-reference'
+ * headingToFragment('Test: With Colon') // returns 'test-with-colon'
+ * headingToFragment('Section 1.2.3') // returns 'section-123'
  */
 function headingToFragment(heading) {
   return heading
@@ -51,8 +58,16 @@ function headingToFragment(heading) {
 }
 
 /**
- * @param {string} filePath
- * @returns {number}
+ * Fix broken link fragments in a markdown file.
+ * Scans for internal links (#anchor) and fixes broken fragments by matching
+ * them to actual headings in the document.
+ * 
+ * @param {string} filePath - Path to the markdown file to fix
+ * @returns {number} Number of link fragments fixed
+ * 
+ * @example
+ * const fixedCount = fixLinkFragments('/path/to/README.md');
+ * console.log(`Fixed ${fixedCount} broken links`);
  */
 function fixLinkFragments(filePath) {
   const content = readFileSync(filePath, 'utf8');
@@ -125,20 +140,76 @@ function fixLinkFragments(filePath) {
   return fixedCount;
 }
 
-// Files to fix
-const files = [
-  'packages/core/src/utils/errors/docs/error-handling.md',
-  'packages/core/src/utils/errors/docs/testing-errors.md'
-];
+// Export functions for testing
+export { headingToFragment, fixLinkFragments };
 
-let totalFixed = 0;
-for (const file of files) {
-  try {
-    const filePath = resolve(file);
-    totalFixed += fixLinkFragments(filePath);
-  } catch (error) {
-    console.error(`Error processing ${file}:`, error instanceof Error ? error.message : String(error));
+// Run the script if executed directly
+if (import.meta.url === `file://${process.argv[1]}`) {
+  // Get files from command line or process all markdown files
+  const args = process.argv.slice(2);
+  let files = [];
+  
+  if (args.length > 0) {
+    // Process specific files passed as arguments
+    files = args;
+  } else {
+    /**
+     * Find all markdown files recursively.
+     * @param {string} dir - Directory to search
+     * @returns {string[]} Array of markdown file paths
+     */
+    function findMarkdownFiles(dir) {
+      const results = [];
+      const items = readdirSync(dir);
+      
+      for (const item of items) {
+        if (item.startsWith('.') || item === 'node_modules') continue;
+        
+        const fullPath = join(dir, item);
+        const stat = statSync(fullPath);
+        
+        if (stat.isDirectory()) {
+          results.push(...findMarkdownFiles(fullPath));
+        } else if (stat.isFile() && extname(fullPath) === '.md') {
+          results.push(fullPath);
+        }
+      }
+      
+      return results;
+    }
+    
+    files = findMarkdownFiles(process.cwd());
+  }
+
+  let totalFixed = 0;
+  let hasErrors = false;
+  
+  for (const file of files) {
+    try {
+      const filePath = resolve(file);
+      
+      // Check if file exists
+      try {
+        statSync(filePath);
+      } catch {
+        console.error(`Error: File not found: ${filePath}`);
+        hasErrors = true;
+        continue;
+      }
+      
+      const fixed = fixLinkFragments(filePath);
+      if (fixed > 0) {
+        totalFixed += fixed;
+      }
+    } catch (error) {
+      console.error(`Error processing ${file}:`, error instanceof Error ? error.message : String(error));
+      hasErrors = true;
+    }
+  }
+
+  console.log(`\nTotal: Fixed ${totalFixed} link fragments`);
+  
+  if (hasErrors) {
+    process.exit(1);
   }
 }
-
-console.log(`\nTotal: Fixed ${totalFixed} link fragments`);

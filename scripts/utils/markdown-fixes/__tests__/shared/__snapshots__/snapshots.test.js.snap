@@ -1,0 +1,73 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`markdown fixes snapshots > fixture tests > should match snapshot for README formatting > readme-before 1`] = `
+"
+# Project Title
+
+## Installation
+\`\`\`
+npm install package
+\`\`\`
+
+## Usage
+Basic usage:
+\`\`\`
+const pkg = require('package');
+pkg.doSomething();
+\`\`\`
+## API
+
+### method1()
+\`\`\`
+pkg.method1(options)
+\`\`\`
+Returns a promise.
+
+### method2()
+\`\`\`
+pkg.method2(data)
+\`\`\`
+Processes data.
+"
+`;
+
+exports[`markdown fixes snapshots > fixture tests > should match snapshot for documentation formatting > api-docs-before 1`] = `
+"
+# API Reference
+
+## Functions
+
+### \`processData(input)\`
+
+Processes the input data.
+
+**Parameters:**
+- \`input\` - The data to process
+
+**Example:**
+\`\`\`
+const result = processData({
+  name: 'test',
+  value: 42
+});
+\`\`\`
+
+**Returns:**
+\`\`\`
+{
+  processed: true,
+  result: { ... }
+}
+\`\`\`
+
+### \`validateInput(data)\`
+
+Validates input data.
+
+\`\`\`
+if (!validateInput(data)) {
+  throw new Error('Invalid input');
+}
+\`\`\`
+"
+`;

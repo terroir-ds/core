@@ -19,19 +19,19 @@ else
 fi
 echo ""
 
-# Fix code blocks first
-echo "📄 Fixing Markdown code blocks..."
-if node scripts/utils/fix-markdown-code-blocks.js; then
-  echo "✅ Code block fixes complete"
+# Run all markdown fixes first (before prettier/markdownlint)
+echo "📄 Fixing Markdown code blocks and formatting..."
+if node scripts/utils/markdown-fixes/index.js; then
+  echo "✅ Markdown code block fixes complete"
 else
-  echo "⚠️  Failed to fix code blocks"
+  echo "⚠️  Some markdown fixes failed"
 fi
 echo ""
 
-# Markdown fixes
-echo "📄 Fixing other Markdown issues..."
+# Markdown linting fixes (after our custom fixes)
+echo "📄 Fixing other Markdown issues with markdownlint..."
 if pnpm lint:md:fix; then
-  echo "✅ Markdown fixes complete"
+  echo "✅ Markdown lint fixes complete"
 else
   echo "⚠️  Some Markdown issues could not be fixed automatically"
 fi
