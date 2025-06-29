@@ -732,8 +732,8 @@ export const cleanupLogger = (): void => {
   // AsyncLocalStorage doesn't have a disable method in Node.js
   // It will be garbage collected when no longer referenced
   
-  // Clear object pools
-  stackPool.forEach(stack => stack.length = 0);
+  // Note: Object pools are now managed by the security/redaction module
+  // and will be cleaned up automatically
   
   // Force garbage collection if available (Node.js with --expose-gc)
   if (global.gc) {

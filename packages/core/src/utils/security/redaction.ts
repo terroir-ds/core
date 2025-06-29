@@ -653,7 +653,7 @@ export interface MaskOptions {
   showLast?: number;
   /** Character to use for masking. Default: '*' */
   maskChar?: string;
-  /** Minimum length before masking. Default: 4 */
+  /** Minimum length of result. If specified, pads with mask characters */
   minLength?: number;
 }
 
@@ -678,16 +678,11 @@ export function mask(value: string, options: MaskOptions = {}): string {
     showFirst = 0,
     showLast = 0,
     maskChar = '*',
-    minLength = 4,
+    minLength,
   } = options;
   
   if (!value || typeof value !== 'string') {
     return '';
-  }
-  
-  // Don't mask if too short
-  if (value.length < minLength) {
-    return maskChar.repeat(value.length);
   }
   
   // Calculate mask positions
@@ -696,9 +691,21 @@ export function mask(value: string, options: MaskOptions = {}): string {
     return value;
   }
   
+  // Don't mask if original string is already being fully shown
+  if (showFirst >= value.length || showLast >= value.length) {
+    return value;
+  }
+  
   const start = value.substring(0, showFirst);
   const end = value.substring(value.length - showLast);
-  const maskLength = value.length - totalShow;
+  const middleLength = value.length - totalShow;
   
-  return start + maskChar.repeat(maskLength) + end;
+  // Apply minimum length if specified
+  if (minLength !== undefined && value.length < minLength) {
+    const totalLength = minLength;
+    const maskLength = totalLength - showFirst - showLast;
+    return start + maskChar.repeat(Math.max(maskLength, 0)) + end;
+  }
+  
+  return start + maskChar.repeat(middleLength) + end;
 }

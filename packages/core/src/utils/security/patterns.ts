@@ -84,7 +84,8 @@ export const SENSITIVE_CONTENT_PATTERNS: ReadonlyArray<RegExp> = [
   // API Keys - Common formats
   /^(gh[ps]_|github_)[A-Za-z0-9]{36,}$/, // GitHub
   /^(sk|pk)_(test|live)_[A-Za-z0-9]{24,}$/, // Stripe
-  /^AKIA[0-9A-Z]{16}$/, // AWS Access Key ID
+  /^AKIA[0-9A-Z]{16}$/, // AWS Access Key ID (standard format)
+  /\bAKIA[A-Z0-9_]{16,}\b/i, // AWS Access Key ID (flexible format)
   /^[A-Za-z0-9]{40}$/, // Generic 40-char API key (AWS Secret, GitHub Classic)
   
   // Email addresses (for privacy)
