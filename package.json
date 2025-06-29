@@ -94,7 +94,7 @@
     "test:unit:logger": "vitest run lib/utils/__tests__/logger",
     "test:visual": "playwright test",
     "test:watch": "vitest watch",
-    "tokens:build": "node scripts/build-tokens.mjs && node scripts/generate-colors.js",
+    "tokens:build": "node scripts/generate-material-colors.mjs && node scripts/build-tokens.mjs",
     "tokens:lint": "node scripts/lint-tokens.js",
     "tokens:watch": "nodemon -w tokens -e json,js -x 'pnpm tokens:build'"
   },
@@ -120,6 +120,7 @@
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "@eslint/js": "^9.30.0",
+    "@material/material-color-utilities": "^0.3.0",
     "@microsoft/tsdoc": "^0.15.1",
     "@playwright/test": "^1.53.1",
     "@semantic-release/changelog": "^6.0.3",
