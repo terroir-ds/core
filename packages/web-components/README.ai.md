@@ -6,11 +6,11 @@
 
 ## Quick Reference
 
-| Task | Element | Example |
-|------|---------|---------|
-| Use Button | `<terroir-button>` | `<terroir-button variant="primary">Click</terroir-button>` |
-| Use Card | `<terroir-card>` | `<terroir-card><h2 slot="header">Title</h2></terroir-card>` |
-| Set theme | CSS variables | `--terroir-theme: light;` |
+| Task       | Element            | Example                                                     |
+| ---------- | ------------------ | ----------------------------------------------------------- |
+| Use Button | `<terroir-button>` | `<terroir-button variant="primary">Click</terroir-button>`  |
+| Use Card   | `<terroir-card>`   | `<terroir-card><h2 slot="header">Title</h2></terroir-card>` |
+| Set theme  | CSS variables      | `--terroir-theme: light;`                                   |
 
 ## Common Tasks
 
@@ -24,9 +24,7 @@
 <terroir-card>
   <h2 slot="header">Welcome</h2>
   <div slot="body">
-    <terroir-button variant="primary" onclick="handleClick()">
-      Get Started
-    </terroir-button>
+    <terroir-button variant="primary" onclick="handleClick()"> Get Started </terroir-button>
   </div>
 </terroir-card>
 ```
@@ -47,7 +45,7 @@ document.body.appendChild(button);
 
 ### Styling with CSS
 
-```css
+```yaml
 /* Use CSS custom properties */
 terroir-button {
   --button-radius: 8px;
@@ -78,7 +76,7 @@ terroir-button {
 
 ## AI Metadata
 
-```yaml
+```text
 stability: experimental
 token_cost: 400
 last_updated: 2025-06-29

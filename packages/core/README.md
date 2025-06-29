@@ -10,7 +10,8 @@ npm install @terroir/core
 pnpm add @terroir/core
 # or
 yarn add @terroir/core
-```bash
+```
+
 ## Features
 
 - 🎨 **Material Design 3 Color System** - Advanced color generation using Google's Material Color Utilities
@@ -33,18 +34,19 @@ import { generateColorSystem } from '@terroir/core';
 const colors = await generateColorSystem('#0066cc');
 
 // Access generated palettes
-console.log(colors.primary[50]);     // Light primary tone
-console.log(colors.primary[90]);     // Dark primary tone
-console.log(colors.secondary[40]);   // Secondary color
+console.log(colors.primary[50]); // Light primary tone
+console.log(colors.primary[90]); // Dark primary tone
+console.log(colors.secondary[40]); // Secondary color
 
 // Advanced usage with options
 const customColors = await generateColorSystem({
   source: '#0066cc',
-  contrastLevel: 0.5,      // Higher contrast for accessibility
-  variant: 'vibrant',      // Material You variant
-  isDark: true            // Generate for dark theme
+  contrastLevel: 0.5, // Higher contrast for accessibility
+  variant: 'vibrant', // Material You variant
+  isDark: true, // Generate for dark theme
 });
-```bash
+```
+
 ### Validate Accessibility
 
 ```typescript
@@ -59,7 +61,8 @@ if (validation.failed.length > 0) {
     console.warn(`${name}: ${ratio.toFixed(2)} (needs 4.5)`);
   });
 }
-```bash
+```
+
 ### Use Logging Utilities
 
 ```typescript
@@ -74,12 +77,14 @@ logger.error({ error }, 'Database connection failed');
 const timer = logger.startTimer();
 await processData();
 timer.done({ operation: 'processData' }, 'Processing complete');
-```bash
+```
+
 ## API Overview
 
 ### Color Generation
 
 #### `generateColorSystem(sourceOrOptions)`
+
 Generate a complete Material Design 3 color system from a source color.
 
 ```typescript
@@ -90,37 +95,46 @@ const colors = await generateColorSystem({
   tones: [0, 10, 20, ...],    // Custom tone values
   isDark: false               // Theme mode
 });
-```bash
+```
+
 Returns a `ColorSystem` with:
+
 - Primary, secondary, tertiary, neutral, and error palettes
 - Each palette contains tones from 0 (black) to 100 (white)
 - Optional light/dark theme configurations
 
 #### `generateTonalPalette(hexColor, tones?)`
+
 Generate a single tonal palette for custom use cases.
 
 ```typescript
 const palette = generateTonalPalette('#ff5722');
 console.log(palette[50]); // Medium tone
-```bash
+```
+
 #### `validateColorContrast(colorSystem, minContrast?)`
+
 Validate color combinations for WCAG compliance.
 
 ```typescript
 const validation = validateColorContrast(colors, 7.0); // AAA compliance
-```bash
+```
+
 ### Logging
 
 #### `createLogger(options?)`
+
 Create a structured logger instance.
 
 ```typescript
-const logger = createLogger({ 
+const logger = createLogger({
   module: 'auth',
-  level: 'info' 
+  level: 'info',
 });
-```bash
+```
+
 #### Performance Tracking
+
 ```typescript
 // Method 1: Timer API
 const timer = logger.startTimer();
@@ -132,10 +146,12 @@ const result = await measureTime(
   async () => await fetchData(),
   (duration) => logger.info({ duration }, 'Fetch complete')
 );
-```bash
+```
+
 ### Utility Functions
 
 The package includes comprehensive utilities for:
+
 - **Async Operations** - Timeouts, delays, retries, cancellation
 - **Error Handling** - Typed errors, retry logic, error boundaries
 - **Type Guards** - Runtime type validation
@@ -155,6 +171,7 @@ The package includes comprehensive utilities for:
 ### Tone Scale
 
 The continuous 0-100 tone scale provides precise control:
+
 - **0-10**: Near black, highest contrast
 - **20-40**: Dark tones, good for text on light
 - **50**: Medium tone, balanced
@@ -164,6 +181,7 @@ The continuous 0-100 tone scale provides precise control:
 ### Accessibility
 
 All generated colors are designed for accessibility:
+
 - Automatic WCAG AA compliance checking
 - Pre-calculated contrast ratios
 - Suggested color pairings
@@ -174,12 +192,12 @@ All generated colors are designed for accessibility:
 Full TypeScript support with exported types:
 
 ```typescript
-import type { 
-  ColorSystem, 
+import type {
+  ColorSystem,
   ColorGeneratorOptions,
   TonalScale,
   ContrastValidationResult,
-  Logger
+  Logger,
 } from '@terroir/core';
 ```
 

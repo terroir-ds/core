@@ -16,17 +16,21 @@
 
 ## 🚀 Quick Start
 
-````typescript
+```typescript
 // Most common imports
 import {
   // Guards
-  isString, isNumber, assertDefined,
+  isString,
+  isNumber,
+  assertDefined,
   // Errors
-  ValidationError, wrapError,
+  ValidationError,
+  wrapError,
   // Logger
   logger,
   // Async
-  withTimeout, retry
+  withTimeout,
+  retry,
 } from '@terroir/core';
 
 // Example usage
@@ -36,48 +40,49 @@ function processUser(data: unknown) {
   if (!isString(data.email)) {
     throw new ValidationError('Invalid email', {
       field: 'email',
-      value: data.email
+      value: data.email,
     });
   }
 
   logger.info({ email: data.email }, 'Processing user');
 }
-```bash
+```
+
 ## 📦 Module Exports
 
 <details>
 <summary>Guards & Validation (click to expand)</summary>
 
-| Function | Type | Use Case |
-|----------|------|----------|
-| `isString` | `(val: unknown) => val is string` | Type guard for strings |
-| `isNumber` | `(val: unknown) => val is number` | Type guard for numbers |
-| `isArray` | `(val: unknown) => val is unknown[]` | Type guard for arrays |
+| Function        | Type                                                       | Use Case                  |
+| --------------- | ---------------------------------------------------------- | ------------------------- |
+| `isString`      | `(val: unknown) => val is string`                          | Type guard for strings    |
+| `isNumber`      | `(val: unknown) => val is number`                          | Type guard for numbers    |
+| `isArray`       | `(val: unknown) => val is unknown[]`                       | Type guard for arrays     |
 | `assertDefined` | `<T>(val: T, msg?: string): asserts val is NonNullable<T>` | Assert not null/undefined |
-| `validateEmail` | `(email: string) => ValidationResult` | Email validation |
-| `validateUrl` | `(url: string) => ValidationResult` | URL validation |
+| `validateEmail` | `(email: string) => ValidationResult`                      | Email validation          |
+| `validateUrl`   | `(url: string) => ValidationResult`                        | URL validation            |
 
 </details>
 
 <details>
 <summary>Error Handling (click to expand)</summary>
 
-| Class/Function | Use Case | Example |
-|----------------|----------|---------|
-| `ValidationError` | Input validation failures | `throw new ValidationError("Invalid", context)` |
-| `NetworkError` | API/fetch failures | `throw new NetworkError("Timeout", { url })` |
-| `wrapError` | Add context to errors | `throw wrapError(err, "During user save")` |
-| `isRetryableError` | Check if should retry | `if (isRetryableError(err)) retry()` |
+| Class/Function     | Use Case                  | Example                                         |
+| ------------------ | ------------------------- | ----------------------------------------------- |
+| `ValidationError`  | Input validation failures | `throw new ValidationError("Invalid", context)` |
+| `NetworkError`     | API/fetch failures        | `throw new NetworkError("Timeout", { url })`    |
+| `wrapError`        | Add context to errors     | `throw wrapError(err, "During user save")`      |
+| `isRetryableError` | Check if should retry     | `if (isRetryableError(err)) retry()`            |
 
 </details>
 
 <details>
 <summary>Logging (click to expand)</summary>
 
-| Method | Use Case | Example |
-|--------|----------|---------|
-| `logger.info()` | General info | `logger.info({ id }, "Created")` |
-| `logger.error()` | Errors | `logger.error({ err }, "Failed")` |
+| Method           | Use Case      | Example                                    |
+| ---------------- | ------------- | ------------------------------------------ |
+| `logger.info()`  | General info  | `logger.info({ id }, "Created")`           |
+| `logger.error()` | Errors        | `logger.error({ err }, "Failed")`          |
 | `logger.child()` | Scoped logger | `const userLog = logger.child({ userId })` |
 
 </details>
@@ -92,6 +97,7 @@ function processUser(data: unknown) {
 ## 🔧 Common Patterns
 
 ### Pattern 1: Validate and transform
+
 ```typescript
 import { assertDefined, isString, ValidationError } from '@terroir/core';
 
@@ -104,19 +110,19 @@ function parseConfig(data: unknown): Config {
 
   return { apiKey: data.apiKey };
 }
-```bash
+```
+
 ### Pattern 2: Retry with timeout
+
 ```typescript
 import { retry, withTimeout, NetworkError } from '@terroir/core';
 
-const data = await retry(
-  () => withTimeout(fetch(url), 5000),
-  { maxAttempts: 3, delay: 1000 }
-);
-```bash
+const data = await retry(() => withTimeout(fetch(url), 5000), { maxAttempts: 3, delay: 1000 });
+```
+
 ## ❌ Common Mistakes
 
-```typescript
+```text
 // ❌ Wrong - using console
 console.log('User created');
 
@@ -128,14 +134,15 @@ throw new Error('Failed');
 
 // ✅ Right - typed errors
 throw new ValidationError('Failed', { field: 'email' });
-```bash
+```
+
 ---
 
 ## 📊 AI Metadata
 
-```yaml
+```text
 token_cost: 1200
 quick_ref_tokens: 250
 stability: stable
 last_updated: 2025-06-29
-````
+```

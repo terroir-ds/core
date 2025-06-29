@@ -6,11 +6,11 @@
 
 ## Quick Reference
 
-| Task | Import | Example |
-|------|--------|---------|
-| Use Button | `Button` | `<Button variant="primary">Click</Button>` |
-| Use Card | `Card` | `<Card><Card.Header>Title</Card.Header></Card>` |
-| Use theme | `ThemeProvider` | `<ThemeProvider theme="light">...</ThemeProvider>` |
+| Task       | Import          | Example                                            |
+| ---------- | --------------- | -------------------------------------------------- |
+| Use Button | `Button`        | `<Button variant="primary">Click</Button>`         |
+| Use Card   | `Card`          | `<Card><Card.Header>Title</Card.Header></Card>`    |
+| Use theme  | `ThemeProvider` | `<ThemeProvider theme="light">...</ThemeProvider>` |
 
 ## Common Tasks
 
@@ -51,7 +51,7 @@ export function Custom({ className, ...props }: CustomProps) {
     color: tokens.color.primary.value,
     padding: tokens.spacing.medium.value
   };
-  
+
   return <div style={styles} {...props} />;
 }
 ```
@@ -69,7 +69,7 @@ export function Custom({ className, ...props }: CustomProps) {
 
 ## AI Metadata
 
-```yaml
+```text
 stability: beta
 token_cost: 350
 last_updated: 2025-06-29

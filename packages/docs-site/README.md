@@ -2,9 +2,10 @@
 
 [![Built with Starlight](https://astro.badg.es/v2/built-with-starlight/tiny.svg)](https://starlight.astro.build)
 
-````bash
-pnpm create astro@latest -- --template starlight
 ```bash
+pnpm create astro@latest -- --template starlight
+```
+
 [![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/starlight/tree/main/examples/basics)
 [![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/starlight/tree/main/examples/basics)
 [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/withastro/starlight&create_from_path=examples/basics)
@@ -16,7 +17,7 @@ pnpm create astro@latest -- --template starlight
 
 Inside of your Astro + Starlight project, you'll see the following folders and files:
 
-```bash
+```text
 .
 ├── public/
 ├── src/
@@ -27,7 +28,7 @@ Inside of your Astro + Starlight project, you'll see the following folders and f
 ├── astro.config.mjs
 ├── package.json
 └── tsconfig.json
-````
+```
 
 Starlight looks for `.md` or `.mdx` files in the `src/content/docs/` directory. Each file is exposed as a route based on its file name.
 

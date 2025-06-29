@@ -6,12 +6,12 @@
 
 ## Quick Reference
 
-| Task | Command | Description |
-|------|---------|-------------|
-| Start dev server | `pnpm dev` | Local development at localhost:4321 |
-| Build site | `pnpm build` | Generate static site |
-| Generate llms.txt | `pnpm llms:generate` | Create AI documentation index |
-| Preview build | `pnpm preview` | Preview production build |
+| Task              | Command              | Description                         |
+| ----------------- | -------------------- | ----------------------------------- |
+| Start dev server  | `pnpm dev`           | Local development at localhost:4321 |
+| Build site        | `pnpm build`         | Generate static site                |
+| Generate llms.txt | `pnpm llms:generate` | Create AI documentation index       |
+| Preview build     | `pnpm preview`       | Preview production build            |
 
 ## Common Tasks
 
@@ -42,7 +42,7 @@ Content goes here...
 
 Edit `astro.config.mjs`:
 
-```javascript
+```bash
 export default defineConfig({
   integrations: [
     starlight({
@@ -70,7 +70,7 @@ pnpm build  # Includes llms:generate
 
 ## File Structure
 
-```
+```text
 src/
 ├── content/
 │   └── docs/
@@ -84,13 +84,14 @@ src/
 ## Deployment
 
 Site deploys to GitHub Pages via workflow:
+
 - Push to main branch
 - Workflow builds and deploys
-- Available at: https://terroir-ds.github.io/core
+- Available at: <https://terroir-ds.github.io/core>
 
 ## AI Metadata
 
-```yaml
+```text
 stability: stable
 token_cost: 300
 last_updated: 2025-06-29
