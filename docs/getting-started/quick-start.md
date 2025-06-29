@@ -281,12 +281,12 @@ Ready to dive deeper?
 
 1. **[Examples](./examples.md)** - See more complete implementations
 2. **[Color System](../foundations/color-system.md)** - Understand the science behind our colors
-3. **[Component Patterns](../guides/component-design/README.md)** - Learn advanced component design
+3. **[Component Documentation Guide](../guides/development/component-documentation-guide.md)** - Learn advanced component design
 4. **[Testing Guide](../guides/testing/README.md)** - Ensure your components are bulletproof
 
 ## Need Help?
 
 - **Can't generate colors?** Check the [color system guide](../foundations/color-system.md)
 - **Accessibility issues?** See our [accessibility guide](../foundations/accessibility.md)
-- **Framework problems?** Check [framework integration guides](../guides/framework-integration/README.md)
+- **Framework problems?** Check the documentation
 - **Still stuck?** Ask in [GitHub Discussions](https://github.com/terroir-ds/core/discussions)

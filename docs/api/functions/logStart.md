@@ -1,6 +1,6 @@
 [**Terroir Core Design System v0.1.0**](../README.md)
 
----
+***
 
 [Terroir Core Design System](../globals.md) / logStart
 
@@ -8,7 +8,7 @@
 
 > **logStart**(`processName`, `context`): `void`
 
-Defined in: [utils/logger/index.ts:686](https://github.com/terroir-ds/core/blob/9691713b8c512b7d2abe808c4f7084bdfab798bf/lib/utils/logger/index.ts#L686)
+Defined in: [utils/logger/index.ts:691](https://github.com/terroir-ds/core/blob/0096649176492a6e21b16e854cb30ade347b1bac/packages/core/src/utils/logger/index.ts#L691)
 
 Logs the start of a process or operation.
 

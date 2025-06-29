@@ -1,6 +1,6 @@
-## Terroir Core Design System v0.1.0
+**Terroir Core Design System v0.1.0**
 
----
+***
 
 # Terroir Core Design System
 
@@ -109,12 +109,38 @@ import { Button } from '@terroir/core/react';
 
 ```bash
 git submodule add https://github.com/your-org/terroir-core design-system
+```bash
+## Advanced Development: Multi-Agent Workflow
+
+This project includes an innovative multi-agent development system that enables parallel development with 70% less memory usage than traditional approaches.
+
+### What is it?
+
+A Docker-based system that lets one developer coordinate multiple parallel tasks:
+
+- **1 Core Agent**: Your main VS Code environment
+- **N Assistant Agents**: Lightweight Docker containers for parallel work
+- **Git Worktrees**: Each agent on its own branch, no conflicts
+
+### Quick Start
+
+```bash
+# Start an assistant agent
+cd .agents/docker
+./agent-manager.sh start 1
+
+# Generate Claude AI prompt for the agent
+./agent-manager.sh prompt 1
 ````
+
+### Learn More
+
+See [.agents/README.md](_media/README.md) for complete documentation on this accelerated development approach.
 
 ## Contributing
 
 1. Fork the repository
-2. Create your feature branch
+2. Create your feature branch (or use multi-agent workflow for complex features)
 3. Commit changes (hooks ensure quality)
 4. Push to the branch
 5. Create a Pull Request

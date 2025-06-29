@@ -1,6 +1,6 @@
 [**Terroir Core Design System v0.1.0**](../README.md)
 
----
+***
 
 [Terroir Core Design System](../globals.md) / logPerformance
 
@@ -8,7 +8,7 @@
 
 > **logPerformance**(`operation`, `duration`, `context`): `void`
 
-Defined in: [utils/logger/index.ts:742](https://github.com/terroir-ds/core/blob/9691713b8c512b7d2abe808c4f7084bdfab798bf/lib/utils/logger/index.ts#L742)
+Defined in: [utils/logger/index.ts:747](https://github.com/terroir-ds/core/blob/0096649176492a6e21b16e854cb30ade347b1bac/packages/core/src/utils/logger/index.ts#L747)
 
 Logs performance metrics for an operation.
 
@@ -49,8 +49,8 @@ const duration = performance.now() - start;
 logPerformance('data processing', duration);
 // Logs: "data processing took 1234ms"
 
-logPerformance('API call', 250, {
+logPerformance('API call', 250, { 
   endpoint: '/users',
-  method: 'GET',
+  method: 'GET' 
 });
 ```

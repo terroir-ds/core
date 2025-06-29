@@ -17,7 +17,7 @@ The Terroir token system provides a flexible, tool-agnostic foundation for desig
 
 Our token architecture follows a three-tier hierarchy for maximum flexibility:
 
-```
+```text
 ┌─────────────────────────┐
 │   Tier 3: Component     │  component.button.background
 ├─────────────────────────┤
@@ -25,8 +25,7 @@ Our token architecture follows a three-tier hierarchy for maximum flexibility:
 ├─────────────────────────┤
 │   Tier 1: Primitives    │  color.primitive.blue.500
 └─────────────────────────┘
-```
-
+```text
 #### Tier 1: Primitives
 Raw values that form the foundation. These are never used directly in components.
 
@@ -44,8 +43,7 @@ Raw values that form the foundation. These are never used directly in components
     }
   }
 }
-```
-
+```text
 #### Tier 2: Semantic
 Meaningful aliases that abstract the purpose from the value.
 
@@ -61,8 +59,7 @@ Meaningful aliases that abstract the purpose from the value.
     }
   }
 }
-```
-
+```text
 #### Tier 3: Component
 Specific use cases tied to components, always reference semantic tokens.
 
@@ -78,8 +75,7 @@ Specific use cases tied to components, always reference semantic tokens.
     }
   }
 }
-```
-
+```text
 ## Token Format Standards
 
 ### Current Format: Style Dictionary
@@ -98,8 +94,7 @@ We use Style Dictionary v3 format as our source of truth:
     }
   }
 }
-```
-
+```text
 ### Future Format: W3C Design Tokens
 
 We're prepared for the W3C Design Tokens Community Group format:
@@ -117,8 +112,7 @@ We're prepared for the W3C Design Tokens Community Group format:
     }
   }
 }
-```
-
+```text
 ### Format Transformation
 
 Our build system automatically handles format conversions:
@@ -135,18 +129,16 @@ Our build system automatically handles format conversions:
     "w3c": { /* W3C DTCG format */ }
   }
 }
-```
-
+```text
 ## Token Types and Naming
 
 ### Naming Convention
 
 We follow a dot notation with clear hierarchy:
 
-```
+```text
 [category].[tier].[group].[property].[variant].[state]
-```
-
+```text
 Examples:
 - `color.primitive.blue.500`
 - `semantic.spacing.component.padding`
@@ -171,8 +163,7 @@ Generated using Material Color Utilities with continuous tone scale (0-100):
     }
   }
 }
-```
-
+```text
 #### Spacing Tokens
 Based on 4px unit system:
 
@@ -187,8 +178,7 @@ Based on 4px unit system:
     }
   }
 }
-```
-
+```text
 #### Typography Tokens
 Composite tokens for complete type styles:
 
@@ -209,8 +199,7 @@ Composite tokens for complete type styles:
     }
   }
 }
-```
-
+```text
 #### Motion Tokens
 For consistent animations:
 
@@ -226,8 +215,7 @@ For consistent animations:
     }
   }
 }
-```
-
+```text
 ## Tool Integration
 
 ### Figma Integration
@@ -241,8 +229,7 @@ Export tokens in flat format with proper naming:
   "color-primary": "#0066cc",
   "spacing-small": "8px"
 }
-```
-
+```text
 #### Figma Variables (Native)
 Support for Figma's native variable system:
 
@@ -255,8 +242,7 @@ Support for Figma's native variable system:
     "variables": [...]
   }]
 }
-```
-
+```text
 ### Development Tool Integration
 
 #### VS Code
@@ -274,8 +260,7 @@ export interface DesignTokens {
     medium: string;
   };
 }
-```
-
+```text
 #### Browser DevTools
 CSS custom properties for easy debugging:
 
@@ -284,8 +269,7 @@ CSS custom properties for easy debugging:
   --color-primary: #0066cc;
   --spacing-small: 8px;
 }
-```
-
+```text
 ## Accessibility and WCAG Compliance
 
 ### Built-in Contrast Validation
@@ -309,8 +293,7 @@ Tokens include accessibility metadata:
     }
   }
 }
-```
-
+```text
 ### Naming Convention for Contrast
 
 Use `on-{background}` pattern for text colors:
@@ -321,8 +304,7 @@ Use `on-{background}` pattern for text colors:
   "on-surface": "Color for text on surface background",
   "on-error": "Color for text on error background"
 }
-```
-
+```text
 ### Automated Testing
 
 Build-time validation ensures compliance:
@@ -332,13 +314,12 @@ pnpm tokens:validate
 # ✓ All color combinations meet WCAG AA
 # ✓ Focus indicators have 3:1 contrast
 # ✓ Touch targets meet 44x44px minimum
-```
-
+```text
 ## Theme Support
 
 ### Theme Structure
 
-```
+```text
 tokens/
 ├── global/           # Theme-agnostic tokens
 ├── themes/
@@ -348,8 +329,7 @@ tokens/
 └── brands/          # Multi-brand support
     ├── default/
     └── custom/
-```
-
+```text
 ### Theme Token Example
 
 ```json
@@ -374,8 +354,7 @@ tokens/
     }
   }
 }
-```
-
+```text
 ## Working with Tokens
 
 ### Development Workflow
@@ -397,8 +376,7 @@ pnpm tokens:validate
 
 # Generate documentation
 pnpm tokens:docs
-```
-
+```text
 ### Token Usage Examples
 
 #### In CSS
@@ -408,8 +386,7 @@ pnpm tokens:docs
   padding: var(--spacing-small) var(--spacing-medium);
   transition-duration: var(--motion-duration-fast);
 }
-```
-
+```text
 #### In JavaScript/React
 ```jsx
 import { tokens } from '@terroir/core';
@@ -418,8 +395,7 @@ const Button = styled.button`
   background-color: ${tokens.color.primary};
   padding: ${tokens.spacing.small} ${tokens.spacing.medium};
 `;
-```
-
+```text
 #### In Figma
 Tokens are automatically synced and available in Figma's asset panel.
 
@@ -433,8 +409,7 @@ Tokens are automatically synced and available in Figma's asset panel.
   --spacing-unit: 4px;
   --font-size-base: 16px;
 }
-```
-
+```text
 ### JavaScript/TypeScript
 ```javascript
 // Generated ES modules
@@ -442,22 +417,19 @@ export const color = {
   primary: '#0066cc',
   secondary: '#6b46c1'
 };
-```
-
+```text
 ### iOS (Swift)
 ```swift
 // Generated Swift extensions
 extension UIColor {
   static let primaryColor = UIColor(hex: "#0066cc")
 }
-```
-
+```text
 ### Android (Kotlin)
 ```kotlin
 // Generated Android resources
 <color name="color_primary">#0066cc</color>
-```
-
+```text
 ## Best Practices
 
 ### 1. **Always Use Semantic Tokens**
@@ -469,8 +441,7 @@ background: tokens.color.primitive.blue.500
 
 // ✅ Good
 background: tokens.semantic.color.primary
-```
-
+```text
 ### 2. **Document Token Purpose**
 Every token must have a clear description.
 
@@ -478,8 +449,7 @@ Every token must have a clear description.
 {
   "description": "Primary action color for buttons and links"
 }
-```
-
+```text
 ### 3. **Maintain Token Relationships**
 Use references to maintain consistency.
 
@@ -490,8 +460,7 @@ Use references to maintain consistency.
     "modify": [{ "type": "darken", "amount": 0.1 }]
   }
 }
-```
-
+```text
 ### 4. **Version Token Changes**
 Follow semantic versioning for token updates.
 
@@ -503,8 +472,7 @@ Follow semantic versioning for token updates.
     "version": "2.0.0"
   }
 }
-```
-
+```text
 ### 5. **Test Across Themes**
 Ensure tokens work in all theme contexts.
 
@@ -512,8 +480,7 @@ Ensure tokens work in all theme contexts.
 pnpm test:tokens --theme=light
 pnpm test:tokens --theme=dark
 pnpm test:tokens --theme=high-contrast
-```
-
+```text
 ## Migration and Compatibility
 
 ### Supporting Multiple Formats
@@ -540,19 +507,25 @@ Deprecated tokens remain available with warnings:
 ## Future Considerations
 
 ### W3C Design Tokens Spec
+
 We're tracking the evolving standard and will provide:
+
 - Automatic migration tools
 - Dual format support during transition
 - Documentation updates
 
 ### AI-Driven Token Generation
+
 Exploring integration with:
+
 - Automated accessibility optimization
 - Context-aware token suggestions
 - Cross-platform consistency checking
 
 ### Advanced Token Features
+
 Planning support for:
+
 - Conditional tokens (responsive, user preference)
 - Composite tokens (shadows, gradients)
 - Animation sequences

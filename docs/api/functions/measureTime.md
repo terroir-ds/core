@@ -1,6 +1,6 @@
 [**Terroir Core Design System v0.1.0**](../README.md)
 
----
+***
 
 [Terroir Core Design System](../globals.md) / measureTime
 
@@ -8,7 +8,7 @@
 
 > **measureTime**\<`T`\>(`operation`, `fn`, `context`): `Promise`\<`T`\>
 
-Defined in: [utils/logger/index.ts:856](https://github.com/terroir-ds/core/blob/9691713b8c512b7d2abe808c4f7084bdfab798bf/lib/utils/logger/index.ts#L856)
+Defined in: [utils/logger/index.ts:861](https://github.com/terroir-ds/core/blob/0096649176492a6e21b16e854cb30ade347b1bac/packages/core/src/utils/logger/index.ts#L861)
 
 Measures and logs the execution time of an async operation.
 
@@ -56,22 +56,30 @@ The original error if the function fails
 
 ## Examples
 
-````typescript
-const result = await measureTime('database query', async () => db.query('SELECT * FROM users'));
+```typescript
+const result = await measureTime(
+  'database query',
+  async () => db.query('SELECT * FROM users')
+);
 // Logs: "database query took 45ms" on success
 // Logs error with duration on failure
 ```typescript
 ```typescript
-const data = await measureTime('API fetch', async () => fetch('/api/data').then((r) => r.json()), {
-  endpoint: '/api/data',
-  method: 'GET',
-});
+const data = await measureTime(
+  'API fetch',
+  async () => fetch('/api/data').then(r => r.json()),
+  { endpoint: '/api/data', method: 'GET' }
+);
 ```typescript
 ```typescript
 try {
-  await measureTime('risky operation', async () => riskyOperation(), { retries: 3 });
+  await measureTime(
+    'risky operation',
+    async () => riskyOperation(),
+    { retries: 3 }
+  );
 } catch (error) {
   // Error is logged with duration before being re-thrown
   handleError(error);
 }
-````
+```

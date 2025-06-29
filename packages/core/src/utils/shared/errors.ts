@@ -38,7 +38,7 @@ export function createValidationError(
     code: options.code,
     message,
     path: options.path || [],
-    context: options.context,
+    ...(options.context && { context: options.context }),
   };
 }
 

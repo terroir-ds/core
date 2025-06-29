@@ -1,5 +1,7 @@
 # Color System
 
+> **📚 This is the conceptual overview.** For practical implementation details, see the [Color System Implementation Guide](../guides/color-system.md).
+
 Terroir Core's color system is built on Google's Material Color Utilities, providing scientifically-derived color palettes that ensure accessibility and visual harmony.
 
 ## Why This Approach?

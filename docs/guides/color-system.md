@@ -1,10 +1,13 @@
-# Color System Guide
+# Color System Implementation Guide
+
+> **🛠️ This is the practical implementation guide.** For conceptual understanding and theory, see the [Color System Foundations](../foundations/color-system.md).
 
 This guide explains how the Terroir Core Design System generates and manages colors using Material Color Utilities (MCU) for perceptually uniform, accessible color palettes.
 
 ## Overview
 
 Our color system provides:
+
 - **Perceptually uniform colors** using HCT color space
 - **Continuous tone scales** (0-100) for precise control
 - **Automatic accessibility** with pre-calculated contrast ratios
@@ -16,6 +19,7 @@ Our color system provides:
 ### Why MCU?
 
 Material Color Utilities provides scientifically-derived color systems that:
+
 - Use HCT (Hue, Chroma, Tone) color space for perceptual uniformity
 - Generate harmonious color relationships automatically
 - Ensure accessibility through tone-based contrast
@@ -24,6 +28,7 @@ Material Color Utilities provides scientifically-derived color systems that:
 ### HCT Color Space
 
 HCT improves upon other color spaces:
+
 - **Better than HSL**: Perceptually uniform lightness
 - **Better than LAB**: More intuitive for designers
 - **Better than LCH**: Smoother gradients and better gamut mapping
@@ -35,8 +40,7 @@ HCT improves upon other color spaces:
   chroma: 0-150+,  // Color intensity (unbounded)
   tone: 0-100      // Perceptual lightness
 }
-```
-
+```text
 ## Color Generation
 
 ### Source Color Configuration
@@ -51,8 +55,7 @@ export const colorConfig = {
   variant: 'tonalSpot',       // Color scheme variant
   isDark: false              // Theme mode
 };
-```
-
+```yaml
 ### Color Scheme Variants
 
 MCU offers several harmonious variants:
@@ -108,8 +111,7 @@ interface ColorScheme {
   inverseOnSurface: Color;
   inversePrimary: Color;
 }
-```
-
+```text
 ## Tone Scale System
 
 ### Understanding Tones
@@ -133,8 +135,7 @@ const tones = {
   99: '#fcfcfc',   // Almost white
   100: '#ffffff'   // White
 };
-```
-
+```text
 ### Accessing Tones
 
 ```typescript
@@ -148,8 +149,7 @@ const primaryPalette = {
   20: colorScheme.primary.tone(20),
   // ... etc
 };
-```
-
+```text
 ### Tone Usage Guidelines
 
 | Tone Range | Light Theme | Dark Theme | Use Case |
@@ -174,8 +174,7 @@ onPrimary: tone(100)     // White text
 // Dark theme  
 primary: tone(80)        // 9.7:1 contrast with black
 onPrimary: tone(20)      // Dark text
-```
-
+```text
 ### Contrast Levels
 
 Configure global contrast for accessibility needs:
@@ -192,8 +191,7 @@ contrastLevel: 1
 
 // Custom contrast
 contrastLevel: 0.73
-```
-
+```text
 ### Testing Contrast
 
 ```typescript
@@ -215,8 +213,7 @@ const result = ContrastChecker.check({
   wcagLargeAA: true,
   wcagLargeAAA: true
 }
-```
-
+```text
 ## Implementation
 
 ### Basic Color Generation
@@ -230,8 +227,7 @@ const colors = await generateColorSystem({
   contrastLevel: 0.5,
   variant: 'tonalSpot'
 });
-```
-
+```text
 ### Advanced Configuration
 
 ```typescript
@@ -253,8 +249,7 @@ const brandColors = {
     variant: 'neutral'
   })
 };
-```
-
+```text
 ### Theme Generation
 
 ```typescript
@@ -278,8 +273,7 @@ const themes = {
     contrastLevel: 1    // Maximum contrast
   })
 };
-```
-
+```text
 ## Token Structure
 
 ### Color Token Organization
@@ -312,8 +306,7 @@ const themes = {
     }
   }
 }
-```
-
+```text
 ### Surface Colors
 
 Special handling for surfaces and backgrounds:
@@ -333,8 +326,7 @@ const surfaces = {
   surfaceContainerHigh: neutral.tone(92),
   surfaceContainerHighest: neutral.tone(90)
 };
-```
-
+```text
 ## Dynamic Color
 
 ### Image-Based Themes
@@ -355,8 +347,7 @@ const dynamicColors = await generateColorSystem({
   source: sourceColor,
   variant: 'fidelity'  // Preserves extracted color
 });
-```
-
+```text
 ### User Preference Themes
 
 Support system and user preferences:
@@ -372,8 +363,7 @@ const userTheme = await generateColorSystem({
   isDark: prefersDark,
   contrastLevel: prefersHighContrast ? 1 : 0
 });
-```
-
+```text
 ## Color Harmony
 
 ### Analogous Colors
@@ -387,8 +377,7 @@ const analogous = {
   secondary: await generateFromHue(180),    // Cyan
   tertiary: await generateFromHue(240)      // Blue-violet
 };
-```
-
+```text
 ### Complementary Colors
 
 ```typescript
@@ -400,8 +389,7 @@ const complementary = {
   primary: await generateFromHue(primaryHue),
   accent: await generateFromHue(complementaryHue)
 };
-```
-
+```text
 ### Custom Relationships
 
 ```typescript
@@ -412,8 +400,7 @@ const customScheme = {
   tertiary: rotateHue(primary, 120),    // Triadic
   accent: rotateHue(primary, 180)       // Complementary
 };
-```
-
+```text
 ## Performance Optimization
 
 ### Color Caching
@@ -431,8 +418,7 @@ function getCachedPalette(config) {
   
   return colorCache.get(key);
 }
-```
-
+```text
 ### Lazy Tone Generation
 
 ```typescript
@@ -450,8 +436,7 @@ class LazyTonalPalette {
     return this.cache.get(value);
   }
 }
-```
-
+```text
 ## Migration Guide
 
 ### From Static Colors
@@ -473,8 +458,7 @@ const colors = await generateColorSystem({
 const primary = colors.primary.tone(40);
 const primaryLight = colors.primary.tone(60);
 const primaryDark = colors.primary.tone(30);
-```
-
+```text
 ### From Other Color Systems
 
 ```typescript
@@ -487,8 +471,7 @@ const hctColor = hslToHct({ h: 210, s: 100, l: 40 });
 import { hexToHct } from '@terroir/core/lib/colors';
 
 const hctColor = hexToHct('#0066cc');
-```
-
+```text
 ## Best Practices
 
 ### 1. **Use Semantic Roles**
@@ -500,8 +483,7 @@ background: var(--color-primary-40);
 
 /* ✅ Prefer */
 background: var(--color-primary);
-```
-
+```text
 ### 2. **Consider All Themes**
 Test colors across light, dark, and high-contrast:
 
@@ -510,8 +492,7 @@ const themes = ['light', 'dark', 'highContrast'];
 themes.forEach(theme => {
   testColorContrast(theme);
 });
-```
-
+```text
 ### 3. **Respect User Preferences**
 Honor system settings:
 
@@ -519,8 +500,7 @@ Honor system settings:
 const theme = getUserPreference() || 
   getSystemPreference() || 
   'light';
-```
-
+```text
 ### 4. **Document Color Decisions**
 Explain color choices:
 
@@ -533,8 +513,7 @@ Explain color choices:
     }
   }
 }
-```
-
+```text
 ### 5. **Validate Accessibility**
 Always verify contrast:
 

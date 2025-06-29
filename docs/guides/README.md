@@ -1,48 +1,42 @@
 # Guides
 
-This section contains practical tutorials, workflows, and best practices for working with Terroir Core. These guides focus on the "why" and "what" of common tasks and processes.
+This section contains practical tutorials, workflows, and best practices for working with Terroir Core. These guides focus on the "how" of common tasks and processes.
 
-## Development Guides
+## Available Guides
 
-### [Contributing](./contributing/README.md)
+### Development Workflows
+
+#### [Contributing](./contributing/README.md)
 
 How to contribute to Terroir Core, including development workflow, testing requirements, and code standards.
 
-### [Development](./development/README.md)
+#### [Development](./development/README.md)
 
 Development workflows, tooling setup, and best practices for building with Terroir Core.
 
-### [Testing](./testing/README.md)
+#### [Testing](./testing/README.md)
 
 Testing strategies, accessibility validation, and quality assurance processes.
 
-## Design Guides
+### Design Implementation
 
-### [Theming](./theming/README.md)
+#### [Color System](./color-system.md)
 
-How to create custom themes, override tokens, and maintain brand consistency.
+Practical implementation guide for using the Material Color Utilities-based color system.
 
-### [Component Design](./component-design/README.md)
+#### [Token System](./token-system.md)
 
-Guidelines for designing new components that integrate with the design system.
+How to work with design tokens, create custom tokens, and organize token architecture.
 
-### [Accessibility Implementation](./accessibility-implementation/README.md)
+## Planned Guides
 
-Practical guidance for implementing accessible designs with Terroir Core.
+The following guides are planned for future releases:
 
-## Integration Guides
-
-### [Framework Integration](./framework-integration/README.md)
-
-How to integrate Terroir Core with different frameworks (React, Vue, Angular, etc.).
-
-### [Build Pipeline Integration](./build-integration/README.md)
-
-Integrating Terroir Core into your build process for optimal performance.
-
-### [Migration Guides](./migration/README.md)
-
-Step-by-step guides for migrating from other design systems or upgrading versions.
+- **Theming Guide** - Creating custom themes and maintaining brand consistency
+- **Component Design** - Guidelines for creating new components
+- **Framework Integration** - React, Vue, Angular integration patterns
+- **Build Integration** - Optimizing your build pipeline
+- **Migration Guide** - Moving from other design systems
 
 ## Guide Types
 
