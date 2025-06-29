@@ -123,7 +123,7 @@ start_agent() {
         # Build image if it doesn't exist
         if ! docker images | grep -q "terroir-agent"; then
             echo -e "${YELLOW}Building agent image...${NC}"
-            docker build -t terroir-agent:latest -f "$SCRIPT_DIR/Dockerfile.agent" "$SCRIPT_DIR"
+            docker build -t terroir-agent:latest -f Dockerfile.agent .
         fi
         
         # Create and start container
@@ -242,7 +242,7 @@ rebuild_agent() {
     
     # Force rebuild the image
     echo -e "${GREEN}Building new agent image...${NC}"
-    docker build --no-cache -t terroir-agent:latest -f "$SCRIPT_DIR/Dockerfile.agent" "$SCRIPT_DIR"
+    docker build --no-cache -t terroir-agent:latest -f Dockerfile.agent .
     
     # Start the agent (which will create new container)
     start_agent "$agent"
