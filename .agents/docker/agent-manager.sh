@@ -231,7 +231,7 @@ show_status() {
         fi
         
         if [ "$num" = "0" ]; then
-            echo -e "  Core (0): ${GREEN}VS Code${NC} (not dockerized)"
+            echo -e "  Core (0): ${GREEN}VS Code${NC} (via devcontainer)"
             continue
         fi
         
