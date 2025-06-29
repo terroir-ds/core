@@ -42,6 +42,49 @@ To report a security vulnerability, please follow these steps:
 3. A new version is released with the security fix.
 4. The vulnerability is disclosed in the release notes after users have had time to update.
 
+## Security Measures
+
+### Automated Security Scanning
+
+Our CI/CD pipeline includes comprehensive security checks:
+
+1. **Dependency Scanning**
+   - Continuous monitoring with `pnpm audit`
+   - Critical vulnerabilities block deployments
+   - Daily scheduled scans for emerging threats
+
+2. **Static Application Security Testing (SAST)**
+   - CodeQL analysis for JavaScript/TypeScript
+   - Semgrep with security-focused rulesets
+   - Regular security pattern updates
+
+3. **Secret Detection**
+   - TruffleHog scanning on all commits
+   - Verified secret detection only
+   - Full repository history scanning
+
+4. **License Compliance**
+   - Automated license compatibility checking
+   - Blocks incompatible licenses (GPL, AGPL, LGPL, SSPL, BUSL)
+   - Production dependency focus
+
+### Development Security Practices
+
+1. **Secure Development Lifecycle**
+   - Security scanning on every PR
+   - Mandatory security review for critical changes
+   - Signed commits recommended
+
+2. **Dependency Management**
+   - Automated updates via Dependabot
+   - Lock file integrity verification
+   - Production vs development dependency separation
+
+3. **Access Control**
+   - Limited repository write access
+   - Required 2FA for all maintainers
+   - Branch protection rules enforced
+
 ## Security Best Practices
 
 When using Terroir Core in your projects:
@@ -51,6 +94,7 @@ When using Terroir Core in your projects:
 3. **Validate Inputs**: Always validate and sanitize user inputs in your applications.
 4. **Use Environment Variables**: Never hardcode sensitive information in your code.
 5. **Enable CSP**: Use Content Security Policy headers when serving Terroir Core assets.
+6. **Run Security Scans**: Use our security workflow as a template for your projects.
 
 ## Known Security Considerations
 

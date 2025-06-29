@@ -1,0 +1,98 @@
+{
+  // Color tokens for the Terroir Design System
+  // These will be processed by Material Color Utilities to generate full palettes
+  "color": {
+    "$description": "Color tokens for the Terroir Design System",
+    
+    // Brand colors define the core visual identity
+    // Each will generate a full tonal palette (0-100)
+    "brand": {
+      "$description": "Brand colors that define the visual identity",
+      
+      // Primary color - main brand identity
+      "primary": {
+        "$value": "#0066cc",
+        "$description": "Primary brand color - will be used to generate full palette",
+        "$type": "color"
+      },
+      
+      // Secondary color - for accents and emphasis
+      "secondary": {
+        "$value": "#00897b",
+        "$description": "Secondary brand color for accents",
+        "$type": "color"
+      },
+      
+      // Tertiary color - for special UI elements
+      "tertiary": {
+        "$value": "#5e35b1",
+        "$description": "Tertiary brand color for special emphasis",
+        "$type": "color"
+      }
+    },
+    
+    // Neutral colors for text, borders, and backgrounds
+    // Will be replaced with Material Color Utilities neutrals
+    "neutral": {
+      "$description": "Neutral colors for backgrounds and surfaces",
+      
+      "0": {
+        "$value": "#ffffff",
+        "$description": "Pure white",
+        "$type": "color"
+      },
+      "10": {
+        "$value": "#f5f5f5",
+        "$description": "Nearly white",
+        "$type": "color"
+      },
+      "20": {
+        "$value": "#e0e0e0",
+        "$description": "Light gray",
+        "$type": "color"
+      },
+      "50": {
+        "$value": "#9e9e9e",
+        "$description": "Medium gray",
+        "$type": "color"
+      },
+      "90": {
+        "$value": "#212121",
+        "$description": "Nearly black",
+        "$type": "color"
+      },
+      "100": {
+        "$value": "#000000",
+        "$description": "Pure black",
+        "$type": "color"
+      }
+    },
+    
+    // Semantic colors for UI states and feedback
+    // These will also be generated with proper tonal ranges
+    "semantic": {
+      "$description": "Semantic colors for UI states",
+      
+      "error": {
+        "$value": "#d32f2f",
+        "$description": "Error state color",
+        "$type": "color"
+      },
+      "warning": {
+        "$value": "#f57c00",
+        "$description": "Warning state color",
+        "$type": "color"
+      },
+      "success": {
+        "$value": "#388e3c",
+        "$description": "Success state color",
+        "$type": "color"
+      },
+      "info": {
+        "$value": "#1976d2",
+        "$description": "Informational state color",
+        "$type": "color"
+      }
+    }
+  }
+}

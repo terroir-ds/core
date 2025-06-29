@@ -90,11 +90,53 @@ import type { Logger, LoggerOptions, TransportTargetOptions } from 'pino';
 import path from 'node:path';
 import { env, isDevelopment, isTest, isCI } from '@lib/config/index.js';
 import type { LogContext, PerformanceMetrics } from '@utils/types/logger.types.js';
-import { createRedactor } from '@utils/security/redaction.js';
+import { isString, isObject, isFunction } from '@utils/guards/type-guards.js';
 
 // Performance: Limit log message size to prevent memory issues
 const MAX_MESSAGE_LENGTH = 10000; // 10KB
 const MAX_OBJECT_DEPTH = 5;
+const MAX_STACK_SIZE = 1000; // Maximum stack size for iterative processing
+
+// Object pooling for performance
+const POOL_SIZE = 50;
+const stackPool: Array<Array<{
+  source: Record<string, unknown> | unknown[];
+  target: Record<string, unknown> | unknown[];
+  key?: string | number;
+  depth: number;
+}>> = [];
+
+// Initialize the pool
+for (let i = 0; i < POOL_SIZE; i++) {
+  stackPool.push([]);
+}
+
+/**
+ * Get a stack array from the pool or create a new one
+ */
+function getStackFromPool(): Array<{
+  source: Record<string, unknown> | unknown[];
+  target: Record<string, unknown> | unknown[];
+  key?: string | number;
+  depth: number;
+}> {
+  return stackPool.pop() || [];
+}
+
+/**
+ * Return a stack array to the pool after clearing it
+ */
+function returnStackToPool(stack: Array<{
+  source: Record<string, unknown> | unknown[];
+  target: Record<string, unknown> | unknown[];
+  key?: string | number;
+  depth: number;
+}>): void {
+  if (stackPool.length < POOL_SIZE) {
+    stack.length = 0; // Clear the array
+    stackPool.push(stack);
+  }
+}
 
 // AsyncLocalStorage for request context propagation
 const asyncLocalStorage = new AsyncLocalStorage<LogContext>();
@@ -223,21 +265,46 @@ const getScriptName = (): string => {
   }
 };
 
-// Create custom redactor for logger with specific options
-const logRedactor = createRedactor({
-  deep: true,
-  maxDepth: MAX_OBJECT_DEPTH,
-  maxStringLength: MAX_MESSAGE_LENGTH,
-  checkContent: true,
-  redactedValue: '[REDACTED]',
-});
+// Custom serializers
+// Comprehensive list of sensitive field patterns
+const SENSITIVE_PATTERNS = [
+  'password', 'passwd', 'pwd',
+  'token', 'api_key', 'apikey', 'api-key',
+  'secret', 'private', 'priv',
+  'key', 'auth', 'authorization',
+  'session', 'cookie',
+  'credit_card', 'creditcard', 'cc_number',
+  'ssn', 'social_security',
+  'bank_account', 'account_number',
+  'pin', 'cvv', 'cvc'
+];
+
+// Content patterns for sensitive data detection
+const SENSITIVE_CONTENT_PATTERNS = [
+  /\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b/g, // Credit card numbers
+  /\beyJ[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\b/g, // JWT tokens
+  /\b\d{3}-\d{2}-\d{4}\b/g, // SSN format
+  /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, // Email addresses
+  /-----BEGIN (?:RSA |EC )?PRIVATE KEY-----/g, // Private keys
+  /sk_(?:test|live)_[a-zA-Z0-9]{24,}/g, // Stripe keys
+  /ghp_[a-zA-Z0-9]{36}/g, // GitHub personal access tokens
+  /\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/g, // IPv4 addresses
+  /\b(?:[A-Fa-f0-9]{1,4}:){7}[A-Fa-f0-9]{1,4}\b/g, // IPv6 addresses (simplified)
+  /\b\+?1?\s*\(?[0-9]{3}\)?[-.\s]?[0-9]{3}[-.\s]?[0-9]{4}\b/g, // US phone numbers
+  /\b\+[1-9]\d{1,14}\b/g, // International E.164 phone format
+];
+
+// Pre-compiled non-global versions for better performance
+const SENSITIVE_CONTENT_TESTERS = SENSITIVE_CONTENT_PATTERNS.map(pattern => 
+  new RegExp(pattern.source, pattern.flags.replace('g', ''))
+);
 
 const serializers: LoggerOptions['serializers'] = {
   err: pino.stdSerializers.err,
   error: pino.stdSerializers.err,
   // Enhanced serializer with deep redaction
   config: (config: Record<string, unknown>) => {
-    return logRedactor(config);
+    return deepRedact(config, SENSITIVE_PATTERNS);
   },
   // Limit request/response sizes
   req: (req: unknown) => {
@@ -250,6 +317,199 @@ const serializers: LoggerOptions['serializers'] = {
   },
   res: pino.stdSerializers.res
 };
+
+/**
+ * Check if a string contains sensitive content
+ */
+function containsSensitiveContent(value: string): boolean {
+  // Check if string is too long (potential data dump)
+  if (value.length > MAX_MESSAGE_LENGTH) {
+    return true;
+  }
+  
+  // Check for binary content
+  if (isBinaryContent(value)) {
+    return true;
+  }
+  
+  // Check against content patterns using pre-compiled testers
+  for (const tester of SENSITIVE_CONTENT_TESTERS) {
+    if (tester.test(value)) {
+      return true;
+    }
+  }
+  
+  return false;
+}
+
+/**
+ * Check if string content appears to be binary data
+ */
+function isBinaryContent(str: string): boolean {
+  // Check for null bytes or high concentration of non-printable characters
+  // eslint-disable-next-line no-control-regex
+  const nonPrintable = str.match(/[\x00-\x08\x0E-\x1F\x7F-\x9F]/g);
+  return nonPrintable ? nonPrintable.length / str.length > 0.3 : false;
+}
+
+/**
+ * Deep redaction of sensitive fields with content inspection
+ * Uses iterative approach to prevent stack overflow
+ */
+function deepRedact(obj: unknown, patterns: string[], depth = 0): unknown {
+  // Handle primitives
+  if (obj === null || obj === undefined) {
+    return obj;
+  }
+  
+  // Check depth limit
+  if (depth > MAX_OBJECT_DEPTH) {
+    return '[MAX DEPTH EXCEEDED]';
+  }
+  
+  // Redact sensitive string content
+  if (isString(obj)) {
+    if (containsSensitiveContent(obj)) {
+      return '[REDACTED - SENSITIVE CONTENT]';
+    }
+    // Truncate long strings
+    if (obj.length > MAX_MESSAGE_LENGTH) {
+      return obj.substring(0, MAX_MESSAGE_LENGTH) + '[TRUNCATED]';
+    }
+    return obj;
+  }
+  
+  // Non-objects pass through
+  if (typeof obj !== 'object') {
+    return obj;
+  }
+  
+  // Use iterative approach with object pooling for better performance
+  const stack = getStackFromPool();
+  
+  try {
+    // Handle arrays
+    if (Array.isArray(obj)) {
+      const result: unknown[] = [];
+      stack.push({ source: obj, target: result, depth });
+      
+      while (stack.length > 0) {
+        // Prevent stack exhaustion attacks
+        if (stack.length > MAX_STACK_SIZE) {
+          return '[REDACTION STACK LIMIT EXCEEDED]';
+        }
+        
+        const current = stack.pop();
+        if (!current) continue;
+        const { source, target, depth: currentDepth } = current;
+        
+        if (Array.isArray(source) && Array.isArray(target)) {
+          for (let i = 0; i < source.length; i++) {
+            const value = source[i];
+            if (value === null || value === undefined) {
+              target[i] = value;
+            } else if (isString(value)) {
+              target[i] = containsSensitiveContent(value) ? '[REDACTED - SENSITIVE CONTENT]' : value;
+            } else if (isObject(value)) {
+              if (currentDepth >= MAX_OBJECT_DEPTH) {
+                target[i] = '[MAX DEPTH EXCEEDED]';
+              } else if (Array.isArray(value)) {
+                target[i] = [];
+                stack.push({ source: value, target: target[i] as unknown[], depth: currentDepth + 1 });
+              } else {
+                target[i] = {};
+                stack.push({ source: value as Record<string, unknown>, target: target[i] as Record<string, unknown>, depth: currentDepth + 1 });
+              }
+            } else {
+              target[i] = value;
+            }
+          }
+        } else {
+          // Handle objects
+          if (!Array.isArray(source) && !Array.isArray(target)) {
+            for (const [key, value] of Object.entries(source)) {
+              const lowerKey = key.toLowerCase();
+              const shouldRedactKey = patterns.some(pattern => 
+                lowerKey.includes(pattern.toLowerCase())
+              );
+              
+              if (shouldRedactKey) {
+                target[key] = '[REDACTED]';
+              } else if (value === null || value === undefined) {
+                target[key] = value;
+              } else if (isString(value)) {
+                target[key] = containsSensitiveContent(value) ? '[REDACTED - SENSITIVE CONTENT]' : value;
+              } else if (isObject(value)) {
+                if (currentDepth >= MAX_OBJECT_DEPTH) {
+                  target[key] = '[MAX DEPTH EXCEEDED]';
+                } else if (Array.isArray(value)) {
+                  target[key] = [];
+                  stack.push({ source: value, target: target[key] as unknown[], depth: currentDepth + 1 });
+                } else {
+                  target[key] = {};
+                  stack.push({ source: value as Record<string, unknown>, target: target[key] as Record<string, unknown>, depth: currentDepth + 1 });
+                }
+              } else {
+                target[key] = value;
+              }
+            }
+          }
+        }
+      }
+      
+      return result;
+    }
+    
+    // Handle objects
+    const result: Record<string, unknown> = {};
+    stack.push({ source: obj as Record<string, unknown>, target: result, depth });
+    
+    while (stack.length > 0) {
+      // Prevent stack exhaustion attacks
+      if (stack.length > MAX_STACK_SIZE) {
+        return '[REDACTION STACK LIMIT EXCEEDED]';
+      }
+      
+      const current = stack.pop();
+      if (!current) continue;
+      const { source, target, depth: currentDepth } = current;
+      
+      if (!Array.isArray(source) && !Array.isArray(target)) {
+        for (const [key, value] of Object.entries(source)) {
+          const lowerKey = key.toLowerCase();
+          const shouldRedactKey = patterns.some(pattern => 
+            lowerKey.includes(pattern.toLowerCase())
+          );
+          
+          if (shouldRedactKey) {
+            target[key] = '[REDACTED]';
+          } else if (value === null || value === undefined) {
+            target[key] = value;
+          } else if (isString(value)) {
+            target[key] = containsSensitiveContent(value) ? '[REDACTED - SENSITIVE CONTENT]' : value;
+          } else if (isObject(value)) {
+            if (currentDepth >= MAX_OBJECT_DEPTH) {
+              target[key] = '[MAX DEPTH EXCEEDED]';
+            } else if (Array.isArray(value)) {
+              target[key] = [];
+              stack.push({ source: value, target: target[key] as unknown[], depth: currentDepth + 1 });
+            } else {
+              target[key] = {};
+              stack.push({ source: value as Record<string, unknown>, target: target[key] as Record<string, unknown>, depth: currentDepth + 1 });
+            }
+          } else {
+            target[key] = value;
+          }
+        }
+      }
+    }
+    
+    return result;
+  } finally {
+    // Return stack to pool
+    returnStackToPool(stack);
+  }
+}
 
 // Base configuration factory
 const createBaseConfig = (): LoggerOptions => ({
@@ -275,7 +535,7 @@ const createBaseConfig = (): LoggerOptions => ({
       }
       
       // Validate input
-      if (inputArgs[0] && typeof inputArgs[0] === 'object') {
+      if (inputArgs[0] && isObject(inputArgs[0])) {
         inputArgs[0] = validateLogInput(inputArgs[0]);
       }
       
@@ -361,7 +621,7 @@ const createTestConfig = (): LoggerOptions => ({
     logMethod(inputArgs: unknown[], method) {
       // In test mode, skip rate limiting to avoid test interference
       // but keep input validation
-      if (inputArgs[0] && typeof inputArgs[0] === 'object') {
+      if (inputArgs[0] && isObject(inputArgs[0])) {
         inputArgs[0] = validateLogInput(inputArgs[0]);
       }
       
@@ -400,7 +660,7 @@ const logger: Logger = new Proxy({} as Logger, {
   get(_target, prop) {
     const loggerInstance = getLogger();
     const value = (loggerInstance as unknown as Record<string | symbol, unknown>)[prop];
-    if (typeof value === 'function') {
+    if (isFunction(value)) {
       return value.bind(loggerInstance);
     }
     return value;
@@ -716,7 +976,7 @@ export const cleanupLogger = (): void => {
   const state = globalWithState[LOGGER_STATE_SYMBOL];
   
   // Flush main logger
-  if (logger && typeof logger.flush === 'function') {
+  if (logger && isFunction(logger.flush)) {
     logger.flush();
   }
   
@@ -732,8 +992,8 @@ export const cleanupLogger = (): void => {
   // AsyncLocalStorage doesn't have a disable method in Node.js
   // It will be garbage collected when no longer referenced
   
-  // Note: Object pools are now managed by the security/redaction module
-  // and will be cleaned up automatically
+  // Clear object pools
+  stackPool.forEach(stack => stack.length = 0);
   
   // Force garbage collection if available (Node.js with --expose-gc)
   if (global.gc) {
@@ -844,7 +1104,7 @@ export const createSampledLogger = (
       
       // Only intercept logging methods
       const loggingMethods = ['fatal', 'error', 'warn', 'info', 'debug', 'trace'];
-      if (typeof prop === 'string' && loggingMethods.includes(prop)) {
+      if (isString(prop) && loggingMethods.includes(prop)) {
         return (...args: unknown[]) => {
           if (shouldLog(prop)) {
             return (value as Function).apply(target, args);

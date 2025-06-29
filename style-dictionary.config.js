@@ -1,111 +1,28 @@
 /**
  * @module style-dictionary.config
  * 
- * Style Dictionary configuration for the Terroir Core Design System.
+ * Legacy CommonJS wrapper for Style Dictionary configuration.
+ * The actual configuration is in style-dictionary.config.mjs
  * 
- * Configures design token transformation and output for multiple platforms:
- * - CSS custom properties with theme support
- * - JavaScript/TypeScript modules
- * - JSON for documentation and tooling
- * 
- * Features:
- * - Custom size/px transform for consistent units
- * - Themed CSS output (light/dark) with data attributes
- * - Output references for maintainable token relationships
- * - Multiple format outputs for different use cases
- * - Theme-specific token filtering
- * 
- * Token sources:
- * - tokens/**/*.json - All design token definitions
- * 
- * Output formats:
- * - CSS: Custom properties with theme variants
- * - JS: ES6 modules with TypeScript definitions
- * - JSON: Nested and flat structures for tooling
+ * This file exists for backwards compatibility with tools that
+ * expect a CommonJS config file.
  */
 
-const StyleDictionary = require('style-dictionary');
-
-// Custom transforms
-StyleDictionary.registerTransform({
-  name: 'size/px',
-  type: 'value',
-  matcher: (token) => token.attributes.category === 'size',
-  transformer: (token) => `${token.value}px`
-});
-
-// Custom formats
-StyleDictionary.registerFormat({
-  name: 'css/variables-themed',
-  formatter: function({ dictionary, options }) {
-    const theme = options.theme || 'light';
-    return `:root[data-theme="${theme}"] {\n` +
-      dictionary.allTokens.map(token => {
-        return `  --${token.name}: ${token.value};`;
-      }).join('\n') +
-      '\n}';
-  }
-});
+// Note: Style Dictionary v5 is ESM-first
+// This file exists only for backwards compatibility
+console.warn('Using legacy CommonJS config. Please update to use style-dictionary.config.mjs directly.');
 
 module.exports = {
+  // Minimal config that points to the ESM config
   source: ['tokens/**/*.json'],
   platforms: {
     css: {
       transformGroup: 'css',
-      buildPath: 'dist/css/',
-      files: [
-        {
-          destination: 'tokens.css',
-          format: 'css/variables',
-          options: {
-            outputReferences: true
-          }
-        },
-        {
-          destination: 'tokens-light.css',
-          format: 'css/variables-themed',
-          options: {
-            theme: 'light'
-          },
-          filter: (token) => !token.filePath.includes('dark')
-        },
-        {
-          destination: 'tokens-dark.css',
-          format: 'css/variables-themed',
-          options: {
-            theme: 'dark'
-          },
-          filter: (token) => !token.filePath.includes('light')
-        }
-      ]
-    },
-    js: {
-      transformGroup: 'js',
-      buildPath: 'dist/js/',
-      files: [
-        {
-          destination: 'tokens.js',
-          format: 'javascript/es6'
-        },
-        {
-          destination: 'tokens.d.ts',
-          format: 'typescript/es6-declarations'
-        }
-      ]
-    },
-    json: {
-      transformGroup: 'js',
-      buildPath: 'dist/json/',
-      files: [
-        {
-          destination: 'tokens.json',
-          format: 'json/nested'
-        },
-        {
-          destination: 'tokens-flat.json',
-          format: 'json/flat'
-        }
-      ]
+      buildPath: 'dist/tokens/css/',
+      files: [{
+        destination: 'variables.css',
+        format: 'css/variables'
+      }]
     }
   }
 };

@@ -1,0 +1,56 @@
+{
+  // Border radius tokens for rounded corners
+  // Used for cards, buttons, inputs, and other UI elements
+  "radius": {
+    "$description": "Border radius scale for rounded corners",
+    
+    // Base values
+    "none": {
+      "$value": 0,
+      "$description": "0 - Sharp corners",
+      "$type": "dimension"
+    },
+    "sm": {
+      "$value": 2,
+      "$description": "2px - Small radius for subtle rounding",
+      "$type": "dimension"
+    },
+    "base": {
+      "$value": 4,
+      "$description": "4px - Default radius for most components",
+      "$type": "dimension"
+    },
+    "md": {
+      "$value": 6,
+      "$description": "6px - Medium radius",
+      "$type": "dimension"
+    },
+    "lg": {
+      "$value": 8,
+      "$description": "8px - Large radius for cards and containers",
+      "$type": "dimension"
+    },
+    "xl": {
+      "$value": 12,
+      "$description": "12px - Extra large radius",
+      "$type": "dimension"
+    },
+    "2xl": {
+      "$value": 16,
+      "$description": "16px - Double extra large radius",
+      "$type": "dimension"
+    },
+    "3xl": {
+      "$value": 24,
+      "$description": "24px - Triple extra large radius",
+      "$type": "dimension"
+    },
+    
+    // Special values
+    "full": {
+      "$value": 9999,
+      "$description": "9999px - Fully rounded (pill shape)",
+      "$type": "dimension"
+    }
+  }
+}
