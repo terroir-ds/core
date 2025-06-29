@@ -90,53 +90,11 @@ import type { Logger, LoggerOptions, TransportTargetOptions } from 'pino';
 import path from 'node:path';
 import { env, isDevelopment, isTest, isCI } from '@lib/config/index.js';
 import type { LogContext, PerformanceMetrics } from '@utils/types/logger.types.js';
-import { LoggerMessages } from './messages.js';
+import { createRedactor } from '@utils/security/redaction.js';
 
 // Performance: Limit log message size to prevent memory issues
 const MAX_MESSAGE_LENGTH = 10000; // 10KB
 const MAX_OBJECT_DEPTH = 5;
-const MAX_STACK_SIZE = 1000; // Maximum stack size for iterative processing
-
-// Object pooling for performance
-const POOL_SIZE = 50;
-const stackPool: Array<Array<{
-  source: Record<string, unknown> | unknown[];
-  target: Record<string, unknown> | unknown[];
-  key?: string | number;
-  depth: number;
-}>> = [];
-
-// Initialize the pool
-for (let i = 0; i < POOL_SIZE; i++) {
-  stackPool.push([]);
-}
-
-/**
- * Get a stack array from the pool or create a new one
- */
-function getStackFromPool(): Array<{
-  source: Record<string, unknown> | unknown[];
-  target: Record<string, unknown> | unknown[];
-  key?: string | number;
-  depth: number;
-}> {
-  return stackPool.pop() || [];
-}
-
-/**
- * Return a stack array to the pool after clearing it
- */
-function returnStackToPool(stack: Array<{
-  source: Record<string, unknown> | unknown[];
-  target: Record<string, unknown> | unknown[];
-  key?: string | number;
-  depth: number;
-}>): void {
-  if (stackPool.length < POOL_SIZE) {
-    stack.length = 0; // Clear the array
-    stackPool.push(stack);
-  }
-}
 
 // AsyncLocalStorage for request context propagation
 const asyncLocalStorage = new AsyncLocalStorage<LogContext>();
@@ -240,13 +198,13 @@ function validateLogInput(obj: unknown): unknown {
     const size = JSON.stringify(obj).length;
     if (size > MAX_MESSAGE_LENGTH * 10) { // 100KB limit for objects
       return { 
-        error: LoggerMessages.OBJECT_TOO_LARGE(), 
+        error: 'Log object too large', 
         size, 
-        truncated: LoggerMessages.TRUNCATED() 
+        truncated: true 
       };
     }
   } catch {
-    return { error: LoggerMessages.SERIALIZE_FAILED() };
+    return { error: 'Failed to serialize log object' };
   }
   
   return obj;
@@ -265,251 +223,33 @@ const getScriptName = (): string => {
   }
 };
 
-// Custom serializers
-// Comprehensive list of sensitive field patterns
-const SENSITIVE_PATTERNS = [
-  'password', 'passwd', 'pwd',
-  'token', 'api_key', 'apikey', 'api-key',
-  'secret', 'private', 'priv',
-  'key', 'auth', 'authorization',
-  'session', 'cookie',
-  'credit_card', 'creditcard', 'cc_number',
-  'ssn', 'social_security',
-  'bank_account', 'account_number',
-  'pin', 'cvv', 'cvc'
-];
-
-// Content patterns for sensitive data detection
-const SENSITIVE_CONTENT_PATTERNS = [
-  /\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b/g, // Credit card numbers
-  /\beyJ[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\b/g, // JWT tokens
-  /\b\d{3}-\d{2}-\d{4}\b/g, // SSN format
-  /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, // Email addresses
-  /-----BEGIN (?:RSA |EC )?PRIVATE KEY-----/g, // Private keys
-  /sk_(?:test|live)_[a-zA-Z0-9]{24,}/g, // Stripe keys
-  /ghp_[a-zA-Z0-9]{36}/g, // GitHub personal access tokens
-  /\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/g, // IPv4 addresses
-  /\b(?:[A-Fa-f0-9]{1,4}:){7}[A-Fa-f0-9]{1,4}\b/g, // IPv6 addresses (simplified)
-  /\b\+?1?\s*\(?[0-9]{3}\)?[-.\s]?[0-9]{3}[-.\s]?[0-9]{4}\b/g, // US phone numbers
-  /\b\+[1-9]\d{1,14}\b/g, // International E.164 phone format
-];
-
-// Pre-compiled non-global versions for better performance
-const SENSITIVE_CONTENT_TESTERS = SENSITIVE_CONTENT_PATTERNS.map(pattern => 
-  new RegExp(pattern.source, pattern.flags.replace('g', ''))
-);
+// Create custom redactor for logger with specific options
+const logRedactor = createRedactor({
+  deep: true,
+  maxDepth: MAX_OBJECT_DEPTH,
+  maxStringLength: MAX_MESSAGE_LENGTH,
+  checkContent: true,
+  redactedValue: '[REDACTED]',
+});
 
 const serializers: LoggerOptions['serializers'] = {
   err: pino.stdSerializers.err,
   error: pino.stdSerializers.err,
   // Enhanced serializer with deep redaction
   config: (config: Record<string, unknown>) => {
-    return deepRedact(config, SENSITIVE_PATTERNS);
+    return logRedactor(config);
   },
   // Limit request/response sizes
   req: (req: unknown) => {
     const serialized = pino.stdSerializers.req(req as Parameters<typeof pino.stdSerializers.req>[0]);
     // Truncate large bodies
     if ('body' in serialized && serialized.body && JSON.stringify((serialized as Record<string, unknown>)['body']).length > MAX_MESSAGE_LENGTH) {
-      (serialized as Record<string, unknown>)['body'] = LoggerMessages.TRUNCATED_SIZE_LIMIT();
+      (serialized as Record<string, unknown>)['body'] = '[TRUNCATED - EXCEEDS SIZE LIMIT]';
     }
     return serialized;
   },
   res: pino.stdSerializers.res
 };
-
-/**
- * Check if a string contains sensitive content
- */
-function containsSensitiveContent(value: string): boolean {
-  // Check if string is too long (potential data dump)
-  if (value.length > MAX_MESSAGE_LENGTH) {
-    return true;
-  }
-  
-  // Check for binary content
-  if (isBinaryContent(value)) {
-    return true;
-  }
-  
-  // Check against content patterns using pre-compiled testers
-  for (const tester of SENSITIVE_CONTENT_TESTERS) {
-    if (tester.test(value)) {
-      return true;
-    }
-  }
-  
-  return false;
-}
-
-/**
- * Check if string content appears to be binary data
- */
-function isBinaryContent(str: string): boolean {
-  // Check for null bytes or high concentration of non-printable characters
-  // eslint-disable-next-line no-control-regex
-  const nonPrintable = str.match(/[\x00-\x08\x0E-\x1F\x7F-\x9F]/g);
-  return nonPrintable ? nonPrintable.length / str.length > 0.3 : false;
-}
-
-/**
- * Deep redaction of sensitive fields with content inspection
- * Uses iterative approach to prevent stack overflow
- */
-function deepRedact(obj: unknown, patterns: string[], depth = 0): unknown {
-  // Handle primitives
-  if (obj === null || obj === undefined) {
-    return obj;
-  }
-  
-  // Check depth limit
-  if (depth > MAX_OBJECT_DEPTH) {
-    return LoggerMessages.MAX_DEPTH_EXCEEDED();
-  }
-  
-  // Redact sensitive string content
-  if (typeof obj === 'string') {
-    if (containsSensitiveContent(obj)) {
-      return LoggerMessages.REDACTED_SENSITIVE();
-    }
-    // Truncate long strings
-    if (obj.length > MAX_MESSAGE_LENGTH) {
-      return obj.substring(0, MAX_MESSAGE_LENGTH) + LoggerMessages.TRUNCATED_SIMPLE();
-    }
-    return obj;
-  }
-  
-  // Non-objects pass through
-  if (typeof obj !== 'object') {
-    return obj;
-  }
-  
-  // Use iterative approach with object pooling for better performance
-  const stack = getStackFromPool();
-  
-  try {
-    // Handle arrays
-    if (Array.isArray(obj)) {
-      const result: unknown[] = [];
-      stack.push({ source: obj, target: result, depth });
-      
-      while (stack.length > 0) {
-        // Prevent stack exhaustion attacks
-        if (stack.length > MAX_STACK_SIZE) {
-          return LoggerMessages.REDACTION_STACK_LIMIT();
-        }
-        
-        const current = stack.pop();
-        if (!current) continue;
-        const { source, target, depth: currentDepth } = current;
-        
-        if (Array.isArray(source) && Array.isArray(target)) {
-          for (let i = 0; i < source.length; i++) {
-            const value = source[i];
-            if (value === null || value === undefined) {
-              target[i] = value;
-            } else if (typeof value === 'string') {
-              target[i] = containsSensitiveContent(value) ? LoggerMessages.REDACTED_SENSITIVE() : value;
-            } else if (typeof value === 'object') {
-              if (currentDepth >= MAX_OBJECT_DEPTH) {
-                target[i] = LoggerMessages.MAX_DEPTH_EXCEEDED();
-              } else if (Array.isArray(value)) {
-                target[i] = [];
-                stack.push({ source: value, target: target[i] as unknown[], depth: currentDepth + 1 });
-              } else {
-                target[i] = {};
-                stack.push({ source: value as Record<string, unknown>, target: target[i] as Record<string, unknown>, depth: currentDepth + 1 });
-              }
-            } else {
-              target[i] = value;
-            }
-          }
-        } else {
-          // Handle objects
-          if (!Array.isArray(source) && !Array.isArray(target)) {
-            for (const [key, value] of Object.entries(source)) {
-              const lowerKey = key.toLowerCase();
-              const shouldRedactKey = patterns.some(pattern => 
-                lowerKey.includes(pattern.toLowerCase())
-              );
-              
-              if (shouldRedactKey) {
-                target[key] = LoggerMessages.REDACTED();
-              } else if (value === null || value === undefined) {
-                target[key] = value;
-              } else if (typeof value === 'string') {
-                target[key] = containsSensitiveContent(value) ? LoggerMessages.REDACTED_SENSITIVE() : value;
-              } else if (typeof value === 'object') {
-                if (currentDepth >= MAX_OBJECT_DEPTH) {
-                  target[key] = LoggerMessages.MAX_DEPTH_EXCEEDED();
-                } else if (Array.isArray(value)) {
-                  target[key] = [];
-                  stack.push({ source: value, target: target[key] as unknown[], depth: currentDepth + 1 });
-                } else {
-                  target[key] = {};
-                  stack.push({ source: value as Record<string, unknown>, target: target[key] as Record<string, unknown>, depth: currentDepth + 1 });
-                }
-              } else {
-                target[key] = value;
-              }
-            }
-          }
-        }
-      }
-      
-      return result;
-    }
-    
-    // Handle objects
-    const result: Record<string, unknown> = {};
-    stack.push({ source: obj as Record<string, unknown>, target: result, depth });
-    
-    while (stack.length > 0) {
-      // Prevent stack exhaustion attacks
-      if (stack.length > MAX_STACK_SIZE) {
-        return LoggerMessages.REDACTION_STACK_LIMIT();
-      }
-      
-      const current = stack.pop();
-      if (!current) continue;
-      const { source, target, depth: currentDepth } = current;
-      
-      if (!Array.isArray(source) && !Array.isArray(target)) {
-        for (const [key, value] of Object.entries(source)) {
-          const lowerKey = key.toLowerCase();
-          const shouldRedactKey = patterns.some(pattern => 
-            lowerKey.includes(pattern.toLowerCase())
-          );
-          
-          if (shouldRedactKey) {
-            target[key] = LoggerMessages.REDACTED();
-          } else if (value === null || value === undefined) {
-            target[key] = value;
-          } else if (typeof value === 'string') {
-            target[key] = containsSensitiveContent(value) ? LoggerMessages.REDACTED_SENSITIVE() : value;
-          } else if (typeof value === 'object') {
-            if (currentDepth >= MAX_OBJECT_DEPTH) {
-              target[key] = '[MAX DEPTH EXCEEDED]';
-            } else if (Array.isArray(value)) {
-              target[key] = [];
-              stack.push({ source: value, target: target[key] as unknown[], depth: currentDepth + 1 });
-            } else {
-              target[key] = {};
-              stack.push({ source: value as Record<string, unknown>, target: target[key] as Record<string, unknown>, depth: currentDepth + 1 });
-            }
-          } else {
-            target[key] = value;
-          }
-        }
-      }
-    }
-    
-    return result;
-  } finally {
-    // Return stack to pool
-    returnStackToPool(stack);
-  }
-}
 
 // Base configuration factory
 const createBaseConfig = (): LoggerOptions => ({
@@ -931,7 +671,7 @@ function isValidRequestId(id: string): boolean {
  */
 export const setRequestId = (requestId: string): void => {
   if (!isValidRequestId(requestId)) {
-    throw new Error(LoggerMessages.INVALID_REQUEST_ID());
+    throw new Error('Invalid request ID format');
   }
   
   const state = globalWithState[LOGGER_STATE_SYMBOL];
@@ -992,8 +732,8 @@ export const cleanupLogger = (): void => {
   // AsyncLocalStorage doesn't have a disable method in Node.js
   // It will be garbage collected when no longer referenced
   
-  // Clear object pools
-  stackPool.forEach(stack => stack.length = 0);
+  // Note: Object pools are now managed by the security/redaction module
+  // and will be cleaned up automatically
   
   // Force garbage collection if available (Node.js with --expose-gc)
   if (global.gc) {
@@ -1055,7 +795,7 @@ export const createSampledLogger = (
   
   // Validate sampling rate
   if (rate < 0 || rate > 1 || isNaN(rate)) {
-    throw new Error(LoggerMessages.INVALID_SAMPLING_RATE());
+    throw new Error('Sampling rate must be between 0 and 1');
   }
   
   // Always log if rate is 1
@@ -1332,9 +1072,9 @@ export const logMemoryUsage = (context?: LogContext, warnThresholdMB = 500): voi
   };
   
   if (stats.heapUsedMB > warnThresholdMB) {
-    logger.warn(logContext, LoggerMessages.HIGH_MEMORY_USAGE(`${stats.heapUsedMB}MB`));
+    logger.warn(logContext, `High memory usage detected: ${stats.heapUsedMB}MB`);
   } else {
-    logger.info(logContext, LoggerMessages.MEMORY_USAGE(`${stats.heapUsedMB}MB / ${stats.heapTotalMB}MB`));
+    logger.info(logContext, `Memory usage: ${stats.heapUsedMB}MB / ${stats.heapTotalMB}MB`);
   }
 };
 
