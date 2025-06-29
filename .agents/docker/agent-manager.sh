@@ -58,10 +58,20 @@ show_help() {
     echo "  prompt [agent]   - Generate Claude prompt and copy to clipboard"
     echo ""
     echo "Agents:"
-    # Iterate over agent numbers from the AGENT_PURPOSE array
-    for num in "${!AGENT_PURPOSE[@]}"; do
-        local purpose="${AGENT_PURPOSE[$num]}"
-        if [ "$num" != "0" ]; then
+    # Get array keys in a way that works for both bash and zsh
+    local keys
+    if [ -n "${BASH_VERSION:-}" ]; then
+        keys="${!AGENT_PURPOSE[@]}"
+    elif [ -n "${ZSH_VERSION:-}" ]; then
+        keys="${(k)AGENT_PURPOSE[@]}"
+    else
+        keys="0 1 2 3"
+    fi
+    
+    # Iterate over agent numbers
+    for num in $keys; do
+        if [ -n "${AGENT_PURPOSE[$num]:-}" ] && [ "$num" != "0" ]; then
+            local purpose="${AGENT_PURPOSE[$num]}"
             echo "  $num or $purpose"
         fi
     done
@@ -200,8 +210,26 @@ show_status() {
     echo -e "${BLUE}Agent Status:${NC}"
     echo ""
     
+    # Get array keys in a way that works for both bash and zsh
+    local keys
+    if [ -n "${BASH_VERSION:-}" ]; then
+        # Bash
+        keys="${!AGENT_PURPOSE[@]}"
+    elif [ -n "${ZSH_VERSION:-}" ]; then
+        # Zsh
+        keys="${(k)AGENT_PURPOSE[@]}"
+    else
+        # Fallback - just check known agent numbers
+        keys="0 1 2 3"
+    fi
+    
     # Show agents in numerical order
-    for num in $(echo "${!AGENT_PURPOSE[@]}" | tr ' ' '\n' | sort -n); do
+    for num in $(echo "$keys" | tr ' ' '\n' | sort -n); do
+        # Skip if no purpose defined for this number
+        if [ -z "${AGENT_PURPOSE[$num]:-}" ]; then
+            continue
+        fi
+        
         if [ "$num" = "0" ]; then
             echo -e "  Core (0): ${GREEN}VS Code${NC} (not dockerized)"
             continue
