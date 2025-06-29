@@ -179,12 +179,13 @@ RUN echo 'export ZSH="$HOME/.oh-my-zsh"' >> ~/.zshrc \
   && echo 'plugins=(git node npm docker)' >> ~/.zshrc \
   && echo 'source $ZSH/oh-my-zsh.sh' >> ~/.zshrc \
   && echo 'alias ll="exa -la"' >> ~/.zshrc \
-  && echo 'alias cat="bat"' >> ~/.zshrc \
+  && echo 'alias cat="batcat"' >> ~/.zshrc \
+  && echo 'alias bat="batcat"' >> ~/.zshrc \
   && echo 'alias find="fd"' >> ~/.zshrc \
   && echo 'alias grep="rg"' >> ~/.zshrc \
   && echo '# Color support for less' >> ~/.zshrc \
   && echo 'export LESS="-R"' >> ~/.zshrc \
-  && echo 'export LESSOPEN="| /usr/bin/env bat --color=always --style=plain %s 2>/dev/null"' >> ~/.zshrc \
+  && echo 'export LESSOPEN="| /usr/bin/env batcat --color=always --style=plain %s 2>/dev/null"' >> ~/.zshrc \
   && echo '# Additional helpful aliases' >> ~/.zshrc \
   && echo 'alias diff="colordiff"' >> ~/.zshrc \
   && echo 'alias gitlog="tig"' >> ~/.zshrc \
