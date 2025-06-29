@@ -13,7 +13,7 @@ A comprehensive design system built with Style Dictionary, featuring Material Co
 
 ## Quick Start
 
-````bash
+```bash
 # Install dependencies
 pnpm install
 
@@ -25,22 +25,24 @@ pnpm dev
 
 # Run tests
 pnpm test
-```bash
+```
+
 ## Project Structure
 
-```text
+```markdown
 terroir-core/
-├── tokens/              # Design token source files
-│   └── base/           # Base token definitions
-├── scripts/            # Build and generation scripts
-├── packages/           # Platform-specific packages
-│   ├── core/          # Core tokens package
-│   ├── react/         # React components
-│   └── web-components/ # Web Components
-├── assets/            # Visual assets (icons, images)
-├── docs/              # Documentation
-└── tests/             # Test suites
-```bash
+├── tokens/ # Design token source files
+│ └── base/ # Base token definitions
+├── scripts/ # Build and generation scripts
+├── packages/ # Platform-specific packages
+│ ├── core/ # Core tokens package
+│ ├── react/ # React components
+│ └── web-components/ # Web Components
+├── assets/ # Visual assets (icons, images)
+├── docs/ # Documentation
+└── tests/ # Test suites
+```
+
 ## Token Architecture
 
 ### Three-Tier System
@@ -89,23 +91,27 @@ pnpm test:a11y
 
 # Visual regression tests
 pnpm test:visual
-```bash
+```
+
 ## Integration
 
 ### As NPM Package
 
 ```bash
 pnpm add @terroir/core
-```bash
-```javascript
+```
+
+```typescript
 import { tokens } from '@terroir/core';
 import { Button } from '@terroir/core/react';
-```bash
+```
+
 ### As Git Submodule
 
 ```bash
 git submodule add https://github.com/your-org/terroir-core design-system
-```bash
+```
+
 ## Advanced Development: Multi-Agent Workflow
 
 This project includes an innovative multi-agent development system that enables parallel development with 70% less memory usage than traditional approaches.
@@ -127,7 +133,7 @@ cd .agents/docker
 
 # Generate Claude AI prompt for the agent
 ./agent-manager.sh prompt 1
-````
+```
 
 ### Learn More
 

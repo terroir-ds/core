@@ -36,6 +36,7 @@ terroir-core/
 │   └── utils/                # Reusable script utilities
 ├── docs/                     # Documentation and Storybook
 └── tests/                    # Visual regression and unit tests
+
 ```bash
 ## Technology Stack
 
@@ -66,8 +67,8 @@ terroir-core/
 ### 1. **Color System Generation**
 
 Uses Google's Material Color Utilities for scientifically-derived color palettes:
+```
 
-```typescript
 import { generateColorSystem } from '@terroir/core/lib/colors';
 
 const colors = await generateColorSystem({
@@ -77,7 +78,8 @@ const colors = await generateColorSystem({
 });
 // Generates primary, secondary, tertiary, neutral, and error palettes
 // Each with continuous tone access (0-100)
-```text
+
+```bash
 ### 2. **Token Architecture**
 
 Three-tier token system for maximum flexibility:
@@ -89,8 +91,8 @@ Three-tier token system for maximum flexibility:
 ### 3. **SVG Token Replacement**
 
 Custom SVGO plugin for dynamic theming:
+```
 
-```xml
 <!-- Source SVG -->
 <svg>
   <circle fill="{color.primary}" stroke="{color.border}"/>
@@ -100,7 +102,8 @@ Custom SVGO plugin for dynamic theming:
 <svg>
   <circle fill="#0066cc" stroke="#e0e0e0"/>
 </svg>
-```yaml
+
+```bash
 ### 4. **Automated Testing**
 
 - **WCAG Contrast**: Every color combination tested
@@ -118,39 +121,44 @@ Custom SVGO plugin for dynamic theming:
 ## Development Workflow
 
 ### Initial Setup
+```
 
-```bash
 pnpm install
 pnpm setup           # Install dependencies, generate initial tokens
-```text
-### Token Development
 
 ```bash
+### Token Development
+```
+
 pnpm tokens:watch    # Watch mode for token changes
 pnpm tokens:build    # Build all token formats
 pnpm tokens:lint     # Validate token structure
-```text
-### Asset Generation
 
 ```bash
+### Asset Generation
+```
+
 pnpm assets:icons    # Process SVG icons with tokens
 pnpm assets:images   # Generate PNG/WebP variants
 pnpm assets:fonts    # Optimize web fonts
-```text
-### Testing
 
 ```bash
+### Testing
+```
+
 pnpm test           # All tests
 pnpm test:contrast  # WCAG contrast validation
 pnpm test:visual    # Visual regression tests
 pnpm test:a11y      # Accessibility tests
-```text
-### Documentation
 
 ```bash
+### Documentation
+```
+
 pnpm storybook:dev  # Development server
 pnpm storybook:build # Static documentation
 pnpm docs:generate  # API documentation
+
 ```bash
 ## Design Principles
 
@@ -331,8 +339,8 @@ See [Node.js Compatibility Standards](./docs/standards/nodejs-compatibility.md) 
 ## Configuration
 
 ### Environment Variables
+```
 
-```bash
 # Build configuration
 NODE_ENV=development
 DESIGN_SYSTEM_VERSION=0.1.0
@@ -344,7 +352,8 @@ GENERATE_WEBP=true
 # Testing
 STRICT_CONTRAST=true
 VISUAL_REGRESSION_THRESHOLD=0.1
-```text
+
+```bash
 ### Token Configuration
 
 See `tokens/config.js` for:
@@ -355,8 +364,8 @@ See `tokens/config.js` for:
 - Output formats
 
 ## Useful Commands
+```
 
-```bash
 # Development
 pnpm dev            # Start all watchers
 pnpm build          # Production build
@@ -378,6 +387,7 @@ pnpm release:major  # Major release
 pnpm analyze        # Bundle analysis
 pnpm lint:fix       # Auto-fix issues
 pnpm upgrade:deps   # Update dependencies
+
 ```bash
 ## Resources
 
@@ -414,8 +424,8 @@ MIT - Feel free to use in your own projects!
 **This project uses pnpm, not npm!**
 
 Always use pnpm for package management:
+```
 
-```bash
 # ✅ Correct - use pnpm
 pnpm install
 pnpm add package-name
@@ -427,24 +437,26 @@ pnpm build
 # ❌ Incorrect - don't use npm
 npm install
 npm install package-name
+
 ```text
 If you need to add to workspace root:
+```
 
-```bash
 pnpm add -w package-name
 pnpm add -w -D dev-package
-```yaml
+
+```bash
 ### Task-Commit Workflow
 
 Follow this workflow for consistent, high-quality development:
 
 1. **Start Task**
+   ```
 
-   ```bash
    # Create task plan in .claude/tasks/
    # Define scope, success criteria, and tests
-````
 
+```markdown
 2. **Implement Feature**
    - Write code/configuration
    - Follow existing patterns
@@ -456,8 +468,8 @@ Follow this workflow for consistent, high-quality development:
    - Check performance impact
 
 4. **Fix and Commit Changes**
+   ```
 
-   ```bash
    # After completing each logical task
 
    # STANDARD: Always attempt fixes before commit
@@ -476,20 +488,21 @@ Follow this workflow for consistent, high-quality development:
 
    # Note: If pnpm fix fails or causes issues, you can still commit:
    # git add . && git commit -m "..." --no-verify
-   ```
 
+   ```markdown
 5. **Move to Next Task**
    - Update task list
    - Repeat process
 
 ### Working Directory Structure
+```
 
-````text
 .claude/                  # AI session working directory (gitignored)
 ├── tasks/               # Task planning and tracking
 ├── sessions/            # Session context and notes
 └── README.md           # Directory documentation
-```yaml
+
+```bash
 ### Definition of Done
 
 A task is complete when:
@@ -516,8 +529,8 @@ A task is complete when:
 - **[AI Documentation](./docs/resources/standards/ai-documentation.md)** - Create .ai.md files for AI agents
 
 Quick examples:
+```
 
-```typescript
 // ✅ Error handling
 import { ValidationError } from '@utils/errors';
 throw new ValidationError('Invalid input', { code: 'INVALID_INPUT', context: { value } });
@@ -529,7 +542,8 @@ logger.info({ userId }, 'Processing user');
 // ❌ Never use
 throw new Error('Something failed');
 console.log('Debug info');
-```text
+
+```bash
 ### Test Organization
 
 See [Testing Standards](./docs/resources/standards/testing.md) for comprehensive testing guidelines.
@@ -537,8 +551,8 @@ See [Testing Standards](./docs/resources/standards/testing.md) for comprehensive
 **Key principle**: Co-locate tests with source code in `__tests__` subdirectories.
 
 ### Quick Commands
+```
 
-```bash
 # Start new task
 mkdir -p .claude/tasks && echo "# Task: [Name]" > .claude/tasks/current-task.md
 
@@ -547,8 +561,8 @@ pnpm fix && pnpm test:lint && pnpm test:type && pnpm test && pnpm build
 
 # Commit with conventional format
 git commit -m "feat(tokens): add new color system"
-```text
 
+```bash
 ### Code Quality
 
 See [Code Quality Standards](./docs/resources/standards/code-quality.md) for comprehensive linting and fixing guidelines.
@@ -581,7 +595,8 @@ See [AI Documentation Standards](./docs/resources/standards/ai-documentation.md)
 - Update `/docs/ai/` for cross-cutting patterns
 
 **Documentation Structure**:
-```text
+```
+
 packages/core/
 ├── README.md          # Human documentation
 ├── README.ai.md       # AI-optimized documentation
@@ -590,7 +605,8 @@ docs/
 │   ├── architecture.md
 │   ├── patterns.md
 │   └── contributing.md
-```text
+
+```bash
 ### Import Conventions
 
 See [Import Conventions](./docs/resources/standards/import-conventions.md) for path alias usage.
@@ -606,4 +622,5 @@ See [Refactoring Opportunities](./docs/development/refactoring-opportunities.md)
 ---
 
 Built with ❤️ for the open-source community
+```
 ````

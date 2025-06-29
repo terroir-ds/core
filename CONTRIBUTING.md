@@ -113,8 +113,10 @@ type(scope): description
 [optional body]
 
 [optional footer(s)]
-```yaml
+```
+
 Types:
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation only changes
@@ -127,11 +129,13 @@ Types:
 - `chore`: Other changes that don't modify src or test files
 
 Examples:
+
 ```text
 feat(colors): add Material You color generation
 fix(logger): prevent memory leak in async context
 docs(readme): update installation instructions
-```text
+```
+
 ### Git Operations for Special Directories
 
 **Multi-Agent Coordination Files**: The `.claude` directory is listed in `.gitignore` to support agent development workflows. When modifying files in `.claude/multi-agent/`, you must use the force flag:
@@ -142,7 +146,8 @@ git add -f .claude/multi-agent/your-file.md
 
 # Or for multiple files
 git add -f .claude/multi-agent/*.md
-```bash
+```
+
 This ensures that multi-agent coordination files remain in version control while allowing agents to use symbolic links without conflicts.
 
 ### Testing
@@ -162,16 +167,17 @@ This ensures that multi-agent coordination files remain in version control while
 
 ## Project Structure
 
-```text
+```markdown
 terroir-core/
-├── packages/           # Monorepo packages
-│   ├── core/          # Core utilities and tokens
-│   ├── docs-site/     # Documentation website
-│   └── ...            # Future packages
-├── docs/              # Project documentation
-├── scripts/           # Build and utility scripts
-└── .github/           # GitHub configuration
-```text
+├── packages/ # Monorepo packages
+│ ├── core/ # Core utilities and tokens
+│ ├── docs-site/ # Documentation website
+│ └── ... # Future packages
+├── docs/ # Project documentation
+├── scripts/ # Build and utility scripts
+└── .github/ # GitHub configuration
+```
+
 ## Style Guide
 
 ### TypeScript

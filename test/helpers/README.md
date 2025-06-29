@@ -68,21 +68,21 @@ describe('MyAsyncFunction', () => {
 
   it('should handle timeout', async () => {
     const promise = myAsyncFunction({ timeout: 1000 });
-    
+
     // Advance time and settle promises
     await advanceAndSettle(1000);
-    
+
     await expect(promise).rejects.toThrow('Timeout');
   });
 
   it('should handle cancellation', async () => {
     const controller = createAbortedController('User cancelled');
-    
-    await expect(myAsyncFunction({ signal: controller.signal }))
-      .rejects.toThrow('User cancelled');
+
+    await expect(myAsyncFunction({ signal: controller.signal })).rejects.toThrow('User cancelled');
   });
 });
-```bash
+```
+
 ### Testing Concurrency
 
 ```typescript
@@ -90,16 +90,15 @@ import { createConcurrencyTracker } from '@test/helpers';
 
 it('should limit concurrent operations', async () => {
   const tracker = createConcurrencyTracker();
-  
-  const operations = Array.from({ length: 10 }, (_, i) =>
-    tracker.track(() => processItem(i))
-  );
-  
+
+  const operations = Array.from({ length: 10 }, (_, i) => tracker.track(() => processItem(i)));
+
   await Promise.all(operations);
-  
+
   expect(tracker.getMaxConcurrent()).toBeLessThanOrEqual(5);
 });
-```bash
+```
+
 ### Testing Event Handling
 
 ```typescript
@@ -108,17 +107,16 @@ import { createMockEventTarget, waitForEvent } from '@test/helpers';
 it('should emit events', async () => {
   const target = createMockEventTarget();
   const handler = vi.fn();
-  
+
   target.addEventListener('custom', handler);
-  
+
   // Dispatch and wait for async handlers
   await target.dispatchAndWait(new CustomEvent('custom', { detail: 'test' }));
-  
-  expect(handler).toHaveBeenCalledWith(
-    expect.objectContaining({ type: 'custom', detail: 'test' })
-  );
+
+  expect(handler).toHaveBeenCalledWith(expect.objectContaining({ type: 'custom', detail: 'test' }));
 });
-```bash
+```
+
 ### Testing Expected Errors
 
 ```typescript
@@ -132,26 +130,24 @@ it('should handle promise rejections cleanly', async () => {
 it('should verify detailed error properties', async () => {
   const controller = new AbortController();
   controller.abort();
-  
-  await verifyRejection(
-    operationWithAbortSignal({ signal: controller.signal }),
-    {
-      message: 'Operation aborted',
-      name: 'AbortError',
-      customCheck: (error) => error instanceof DOMException
-    }
-  );
+
+  await verifyRejection(operationWithAbortSignal({ signal: controller.signal }), {
+    message: 'Operation aborted',
+    name: 'AbortError',
+    customCheck: (error) => error instanceof DOMException,
+  });
 });
 
 it('should capture and examine errors', async () => {
   const error = await captureExpectedError(async () => {
     await functionThatThrows();
   });
-  
+
   expect(error.message).toBe('Expected error');
   expect(error.cause).toBeDefined();
 });
-```bash
+```
+
 ### Testing with Controlled Timing
 
 ```typescript
@@ -160,20 +156,21 @@ import { mockDateNow, createControllableOperation } from '@test/helpers';
 it('should handle rate limiting', async () => {
   const time = mockDateNow(0);
   const { operation, resolve } = createControllableOperation<string>();
-  
+
   const promise = rateLimitedFunction(operation);
-  
+
   // Advance time
   time.advance(1000);
-  
+
   // Resolve the operation
   resolve('success');
-  
+
   expect(await promise).toBe('success');
-  
+
   time.restore();
 });
-```bash
+```
+
 ## Best Practices
 
 ### 1. Use Helper Functions Over Direct Mocking
@@ -185,14 +182,15 @@ const controller = createAbortedController();
 // ❌ Avoid - manual setup
 const controller = new AbortController();
 controller.abort();
-```bash
+```
+
 ### 2. Leverage Automatic Cleanup
 
-```typescript
+```text
 // ✅ Good - automatic cleanup
 describe('MyTests', () => {
   useFakeTimers(); // Handles setup/teardown
-  
+
   it('test 1', async () => { /* ... */ });
   it('test 2', async () => { /* ... */ });
 });
@@ -200,7 +198,8 @@ describe('MyTests', () => {
 // ❌ Avoid - manual cleanup
 beforeEach(() => vi.useFakeTimers());
 afterEach(() => vi.restoreAllMocks());
-```bash
+```
+
 ### 3. Track Async State Properly
 
 ```typescript
@@ -211,9 +210,12 @@ expect(state.isPending()).toBe(true);
 
 // ❌ Avoid - race conditions
 let resolved = false;
-promise.then(() => { resolved = true; });
+promise.then(() => {
+  resolved = true;
+});
 // May have race conditions
-```bash
+```
+
 ### 4. Use Type-Safe Helpers
 
 ```typescript
@@ -227,7 +229,8 @@ const results = mockSequentialResults<string>([
 const fn = vi.fn();
 fn.mockResolvedValueOnce('first');
 fn.mockRejectedValueOnce(new Error('failed'));
-```bash
+```
+
 ## Adding New Helpers
 
 When adding new test helpers:
@@ -241,7 +244,7 @@ When adding new test helpers:
 
 Example structure:
 
-```typescript
+````typescript
 /**
  * Brief description of what the helper does
  * @param param1 - Description of parameter
@@ -255,7 +258,8 @@ Example structure:
 export function myHelper(param1: string): string {
   // Implementation
 }
-```bash
+````
+
 ## Performance Considerations
 
 1. **Fake timers** - Always use fake timers for time-dependent tests
@@ -267,19 +271,20 @@ export function myHelper(param1: string): string {
 
 ### Setup/Teardown Pattern
 
-```typescript
+```yaml
 describe('Feature', () => {
   useFakeTimers();
-  
+
   let tracker: ReturnType<typeof createConcurrencyTracker>;
-  
+
   beforeEach(() => {
     tracker = createConcurrencyTracker();
   });
-  
+
   // Tests use tracker
 });
-```bash
+```
+
 ### Assertion Helpers Pattern
 
 ```typescript
@@ -288,7 +293,7 @@ async function assertEventuallyTrue(
   timeout: number = 1000
 ): Promise<void> {
   const start = Date.now();
-  
+
   while (!condition()) {
     if (Date.now() - start > timeout) {
       throw new Error('Condition not met within timeout');
@@ -296,7 +301,8 @@ async function assertEventuallyTrue(
     await waitForNextTick();
   }
 }
-```bash
+```
+
 ### State Machine Testing
 
 ```typescript
@@ -304,13 +310,14 @@ const states = {
   initial: 'idle',
   current: 'idle',
   transitions: [] as string[],
-  
+
   transition(to: string) {
     this.transitions.push(`${this.current} -> ${to}`);
     this.current = to;
   },
 };
-```bash
+```
+
 ## Debugging Tests
 
 When tests using these helpers fail:
@@ -344,7 +351,7 @@ it('test', async () => {
 // After
 describe('Feature', () => {
   useFakeTimers();
-  
+
   it('test', async () => {
     const controller = createAbortedController();
     // ...
