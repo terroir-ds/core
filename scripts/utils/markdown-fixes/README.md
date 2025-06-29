@@ -5,6 +5,7 @@ A collection of scripts to automatically fix common markdown formatting issues, 
 ## Overview
 
 These utilities help maintain clean, consistent markdown documentation by:
+
 - Adding language identifiers to code blocks
 - Ensuring proper blank line spacing around code blocks
 - Fixing broken internal link fragments
@@ -15,6 +16,7 @@ These utilities help maintain clean, consistent markdown documentation by:
 ### 1. `fix-markdown-code-blocks.js`
 
 Fixes all code block-related issues:
+
 - Adds appropriate language identifiers to opening backticks
 - Removes language identifiers from closing backticks
 - Ensures blank lines before code blocks
@@ -23,6 +25,7 @@ Fixes all code block-related issues:
 - Handles quadruple backticks correctly
 
 **Usage:**
+
 ```bash
 node scripts/utils/markdown-fixes/fix-markdown-code-blocks.js
 ```
@@ -30,11 +33,13 @@ node scripts/utils/markdown-fixes/fix-markdown-code-blocks.js
 ### 2. `fix-markdown-links.js`
 
 Fixes broken internal link fragments:
+
 - Validates all internal link fragments match actual headings
 - Converts heading text to proper fragment IDs
 - Preserves link text while fixing fragments
 
 **Usage:**
+
 ```bash
 node scripts/utils/markdown-fixes/fix-markdown-links.js
 ```
@@ -42,10 +47,12 @@ node scripts/utils/markdown-fixes/fix-markdown-links.js
 ### 3. `index.js` (Orchestrator)
 
 Runs all markdown fixes in the correct order to avoid conflicts:
+
 1. Code block fixes (first, as they may affect headings)
 2. Link fixes (after code blocks are corrected)
 
 **Usage:**
+
 ```bash
 # Run all fixes
 node scripts/utils/markdown-fixes/
@@ -58,7 +65,7 @@ node scripts/utils/markdown-fixes/index.js
 
 Based on CommonMark and GitHub Flavored Markdown standards:
 
-1. **Opening backticks**: 
+1. **Opening backticks**:
    - Must have a language identifier (e.g., ` ```javascript`)
    - Must have a blank line before (unless at start of file)
    - No blank line after
@@ -75,6 +82,7 @@ Based on CommonMark and GitHub Flavored Markdown standards:
 ## Language Detection
 
 The code block fixer automatically detects languages based on content:
+
 - **Bash**: Shell commands, scripts starting with `#!`
 - **JavaScript**: `const`, `let`, `var`, `console.log`, `require`
 - **TypeScript**: Type annotations, interfaces, `.ts` imports
@@ -88,19 +96,21 @@ The code block fixer automatically detects languages based on content:
 ## Testing
 
 Comprehensive test suite covering:
+
 - Unit tests for individual functions
 - Integration tests for full pipeline
 - Performance tests for large files
 - Regression tests for previously fixed bugs
 
 Run tests:
+
 ```bash
 pnpm vitest run scripts/utils/markdown-fixes/__tests__/
 ```
 
 ## Architecture
 
-```
+```text
 markdown-fixes/
 ├── fix-markdown-code-blocks.js    # Code block fixes
 ├── fix-markdown-links.js          # Link fragment fixes
@@ -116,6 +126,7 @@ markdown-fixes/
 ## Development
 
 When adding new fixes:
+
 1. Create a new script file
 2. Export necessary functions for testing
 3. Add to orchestrator with appropriate order
