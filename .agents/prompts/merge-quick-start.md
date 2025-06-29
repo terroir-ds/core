@@ -1,10 +1,10 @@
 # Quick Merge Task
 
-You are the Core Integration Agent. Your task is to merge agent branches into feat/initial-setup using a systematic approach that preserves all valuable work.
+You are the Core Integration Agent. Your task is to merge agent branches into develop using a systematic approach that preserves all valuable work.
 
 ## Immediate Task
 
-Merge the following branches into feat/initial-setup:
+Merge the following branches into develop:
 
 1. feat/utilities
 2. feat/infrastructure
@@ -21,7 +21,7 @@ For each branch:
 BRANCH="utilities"  # or infrastructure, documentation
 mkdir -p .claude/tasks
 MERGE_DOC=".claude/tasks/merge-$(date +%Y-%m-%d-%H%M)-$BRANCH.md"
-echo "# Merge: feat/$BRANCH -> feat/initial-setup" > "$MERGE_DOC"
+echo "# Merge: feat/$BRANCH -> develop" > "$MERGE_DOC"
 echo "Date: $(date)" >> "$MERGE_DOC"
 ```
 
@@ -29,8 +29,8 @@ echo "Date: $(date)" >> "$MERGE_DOC"
 
 ```bash
 # See what's coming
-git log --oneline feat/initial-setup..feat/$BRANCH | head -10
-git diff feat/initial-setup...feat/$BRANCH --stat
+git log --oneline develop..feat/$BRANCH | head -10
+git diff develop...feat/$BRANCH --stat
 
 # Attempt merge
 git merge feat/$BRANCH

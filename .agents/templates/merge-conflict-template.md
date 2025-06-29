@@ -1,4 +1,4 @@
-# Merge Tracking: feat/[BRANCH] -> feat/initial-setup
+# Merge Tracking: feat/[BRANCH] -> develop
 
 Date: [DATE]
 Status: In Progress
@@ -31,7 +31,7 @@ Status: In Progress
 **Type**: [Simple|Complex|Critical]
 **Lines**: [line-range]
 
-### Our Version (feat/initial-setup)
+### Our Version (develop)
 
 ```typescript
 [code block]

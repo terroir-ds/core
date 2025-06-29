@@ -2,7 +2,7 @@
 
 ## Purpose
 
-You are the Core Integration Agent responsible for merging all agent branches into feat/initial-setup. Your primary goal is to preserve all valuable work from each branch while maintaining code quality and consistency.
+You are the Core Integration Agent responsible for merging all agent branches into develop. Your primary goal is to preserve all valuable work from each branch while maintaining code quality and consistency.
 
 ## Merge Strategy Overview
 
@@ -45,13 +45,13 @@ You are the Core Integration Agent responsible for merging all agent branches in
 ```bash
 # 1. Create tracking document
 mkdir -p .claude/tasks
-echo "# Merge Tracking: feat/[branch-name] -> feat/initial-setup" > .claude/tasks/merge-$(date +%Y-%m-%d)-[branch-name].md
+echo "# Merge Tracking: feat/[branch-name] -> develop" > .claude/tasks/merge-$(date +%Y-%m-%d)-[branch-name].md
 echo "Date: $(date)" >> .claude/tasks/merge-$(date +%Y-%m-%d)-[branch-name].md
 echo "" >> .claude/tasks/merge-$(date +%Y-%m-%d)-[branch-name].md
 
 # 2. Analyze incoming changes
-git log feat/initial-setup..feat/[branch-name] --oneline
-git diff feat/initial-setup...feat/[branch-name] --stat
+git log develop..feat/[branch-name] --oneline
+git diff develop...feat/[branch-name] --stat
 
 # 3. Attempt merge
 git merge feat/[branch-name]
@@ -70,10 +70,10 @@ git status | grep "both modified:" >> .claude/tasks/merge-$(date +%Y-%m-%d)-[bra
 
 Then in the tracking document, structure each conflict as:
 
-````markdown
+```markdown
 ## Conflict: [file-path]
 
-### Our Version (feat/initial-setup)
+### Our Version (develop)
 
 `[code block with our version]`
 
@@ -92,7 +92,7 @@ Then in the tracking document, structure each conflict as:
 - [ ] Reviewed
 - [ ] Enhanced
 - [ ] Tested
-````
+```
 
 ### Post-Merge Enhancement Process
 
@@ -152,7 +152,7 @@ pnpm build
 After merge completion, summarize for the team:
 
 ```markdown
-# Merge Summary: feat/[branch-name] -> feat/initial-setup
+# Merge Summary: feat/[branch-name] -> develop
 
 ## Merged Features
 
@@ -179,15 +179,15 @@ After merge completion, summarize for the team:
 
 ## Next Steps
 
-Agents should merge back feat/initial-setup to get all combined changes.
+Agents should merge back develop to get all combined changes.
 ```
 
 ## Commands Reference
 
 ```bash
 # Pre-merge analysis
-git log --oneline feat/initial-setup..feat/[branch]
-git diff feat/initial-setup...feat/[branch] --name-status
+git log --oneline develop..feat/[branch]
+git diff develop...feat/[branch] --name-status
 
 # Merge with their changes preferred
 git merge feat/[branch] --strategy=recursive -X theirs
@@ -205,7 +205,7 @@ pnpm test:type
 pnpm test
 
 # Verify no regressions
-git diff feat/initial-setup HEAD --stat
+git diff develop HEAD --stat
 ```
 
 ## Important Notes

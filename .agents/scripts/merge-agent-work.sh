@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Merge agent work into feat/initial-setup with systematic conflict resolution
+# Merge agent work into develop with systematic conflict resolution
 
 set -euo pipefail
 
@@ -29,7 +29,7 @@ echo -e "${BLUE}📝 Creating merge tracking document: $MERGE_DOC${NC}"
 
 # Initialize tracking document
 cat > "$MERGE_DOC" << EOF
-# Merge Tracking: $BRANCH -> feat/initial-setup
+# Merge Tracking: $BRANCH -> develop
 Date: $(date)
 Status: In Progress
 
@@ -37,12 +37,12 @@ Status: In Progress
 
 ### Incoming Changes Summary
 \`\`\`bash
-$(git diff feat/initial-setup...$BRANCH --stat)
+$(git diff develop...$BRANCH --stat)
 \`\`\`
 
 ### Recent Commits
 \`\`\`bash
-$(git log feat/initial-setup..$BRANCH --oneline | head -10)
+$(git log develop..$BRANCH --oneline | head -10)
 \`\`\`
 
 ## Conflicts Encountered
@@ -51,8 +51,8 @@ EOF
 
 # Show what's coming
 echo -e "${BLUE}📊 Analyzing incoming changes...${NC}"
-echo "Files changed: $(git diff feat/initial-setup...$BRANCH --name-only | wc -l)"
-echo "Commits to merge: $(git rev-list --count feat/initial-setup..$BRANCH)"
+echo "Files changed: $(git diff develop...$BRANCH --name-only | wc -l)"
+echo "Commits to merge: $(git rev-list --count develop..$BRANCH)"
 
 # Attempt the merge
 echo -e "${YELLOW}🔀 Attempting merge of $BRANCH...${NC}"
@@ -85,7 +85,7 @@ else
 **Type**: [To be determined]
 **Lines**: [To be determined]
 
-### Our Version (feat/initial-setup)
+### Our Version (develop)
 \`\`\`$(basename "$file" | sed 's/.*\.//')
 $(git show :2:"$file" 2>/dev/null | head -50 || echo "[Content not available]")
 \`\`\`

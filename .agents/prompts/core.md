@@ -26,7 +26,7 @@ You are the **Core Integration Agent** responsible for overall project coordinat
 
 ### Your Branch
 
-- **Branch Name**: `main` or `feat/initial-setup`
+- **Branch Name**: `main` or `develop`
 - **Color Theme**: Default (VS Code theme)
 - **Working Directory**: `/workspaces/terroir-core`
 
