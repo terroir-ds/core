@@ -60,6 +60,14 @@ Consistent, intuitive API design principles.
 
 Dependency evaluation and management.
 
+### 15. [String Handling](./string-handling.md)
+
+Consistent string manipulation using utility functions.
+
+### 16. [Utility Development](./utility-development.md)
+
+Standards for creating and maintaining utility modules.
+
 ## Planned Standards (TODO)
 
 These standards will be created as they become relevant:
