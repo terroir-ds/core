@@ -30,14 +30,15 @@ function processValue(value: unknown) {
     // TypeScript knows value is string
     return value.toUpperCase();
   }
-  
+
   if (isNumber(value) && isFinite(value)) {
     return value * 2;
   }
-  
+
   throw new Error('Invalid value');
 }
-```bash
+```
+
 ### Assertions (`assertions.ts`)
 
 Runtime assertions that throw on failure with proper type narrowing.
@@ -48,12 +49,13 @@ import { assertDefined, assertType, assertInRange } from '@utils/guards';
 function calculatePercentage(value: number | undefined, total: number) {
   assertDefined(value, 'Value is required');
   // TypeScript knows value is number
-  
+
   assertInRange(value, 0, total, 'Value must be between 0 and total');
-  
+
   return (value / total) * 100;
 }
-```bash
+```
+
 ### Validation (`validation.ts`)
 
 Common validation patterns with detailed error reporting.
@@ -70,13 +72,13 @@ if (emailResult.valid) {
 }
 
 // Compose validators
-const validateCompanyEmail = composeValidators(
-  validateEmail,
-  (email) => email.endsWith('@company.com') 
+const validateCompanyEmail = composeValidators(validateEmail, (email) =>
+  email.endsWith('@company.com')
     ? { valid: true, value: email }
     : { valid: false, errors: [{ message: 'Must be company email' }] }
 );
-```bash
+```
+
 ### Predicates (`predicates.ts`)
 
 Reusable, composable predicate functions.
@@ -89,10 +91,9 @@ const isValidAge = and(isPositive, (n: number) => n <= 120);
 const isValidName = and(hasMinLength(2), not(isEmpty));
 
 // Use in filters and validations
-const validUsers = users.filter(user => 
-  isValidAge(user.age) && isValidName(user.name)
-);
-```bash
+const validUsers = users.filter((user) => isValidAge(user.age) && isValidName(user.name));
+```
+
 ## Performance
 
 All type guards are optimized for performance:
@@ -104,13 +105,13 @@ All type guards are optimized for performance:
 
 ## Comparison with Zod
 
-| Feature | Guards | Zod | Use Case |
-|---------|--------|-----|----------|
-| Primitive type checking | ✅ Faster | ❌ Slower | Hot paths, type guards |
-| Schema validation | ❌ Limited | ✅ Excellent | Complex objects, API validation |
-| Bundle size | ✅ Smaller | ❌ Larger | Simple validation needs |
-| Type inference | ✅ Good | ✅ Excellent | Both suitable |
-| Error messages | ✅ Good | ✅ Excellent | Zod better for user-facing |
+| Feature                 | Guards     | Zod          | Use Case                        |
+| ----------------------- | ---------- | ------------ | ------------------------------- |
+| Primitive type checking | ✅ Faster  | ❌ Slower    | Hot paths, type guards          |
+| Schema validation       | ❌ Limited | ✅ Excellent | Complex objects, API validation |
+| Bundle size             | ✅ Smaller | ❌ Larger    | Simple validation needs         |
+| Type inference          | ✅ Good    | ✅ Excellent | Both suitable                   |
+| Error messages          | ✅ Good    | ✅ Excellent | Zod better for user-facing      |
 
 **Recommendation**: Use Guards for simple type checking and hot paths, Zod for complex schema validation.
 
@@ -125,10 +126,10 @@ import { validateEmail } from '@utils/guards';
 
 const userSchema = z.object({
   name: z.string().min(2),
-  email: z.string().refine(email => validateEmail(email).valid, {
-    message: 'Invalid email format'
+  email: z.string().refine((email) => validateEmail(email).valid, {
+    message: 'Invalid email format',
   }),
-  age: z.number().int().positive().max(120)
+  age: z.number().int().positive().max(120),
 });
 
 // Replace scattered type checks
@@ -143,24 +144,38 @@ if (typeof value === 'string' && value != null) {
 if (isString(value) && isDefined(value)) {
   // ...
 }
-```bash
+```
+
 ## Migration Guide
 
 ### From Manual Type Checks
 
 ```typescript
 // Before
-if (typeof value === 'string') { /* ... */ }
-if (value != null) { /* ... */ }
-if (Array.isArray(value)) { /* ... */ }
+if (typeof value === 'string') {
+  /* ... */
+}
+if (value != null) {
+  /* ... */
+}
+if (Array.isArray(value)) {
+  /* ... */
+}
 
 // After
 import { isString, isDefined, isArray } from '@utils/guards';
 
-if (isString(value)) { /* ... */ }
-if (isDefined(value)) { /* ... */ }
-if (isArray(value)) { /* ... */ }
-```bash
+if (isString(value)) {
+  /* ... */
+}
+if (isDefined(value)) {
+  /* ... */
+}
+if (isArray(value)) {
+  /* ... */
+}
+```
+
 ### From Existing Error Handling
 
 ```typescript

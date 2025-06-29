@@ -8,11 +8,12 @@ This directory contains reusable TypeScript type definitions that are shared acr
 
 ## Directory Structure
 
-```text
+```markdown
 types/
-├── async.types.ts    # Async operation types (promises, cancellation, etc.)
-└── README.md         # This file
-```bash
+├── async.types.ts # Async operation types (promises, cancellation, etc.)
+└── README.md # This file
+```
+
 ## Available Types
 
 ### Async Types (`async.types.ts`)
@@ -68,7 +69,8 @@ async function myOperation(options?: MyOptions): Promise<void> {
   }
   // ... operation logic
 }
-```bash
+```
+
 ### Progress Reporting
 
 ```typescript
@@ -80,7 +82,8 @@ async function processItems<T>(items: T[], options?: CancellableProgressOptions)
     // ... process item
   }
 }
-```bash
+```
+
 ### Result Containers
 
 ```typescript
@@ -94,7 +97,8 @@ async function tryOperation(): Promise<Result<string>> {
     return { error: error instanceof Error ? error : new Error(String(error)) };
   }
 }
-```bash
+```
+
 ### Deferred Promises
 
 ```typescript
@@ -111,7 +115,8 @@ function createDeferred<T>(): Deferred<T> {
 
   return { promise, resolve, reject };
 }
-```bash
+```
+
 ## Adding New Types
 
 When adding new shared types:
@@ -132,7 +137,8 @@ import type { CancellableOptions } from '@utils/types/async.types';
 
 // ❌ Avoid - runtime import for types
 import { CancellableOptions } from '@utils/types/async.types';
-```bash
+```
+
 ### 2. Extend Base Interfaces
 
 ```typescript
@@ -146,7 +152,8 @@ interface MyOptions {
   signal?: AbortSignal; // Duplicates CancellableOptions
   customField: string;
 }
-```bash
+```
+
 ### 3. Use Generic Constraints
 
 ```typescript
@@ -159,7 +166,8 @@ function processResult<T, E extends Error>(result: Result<T, E>): T | null {
 function processResult<T>(result: Result<T, any>): T | null {
   return result.value ?? null;
 }
-```bash
+```
+
 ### 4. Provide Default Type Parameters
 
 ```typescript
@@ -171,7 +179,8 @@ export interface Result<T, E = Error> {
 
 // Usage is simpler for common cases
 const result: Result<string>; // E defaults to Error
-```bash
+```
+
 ## Migration Guide
 
 When migrating code to use shared types:

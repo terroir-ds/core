@@ -15,7 +15,8 @@ The security module provides:
 
 ```typescript
 import { redact, sanitizeInput, hashObject } from '@utils/security';
-```bash
+```
+
 ## Features
 
 ### Data Redaction
@@ -32,8 +33,8 @@ const data = {
   apiKey: 'sk_live_abc123',
   profile: {
     email: 'john@example.com',
-    ssn: '123-45-6789'
-  }
+    ssn: '123-45-6789',
+  },
 };
 
 const safe = redact(data);
@@ -55,9 +56,10 @@ const apiRedactor = createRedactor({
       return value.replace(/(.{2}).*@/, '$1***@');
     }
     return value;
-  }
+  },
 });
-```bash
+```
+
 ### Input Sanitization
 
 Clean and validate user input:
@@ -69,33 +71,30 @@ import { sanitizeInput, stripDangerous } from '@utils/security';
 const input = {
   name: '  John Doe  ',
   bio: '<script>alert("xss")</script>Developer',
-  tags: new Array(10000).fill('spam')
+  tags: new Array(10000).fill('spam'),
 };
 
 const clean = sanitizeInput(input, {
   maxArrayLength: 10,
   stripBinary: true,
-  trimStrings: true
+  trimStrings: true,
 });
 
 // Strip dangerous content
 const html = '<p onclick="hack()">Hello <script>alert("xss")</script>world</p>';
 const safe = stripDangerous(html, {
   stripHtml: true,
-  stripScripts: true
+  stripScripts: true,
 });
 // 'Hello world'
-```bash
+```
+
 ### Pattern Matching
 
 Pre-built patterns for sensitive data detection:
 
 ```typescript
-import { 
-  SENSITIVE_FIELD_PATTERNS,
-  createMatcher,
-  PatternBuilder 
-} from '@utils/security';
+import { SENSITIVE_FIELD_PATTERNS, createMatcher, PatternBuilder } from '@utils/security';
 
 // Check field names
 const isSensitive = createMatcher(SENSITIVE_FIELD_PATTERNS);
@@ -106,7 +105,8 @@ if (isSensitive('api_key')) {
 // Build custom patterns
 const creditCardPattern = PatternBuilder.creditCard();
 const jwtPattern = PatternBuilder.jwt();
-```bash
+```
+
 ### Hashing
 
 Fast, consistent hashing using established libraries:
@@ -125,7 +125,8 @@ const hexHash = await hashString('hello world', { format: 'hex' });
 
 // Consistent hashing for sharding
 const serverIndex = await consistentHash(userId, numServers);
-```bash
+```
+
 ## Common Patterns
 
 ### API Response Filtering
@@ -138,7 +139,8 @@ app.get('/api/user/:id', async (req, res) => {
   // Automatically redact sensitive fields
   res.json(apiRedactor(user));
 });
-```bash
+```
+
 ### Logging Safety
 
 ```typescript
@@ -146,14 +148,18 @@ import { logRedactor } from '@utils/security';
 import { logger } from '@utils/logger';
 
 // Safe logging with automatic redaction
-logger.info('User data:', logRedactor({
-  id: 123,
-  email: 'user@example.com',
-  password: 'secret',
-  creditCard: '4111111111111111'
-}));
+logger.info(
+  'User data:',
+  logRedactor({
+    id: 123,
+    email: 'user@example.com',
+    password: 'secret',
+    creditCard: '4111111111111111',
+  })
+);
 // Logs: User data: { id: 123, email: 'us***@***.com', password: '[REDACTED]', creditCard: '[REDACTED]' }
-```bash
+```
+
 ### Form Input Processing
 
 ```typescript
@@ -162,16 +168,17 @@ import { inputSanitizer, htmlStripper } from '@utils/security';
 app.post('/api/comment', (req, res) => {
   // Sanitize all input
   const data = inputSanitizer(req.body);
-  
+
   // Strip HTML from specific fields
   const comment = {
     ...data,
-    content: htmlStripper(data.content)
+    content: htmlStripper(data.content),
   };
-  
+
   saveComment(comment);
 });
-```bash
+```
+
 ### Cache Key Generation
 
 ```typescript
@@ -180,15 +187,16 @@ import { deterministicId } from '@utils/security';
 async function getCachedData(userId: string, dataType: string) {
   // Generate consistent cache key
   const cacheKey = await deterministicId('cache', userId, dataType);
-  
+
   const cached = await cache.get(cacheKey);
   if (cached) return cached;
-  
+
   const data = await fetchData(userId, dataType);
   await cache.set(cacheKey, data);
   return data;
 }
-```bash
+```
+
 ## Security Patterns
 
 ### Path-Based Redaction
@@ -202,17 +210,15 @@ const data = {
     password: 'secret',
     profile: {
       ssn: '123-45-6789',
-      phone: '555-1234'
-    }
-  }
+      phone: '555-1234',
+    },
+  },
 };
 
 // Redact specific paths
-const safe = redactPaths(data, [
-  'user.password',
-  'user.profile.ssn'
-]);
-```bash
+const safe = redactPaths(data, ['user.password', 'user.profile.ssn']);
+```
+
 ### Pattern-Based Redaction
 
 ```typescript
@@ -220,16 +226,17 @@ import { redactByPattern } from '@utils/security';
 
 const text = {
   log: 'User john@example.com called API with key sk_live_abc123',
-  note: 'Contact: 555-123-4567'
+  note: 'Contact: 555-123-4567',
 };
 
 // Redact by patterns
 const safe = redactByPattern(text, [
   /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, // emails
   /sk_live_[A-Za-z0-9]+/g, // API keys
-  /\b\d{3}-\d{3}-\d{4}\b/g // phone numbers
+  /\b\d{3}-\d{3}-\d{4}\b/g, // phone numbers
 ]);
-```bash
+```
+
 ### Data Anonymization
 
 ```typescript
@@ -241,14 +248,14 @@ const userData = {
   age: 30,
   orders: [
     { id: 123, amount: 99.99 },
-    { id: 456, amount: 149.99 }
-  ]
+    { id: 456, amount: 149.99 },
+  ],
 };
 
 // Anonymize for testing/demos
 const anonymous = await anonymize(userData, {
   preserveTypes: true,
-  deterministicSeed: 'test-seed' // Same seed = same output
+  deterministicSeed: 'test-seed', // Same seed = same output
 });
 // {
 //   name: 'XXXXX XXX',
@@ -259,7 +266,8 @@ const anonymous = await anonymize(userData, {
 //     { id: 101, amount: 56.78 }
 //   ]
 // }
-```bash
+```
+
 ## Performance Considerations
 
 1. **Redaction**: Uses iterative processing with object pooling to handle deep objects efficiently

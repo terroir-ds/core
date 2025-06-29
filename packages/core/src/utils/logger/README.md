@@ -24,12 +24,13 @@ import {
   logSuccess,
   measureTime,
 } from '@terroir/core/lib/utils/logger';
-```bash
+```
+
 ## Core API
 
 ### Basic Logging
 
-```typescript
+```text
 // Simple messages
 logger.info('Application started');
 logger.warn('Deprecation warning');
@@ -41,7 +42,8 @@ logger.error({ err: error, attemptCount: 3 }, 'Failed to connect');
 
 // With formatting
 logger.info({ count: 5 }, 'Processed %d items', 5);
-```bash
+```
+
 ### Log Levels
 
 The logger supports standard Pino log levels:
@@ -65,7 +67,8 @@ const customLogger = createLogger({
   name: 'api',
   level: 'warn', // Only warn and above
 });
-```bash
+```
+
 ### Child Loggers
 
 Create contextual loggers that inherit configuration:
@@ -83,7 +86,8 @@ requestLogger.info('Processing request');
 // Nested children
 const dbLogger = requestLogger.child({ component: 'database' });
 dbLogger.info({ query: 'SELECT *' }, 'Executing query');
-```bash
+```
+
 ### Performance Tracking
 
 Built-in utilities for measuring operations:
@@ -111,12 +115,13 @@ logSuccess('api-call', {
   statusCode: response.status,
   duration: Date.now() - startTime,
 });
-```bash
+```
+
 ### Error Logging
 
 Enhanced error logging with stack traces and context:
 
-```typescript
+```yaml
 try {
   await riskyOperation();
 } catch (error) {
@@ -140,7 +145,8 @@ logger.error(
   },
   'Failed to initialize database'
 );
-```bash
+```
+
 ## Advanced Features
 
 ### Custom Logger Creation
@@ -160,12 +166,13 @@ const customLogger = createLogger({
     req: (req) => ({ method: req.method, url: req.url }),
   },
 });
-```bash
+```
+
 ### Security Features
 
 The logger automatically redacts sensitive data:
 
-```typescript
+```yaml
 // These will be redacted automatically
 logger.info({
   password: 'secret123', // Redacted
@@ -183,7 +190,8 @@ logger.info({
 //   email: "u***@example.com",
 //   phone: "+1******890"
 // }
-```bash
+```
+
 **Redacted patterns include:**
 
 - `password`, `passwd`, `pwd`
@@ -198,14 +206,15 @@ logger.info({
 
 Large objects are automatically truncated to prevent memory issues:
 
-```typescript
+```yaml
 logger.info(
   {
     hugeData: veryLargeObject, // Truncated if > 10KB
   },
   'Processing data'
 );
-```bash
+```
+
 ### Request Context
 
 Automatic request ID tracking:
@@ -245,7 +254,8 @@ app.use((req, res, next) => {
 
 // All subsequent logs include request context
 logger.info('Processing request'); // Includes requestId automatically
-```bash
+```
+
 ### Performance Utilities
 
 ```typescript
@@ -270,7 +280,8 @@ await measureTime('full-export', async () => {
   await measureTime('transform-data', transformData);
   await measureTime('write-output', writeOutput);
 });
-```bash
+```
+
 ## Environment-Specific Behavior
 
 ### Development Mode
@@ -280,7 +291,7 @@ await measureTime('full-export', async () => {
 - All log levels enabled
 - Synchronous output for debugging
 
-```typescript
+```text
 // NODE_ENV=development
 logger.info({ user: { id: 123 } }, 'User logged in');
 // Output:
@@ -288,7 +299,8 @@ logger.info({ user: { id: 123 } }, 'User logged in');
 //   user: {
 //     id: 123
 //   }
-```bash
+```
+
 ### Production Mode
 
 - JSON format for parsing
@@ -296,12 +308,13 @@ logger.info({ user: { id: 123 } }, 'User logged in');
 - Asynchronous for performance
 - No colors or formatting
 
-```typescript
+```text
 // NODE_ENV=production
 logger.info({ user: { id: 123 } }, 'User logged in');
 // Output:
 // {"level":30,"time":1234567890,"msg":"User logged in","user":{"id":123}}
-```bash
+```
+
 ### Test Mode
 
 - Disabled by default
@@ -319,18 +332,20 @@ it('should log success', () => {
 
   expect(logs.info).toContainEqual(expect.objectContaining({ msg: 'Operation successful' }));
 });
-```bash
+```
+
 ## Best Practices
 
 ### 1. Use Structured Data
 
-```typescript
+```text
 // ❌ Don't concatenate data into messages
 logger.info(`User ${userId} performed ${action}`);
 
 // ✅ Use structured data
 logger.info({ userId, action }, 'User performed action');
-```bash
+```
+
 ### 2. Create Contextual Loggers
 
 ```typescript
@@ -342,10 +357,11 @@ logger.info({ component: 'auth', userId }, 'Login successful');
 const authLogger = logger.child({ component: 'auth', userId });
 authLogger.info('Login attempt');
 authLogger.info('Login successful');
-```bash
+```
+
 ### 3. Use Appropriate Levels
 
-```typescript
+```text
 // Trace: Very detailed debugging
 logger.trace({ query, params }, 'SQL query details');
 
@@ -363,10 +379,11 @@ logger.error({ err }, 'Operation failed');
 
 // Fatal: Application crash
 logger.fatal({ err }, 'Unrecoverable error');
-```bash
+```
+
 ### 4. Include Error Context
 
-```typescript
+```yaml
 // ❌ Don't log errors without context
 logger.error(err);
 
@@ -380,7 +397,8 @@ logger.error(
   },
   'Request failed'
 );
-```bash
+```
+
 ### 5. Measure Performance
 
 ```typescript
@@ -395,7 +413,8 @@ const data = await measureTime('fetch', fetchData);
 const processed = await measureTime('process', () => processData(data));
 await measureTime('save', () => saveData(processed));
 logSuccess('data-pipeline');
-```bash
+```
+
 ## Configuration
 
 ### Environment Variables
@@ -416,7 +435,8 @@ interface LoggerOptions {
   redact?: string[]; // Additional fields to redact
   prettyPrint?: boolean; // Force pretty printing
 }
-```bash
+```
+
 ## Integration Examples
 
 ### Express Middleware
@@ -449,10 +469,11 @@ app.use((req, res, next) => {
 
   next();
 });
-```bash
+```
+
 ### Error Handler
 
-```typescript
+```yaml
 app.use((err, req, res, next) => {
   req.logger.error(
     {
@@ -468,7 +489,8 @@ app.use((err, req, res, next) => {
     requestId: getRequestId(),
   });
 });
-```bash
+```
+
 ## Testing
 
 ### Using the Mock Logger
@@ -499,7 +521,8 @@ describe('MyComponent', () => {
     expect(logs.all).toHaveLength(2);
   });
 });
-```bash
+```
+
 ## Performance Considerations
 
 1. **Lazy Evaluation**: Check log levels before expensive operations
@@ -511,7 +534,7 @@ describe('MyComponent', () => {
 
 ### From console.log
 
-```typescript
+```text
 // Before
 console.log('User logged in:', userId);
 console.error('Failed:', error);
@@ -519,10 +542,11 @@ console.error('Failed:', error);
 // After
 logger.info({ userId }, 'User logged in');
 logger.error({ err: error }, 'Failed');
-```bash
+```
+
 ### From Winston
 
-```typescript
+```text
 // Before
 winston.log('info', 'User logged in', { userId });
 winston.error('Failed', error);
@@ -530,7 +554,8 @@ winston.error('Failed', error);
 // After
 logger.info({ userId }, 'User logged in');
 logger.error({ err: error }, 'Failed');
-```bash
+```
+
 ### From Debug
 
 ```typescript

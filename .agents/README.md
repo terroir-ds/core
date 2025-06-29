@@ -4,7 +4,7 @@ A Docker-based multi-agent development system for Terroir Core that enables para
 
 ## Quick Start
 
-````bash
+```bash
 # 1. Navigate to the Docker directory
 cd .agents/docker
 
@@ -16,34 +16,39 @@ cd .agents/docker
 
 # 4. Generate a Claude prompt
 ./agent-manager.sh prompt 1    # From host (recommended)
-```bash
+```
+
 ### macOS Note
+
 If you encounter errors about "invalid option" or "declare -A", run the scripts with zsh:
+
 ```bash
 zsh ./agent-manager.sh prompt 1
-````
+```
 
 macOS ships with bash 3.x which lacks modern features. The scripts are compatible with both bash 4+ and zsh 5+.
 
 ## Architecture
 
-````text
+```markdown
 .agents/
-├── config/           # Agent configuration
-│   └── agent-mapping.conf    # Maps numbers to purposes
-├── docker/          # Docker setup
-│   ├── docker-compose.yml    # Container definitions
-│   ├── Dockerfile.agent      # Agent container image
-│   └── agent-manager.sh      # Container management
-├── prompts/         # Agent prompt templates
-├── scripts/         # Shared scripts (work in both contexts)
-└── docs/            # Documentation
-```bash
+├── config/ # Agent configuration
+│ └── agent-mapping.conf # Maps numbers to purposes
+├── docker/ # Docker setup
+│ ├── docker-compose.yml # Container definitions
+│ ├── Dockerfile.agent # Agent container image
+│ └── agent-manager.sh # Container management
+├── prompts/ # Agent prompt templates
+├── scripts/ # Shared scripts (work in both contexts)
+└── docs/ # Documentation
+```
+
 ## Key Components
 
 ### 1. Agent Configuration (`config/agent-mapping.conf`)
 
 Maps agent numbers to their current purposes:
+
 - Agent 0: Core (VS Code)
 - Agent 1: Utilities
 - Agent 2: Infrastructure
@@ -78,7 +83,8 @@ Maps agent numbers to their current purposes:
 
 # Rebuild when Dockerfile changes
 ./agent-manager.sh rebuild 1
-```bash
+```
+
 ### 4. Scripts (`scripts/`)
 
 Available in both host and container contexts:
@@ -101,7 +107,7 @@ Example:
 ```bash
 # Change agent 1 from utilities to color-management
 1:color-mgmt:feat/color-management:green
-````
+```
 
 ## Key Benefits
 

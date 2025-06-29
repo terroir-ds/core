@@ -14,7 +14,7 @@ Terroir Core buttons automatically handle color contrast, focus management, and 
 
 The simplest way to use a button with default styling:
 
-````tsx
+```typescript
 import { Button } from '@terroir/react';
 
 function Example() {
@@ -24,95 +24,111 @@ function Example() {
     </Button>
   );
 }
-```text
+```
+
 ### Common Patterns
 
 #### Primary Actions
+
 Use the primary variant for the main action on a page or form:
 
-```tsx
+```text
 <Button variant="primary" onClick={handleSubmit}>
   Submit Form
 </Button>
-```text
+```
+
 #### Secondary Actions
+
 Use secondary variant for alternative or less important actions:
 
-```tsx
+```text
 <Button variant="secondary" onClick={handleCancel}>
   Cancel
 </Button>
-```text
+```
+
 #### Destructive Actions
+
 Use the destructive variant for actions that delete or remove data:
 
-```tsx
+```text
 <Button variant="destructive" onClick={handleDelete}>
   Delete Item
 </Button>
-```text
+```
+
 ## API Reference
 
 ### Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `variant` | `'primary' \| 'secondary' \| 'destructive' \| 'ghost'` | `'primary'` | Visual style variant |
-| `size` | `'sm' \| 'md' \| 'lg'` | `'md'` | Button size |
-| `disabled` | `boolean` | `false` | Disables the button |
-| `loading` | `boolean` | `false` | Shows loading state |
-| `fullWidth` | `boolean` | `false` | Makes button full width |
-| `type` | `'button' \| 'submit' \| 'reset'` | `'button'` | HTML button type |
-| `className?` | `string` | - | Additional CSS classes |
-| `children` | `React.ReactNode` | - | Button content |
-| `onClick?` | `(event: MouseEvent) => void` | - | Click handler |
-| `href?` | `string` | - | Renders as link if provided |
-| `target?` | `'_blank' \| '_self' \| '_parent' \| '_top'` | - | Link target (when href is used) |
+| Prop         | Type                                                   | Default     | Description                     |
+| ------------ | ------------------------------------------------------ | ----------- | ------------------------------- |
+| `variant`    | `'primary' \| 'secondary' \| 'destructive' \| 'ghost'` | `'primary'` | Visual style variant            |
+| `size`       | `'sm' \| 'md' \| 'lg'`                                 | `'md'`      | Button size                     |
+| `disabled`   | `boolean`                                              | `false`     | Disables the button             |
+| `loading`    | `boolean`                                              | `false`     | Shows loading state             |
+| `fullWidth`  | `boolean`                                              | `false`     | Makes button full width         |
+| `type`       | `'button' \| 'submit' \| 'reset'`                      | `'button'`  | HTML button type                |
+| `className?` | `string`                                               | -           | Additional CSS classes          |
+| `children`   | `React.ReactNode`                                      | -           | Button content                  |
+| `onClick?`   | `(event: MouseEvent) => void`                          | -           | Click handler                   |
+| `href?`      | `string`                                               | -           | Renders as link if provided     |
+| `target?`    | `'_blank' \| '_self' \| '_parent' \| '_top'`           | -           | Link target (when href is used) |
 
 ### Variants
 
 #### Primary (default)
+
 High-emphasis button for primary actions like submitting forms or confirming choices.
 
-```tsx
-<Button variant="primary">Save Changes</Button>
 ```text
+<Button variant="primary">Save Changes</Button>
+```
+
 #### Secondary
+
 Medium-emphasis button for secondary actions like canceling or going back.
 
-```tsx
-<Button variant="secondary">Cancel</Button>
 ```text
+<Button variant="secondary">Cancel</Button>
+```
+
 #### Destructive
+
 High-emphasis button for dangerous actions that require user attention.
 
-```tsx
-<Button variant="destructive">Delete Account</Button>
 ```text
+<Button variant="destructive">Delete Account</Button>
+```
+
 #### Ghost
+
 Low-emphasis button for tertiary actions or subtle interactions.
 
-```tsx
+```text
 <Button variant="ghost">Learn More</Button>
-```yaml
+```
+
 ### Sizes
 
 - **Small (`sm`)**: Use in compact interfaces, toolbars, or alongside text
 - **Medium (`md`)**: Default size suitable for most interfaces
 - **Large (`lg`)**: Use for primary calls-to-action or touch-optimized interfaces
 
-```tsx
+```text
 <Button size="sm">Small</Button>
 <Button size="md">Medium</Button>
 <Button size="lg">Large</Button>
-```text
+```
+
 ## Styling
 
 ### CSS Custom Properties
 
 Customize button appearance using these CSS variables:
 
-```css
+```yaml
 .terroir-button {
   --button-height: var(--size-md);
   --button-padding-x: var(--space-lg);
@@ -130,12 +146,13 @@ Customize button appearance using these CSS variables:
   --button-active-background: var(--color-primary-50);
   --button-focus-ring: var(--color-primary-60);
 }
-```text
+```
+
 ### Theming
 
 Buttons automatically adapt to light and dark themes:
 
-```tsx
+```text
 // Automatically uses appropriate colors for the theme
 <ThemeProvider theme="light">
   <Button>Light Theme</Button>
@@ -144,16 +161,17 @@ Buttons automatically adapt to light and dark themes:
 <ThemeProvider theme="dark">
   <Button>Dark Theme</Button>
 </ThemeProvider>
-```text
+```
+
 ## Accessibility
 
 ### Keyboard Navigation
 
-| Key | Action |
-|-----|--------|
-| `Tab` | Move focus to/from button |
-| `Enter` | Activate button |
-| `Space` | Activate button |
+| Key     | Action                    |
+| ------- | ------------------------- |
+| `Tab`   | Move focus to/from button |
+| `Enter` | Activate button           |
+| `Space` | Activate button           |
 
 ### Screen Reader Support
 
@@ -164,7 +182,7 @@ Buttons automatically adapt to light and dark themes:
 
 ### ARIA Attributes
 
-```tsx
+```text
 <Button
   aria-label="Save document"
   aria-describedby="save-help-text"
@@ -173,7 +191,8 @@ Buttons automatically adapt to light and dark themes:
 >
   Save
 </Button>
-```text
+```
+
 ### Best Practices
 
 - ✅ Always provide clear, actionable button text
@@ -208,7 +227,7 @@ Buttons automatically adapt to light and dark themes:
 
 ### With Icons
 
-```tsx
+```typescript
 import { Button } from '@terroir/react';
 import { SaveIcon } from '@terroir/icons';
 
@@ -220,10 +239,11 @@ function SaveButton() {
     </Button>
   );
 }
-```text
+```
+
 ### Loading States
 
-```tsx
+```typescript
 function SubmitButton() {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -243,10 +263,11 @@ function SubmitButton() {
     </Button>
   );
 }
-```text
+```
+
 ### Button Groups
 
-```tsx
+```typescript
 import { ButtonGroup, Button } from '@terroir/react';
 
 function ActionBar() {
@@ -257,10 +278,11 @@ function ActionBar() {
     </ButtonGroup>
   );
 }
-```text
+```
+
 ### As Link
 
-```tsx
+```text
 // Renders as <a> element with button styling
 <Button href="/dashboard" target="_self">
   Go to Dashboard
@@ -275,18 +297,19 @@ function ActionBar() {
   Visit Site
   <ExternalIcon aria-label="Opens in new window" />
 </Button>
-```text
+```
+
 ## Migration Guide
 
 ### From v1.x to v2.x
 
-```tsx
+```text
 // v1.x (old)
 <Button type="primary" small />
 
 // v2.x (new)
 <Button variant="primary" size="sm" />
-````
+```
 
 ### Breaking Changes
 
