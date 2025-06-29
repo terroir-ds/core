@@ -105,7 +105,9 @@ agent_running() {
 start_agent() {
     local agent=${1:-1}
     local agent_num=$(get_agent_number "$agent") || return 1
-    local agent_purpose="${AGENT_PURPOSE[$agent_num]}"
+    local agent_purpose=$(get_agent_property "$agent_num" "purpose")
+    local agent_branch=$(get_agent_property "$agent_num" "branch")
+    local agent_color=$(get_agent_property "$agent_num" "color")
     
     echo -e "${BLUE}Starting agent ${agent_num} (${agent_purpose})...${NC}"
     
@@ -119,7 +121,47 @@ start_agent() {
         fi
     else
         echo -e "${GREEN}Creating new agent ${agent_num} container...${NC}"
-        docker-compose up -d "agent${agent_num}"
+        
+        # Build image if it doesn't exist
+        if ! docker images | grep -q "terroir-agent"; then
+            echo -e "${YELLOW}Building agent image...${NC}"
+            docker build -t terroir-agent:latest -f "$SCRIPT_DIR/Dockerfile.agent" "$SCRIPT_DIR"
+        fi
+        
+        # Create and start container
+        docker run -d \
+            --name "terroir-agent${agent_num}" \
+            --hostname "agent${agent_num}" \
+            -it \
+            --restart=no \
+            -e TERM=xterm-256color \
+            -e COLORTERM=truecolor \
+            -e FORCE_COLOR=1 \
+            -e CLICOLOR=1 \
+            -e CLICOLOR_FORCE=1 \
+            -e GIT_PAGER="less -R" \
+            -e NODE_ENV=development \
+            -e NODE_OPTIONS="--max-old-space-size=3072" \
+            -e AGENT_NUMBER="${agent_num}" \
+            -e AGENT_ROLE="${agent_purpose}" \
+            -e AGENT_COLOR="${agent_color}" \
+            -e OP_SERVICE_ACCOUNT_TOKEN="${OP_SERVICE_ACCOUNT_TOKEN:-}" \
+            -e GIT_CONFIG_ITEM="${GIT_CONFIG_ITEM:-}" \
+            -e GIT_SIGNING_KEY_ITEM="${GIT_SIGNING_KEY_ITEM:-}" \
+            -v "${HOME}/Development/Design/terroir-core:/workspaces/terroir-core" \
+            -v "${HOME}/Development/Design/terroir-agent${agent_num}:/workspaces/terroir-agent${agent_num}" \
+            -w "/workspaces/terroir-agent${agent_num}" \
+            --memory="4g" \
+            --memory-reservation="1g" \
+            --cpus="2.0" \
+            --security-opt no-new-privileges:true \
+            --cap-drop=ALL \
+            --cap-add=CHOWN \
+            --cap-add=SETUID \
+            --cap-add=SETGID \
+            terroir-agent:latest
+        
+        echo -e "${GREEN}Agent ${agent_num} created and started${NC}"
     fi
 }
 
@@ -147,7 +189,8 @@ connect_agent() {
     
     if agent_running "$agent"; then
         echo -e "${GREEN}Connecting to agent ${agent_num} (${agent_purpose})...${NC}"
-        docker exec -it "terroir-agent${agent_num}" /bin/zsh
+        # Pass TERM environment for proper color support
+        docker exec -it -e TERM=xterm-256color "terroir-agent${agent_num}" /bin/zsh
     else
         echo -e "${RED}Agent ${agent_num} is not running. Start it first with: $0 start ${agent}${NC}"
         exit 1
@@ -183,7 +226,7 @@ show_status() {
 rebuild_agent() {
     local agent=${1:-1}
     local agent_num=$(get_agent_number "$agent") || return 1
-    local agent_purpose="${AGENT_PURPOSE[$agent_num]}"
+    local agent_purpose=$(get_agent_property "$agent_num" "purpose")
     
     echo -e "${BLUE}Rebuilding agent ${agent_num} (${agent_purpose})...${NC}"
     
@@ -199,10 +242,12 @@ rebuild_agent() {
         docker rm "terroir-agent${agent_num}"
     fi
     
-    # Rebuild and start
-    echo -e "${GREEN}Building new agent ${agent_num} container...${NC}"
-    docker-compose build "agent${agent_num}"
-    docker-compose up -d "agent${agent_num}"
+    # Force rebuild the image
+    echo -e "${GREEN}Building new agent image...${NC}"
+    docker build --no-cache -t terroir-agent:latest -f "$SCRIPT_DIR/Dockerfile.agent" "$SCRIPT_DIR"
+    
+    # Start the agent (which will create new container)
+    start_agent "$agent"
 }
 
 # Clean agent
@@ -264,7 +309,7 @@ generate_prompt() {
     
     # Generate prompt inside container and output to stdout
     echo -e "${GREEN}📝 Generating prompt for Agent ${agent_num}...${NC}"
-    local prompt_content=$(docker exec ${container_name} bash -c "cd /workspaces/terroir-core/.agents/scripts && ./prompt.sh $agent 2>&1 | tail -n +2")
+    local prompt_content=$(docker exec -e TERM=xterm-256color ${container_name} bash -c "cd /workspaces/terroir-core/.agents/scripts && ./prompt.sh $agent 2>&1 | tail -n +2")
     
     # Extract the temp file path from the output
     local prompt_file=$(echo "$prompt_content" | grep "Prompt file created:" | sed 's/.*Prompt file created: //')
@@ -276,7 +321,7 @@ generate_prompt() {
     fi
     
     # Get the actual prompt content from the container
-    local prompt_text=$(docker exec ${container_name} cat "$prompt_file")
+    local prompt_text=$(docker exec -e TERM=xterm-256color ${container_name} cat "$prompt_file")
     
     # Copy to host clipboard
     if command -v xclip >/dev/null 2>&1; then

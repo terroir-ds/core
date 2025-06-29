@@ -30,69 +30,43 @@ macOS ships with bash 3.x which lacks modern features. The scripts are compatibl
 
 ## Architecture
 
-```markdown
+```text
 .agents/
-├── config/ # Agent configuration
-│ └── agent-mapping.conf # Maps numbers to purposes
-├── docker/ # Docker setup
-│ ├── docker-compose.yml # Container definitions
-│ ├── Dockerfile.agent # Agent container image
-│ └── agent-manager.sh # Container management
-├── prompts/ # Agent prompt templates
-├── scripts/ # Shared scripts (work in both contexts)
-└── docs/ # Documentation
+├── config/                 # Agent configuration
+│   └── agent-mapping.conf  # Maps numbers to purposes
+├── docker/                 # Docker container system
+│   ├── agent-manager.sh    # Container management
+│   ├── Dockerfile.agent    # Container image
+│   ├── scripts/            # Container-specific scripts
+│   └── README.md           # Docker documentation
+├── prompts/                # Agent prompt templates
+├── scripts/                # Shared scripts
+└── docs/                   # System documentation
 ```
 
 ## Key Components
 
 ### 1. Agent Configuration (`config/agent-mapping.conf`)
 
-Maps agent numbers to their current purposes:
+Maps agent numbers to their current purposes. Easy to update as needs change.
 
-- Agent 0: Core (VS Code)
-- Agent 1: Utilities
-- Agent 2: Infrastructure
-- Agent 3: Components
+### 2. Docker System (`docker/`)
 
-### 2. Docker Setup (`docker/`)
+See [Docker README](docker/README.md) for complete details on:
 
-- **docker-compose.yml**: Defines agent containers with git worktrees
-- **Dockerfile.agent**: Lightweight Node.js environment (~50MB per agent)
-- **agent-manager.sh**: Single entry point for all Docker operations
-- **init-container.sh**: Automatic container initialization
+- Container management with agent-manager.sh
+- Resource-efficient architecture
+- Full terminal color support
+- Persistent development environments
 
-### 3. Container Management
+### 3. Shared Scripts (`scripts/`)
 
-```bash
-# Start/stop agents
-./agent-manager.sh start 1       # Start by number
-./agent-manager.sh start utilities   # Start by purpose
-./agent-manager.sh stop 1
+Cross-platform utilities that work in both host and container contexts:
 
-# Connect to running agent
-./agent-manager.sh connect 1
-
-# Check all agents status
-./agent-manager.sh status
-
-# Generate prompt (copies to clipboard)
-./agent-manager.sh prompt 1
-
-# View logs
-./agent-manager.sh logs 1
-
-# Rebuild when Dockerfile changes
-./agent-manager.sh rebuild 1
-```
-
-### 4. Scripts (`scripts/`)
-
-Available in both host and container contexts:
-
-- **load-agent-config.sh**: Configuration loader (used by other scripts)
-- **prompt.sh**: Generate Claude prompts
-- **session.sh**: Save/restore session continuity
-- **status.sh**: Quick agent status check
+- **prompt.sh**: Generate Claude prompts with context
+- **session.sh**: Save/restore conversation continuity
+- **status.sh**: Quick agent status overview
+- **load-agent-config.sh**: Configuration parser
 
 ## Agent Purposes
 
@@ -132,6 +106,7 @@ Example:
 
 ## Documentation
 
+- **[Docker System](docker/README.md)** - Container setup and management
 - **[Getting Started](docs/getting-started.md)** - Quick introduction and daily workflows
 - **[Setup Guide](docs/setup-guide.md)** - Complete installation instructions
 - **[Architecture](docs/architecture.md)** - Technical design and trade-offs
