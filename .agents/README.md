@@ -47,7 +47,7 @@ Maps agent numbers to their current purposes:
 - Agent 0: Core (VS Code)
 - Agent 1: Utilities
 - Agent 2: Infrastructure
-- Agent 3: Documentation
+- Agent 3: Components
 
 ### 2. Docker Setup (`docker/`)
 

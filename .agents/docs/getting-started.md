@@ -67,7 +67,7 @@ cd .agents/docker
 - **Core (VS Code)**: Main development, testing, integration
 - **Agent 1**: Utilities and helper functions
 - **Agent 2**: Infrastructure and build tasks
-- **Agent 3**: Documentation updates
+- **Agent 3**: Component development
 
 ### Switching Between Agents
 ```bash

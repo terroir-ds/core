@@ -73,7 +73,7 @@ AGENT_NUM=""
 case $AGENT in
     1|utilities) AGENT_NUM="1" ;;
     2|infrastructure) AGENT_NUM="2" ;;
-    3|documentation) AGENT_NUM="3" ;;
+    3|components) AGENT_NUM="3" ;;
     core|main) AGENT_NUM="core" ;;
 esac
 

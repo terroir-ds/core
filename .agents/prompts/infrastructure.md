@@ -65,7 +65,7 @@ You are the **Infrastructure Agent** responsible for build systems, tooling, and
 ### Coordination Points
 
 - **With Utilities Agent**: Use shared logging and error handling
-- **With Documentation Agent**: Document build processes
+- **With Components Agent**: Support component build and bundling
 - **With Core Team**: Ensure infrastructure supports all workflows
 
 ### Key Files You Own

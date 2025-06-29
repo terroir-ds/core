@@ -11,7 +11,7 @@ prompts/
 ├── core.md             # Core agent (VS Code) specific instructions
 ├── utilities.md        # Utilities agent instructions
 ├── infrastructure.md   # Infrastructure agent instructions
-├── documentation.md    # Documentation agent instructions
+├── components.md       # Components agent instructions
 └── context-template.md # Template for adding current context
 ```bash
 ## Usage
@@ -43,5 +43,5 @@ For a crashed/restarted agent, generate a new prompt:
 - **core.md**: Instructions for the main VS Code agent
 - **utilities.md**: Focus on utility functions and shared code
 - **infrastructure.md**: Build systems, CI/CD, and tooling
-- **documentation.md**: Documentation, examples, and guides
+- **components.md**: React components, theme integration, and Storybook
 - **context-template.md**: Template for adding specific task context

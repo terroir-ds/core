@@ -49,7 +49,7 @@ Think of yourself as a **tech lead** with a small team:
 You (Core Agent)          = Tech Lead in VS Code
 ├── Agent 1 (Docker)      = Junior dev working on utilities
 ├── Agent 2 (Docker)      = Junior dev working on infrastructure
-└── Agent 3 (Docker)      = Junior dev working on documentation
+└── Agent 3 (Docker)      = Junior dev working on components
 
 Each on their own git branch, all coordinating through shared tools.
 ```bash
