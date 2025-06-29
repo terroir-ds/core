@@ -1,292 +1,116 @@
 # Quick Start
 
-Build your first component with Terroir Core in just 5 minutes! This guide will walk you through creating a themed button component.
+Build your first component with Terroir Core in 5 minutes! This guide shows you the essential steps to get started.
 
 ## What You'll Build
 
-By the end of this guide, you'll have:
+- ✅ A Material Design 3 color system from your brand color
+- ✅ A fully accessible button component
+- ✅ Automatic WCAG compliance testing
+- ✅ Working demo with multiple variants
 
-- ✅ A fully-themed button component
-- ✅ Automatic accessibility features
-- ✅ Color system integration
-- ✅ Responsive design tokens
+## Install
 
-## Step 1: Import Terroir Core
+```bash
+npm install @terroir/core
+```
 
-First, import the tokens and utilities you'll need:
-
-````typescript
-import { tokens } from '@terroir/core';
-import { generateColorSystem } from '@terroir/core/colors';
-```text
-## Step 2: Generate Your Color System
-
-Create a color system based on your brand color:
+## Generate Colors
 
 ```typescript
-// Generate colors from your brand color
+import { generateColorSystem, validateColorContrast } from '@terroir/core/colors';
+
+// Generate a complete color system
 const colors = await generateColorSystem({
-  source: '#0066cc', // Your brand blue
-  contrastLevel: 0.5  // AA accessibility compliance
+  source: '#0066cc', // Your brand color
+  contrastLevel: 0.5, // Enhanced accessibility
+  variant: 'tonalSpot', // Material You balanced
 });
 
-console.log('Generated colors:', colors);
-// Output: { primary: {...}, secondary: {...}, neutral: {...} }
-```text
-## Step 3: Create Your Component
+// Validate accessibility
+const validation = validateColorContrast(colors);
+console.log(`✅ ${validation.passed.length} accessible color pairs`);
+```
 
-### HTML + CSS Version
-
-```html
-<!DOCTYPE html>
-<html>
-<head>
-  <style>
-    .button {
-      /* Use generated color tokens */
-      background-color: var(--color-primary-60);
-      color: var(--color-primary-10);
-
-      /* Use spacing tokens */
-      padding: var(--space-md) var(--space-lg);
-
-      /* Use typography tokens */
-      font-family: var(--font-family-base);
-      font-size: var(--font-size-md);
-      font-weight: var(--font-weight-semibold);
-
-      /* Built-in accessibility */
-      border: none;
-      border-radius: var(--radius-md);
-      cursor: pointer;
-      min-height: 44px; /* Touch target size */
-
-      /* Smooth interactions */
-      transition: all 200ms ease;
-    }
-
-    .button:hover {
-      background-color: var(--color-primary-70);
-      transform: translateY(-1px);
-    }
-
-    .button:focus {
-      outline: 2px solid var(--color-primary-60);
-      outline-offset: 2px;
-    }
-
-    .button:active {
-      transform: translateY(0);
-      background-color: var(--color-primary-50);
-    }
-  </style>
-</head>
-<body>
-  <button class="button">
-    Click me!
-  </button>
-</body>
-</html>
-```text
-### React Version
-
-```tsx
-import React from 'react';
-import { useTheme } from '@terroir/react';
-
-interface ButtonProps {
-  variant?: 'primary' | 'secondary';
-  size?: 'sm' | 'md' | 'lg';
-  children: React.ReactNode;
-  onClick?: () => void;
-}
-
-export function Button({
-  variant = 'primary',
-  size = 'md',
-  children,
-  onClick
-}: ButtonProps) {
-  const theme = useTheme();
-
-  const styles = {
-    // Color system integration
-    backgroundColor: theme.colors.primary.tone(60),
-    color: theme.colors.primary.tone(10),
-
-    // Spacing system
-    padding: `${theme.space.md} ${theme.space.lg}`,
-
-    // Typography system
-    fontFamily: theme.fonts.base,
-    fontSize: theme.fontSizes.md,
-    fontWeight: theme.fontWeights.semibold,
-
-    // Accessibility built-in
-    border: 'none',
-    borderRadius: theme.radii.md,
-    cursor: 'pointer',
-    minHeight: '44px',
-
-    // Smooth interactions
-    transition: 'all 200ms ease',
-  };
-
-  return (
-    <button
-      style={styles}
-      onClick={onClick}
-      // Accessibility attributes automatically included
-    >
-      {children}
-    </button>
-  );
-}
-```text
-### Vue Version
-
-```vue
-<template>
-  <button
-    class="terroir-button"
-    :class="[`terroir-button--${variant}`, `terroir-button--${size}`]"
-    @click="$emit('click')"
-  >
-    <slot />
-  </button>
-</template>
-
-<script setup lang="ts">
-import { computed } from 'vue';
-import { useTheme } from '@terroir/vue';
-
-interface Props {
-  variant?: 'primary' | 'secondary';
-  size?: 'sm' | 'md' | 'lg';
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  variant: 'primary',
-  size: 'md'
-});
-
-const theme = useTheme();
-
-const buttonStyles = computed(() => ({
-  '--button-bg': theme.colors.primary.tone(60),
-  '--button-text': theme.colors.primary.tone(10),
-  '--button-padding': `${theme.space.md} ${theme.space.lg}`,
-}));
-</script>
-
-<style scoped>
-.terroir-button {
-  background-color: var(--button-bg);
-  color: var(--button-text);
-  padding: var(--button-padding);
-
-  border: none;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  min-height: 44px;
-
-  font-family: var(--font-family-base);
-  font-size: var(--font-size-md);
-  font-weight: var(--font-weight-semibold);
-
-  transition: all 200ms ease;
-}
-
-.terroir-button:hover {
-  transform: translateY(-1px);
-  filter: brightness(1.1);
-}
-
-.terroir-button:focus {
-  outline: 2px solid var(--color-primary-60);
-  outline-offset: 2px;
-}
-</style>
-```yaml
-## Step 4: Test Your Component
-
-### Accessibility Testing
-
-Your component automatically includes:
-- ✅ **WCAG-compliant colors** (tested contrast ratios)
-- ✅ **Touch-friendly size** (44px minimum)
-- ✅ **Keyboard navigation** (focus indicators)
-- ✅ **Screen reader support** (semantic HTML)
-
-Test with:
-```bash
-# Run accessibility tests
-pnpm test:a11y
-
-# Test keyboard navigation
-# Tab to button, press Enter/Space to activate
-```text
-### Visual Testing
-
-```bash
-# See your component in Storybook
-pnpm storybook:dev
-
-# Run visual regression tests
-pnpm test:visual
-```text
-## Step 5: Customize and Extend
-
-### Add Variants
+## Create Component
 
 ```typescript
-// Create secondary button variant
-const secondaryButton = {
-  backgroundColor: colors.secondary.tone(20),
-  color: colors.secondary.tone(90),
-  border: `1px solid ${colors.secondary.tone(40)}`
-};
+// Use generated colors in your component
+function createButton(label: string) {
+  const button = document.createElement('button');
 
-// Create size variants
-const sizes = {
-  sm: { padding: `${tokens.space.sm} ${tokens.space.md}` },
-  md: { padding: `${tokens.space.md} ${tokens.space.lg}` },
-  lg: { padding: `${tokens.space.lg} ${tokens.space.xl}` }
-};
-```text
-### Add States
+  // Apply colors from your generated system
+  button.style.backgroundColor = colors.palettes.primary.tones[40].hex;
+  button.style.color = colors.palettes.primary.tones[100].hex;
+  button.style.padding = '12px 24px';
+  button.style.borderRadius = '8px';
+  button.style.border = 'none';
+  button.style.minHeight = '44px'; // Accessibility compliance
+  button.style.cursor = 'pointer';
+
+  button.textContent = label;
+  return button;
+}
+
+// Create and use your button
+const myButton = createButton('Click me!');
+document.body.appendChild(myButton);
+```
+
+## Test Results
+
+Your button automatically includes:
+
+- **Accessible colors**: Tested contrast ratios (4.5+ for WCAG AA)
+- **Touch-friendly size**: 44px minimum height
+- **Consistent theming**: Generated from your brand color
+- **Material Design**: Based on Google's color science
+
+## What You Get
 
 ```typescript
-// Interactive states with automatic contrast
-const buttonStates = {
-  default: colors.primary.tone(60),
-  hover: colors.primary.tone(70),
-  active: colors.primary.tone(50),
-  disabled: colors.neutral.tone(90)
-};
-````
+// Access your complete color system
+colors.palettes.primary; // Your brand color variations
+colors.palettes.secondary; // Complementary colors
+colors.palettes.neutral; // Text and background colors
+colors.themes.light; // Light theme tokens
+colors.themes.dark; // Dark theme tokens
 
-## What You've Learned
+// Example tones available (0-100 scale)
+colors.palettes.primary.tones[10]; // Very light
+colors.palettes.primary.tones[40]; // Medium (great for buttons)
+colors.palettes.primary.tones[90]; // Very dark (great for text)
+```
 
-🎉 **Congratulations!** You've just built your first Terroir Core component. You now know how to:
+## Ready for More?
 
-- Generate accessible color systems from brand colors
-- Use design tokens for consistent spacing and typography
-- Create components with built-in accessibility features
-- Test your components for quality assurance
+### Complete Tutorial
 
-## Next Steps
+Want to build a production-ready component? Follow our [Complete Tutorial](./complete-tutorial.md) with:
 
-Ready to dive deeper?
+- Full TypeScript setup
+- Multiple component variants
+- Interactive demo page
+- Production considerations
 
-1. **[Examples](./examples.md)** - See more complete implementations
-2. **[Color System](../foundations/color-system.md)** - Understand the science behind our colors
-3. **[Component Documentation Guide](../guides/development/component-documentation-guide.md)** - Learn advanced component design
-4. **[Testing Guide](../guides/testing/README.md)** - Ensure your components are bulletproof
+### Framework Integration
+
+- **React**: [React Components Guide](../guides/react/README.md)
+- **Vue**: [Vue Components Guide](../guides/vue/README.md)
+- **Angular**: [Angular Integration](../guides/angular/README.md)
+
+### Advanced Features
+
+- **[Color System Deep Dive](../foundations/color-system.md)** - Understanding the science
+- **[Accessibility Guide](../foundations/accessibility.md)** - Ensuring inclusive design
+- **[API Reference](../api/README.md)** - Complete function documentation
 
 ## Need Help?
 
-- **Can't generate colors?** Check the [color system guide](../foundations/color-system.md)
-- **Accessibility issues?** See our [accessibility guide](../foundations/accessibility.md)
-- **Framework problems?** Check the documentation
-- **Still stuck?** Ask in [GitHub Discussions](https://github.com/terroir-ds/core/discussions)
+- 🐛 **Issues**: [GitHub Issues](https://github.com/terroir-ds/core/issues)
+- 💬 **Questions**: [GitHub Discussions](https://github.com/terroir-ds/core/discussions)
+- 📖 **Docs**: [Full Documentation](../README.md)
+
+---
+
+**Time to first component: ~5 minutes** ⚡
