@@ -48,6 +48,7 @@ import { createManagedTimer } from './helpers/timers.js';
 import { createCleanupManager } from './helpers/cleanup.js';
 import { AsyncErrorMessages } from './helpers/messages.js';
 import { AsyncValidationError } from './errors.js';
+import { getMessage } from '@utils/errors/messages.js';
 
 /**
  * Options for delay operations
@@ -282,7 +283,7 @@ export async function randomDelay(
   }
   
   if (min > max) {
-    throw new AsyncValidationError('Minimum delay must not exceed maximum delay', {
+    throw new AsyncValidationError(getMessage('DELAY_MIN_MAX_INVALID'), {
       context: { min, max }
     });
   }
@@ -410,7 +411,7 @@ export function debouncedDelay(
 
   const cancel = () => {
     if (reject) {
-      const error = createAbortError('Debounced delay cancelled');
+      const error = createAbortError(getMessage('DEBOUNCED_DELAY_CANCELLED'));
       const currentReject = reject;
       reset();
       currentReject(error);

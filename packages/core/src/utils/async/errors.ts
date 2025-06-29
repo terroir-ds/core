@@ -10,12 +10,13 @@ import {
   ErrorSeverity,
   ErrorCategory,
 } from '@utils/errors/index.js';
+import { getMessage } from '@utils/errors/messages.js';
 
 /**
  * Error thrown when an async operation is aborted
  */
 export class AsyncAbortError extends BaseError {
-  constructor(message = 'Operation aborted', options?: ErrorOptions) {
+  constructor(message = getMessage('OPERATION_ABORTED'), options?: ErrorOptions) {
     super(message, {
       ...options,
       code: options?.code ?? 'ASYNC_ABORTED',

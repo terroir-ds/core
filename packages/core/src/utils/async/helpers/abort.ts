@@ -3,6 +3,8 @@
  * @module @utils/async/helpers/abort
  */
 
+import { getMessage } from '@utils/errors/messages.js';
+
 /**
  * Checks if an AbortSignal is aborted and throws if it is
  * @param signal - The abort signal to check
@@ -19,7 +21,7 @@ export function checkAborted(signal?: AbortSignal): void {
  * @param message - Optional custom error message
  * @returns A DOMException with AbortError name
  */
-export function createAbortError(message: string = 'Operation aborted'): DOMException {
+export function createAbortError(message: string = getMessage('OPERATION_ABORTED')): DOMException {
   return new DOMException(message, 'AbortError');
 }
 
