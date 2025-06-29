@@ -496,12 +496,13 @@ A task is complete when:
 
 - ✅ All code implemented
 - ✅ Tests written and passing
-- ✅ Documentation updated
+- ✅ Documentation updated (both human and AI docs)
 - ✅ No linting/type errors (run `pnpm fix` before commit)
 - ✅ Performance verified
 - ✅ Committed with conventional message
 - ✅ Uses structured logging (no console.log)
 - ✅ Uses standard error handling (typed errors with context)
+- ✅ AI documentation updated (.ai.md files)
 
 ### Development Standards
 
@@ -512,6 +513,7 @@ A task is complete when:
 - **[Code Quality](./docs/resources/standards/code-quality.md)** - Run `pnpm fix` before commits
 - **[Testing](./docs/resources/standards/testing.md)** - Co-locate tests with source
 - **[Documentation](./docs/resources/standards/documentation.md)** - Keep docs close to code
+- **[AI Documentation](./docs/resources/standards/ai-documentation.md)** - Create .ai.md files for AI agents
 
 Quick examples:
 
@@ -568,6 +570,27 @@ See [Documentation Standards](./docs/resources/standards/documentation.md) and [
 - Keep documentation close to code
 - Use consistent naming patterns
 
+### AI Documentation
+
+See [AI Documentation Standards](./docs/resources/standards/ai-documentation.md) for AI-first documentation practices.
+
+**Quick reminders**:
+- Create `.ai.md` files alongside human documentation
+- Include task-oriented examples and quick reference tables
+- Add AI metadata with token costs and stability
+- Update `/docs/ai/` for cross-cutting patterns
+
+**Documentation Structure**:
+```text
+packages/core/
+├── README.md          # Human documentation
+├── README.ai.md       # AI-optimized documentation
+docs/
+├── ai/                # AI-specific guides
+│   ├── architecture.md
+│   ├── patterns.md
+│   └── contributing.md
+```text
 ### Import Conventions
 
 See [Import Conventions](./docs/resources/standards/import-conventions.md) for path alias usage.

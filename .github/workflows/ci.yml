@@ -38,3 +38,29 @@ jobs:
 
       - name: Lint
         run: pnpm lint
+
+      - name: Validate AI Documentation
+        run: |
+          # Check that all packages with README.md also have README.ai.md
+          for pkg in packages/*/README.md; do
+            dir=$(dirname "$pkg")
+            if [ -f "$dir/README.md" ] && [ ! -f "$dir/README.ai.md" ]; then
+              echo "Missing AI documentation: $dir/README.ai.md"
+              exit 1
+            fi
+          done
+
+          # Validate AI documentation metadata
+          for ai_doc in packages/*/README.ai.md docs/ai/*.md; do
+            if [ -f "$ai_doc" ]; then
+              if ! grep -q "## AI Metadata" "$ai_doc"; then
+                echo "Missing AI Metadata section in: $ai_doc"
+                exit 1
+              fi
+            fi
+          done
+
+      - name: Generate llms.txt
+        run: |
+          cd packages/docs-site
+          pnpm llms:generate

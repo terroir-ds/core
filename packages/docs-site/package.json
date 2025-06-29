@@ -6,13 +6,14 @@
   "type": "module",
   "scripts": {
     "astro": "astro",
-    "build": "astro build",
+    "build": "pnpm llms:generate && astro build",
     "check": "astro check",
     "clean": "del dist",
     "dev": "astro dev",
     "fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "lint:fix": "pnpm fix",
+    "llms:generate": "node scripts/generate-llms-txt.js",
     "preview": "astro preview",
     "start": "astro dev",
     "test": "pnpm test:type",
@@ -27,6 +28,8 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
+    "glob": "^10.3.10",
+    "gray-matter": "^4.0.3",
     "typescript": "^5.8.3"
   }
 }

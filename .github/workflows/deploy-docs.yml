@@ -8,6 +8,8 @@ on:
       - 'packages/docs-site/**'
       - 'lib/**'
       - 'docs/**'
+      - '**/README.ai.md'
+      - '**/*.ai.md'
 
   # Allow manual trigger
   workflow_dispatch:

@@ -76,5 +76,7 @@ export default defineConfig({
 				'@terroir/core': '../../lib',
 			},
 		},
+		// Ensure llms.txt is served correctly
+		publicDir: 'public',
 	},
 });
