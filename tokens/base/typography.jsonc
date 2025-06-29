@@ -1,0 +1,192 @@
+{
+  // Typography tokens for the Terroir Design System
+  // Defines font families, sizes, weights, and line heights
+  "typography": {
+    "$description": "Typography system tokens",
+    
+    // Font families with system font fallbacks
+    "fontFamily": {
+      "$description": "Font family stacks",
+      
+      "sans": {
+        "$value": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+        "$description": "System sans-serif font stack",
+        "$type": "fontFamily"
+      },
+      "serif": {
+        "$value": "Georgia, Cambria, 'Times New Roman', Times, serif",
+        "$description": "System serif font stack",
+        "$type": "fontFamily"
+      },
+      "mono": {
+        "$value": "'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace",
+        "$description": "System monospace font stack",
+        "$type": "fontFamily"
+      }
+    },
+    
+    // Font sizes using modular scale (1.25 ratio)
+    "fontSize": {
+      "$description": "Font size scale using 1.25 ratio",
+      
+      "xs": {
+        "$value": 12,
+        "$description": "12px - Extra small text",
+        "$type": "dimension"
+      },
+      "sm": {
+        "$value": 14,
+        "$description": "14px - Small text",
+        "$type": "dimension"
+      },
+      "base": {
+        "$value": 16,
+        "$description": "16px - Base body text",
+        "$type": "dimension"
+      },
+      "lg": {
+        "$value": 18,
+        "$description": "18px - Large text",
+        "$type": "dimension"
+      },
+      "xl": {
+        "$value": 20,
+        "$description": "20px - Extra large text",
+        "$type": "dimension"
+      },
+      "2xl": {
+        "$value": 24,
+        "$description": "24px - Heading level 4",
+        "$type": "dimension"
+      },
+      "3xl": {
+        "$value": 30,
+        "$description": "30px - Heading level 3",
+        "$type": "dimension"
+      },
+      "4xl": {
+        "$value": 36,
+        "$description": "36px - Heading level 2",
+        "$type": "dimension"
+      },
+      "5xl": {
+        "$value": 48,
+        "$description": "48px - Heading level 1",
+        "$type": "dimension"
+      },
+      "6xl": {
+        "$value": 60,
+        "$description": "60px - Display text",
+        "$type": "dimension"
+      }
+    },
+    
+    // Font weights
+    "fontWeight": {
+      "$description": "Font weight scale",
+      
+      "thin": {
+        "$value": 100,
+        "$description": "Thin weight",
+        "$type": "fontWeight"
+      },
+      "light": {
+        "$value": 300,
+        "$description": "Light weight",
+        "$type": "fontWeight"
+      },
+      "regular": {
+        "$value": 400,
+        "$description": "Regular weight",
+        "$type": "fontWeight"
+      },
+      "medium": {
+        "$value": 500,
+        "$description": "Medium weight",
+        "$type": "fontWeight"
+      },
+      "semibold": {
+        "$value": 600,
+        "$description": "Semi-bold weight",
+        "$type": "fontWeight"
+      },
+      "bold": {
+        "$value": 700,
+        "$description": "Bold weight",
+        "$type": "fontWeight"
+      },
+      "black": {
+        "$value": 900,
+        "$description": "Black weight",
+        "$type": "fontWeight"
+      }
+    },
+    
+    // Line heights for optimal readability
+    "lineHeight": {
+      "$description": "Line height scale",
+      
+      "tight": {
+        "$value": 1.25,
+        "$description": "1.25 - Tight line height for headings",
+        "$type": "number"
+      },
+      "snug": {
+        "$value": 1.375,
+        "$description": "1.375 - Snug line height",
+        "$type": "number"
+      },
+      "normal": {
+        "$value": 1.5,
+        "$description": "1.5 - Normal line height for body text",
+        "$type": "number"
+      },
+      "relaxed": {
+        "$value": 1.625,
+        "$description": "1.625 - Relaxed line height",
+        "$type": "number"
+      },
+      "loose": {
+        "$value": 2,
+        "$description": "2 - Loose line height for readability",
+        "$type": "number"
+      }
+    },
+    
+    // Letter spacing (tracking)
+    "letterSpacing": {
+      "$description": "Letter spacing scale",
+      
+      "tighter": {
+        "$value": "-0.05em",
+        "$description": "-0.05em - Tighter letter spacing",
+        "$type": "dimension"
+      },
+      "tight": {
+        "$value": "-0.025em",
+        "$description": "-0.025em - Tight letter spacing",
+        "$type": "dimension"
+      },
+      "normal": {
+        "$value": "0",
+        "$description": "0 - Normal letter spacing",
+        "$type": "dimension"
+      },
+      "wide": {
+        "$value": "0.025em",
+        "$description": "0.025em - Wide letter spacing",
+        "$type": "dimension"
+      },
+      "wider": {
+        "$value": "0.05em",
+        "$description": "0.05em - Wider letter spacing",
+        "$type": "dimension"
+      },
+      "widest": {
+        "$value": "0.1em",
+        "$description": "0.1em - Widest letter spacing",
+        "$type": "dimension"
+      }
+    }
+  }
+}

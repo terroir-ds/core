@@ -94,7 +94,7 @@
     "test:unit:logger": "vitest run lib/utils/__tests__/logger",
     "test:visual": "playwright test",
     "test:watch": "vitest watch",
-    "tokens:build": "style-dictionary build && node scripts/generate-colors.js",
+    "tokens:build": "node scripts/build-tokens.mjs && node scripts/generate-colors.js",
     "tokens:lint": "node scripts/lint-tokens.js",
     "tokens:watch": "nodemon -w tokens -e json,js -x 'pnpm tokens:build'"
   },
@@ -142,6 +142,7 @@
     "prettier": "^3.6.2",
     "semantic-release": "^24.2.5",
     "sort-package-json": "^3.3.1",
+    "style-dictionary": "^5.0.0",
     "tsx": "^4.20.3",
     "turbo": "^2.5.4",
     "typedoc": "^0.28.6",

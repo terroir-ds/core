@@ -1,0 +1,89 @@
+{
+  // Spacing tokens based on a 4px grid system
+  // Use these tokens for all padding, margin, gap, and positioning values
+  "spacing": {
+    "$description": "Spacing scale based on 4px base unit for consistent rhythm",
+    
+    // Base unit - all other spacing values should be multiples of this
+    "base": {
+      "$value": 4,
+      "$description": "Base spacing unit in pixels",
+      "$type": "dimension"
+    },
+    
+    // Spacing scale follows a modified fibonacci sequence for visual harmony
+    // 0, 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96
+    
+    "0": {
+      "$value": 0,
+      "$description": "No spacing",
+      "$type": "dimension"
+    },
+    
+    // Small spacing values (4-16px)
+    "1": {
+      "$value": "{spacing.base}",
+      "$description": "4px - Minimum spacing for tight layouts",
+      "$type": "dimension"
+    },
+    "2": {
+      "$value": 8,
+      "$description": "8px - Tight spacing for related elements",
+      "$type": "dimension"
+    },
+    "3": {
+      "$value": 12,
+      "$description": "12px - Compact spacing for grouped items",
+      "$type": "dimension"
+    },
+    "4": {
+      "$value": 16,
+      "$description": "16px - Default spacing for most use cases",
+      "$type": "dimension"
+    },
+    
+    // Medium spacing values (20-32px)
+    "5": {
+      "$value": 20,
+      "$description": "20px - Relaxed spacing for readability",
+      "$type": "dimension"
+    },
+    "6": {
+      "$value": 24,
+      "$description": "24px - Loose spacing for visual separation",
+      "$type": "dimension"
+    },
+    "8": {
+      "$value": 32,
+      "$description": "32px - Large spacing between sections",
+      "$type": "dimension"
+    },
+    
+    // Large spacing values (40-96px)
+    "10": {
+      "$value": 40,
+      "$description": "40px - Extra large spacing for major sections",
+      "$type": "dimension"
+    },
+    "12": {
+      "$value": 48,
+      "$description": "48px - Huge spacing for clear hierarchy",
+      "$type": "dimension"
+    },
+    "16": {
+      "$value": 64,
+      "$description": "64px - Massive spacing for page sections",
+      "$type": "dimension"
+    },
+    "20": {
+      "$value": 80,
+      "$description": "80px - Gigantic spacing for major breaks",
+      "$type": "dimension"
+    },
+    "24": {
+      "$value": 96,
+      "$description": "96px - Colossal spacing for hero sections",
+      "$type": "dimension"
+    }
+  }
+}
