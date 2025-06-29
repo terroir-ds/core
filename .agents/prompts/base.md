@@ -44,8 +44,17 @@ Check `/docs/resources/standards/` for:
 1. Read START file for current task
 2. Implement following 5-pass approach
 3. Run `pnpm fix` before commit
-4. Update START file progress
-5. Move to next task
+4. Create atomic commits for each logical change
+5. Update START file progress
+6. Move to next task
+
+## Commit Standards
+
+- Make atomic commits (one logical change per commit)
+- Use conventional format: `type(scope): description`
+- Common types: feat, fix, docs, style, refactor, test, chore
+- Keep commits focused and easy to review
+- Run `pnpm fix` before each commit
 
 ## Important
 
