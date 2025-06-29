@@ -86,7 +86,7 @@ const DEFAULT_REPLACEMENTS: Record<string, string> = {
   '+': 'plus', '=': 'equals', '<': 'lt', '>': 'gt',
   
   // Quotes and dashes
-  '"': '', "'": '', '`': '', '"': '', '"': '',
+  '"': '', "'": '', '`': '', '\u201C': '', '\u201D': '',
   '–': '-', '—': '-', '…': '...',
 };
 

@@ -22,6 +22,10 @@
  * ```
  */
 
+// Import required functions for pre-configured utilities
+import { createRedactor as _createRedactor } from './redaction.js';
+import { sanitizeInput as _sanitizeInput, stripDangerous as _stripDangerous } from './sanitization.js';
+
 // =============================================================================
 // PATTERN EXPORTS
 // =============================================================================
@@ -140,7 +144,7 @@ export {
  * const safe = apiRedactor(data);
  * ```
  */
-export const apiRedactor = createRedactor({
+export const apiRedactor = _createRedactor({
   deep: true,
   checkContent: true,
   redactedValue: '[REDACTED]',
@@ -155,17 +159,19 @@ export const apiRedactor = createRedactor({
  * logger.info('User data:', logRedactor(userData));
  * ```
  */
-export const logRedactor = createRedactor({
+export const logRedactor = _createRedactor({
   deep: true,
   checkContent: true,
   maxStringLength: 1000,
-  redactedValue: (original) => {
+  redactedValue: (original: unknown) => {
     if (typeof original === 'string' && original.includes('@')) {
       // Partially mask emails
       const parts = original.split('@');
       if (parts.length === 2) {
         const [local, domain] = parts;
-        return `${local.substring(0, 2)}***@***.${domain.split('.').pop()}`;
+        const domainParts = domain.split('.');
+        const tld = domainParts.length > 0 ? domainParts[domainParts.length - 1] : '';
+        return `${local.substring(0, 2)}***@***.${tld}`;
       }
     }
     return '[REDACTED]';
@@ -182,7 +188,7 @@ export const logRedactor = createRedactor({
  * ```
  */
 export const inputSanitizer = (input: unknown) => 
-  sanitizeInput(input, {
+  _sanitizeInput(input, {
     maxLength: 10000,
     stripBinary: true,
     trimStrings: true,
@@ -200,7 +206,7 @@ export const inputSanitizer = (input: unknown) =>
  * ```
  */
 export const htmlStripper = (text: string) =>
-  stripDangerous(text, {
+  _stripDangerous(text, {
     stripHtml: true,
     stripScripts: true,
     stripControl: true,
