@@ -13,6 +13,9 @@ else
 fi
 BASE_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
+# Always run from the docker directory to ensure relative paths work
+cd "$SCRIPT_DIR"
+
 # Source the agent configuration
 source "$BASE_DIR/scripts/load-agent-config.sh"
 
@@ -21,15 +24,11 @@ get_agent_property() {
     local agent_num="$1"
     local property="$2"
     
-    local idx=$(find_agent_index "$agent_num")
-    if [ -z "$idx" ]; then
-        return 1
-    fi
-    
+    # Access associative arrays directly by agent number
     case "$property" in
-        purpose) echo "${AGENT_PURPOSE[$idx]}" ;;
-        branch) echo "${AGENT_BRANCH[$idx]}" ;;
-        color) echo "${AGENT_COLOR[$idx]}" ;;
+        purpose) echo "${AGENT_PURPOSE[$agent_num]:-}" ;;
+        branch) echo "${AGENT_BRANCH[$agent_num]:-}" ;;
+        color) echo "${AGENT_COLOR[$agent_num]:-}" ;;
         *) return 1 ;;
     esac
 }
@@ -59,10 +58,9 @@ show_help() {
     echo "  prompt [agent]   - Generate Claude prompt and copy to clipboard"
     echo ""
     echo "Agents:"
-    local i
-    for i in "${!AGENT_NUMS[@]}"; do
-        local num="${AGENT_NUMS[$i]}"
-        local purpose="${AGENT_PURPOSE[$i]}"
+    # Iterate over agent numbers from the AGENT_PURPOSE array
+    for num in "${!AGENT_PURPOSE[@]}"; do
+        local purpose="${AGENT_PURPOSE[$num]}"
         if [ "$num" != "0" ]; then
             echo "  $num or $purpose"
         fi
