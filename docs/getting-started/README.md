@@ -12,11 +12,25 @@ Terroir Core is a comprehensive, accessible design system built with modern web 
 - **Multi-format asset generation** (SVG, PNG, WebP)
 - **Framework-agnostic** core with React components
 
-## Quick Navigation
+## Learning Path
 
-- **[Installation](./installation.md)** - Set up Terroir Core in your project
-- **[Quick Start](./quick-start.md)** - Build your first component in 5 minutes
-- **[Examples](./examples.md)** - See Terroir Core in action
+Choose your journey based on your experience and goals:
+
+### 🚀 **New to Terroir Core?**
+
+1. **[Quick Start](./quick-start.md)** - Build your first component in 5 minutes
+2. **[Complete Tutorial](./complete-tutorial.md)** - Full project setup with working demo
+3. **[Examples](./examples.md)** - Explore more complex patterns
+
+### 🔧 **Just need setup?**
+
+- **[Installation](./installation.md)** - Get Terroir Core running in your project
+
+### 📚 **Ready to dive deep?**
+
+- **[API Reference](../api/README.md)** - Complete function documentation
+- **[Color System](../foundations/color-system.md)** - Understanding the science
+- **[Component Patterns](../guides/patterns/README.md)** - Advanced design patterns
 
 ## Why Choose Terroir Core?
 
