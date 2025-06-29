@@ -17,14 +17,15 @@ Every typographic decision prioritizes legibility and comprehension:
 
 We use system font stacks for optimal performance and native feel:
 
-```css
+```yaml
 --font-family-base: system-ui, -apple-system, BlinkMacSystemFont, 
                     "Segoe UI", Roboto, "Helvetica Neue", Arial, 
                     sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
 
 --font-family-mono: ui-monospace, "SF Mono", "Cascadia Code", 
                     "Roboto Mono", Consolas, "Courier New", monospace;
-```text
+```
+
 ### 3. Responsive Scaling
 
 Typography adapts to viewport and user preferences:
@@ -53,7 +54,7 @@ Our modular type scale uses a 1.25 ratio (Major Third) for harmonious progressio
 
 ### Responsive Implementation
 
-```css
+```yaml
 /* Fluid typography with clamp() */
 .heading-1 {
   font-size: clamp(
@@ -62,7 +63,8 @@ Our modular type scale uses a 1.25 ratio (Major Third) for harmonious progressio
     var(--font-size-4xl)   /* maximum */
   );
 }
-```text
+```
+
 ## Font Weights
 
 Carefully selected weights provide clear hierarchy without overwhelming:
@@ -103,7 +105,7 @@ Pre-composed styles for common text patterns:
 
 ### Headings
 
-```css
+```yaml
 .heading-1 {
   font-size: var(--font-size-3xl);
   font-weight: var(--font-weight-bold);
@@ -122,10 +124,11 @@ Pre-composed styles for common text patterns:
   font-weight: var(--font-weight-semibold);
   line-height: var(--line-height-snug);
 }
-```text
+```
+
 ### Body Text
 
-```css
+```yaml
 .body-large {
   font-size: var(--font-size-md);
   line-height: var(--line-height-relaxed);
@@ -140,10 +143,11 @@ Pre-composed styles for common text patterns:
   font-size: var(--font-size-sm);
   line-height: var(--line-height-normal);
 }
-```text
+```
+
 ### Special Purpose
 
-```css
+```yaml
 .caption {
   font-size: var(--font-size-xs);
   line-height: var(--line-height-normal);
@@ -164,7 +168,8 @@ Pre-composed styles for common text patterns:
   padding: 0.125em 0.25em;
   border-radius: var(--radius-sm);
 }
-```yaml
+```
+
 ## Accessibility Considerations
 
 ### Minimum Sizes
@@ -192,7 +197,7 @@ All text meets WCAG contrast requirements:
 
 ### React Component
 
-```tsx
+```typescript
 import { Text } from '@terroir/react';
 
 function Article() {
@@ -210,10 +215,11 @@ function Article() {
     </>
   );
 }
-```text
+```
+
 ### CSS Classes
 
-```html
+```text
 <article>
   <h1 class="heading-1">Article Title</h1>
   <p class="body-large text-neutral-60">
@@ -223,7 +229,8 @@ function Article() {
     Main article content with default styling...
   </p>
 </article>
-```text
+```
+
 ### Design Tokens
 
 ```typescript
@@ -234,12 +241,13 @@ const styles = {
   fontWeight: tokens.fontWeight.semibold,
   lineHeight: tokens.lineHeight.snug,
 };
-```text
+```
+
 ## Variable Fonts
 
 For projects requiring more typographic control, we support variable fonts:
 
-```css
+```yaml
 @font-face {
   font-family: 'Inter var';
   src: url('/fonts/Inter.var.woff2') format('woff2-variations');
@@ -252,12 +260,13 @@ For projects requiring more typographic control, we support variable fonts:
   font-family: 'Inter var', var(--font-family-base);
   font-variation-settings: 'wght' var(--font-weight-custom, 400);
 }
-```text
+```
+
 ## Performance Optimization
 
 ### Font Loading Strategy
 
-```html
+```yaml
 <!-- Preload critical fonts -->
 <link rel="preload" href="/fonts/Inter-Regular.woff2" as="font" type="font/woff2" crossorigin>
 
@@ -269,12 +278,13 @@ For projects requiring more typographic control, we support variable fonts:
     font-display: swap;
   }
 </style>
-```text
+```
+
 ### Subsetting
 
 Reduce font file sizes by subsetting to required characters:
 
-```css
+```yaml
 /* Latin subset for body text */
 @font-face {
   font-family: 'Inter';

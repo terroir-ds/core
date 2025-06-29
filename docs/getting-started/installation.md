@@ -13,14 +13,15 @@ Before installing Terroir Core, ensure you have:
 
 If you don't have pnpm installed:
 
-````bash
+```bash
 # Install pnpm globally
 npm install -g pnpm
 
 # Or using Node.js Corepack (recommended)
 corepack enable
 corepack prepare pnpm@latest --activate
-```text
+```
+
 ## Quick Installation
 
 ### Option 1: NPM Package (Recommended)
@@ -34,7 +35,8 @@ pnpm add @terroir/react
 
 # Install development dependencies for token generation
 pnpm add -D @terroir/build-tools
-```text
+```
+
 ### Option 2: Git Submodule
 
 For projects that want to customize tokens directly:
@@ -49,7 +51,8 @@ pnpm install
 
 # Build tokens
 pnpm build
-```text
+```
+
 ## Framework-Specific Setup
 
 ### React Projects
@@ -60,7 +63,8 @@ pnpm add @terroir/core @terroir/react
 
 # Install CSS processing tools
 pnpm add -D postcss autoprefixer
-```text
+```
+
 ### Vue Projects
 
 ```bash
@@ -69,25 +73,27 @@ pnpm add @terroir/core
 
 # CSS processing
 pnpm add -D postcss autoprefixer
-```text
+```
+
 ### Vanilla JavaScript
 
 ```bash
 # Core tokens only
 pnpm add @terroir/core
-```text
+```
+
 ## Verification
 
 Verify your installation works:
 
-```javascript
+```typescript
 // Test import
 import { tokens } from '@terroir/core';
 import { generateColorSystem } from '@terroir/core/colors';
 
 console.log('✅ Terroir Core installed successfully!');
 console.log('Available tokens:', Object.keys(tokens));
-````
+```
 
 ## Next Steps
 

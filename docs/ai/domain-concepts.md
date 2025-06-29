@@ -123,7 +123,7 @@ Process of translating designs into code using tokens.
 
 ## AI Metadata
 
-```yaml
+```text
 stability: stable
 token_cost: 600
 last_updated: 2025-06-29

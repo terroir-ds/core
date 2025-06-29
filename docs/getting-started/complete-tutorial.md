@@ -12,7 +12,7 @@ This comprehensive tutorial walks you through building a real button component u
 
 Create a new project and install Terroir Core:
 
-````bash
+```bash
 # Create project directory
 mkdir my-terroir-app
 cd my-terroir-app
@@ -25,10 +25,11 @@ npm install @terroir/core
 
 # Install development dependencies
 npm install -D typescript @types/node vite
-```text
+```
+
 Create a basic TypeScript configuration:
 
-```json
+```yaml
 // tsconfig.json
 {
   "compilerOptions": {
@@ -42,7 +43,8 @@ Create a basic TypeScript configuration:
     "forceConsistentCasingInFileNames": true
   }
 }
-```text
+```
+
 ## Step 2: Generate Your Color System
 
 Create a file to generate and test your color system:
@@ -117,12 +119,13 @@ createBrandColors().then((colors) => {
   brandColors = colors;
   console.log('🚀 Brand colors ready for use!');
 });
-```text
+```
+
 ## Step 3: Create Your First Component
 
 Now let's build a button component using the generated colors:
 
-```typescript
+```bash
 // src/components/Button.ts
 import { brandColors } from '../color-system.js';
 
@@ -253,12 +256,13 @@ export function createButton(props: ButtonProps): HTMLButtonElement {
 
   return button;
 }
-```text
+```
+
 ## Step 4: Test Your Component
 
 Create a test page to see your component in action:
 
-```html
+```yaml
 <!-- public/index.html -->
 <!DOCTYPE html>
 <html lang="en">
@@ -327,8 +331,9 @@ Create a test page to see your component in action:
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
-```text
-```typescript
+```
+
+```bash
 // src/main.ts
 import { testColorSystem, brandColors } from './color-system.js';
 import { createButton, type ButtonProps } from './components/Button.js';
@@ -460,7 +465,8 @@ function createButtonDemos() {
 
 // Initialize the demo
 initializeDemo();
-```text
+```
+
 ## Step 5: Run Your Demo
 
 Add a build script to your package.json:
@@ -472,7 +478,8 @@ Add a build script to your package.json:
     "build": "vite build"
   }
 }
-```text
+```
+
 Now run your demo:
 
 ```bash
@@ -480,7 +487,8 @@ Now run your demo:
 npm run dev
 
 # Open your browser to the displayed URL (usually http://localhost:5173)
-```text
+```
+
 ## Step 6: Understanding What You Built
 
 ### Color System Features
@@ -522,7 +530,7 @@ export interface ButtonProps {
   loadingText?: string;
   // ... other props
 }
-````
+```
 
 ### Create More Components
 

@@ -25,11 +25,13 @@ All tokens are resolved at build time for:
 
 ### 3. Material Color Utilities Integration
 
-```typescript
+```text
 // Color generation flow
 source color → Material algorithm → Tonal palettes → Theme tokens
-```text
+```
+
 Key features:
+
 - Perceptually uniform color spaces
 - Automatic contrast compliance
 - Theme variant generation
@@ -37,7 +39,7 @@ Key features:
 
 ## Package Architecture
 
-```text
+```markdown
 @terroir/core
 ├── /guards     # Type guards and validation
 ├── /errors     # Typed error system
@@ -53,7 +55,8 @@ Key features:
 ├── /components # React components
 ├── /hooks      # Shared hooks
 └── /utils      # React utilities
-```text
+```
+
 ## Build Pipeline
 
 ### Token Processing Pipeline
@@ -64,7 +67,8 @@ graph LR
     B --> C[Platform Transforms]
     C --> D[Output Formats]
     D --> E[Package Bundles]
-```text
+```
+
 1. **Input**: JSON token definitions
 2. **Transform**: Style Dictionary processors
 3. **Validate**: WCAG contrast checking
@@ -78,7 +82,8 @@ graph LR
     B --> C[SVGO Optimization]
     C --> D[Sharp Processing]
     D --> E[Multi-format Output]
-```text
+```
+
 1. **SVG Processing**: Token placeholders replaced
 2. **Optimization**: SVGO with custom plugins
 3. **Rasterization**: PNG/WebP generation
@@ -120,7 +125,8 @@ import { Button, Card } from '@terroir/react';
 
 // Utilities
 import { logger, guards } from '@terroir/core';
-```text
+```
+
 ### For Build Tools
 
 - **Webpack**: Custom loaders for tokens
@@ -192,7 +198,7 @@ import { logger, guards } from '@terroir/core';
 
 ## AI Metadata
 
-```yaml
+```text
 stability: stable
 token_cost: 1200
 last_updated: 2025-06-29

@@ -28,7 +28,7 @@ Experiment with our components in the [Storybook playground](https://storybook.t
 
 Implement light/dark mode switching with automatic persistence:
 
-```tsx
+```typescript
 import { ThemeProvider, useTheme } from '@terroir/react';
 import { generateColorSystem } from '@terroir/core/colors';
 
@@ -57,12 +57,13 @@ function ThemeSwitcher() {
     </ThemeProvider>
   );
 }
-```text
+```
+
 ### 2. Responsive Navigation
 
 Mobile-first navigation with accessibility built-in:
 
-```tsx
+```typescript
 import { Button, IconButton, Drawer } from '@terroir/react';
 import { MenuIcon, CloseIcon } from '@terroir/icons';
 
@@ -118,12 +119,13 @@ function Navigation() {
     </>
   );
 }
-```text
+```
+
 ### 3. Form with Validation
 
 Accessible form with real-time validation and error handling:
 
-```tsx
+```typescript
 import { Form, Input, Button, ErrorMessage } from '@terroir/react';
 import { validateEmail } from '@terroir/core/utils';
 
@@ -194,12 +196,13 @@ function ContactForm() {
     </Form>
   );
 }
-```text
+```
+
 ### 4. Data Table
 
 Sortable, accessible data table with responsive design:
 
-```tsx
+```typescript
 import { Table, TableHead, TableBody, TableRow, TableCell } from '@terroir/react';
 
 function UserTable({ users }) {
@@ -256,12 +259,13 @@ function UserTable({ users }) {
     </Table>
   );
 }
-```text
+```
+
 ### 5. Card Grid Layout
 
 Responsive card grid with proper semantics:
 
-```tsx
+```typescript
 import { Card, CardHeader, CardBody, CardFooter, Button } from '@terroir/react';
 
 function ProductGrid({ products }) {
@@ -299,12 +303,14 @@ function ProductGrid({ products }) {
     </section>
   );
 }
-```text
+```
+
 ## Full Application Examples
 
 ### Blog Template
 
 A complete blog with:
+
 - Accessible navigation
 - Theme switching
 - Responsive layout
@@ -315,6 +321,7 @@ A complete blog with:
 ### E-commerce Site
 
 Full shopping experience featuring:
+
 - Product catalog
 - Shopping cart
 - Checkout flow
@@ -325,6 +332,7 @@ Full shopping experience featuring:
 ### Dashboard
 
 Admin dashboard showcasing:
+
 - Data visualization
 - Complex forms
 - Real-time updates
@@ -338,7 +346,7 @@ Admin dashboard showcasing:
 
 Server-side rendering setup:
 
-```tsx
+```typescript
 // pages/_app.tsx
 import { TerroirProvider } from '@terroir/react';
 import { generateColorSystem } from '@terroir/core/colors';
@@ -354,12 +362,13 @@ export default function App({ Component, pageProps }) {
     </TerroirProvider>
   );
 }
-```text
+```
+
 ### With Tailwind CSS
 
 Combine with Tailwind utilities:
 
-```js
+```typescript
 // tailwind.config.js
 import { tokens } from '@terroir/core';
 
@@ -378,12 +387,13 @@ export default {
     }
   }
 }
-```text
+```
+
 ### With Styled Components
 
 Use tokens in CSS-in-JS:
 
-```tsx
+```typescript
 import styled from 'styled-components';
 import { tokens } from '@terroir/core';
 
@@ -398,12 +408,13 @@ const StyledButton = styled.button`
     background: ${tokens.colors.primary[70]};
   }
 `;
-```text
+```
+
 ## Testing Examples
 
 ### Component Testing
 
-```tsx
+```typescript
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Button } from '@terroir/react';
@@ -421,10 +432,11 @@ test('button handles click events', async () => {
   await user.click(screen.getByRole('button'));
   expect(handleClick).toHaveBeenCalledTimes(1);
 });
-```text
+```
+
 ### Accessibility Testing
 
-```tsx
+```bash
 import { axe } from '@axe-core/react';
 import { render } from '@testing-library/react';
 import { Form } from './Form';

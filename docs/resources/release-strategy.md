@@ -12,9 +12,10 @@ We use **semantic versioning** and **automated releases** powered by semantic-re
 
 We follow [Semantic Versioning 2.0.0](https://semver.org/):
 
-```bash
+```text
 MAJOR.MINOR.PATCH
-```bash
+```
+
 - **MAJOR**: Breaking changes
 - **MINOR**: New features (backwards compatible)
 - **PATCH**: Bug fixes (backwards compatible)
@@ -41,7 +42,7 @@ Releases are determined by commit messages:
 
 ### 2. Release Workflow
 
-```mermaid
+```bash
 graph LR
     A[Push to main] --> B{Analyze commits}
     B -->|Release needed| C[Generate version]
@@ -51,7 +52,8 @@ graph LR
     F --> G[Generate changelog]
     G --> H[Publish to npm]
     H --> I[Create GitHub release]
-```bash
+```
+
 ### 3. Triggered Actions
 
 When a release is triggered:
@@ -89,7 +91,8 @@ Configuration in `.releaserc.json`:
     }
   ]
 }
-```bash
+```
+
 ### Canary Releases
 
 For testing specific features:
@@ -98,7 +101,8 @@ For testing specific features:
 # Manual canary release
 npm version prerelease --preid=canary
 npm publish --tag canary
-```bash
+```
+
 ## Manual Release Process
 
 If automated release fails:
@@ -116,7 +120,8 @@ git pull origin main
 # Run tests
 pnpm test
 pnpm build
-```bash
+```
+
 ### 2. Create Release
 
 ```bash
@@ -125,7 +130,8 @@ pnpm exec semantic-release --dry-run
 
 # Actual release
 pnpm exec semantic-release
-```bash
+```
+
 ### 3. Verify Release
 
 - Check npm registry: `npm view @terroir/core`
@@ -141,14 +147,16 @@ For critical bugs in production:
 ```bash
 # From the tag that needs fixing
 git checkout -b hotfix/1.2.4 v1.2.3
-```bash
+```
+
 ### 2. Apply Fix
 
 ```bash
 # Make changes
 git add .
 git commit -m "fix: critical bug in color calculation"
-```bash
+```
+
 ### 3. Release Hotfix
 
 ```bash
@@ -158,7 +166,8 @@ git merge hotfix/1.2.4
 git push origin main
 
 # Automated release will trigger
-```bash
+```
+
 ## Package Publishing
 
 ### Monorepo Coordination
@@ -180,7 +189,8 @@ Publishing settings in `package.json`:
     "registry": "https://registry.npmjs.org/"
   }
 }
-```bash
+```
+
 ### Pre-publish Checks
 
 Automated checks before publish:
@@ -206,7 +216,7 @@ CHANGELOG.md is updated automatically with:
 
 For important context, edit before release:
 
-```markdown
+```bash
 ## [1.2.0] - 2024-06-25
 
 ### Added
@@ -219,7 +229,8 @@ To migrate from v1.1.x:
 
 1. Update color token references
 2. Run migration script: `npx @terroir/migrate`
-```bash
+```
+
 ## Communication
 
 ### Release Announcements
@@ -231,7 +242,7 @@ To migrate from v1.1.x:
 
 ### Template
 
-```markdown
+```bash
 🎉 Terroir Core v1.2.0 Released!
 
 ✨ Highlights:
@@ -242,7 +253,8 @@ To migrate from v1.1.x:
 📚 Docs: https://terroir.design
 📦 npm: npm install @terroir/core@1.2.0
 🔄 Changelog: https://github.com/terroir-ds/core/releases/tag/v1.2.0
-```bash
+```
+
 ## Rollback Procedure
 
 If a release has critical issues:
@@ -251,7 +263,8 @@ If a release has critical issues:
 
 ```bash
 npm deprecate @terroir/core@1.2.3 "Critical bug, use 1.2.4"
-```bash
+```
+
 ### 2. Publish Patch
 
 Follow hotfix process above
@@ -274,13 +287,14 @@ Follow hotfix process above
 
 For gradual rollout:
 
-```javascript
+```typescript
 // tokens/config.js
 export const features = {
   newColorSystem: process.env.FEATURE_NEW_COLORS === 'true',
   experimentalComponents: false,
 };
-```bash
+```
+
 ## Monitoring
 
 ### Post-Release Checks
@@ -315,19 +329,21 @@ For security vulnerabilities:
 
 Provide migration tools:
 
-```bash
+```text
 npx @terroir/migrate@latest
-```bash
+```
+
 ### Codemods
 
 Automated code updates:
 
-```javascript
+```typescript
 // codemods/v2-token-names.js
 module.exports = function (fileInfo, api) {
   // Transform code
 };
-```bash
+```
+
 ### Documentation
 
 - Migration guide for each major version

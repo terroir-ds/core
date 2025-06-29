@@ -20,8 +20,10 @@ try {
 } catch (err) {
   throw wrapError(err, 'Failed to fetch user data', { url });
 }
-```text
+```
+
 ### Error Recovery
+
 ```typescript
 import { retry, isRetryableError } from '@terroir/core';
 
@@ -36,10 +38,12 @@ const data = await retry(
     shouldRetry: (err) => isRetryableError(err)
   }
 );
-```text
+```
+
 ## Validation Pattern
 
 ### Input Validation Flow
+
 ```typescript
 import { assertDefined, isString, validateEmail } from '@terroir/core';
 
@@ -60,10 +64,12 @@ function processUserInput(data: unknown): User {
   
   return { email: data.email };
 }
-```text
+```
+
 ## Logging Pattern
 
 ### Structured Logging
+
 ```typescript
 import { logger } from '@terroir/core';
 
@@ -80,10 +86,12 @@ try {
   userLogger.error({ error, userId }, 'Operation failed');
   throw error;
 }
-```text
+```
+
 ## Token Usage Pattern
 
 ### Design Token Access
+
 ```typescript
 import { tokens } from '@terroir/tokens';
 
@@ -100,10 +108,12 @@ const spacing = {
   medium: tokens.spacing.medium.value,
   large: tokens.spacing.large.value
 };
-```text
+```
+
 ## Component Pattern
 
 ### React Component Structure
+
 ```typescript
 import { type ComponentProps } from '@terroir/react';
 import { tokens } from '@terroir/tokens';
@@ -126,10 +136,12 @@ export function Button({
   
   return <button style={styles} {...props} />;
 }
-```text
+```
+
 ## Async Pattern
 
 ### Timeout and Cancellation
+
 ```typescript
 import { withTimeout, createAbortable } from '@terroir/core';
 
@@ -146,10 +158,12 @@ const { promise, abort } = createAbortable(async (signal) => {
 });
 
 // Later: abort()
-```text
+```
+
 ## Configuration Pattern
 
 ### Type-Safe Config
+
 ```typescript
 import { assertDefined } from '@terroir/core';
 
@@ -169,11 +183,13 @@ function loadConfig(): Config {
     retries: Number(process.env.RETRIES) || 3
   };
 }
-```text
+```
+
 ## Testing Pattern
 
 ### Component Testing
-```typescript
+
+```bash
 import { render, screen } from '@testing-library/react';
 import { Button } from './Button';
 
@@ -191,10 +207,11 @@ describe('Button', () => {
     // Test secondary styles
   });
 });
-```text
+```
+
 ## AI Metadata
 
-```yaml
+```text
 stability: stable
 token_cost: 800
 last_updated: 2025-06-29

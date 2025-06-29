@@ -6,13 +6,14 @@ This guide helps AI agents effectively contribute to the Terroir Core design sys
 
 ## Quick Start Checklist
 
-```markdown
+```bash
 - [ ] Read CLAUDE.md for project context
 - [ ] Check existing patterns in /docs/ai/patterns.md
 - [ ] Review relevant .ai.md files for packages you'll modify
 - [ ] Use TodoWrite to track your tasks
 - [ ] Run `pnpm fix` before committing
-```text
+```
+
 ## Common Agent Tasks
 
 ### 1. Adding New Components
@@ -27,10 +28,11 @@ touch packages/react/src/components/NewComponent/{index.ts,NewComponent.tsx,NewC
 
 # 3. Create AI documentation
 touch packages/react/src/components/NewComponent/NewComponent.ai.md
-```text
+```
+
 ### 2. Updating Design Tokens
 
-```typescript
+```bash
 // 1. Modify token source
 // tokens/base/color.json
 
@@ -41,10 +43,11 @@ pnpm tokens:build
 pnpm test:contrast
 
 // 4. Update affected components
-```text
+```
+
 ### 3. Implementing Utilities
 
-```typescript
+```text
 // 1. Add to appropriate module
 // lib/utils/newUtility.ts
 
@@ -56,20 +59,24 @@ pnpm test:contrast
 
 // 4. Document in .ai.md
 // lib/utils/utilities.ai.md
-```text
+```
+
 ## Code Generation Guidelines
 
 ### Import Statements
-```typescript
+
+```bash
 // ✅ Use path aliases
 import { logger } from '@utils/logger';
 import { ValidationError } from '@utils/errors';
 
 // ❌ Avoid relative paths
 import { logger } from '../../../utils/logger';
-```text
+```
+
 ### Error Handling
-```typescript
+
+```yaml
 // ✅ Use typed errors with context
 throw new ValidationError('Invalid color format', {
   value: input,
@@ -79,26 +86,32 @@ throw new ValidationError('Invalid color format', {
 
 // ❌ Never use generic errors
 throw new Error('Invalid color');
-```text
+```
+
 ### Logging
-```typescript
+
+```text
 // ✅ Use structured logger
 logger.info({ component: 'Button', action: 'render' }, 'Rendering button');
 
 // ❌ Never use console
 console.log('Rendering button');
-```text
+```
+
 ## Testing Requirements
 
 ### Test Co-location
+
 ```text
 components/
 └── Button/
     ├── Button.tsx
     └── __tests__/
         └── Button.test.tsx
-```text
+```
+
 ### Test Coverage
+
 - Unit tests for all utilities
 - Component tests for all props
 - Visual regression for components
@@ -119,7 +132,8 @@ components/
    - Metadata for token costs
 
 ### Documentation Template
-```markdown
+
+```bash
 # Component/Package Name
 
 **Purpose**: One-line description
@@ -132,19 +146,25 @@ components/
 
 ## Common Tasks
 ### Task Name
-```typescript
+```
+
 // Example code
-```text
+
+```bash
 ## AI Metadata
-```yaml
+```
+
 stability: stable
 token_cost: 300
 last_updated: 2025-06-29
+
 ```text
-```text
+```
+
 ## Commit Guidelines
 
 ### Conventional Commits
+
 ```bash
 # Format: type(scope): description
 
@@ -153,8 +173,10 @@ fix(button): correct hover state
 docs(ai): update patterns documentation
 test(core): add validation tests
 refactor(utils): simplify error handling
-```text
+```
+
 ### Pre-commit Checklist
+
 ```bash
 # 1. Run fixes
 pnpm fix
@@ -168,40 +190,48 @@ pnpm build
 # 4. Stage and commit
 git add .
 git commit -m "type(scope): description"
-```text
+```
+
 ## Common Pitfalls
 
 ### ❌ Don't Do This
-```typescript
+
+```text
 // Creating files without need
 // Using console.log
 // Throwing generic errors
 // Using relative imports
 // Skipping tests
 // Forgetting AI docs
-```text
+```
+
 ### ✅ Do This Instead
-```typescript
+
+```text
 // Edit existing files when possible
 // Use structured logger
 // Use typed errors with context
 // Use path aliases
 // Write co-located tests
 // Update .ai.md files
-```bash
+```
+
 ## Getting Help
 
 ### Project Understanding
+
 - Architecture: `/docs/ai/architecture.md`
 - Patterns: `/docs/ai/patterns.md`
 - Domain concepts: `/docs/ai/domain-concepts.md`
 
 ### Standards
+
 - AI docs: `/docs/resources/standards/ai-documentation.md`
 - Testing: `/docs/resources/standards/testing.md`
 - Code quality: `/docs/resources/standards/code-quality.md`
 
 ### Tools
+
 - `pnpm fix` - Auto-fix code issues
 - `pnpm test` - Run tests
 - `pnpm build` - Build packages
@@ -209,7 +239,7 @@ git commit -m "type(scope): description"
 
 ## AI Metadata
 
-```yaml
+```text
 stability: stable
 token_cost: 700
 last_updated: 2025-06-29

@@ -22,7 +22,7 @@ This template provides a consistent structure for documenting components in the 
 
 [Show the simplest possible usage example]
 
-````tsx
+```typescript
 import { ComponentName } from '@terroir/react';
 
 function Example() {
@@ -32,23 +32,28 @@ function Example() {
     </ComponentName>
   );
 }
-```text
+```
+
 ### Common Patterns
 
 [Show 2-3 common usage patterns with explanations]
 
 #### Pattern 1: [Name]
+
 [Brief explanation of when/why to use this pattern]
 
-```tsx
-// Code example
 ```text
+// Code example
+```
+
 #### Pattern 2: [Name]
+
 [Brief explanation of when/why to use this pattern]
 
-```tsx
-// Code example
 ```text
+// Code example
+```
+
 ## API Reference
 
 ### Props
@@ -67,17 +72,21 @@ function Example() {
 ### Variants
 
 #### Primary (default)
+
 [Description and use case for primary variant]
 
-```tsx
-<ComponentName variant="primary">Primary content</ComponentName>
 ```text
+<ComponentName variant="primary">Primary content</ComponentName>
+```
+
 #### Secondary
+
 [Description and use case for secondary variant]
 
-```tsx
+```text
 <ComponentName variant="secondary">Secondary content</ComponentName>
-```yaml
+```
+
 ### Sizes
 
 [If applicable, show size variations with visual examples or descriptions]
@@ -92,19 +101,20 @@ function Example() {
 
 The component exposes these CSS custom properties for customization:
 
-```css
+```yaml
 .component-name {
   --component-background: var(--color-primary-60);
   --component-text: var(--color-primary-10);
   --component-border: var(--color-primary-40);
   --component-spacing: var(--space-md);
 }
-```text
+```
+
 ### Theming
 
 [Explain how the component responds to theme changes]
 
-```tsx
+```text
 // Light theme
 <ThemeProvider theme="light">
   <ComponentName />
@@ -114,7 +124,8 @@ The component exposes these CSS custom properties for customization:
 <ThemeProvider theme="dark">
   <ComponentName />
 </ThemeProvider>
-```text
+```
+
 ## Accessibility
 
 ### Keyboard Navigation
@@ -136,14 +147,15 @@ The component exposes these CSS custom properties for customization:
 
 ### ARIA Attributes
 
-```tsx
+```text
 <ComponentName
   aria-label="Descriptive label"
   aria-describedby="helper-text-id"
   aria-expanded={isExpanded}
   role="button"
 />
-```text
+```
+
 ### Best Practices
 
 - ✅ Always provide meaningful labels for screen readers
@@ -178,7 +190,7 @@ The component exposes these CSS custom properties for customization:
 
 ### With Form Validation
 
-```tsx
+```typescript
 function FormExample() {
   const [error, setError] = useState<string>();
 
@@ -196,10 +208,11 @@ function FormExample() {
     </ComponentName>
   );
 }
-```text
+```
+
 ### Loading States
 
-```tsx
+```typescript
 function LoadingExample() {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -212,10 +225,11 @@ function LoadingExample() {
     </ComponentName>
   );
 }
-```text
+```
+
 ### Responsive Behavior
 
-```tsx
+```yaml
 // Responsive size based on viewport
 <ComponentName
   size={{
@@ -226,20 +240,21 @@ function LoadingExample() {
 >
   Responsive content
 </ComponentName>
-```text
+```
+
 ## Migration Guide
 
 ### From v1.x to v2.x
 
 [If applicable, provide migration instructions]
 
-```tsx
+```text
 // v1.x (old)
 <ComponentName type="primary" />
 
 // v2.x (new)
 <ComponentName variant="primary" />
-````
+```
 
 ### Breaking Changes
 

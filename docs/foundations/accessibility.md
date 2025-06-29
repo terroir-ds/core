@@ -42,7 +42,7 @@ Accessibility testing is integrated into our development workflow:
 
 ### Build-Time Validation
 
-````bash
+```bash
 # Color contrast validation
 pnpm test:contrast
 
@@ -51,13 +51,16 @@ pnpm test:a11y
 
 # Full accessibility audit
 pnpm test --filter accessibility
-```text
+```
+
 ### Runtime Testing
+
 - **axe-core integration** for automated accessibility scanning
 - **Playwright tests** for keyboard navigation and focus management
 - **Screen reader testing** with automated voice-over simulation
 
 ### Visual Regression Testing
+
 - **Focus indicator visibility** across all interactive elements
 - **High contrast mode** compatibility testing
 - **Motion reduction** preference respect
@@ -65,6 +68,7 @@ pnpm test --filter accessibility
 ## Implementation Guidelines
 
 ### Color Usage
+
 ```typescript
 // ✅ Good: Automatic contrast calculation
 import { generateColorSystem } from '@terroir/core';
@@ -77,8 +81,10 @@ const colors = await generateColorSystem({
 // Colors automatically provide accessible text colors
 const backgroundColor = colors.primary.tone(60);
 const textColor = colors.primary.tone(10); // Guaranteed contrast
-```text
+```
+
 ### Component Design
+
 ```typescript
 // ✅ Good: Built-in accessibility features
 import { Button } from '@terroir/core/react';
@@ -91,9 +97,12 @@ import { Button } from '@terroir/core/react';
 >
   Submit Form
 </Button>
-```text
+```
+
 ### Focus Management
+
 All interactive components include:
+
 - **Visible focus indicators** that meet contrast requirements
 - **Logical tab order** with proper focus flow
 - **Focus trapping** in modal dialogs and overlays
@@ -102,18 +111,22 @@ All interactive components include:
 ## Screen Reader Support
 
 ### Semantic Markup
+
 All components use proper HTML semantics:
+
 - `<button>` for actions, `<a>` for navigation
 - `<fieldset>` and `<legend>` for form groups
 - `<main>`, `<nav>`, `<section>` for page structure
 
 ### ARIA Implementation
+
 - **aria-label** for buttons with icon-only content
 - **aria-describedby** for help text and error messages
 - **aria-expanded** for collapsible content
 - **aria-live** for dynamic content updates
 
 ### Content Strategy
+
 - **Descriptive link text** that makes sense out of context
 - **Clear error messages** with specific correction guidance
 - **Progress indicators** for multi-step processes
@@ -123,7 +136,8 @@ All components use proper HTML semantics:
 Respecting user preferences for motion:
 
 ### Reduced Motion Support
-```css
+
+```yaml
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;
@@ -131,8 +145,10 @@ Respecting user preferences for motion:
     transition-duration: 0.01ms !important;
   }
 }
-```yaml
+```
+
 ### Motion Guidelines
+
 - **Essential motion only**: Animations serve a functional purpose
 - **Smooth transitions**: Using CSS transforms for better performance
 - **Reasonable duration**: 200-500ms for most interface animations
@@ -141,16 +157,19 @@ Respecting user preferences for motion:
 ## Testing Tools and Resources
 
 ### Automated Testing
+
 - **[axe-core](https://github.com/dequelabs/axe-core)** - Automated accessibility testing
 - **[Lighthouse](https://lighthouse.web.dev/)** - Accessibility auditing
 - **[Pa11y](https://pa11y.org/)** - Command-line accessibility testing
 
 ### Manual Testing
+
 - **[NVDA](https://www.nvaccess.org/)** - Free screen reader for Windows
 - **[VoiceOver](https://support.apple.com/guide/voiceover/)** - Built-in macOS screen reader
 - **[Color Oracle](https://colororacle.org/)** - Color blindness simulator
 
 ### Browser Extensions
+
 - **[axe DevTools](https://chrome.google.com/webstore/detail/axe-devtools-web-accessib/lhdoppojpmngadmnindnejefpokejbdd)** - Browser accessibility testing
 - **[WAVE](https://wave.webaim.org/extension/)** - Web accessibility evaluation
 - **[Colour Contrast Analyser](https://www.tpgi.com/color-contrast-checker/)** - Color contrast validation
@@ -160,16 +179,19 @@ Respecting user preferences for motion:
 We measure accessibility through:
 
 ### Automated Metrics
+
 - **Zero axe-core violations** in all components
 - **100% WCAG AA compliance** for color contrast
 - **Complete keyboard navigation** coverage
 
 ### User Testing
+
 - **Screen reader user feedback** on component usability
 - **Keyboard-only navigation testing** with real users
 - **Usability testing** with users who have disabilities
 
 ### Performance Indicators
+
 - **Time to interactive** for keyboard users
 - **Error recovery rates** in form interactions
 - **Task completion rates** across different assistive technologies
@@ -177,7 +199,8 @@ We measure accessibility through:
 ## Common Patterns
 
 ### Form Accessibility
-```typescript
+
+```yaml
 <FormField
   label="Email Address"
   error={emailError}
@@ -198,9 +221,11 @@ We measure accessibility through:
     </ErrorMessage>
   )}
 </FormField>
-```text
+```
+
 ### Modal Accessibility
-```typescript
+
+```text
 <Modal
   isOpen={isModalOpen}
   onClose={closeModal}
@@ -222,7 +247,7 @@ We measure accessibility through:
     </Button>
   </ModalFooter>
 </Modal>
-````
+```
 
 ## Related Resources
 

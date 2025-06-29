@@ -25,8 +25,10 @@ Our token architecture follows a three-tier hierarchy for maximum flexibility:
 ├─────────────────────────┤
 │   Tier 1: Primitives    │  color.primitive.blue.500
 └─────────────────────────┘
-```text
+```
+
 #### Tier 1: Primitives
+
 Raw values that form the foundation. These are never used directly in components.
 
 ```json
@@ -43,8 +45,10 @@ Raw values that form the foundation. These are never used directly in components
     }
   }
 }
-```text
+```
+
 #### Tier 2: Semantic
+
 Meaningful aliases that abstract the purpose from the value.
 
 ```json
@@ -59,8 +63,10 @@ Meaningful aliases that abstract the purpose from the value.
     }
   }
 }
-```text
+```
+
 #### Tier 3: Component
+
 Specific use cases tied to components, always reference semantic tokens.
 
 ```json
@@ -75,7 +81,8 @@ Specific use cases tied to components, always reference semantic tokens.
     }
   }
 }
-```text
+```
+
 ## Token Format Standards
 
 ### Current Format: Style Dictionary
@@ -94,7 +101,8 @@ We use Style Dictionary v3 format as our source of truth:
     }
   }
 }
-```text
+```
+
 ### Future Format: W3C Design Tokens
 
 We're prepared for the W3C Design Tokens Community Group format:
@@ -112,12 +120,13 @@ We're prepared for the W3C Design Tokens Community Group format:
     }
   }
 }
-```text
+```
+
 ### Format Transformation
 
 Our build system automatically handles format conversions:
 
-```javascript
+```yaml
 // Input: Style Dictionary format
 // Output: Multiple formats for different tools
 {
@@ -129,7 +138,8 @@ Our build system automatically handles format conversions:
     "w3c": { /* W3C DTCG format */ }
   }
 }
-```text
+```
+
 ## Token Types and Naming
 
 ### Naming Convention
@@ -138,8 +148,10 @@ We follow a dot notation with clear hierarchy:
 
 ```text
 [category].[tier].[group].[property].[variant].[state]
-```text
+```
+
 Examples:
+
 - `color.primitive.blue.500`
 - `semantic.spacing.component.padding`
 - `component.button.background.hover`
@@ -147,9 +159,10 @@ Examples:
 ### Supported Token Types
 
 #### Color Tokens
+
 Generated using Material Color Utilities with continuous tone scale (0-100):
 
-```json
+```yaml
 {
   "color": {
     "primitive": {
@@ -163,8 +176,10 @@ Generated using Material Color Utilities with continuous tone scale (0-100):
     }
   }
 }
-```text
+```
+
 #### Spacing Tokens
+
 Based on 4px unit system:
 
 ```json
@@ -178,8 +193,10 @@ Based on 4px unit system:
     }
   }
 }
-```text
+```
+
 #### Typography Tokens
+
 Composite tokens for complete type styles:
 
 ```json
@@ -199,8 +216,10 @@ Composite tokens for complete type styles:
     }
   }
 }
-```text
+```
+
 #### Motion Tokens
+
 For consistent animations:
 
 ```json
@@ -215,25 +234,29 @@ For consistent animations:
     }
   }
 }
-```text
+```
+
 ## Tool Integration
 
 ### Figma Integration
 
 #### Figma Tokens Plugin
+
 Export tokens in flat format with proper naming:
 
-```javascript
+```yaml
 // Transform nested to flat for Figma
 {
   "color-primary": "#0066cc",
   "spacing-small": "8px"
 }
-```text
+```
+
 #### Figma Variables (Native)
+
 Support for Figma's native variable system:
 
-```javascript
+```yaml
 // Export as Figma-compatible JSON
 {
   "collections": [{
@@ -242,10 +265,12 @@ Support for Figma's native variable system:
     "variables": [...]
   }]
 }
-```text
+```
+
 ### Development Tool Integration
 
 #### VS Code
+
 IntelliSense support through generated TypeScript definitions:
 
 ```typescript
@@ -260,16 +285,19 @@ export interface DesignTokens {
     medium: string;
   };
 }
-```text
+```
+
 #### Browser DevTools
+
 CSS custom properties for easy debugging:
 
-```css
+```yaml
 :root {
   --color-primary: #0066cc;
   --spacing-small: 8px;
 }
-```text
+```
+
 ## Accessibility and WCAG Compliance
 
 ### Built-in Contrast Validation
@@ -293,7 +321,8 @@ Tokens include accessibility metadata:
     }
   }
 }
-```text
+```
+
 ### Naming Convention for Contrast
 
 Use `on-{background}` pattern for text colors:
@@ -304,7 +333,8 @@ Use `on-{background}` pattern for text colors:
   "on-surface": "Color for text on surface background",
   "on-error": "Color for text on error background"
 }
-```text
+```
+
 ### Automated Testing
 
 Build-time validation ensures compliance:
@@ -314,12 +344,13 @@ pnpm tokens:validate
 # ✓ All color combinations meet WCAG AA
 # ✓ Focus indicators have 3:1 contrast
 # ✓ Touch targets meet 44x44px minimum
-```text
+```
+
 ## Theme Support
 
 ### Theme Structure
 
-```text
+```markdown
 tokens/
 ├── global/           # Theme-agnostic tokens
 ├── themes/
@@ -329,10 +360,11 @@ tokens/
 └── brands/          # Multi-brand support
     ├── default/
     └── custom/
-```text
+```
+
 ### Theme Token Example
 
-```json
+```yaml
 // global/semantic.json
 {
   "semantic": {
@@ -354,7 +386,8 @@ tokens/
     }
   }
 }
-```text
+```
+
 ## Working with Tokens
 
 ### Development Workflow
@@ -376,81 +409,100 @@ pnpm tokens:validate
 
 # Generate documentation
 pnpm tokens:docs
-```text
+```
+
 ### Token Usage Examples
 
 #### In CSS
-```css
+
+```yaml
 .button {
   background-color: var(--color-primary);
   padding: var(--spacing-small) var(--spacing-medium);
   transition-duration: var(--motion-duration-fast);
 }
-```text
+```
+
 #### In JavaScript/React
-```jsx
+
+```typescript
 import { tokens } from '@terroir/core';
 
 const Button = styled.button`
   background-color: ${tokens.color.primary};
   padding: ${tokens.spacing.small} ${tokens.spacing.medium};
 `;
-```text
+```
+
 #### In Figma
+
 Tokens are automatically synced and available in Figma's asset panel.
 
 ## Platform-Specific Outputs
 
 ### Web (CSS)
-```css
+
+```yaml
 /* Generated CSS custom properties */
 :root {
   --color-primary: #0066cc;
   --spacing-unit: 4px;
   --font-size-base: 16px;
 }
-```text
+```
+
 ### JavaScript/TypeScript
-```javascript
+
+```typescript
 // Generated ES modules
 export const color = {
   primary: '#0066cc',
   secondary: '#6b46c1'
 };
-```text
+```
+
 ### iOS (Swift)
-```swift
+
+```yaml
 // Generated Swift extensions
 extension UIColor {
   static let primaryColor = UIColor(hex: "#0066cc")
 }
-```text
+```
+
 ### Android (Kotlin)
-```kotlin
+
+```text
 // Generated Android resources
 <color name="color_primary">#0066cc</color>
-```text
+```
+
 ## Best Practices
 
 ### 1. **Always Use Semantic Tokens**
+
 Never reference primitive tokens directly in components.
 
-```javascript
+```text
 // ❌ Bad
 background: tokens.color.primitive.blue.500
 
 // ✅ Good
 background: tokens.semantic.color.primary
-```text
+```
+
 ### 2. **Document Token Purpose**
+
 Every token must have a clear description.
 
 ```json
 {
   "description": "Primary action color for buttons and links"
 }
-```text
+```
+
 ### 3. **Maintain Token Relationships**
+
 Use references to maintain consistency.
 
 ```json
@@ -460,8 +512,10 @@ Use references to maintain consistency.
     "modify": [{ "type": "darken", "amount": 0.1 }]
   }
 }
-```text
+```
+
 ### 4. **Version Token Changes**
+
 Follow semantic versioning for token updates.
 
 ```json
@@ -472,20 +526,24 @@ Follow semantic versioning for token updates.
     "version": "2.0.0"
   }
 }
-```text
+```
+
 ### 5. **Test Across Themes**
+
 Ensure tokens work in all theme contexts.
 
 ```bash
 pnpm test:tokens --theme=light
 pnpm test:tokens --theme=dark
 pnpm test:tokens --theme=high-contrast
-```text
+```
+
 ## Migration and Compatibility
 
 ### Supporting Multiple Formats
 
 Our transformation layer handles:
+
 - Style Dictionary → W3C DTCG
 - Nested → Flat (for Figma)
 - JSON → Platform-specific

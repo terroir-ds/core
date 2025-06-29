@@ -11,9 +11,10 @@ Build your first component with Terroir Core in 5 minutes! This guide shows you 
 
 ## Install
 
-````bash
+```bash
 npm install @terroir/core
-```text
+```
+
 ## Generate Colors
 
 ```typescript
@@ -29,7 +30,8 @@ const colors = await generateColorSystem({
 // Validate accessibility
 const validation = validateColorContrast(colors);
 console.log(`✅ ${validation.passed.length} accessible color pairs`);
-```text
+```
+
 ## Create Component
 
 ```typescript
@@ -53,7 +55,8 @@ function createButton(label: string) {
 // Create and use your button
 const myButton = createButton('Click me!');
 document.body.appendChild(myButton);
-```yaml
+```
+
 ## Test Results
 
 Your button automatically includes:
@@ -65,7 +68,7 @@ Your button automatically includes:
 
 ## What You Get
 
-```typescript
+```text
 // Access your complete color system
 colors.palettes.primary; // Your brand color variations
 colors.palettes.secondary; // Complementary colors
@@ -77,7 +80,7 @@ colors.themes.dark; // Dark theme tokens
 colors.palettes.primary.tones[10]; // Very light
 colors.palettes.primary.tones[40]; // Medium (great for buttons)
 colors.palettes.primary.tones[90]; // Very dark (great for text)
-````
+```
 
 ## Ready for More?
 
