@@ -125,6 +125,15 @@ if is_container; then
   git config --global --add safe.directory "$WORKSPACE_ROOT"
   echo -e "✓ Git safe directory configured"
   
+  # Enable git color output
+  git config --global color.ui auto
+  git config --global color.diff auto
+  git config --global color.status auto
+  git config --global color.branch auto
+  git config --global color.interactive auto
+  git config --global color.grep auto
+  echo -e "✓ Git color output enabled"
+  
   # Call common post-create script if it exists
   if [ -f "$WORKSPACE_ROOT/scripts/utils/post-create.sh" ]; then
     echo -e "\n${GREEN}Running common post-create script...${NC}"

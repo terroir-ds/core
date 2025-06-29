@@ -9,6 +9,11 @@ x-agent-base: &agent-base
     # Enable color support
     - TERM=xterm-256color
     - COLORTERM=truecolor
+    - FORCE_COLOR=1
+    - CLICOLOR=1
+    - CLICOLOR_FORCE=1
+    # Git color support
+    - GIT_PAGER=less -R
     # Node.js optimization
     - NODE_ENV=development
     - NODE_OPTIONS=--max-old-space-size=3072
