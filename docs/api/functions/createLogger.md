@@ -1,6 +1,6 @@
 [**Terroir Core Design System v0.1.0**](../README.md)
 
----
+***
 
 [Terroir Core Design System](../globals.md) / createLogger
 
@@ -8,7 +8,7 @@
 
 > **createLogger**(`context`): `Logger`
 
-Defined in: [utils/logger/index.ts:792](https://github.com/terroir-ds/core/blob/9691713b8c512b7d2abe808c4f7084bdfab798bf/lib/utils/logger/index.ts#L792)
+Defined in: [utils/logger/index.ts:797](https://github.com/terroir-ds/core/blob/0096649176492a6e21b16e854cb30ade347b1bac/packages/core/src/utils/logger/index.ts#L797)
 
 Creates a child logger with additional context.
 
@@ -33,7 +33,7 @@ A new logger instance with the additional context
 
 ## Examples
 
-````typescript
+```typescript
 // In auth module
 const authLogger = createLogger({ module: 'auth' });
 
@@ -48,10 +48,10 @@ function handleRequest(req: Request) {
   const reqLogger = createLogger({
     requestId: req.id,
     path: req.path,
-    method: req.method,
+    method: req.method
   });
-
+  
   reqLogger.info('Processing request');
   // All logs include request context
 }
-````
+```

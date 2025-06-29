@@ -4,19 +4,15 @@ This section contains technical specifications, API documentation, and reference
 
 ## API Documentation
 
-### [API Reference](./api/README.md)
+### [API Reference](../api/README.md)
 
 Complete API documentation generated from TypeScript definitions, including functions, interfaces, and type definitions.
 
 ## Token Reference
 
-### [Tokens](./tokens/README.md)
-
-Complete specification of all design tokens, including values, usage guidelines, and platform-specific formats.
-
 ## Component Reference
 
-### [Components](./components/README.md)
+### [Components](./components/)
 
 Technical specifications for all components, including props, APIs, accessibility features, and examples.
 
@@ -56,10 +52,9 @@ Manual reference content includes:
 
 ## Quick Navigation
 
-- **Functions**: [Color utilities](./api/functions/generateColorSystem.md), [logging helpers](./api/functions/createLogger.md)
-- **Types**: [Color interfaces](./api/interfaces/ColorSystem.md), [token definitions](./api/type-aliases/Tone.md)
-- **Tokens**: [Color tokens](./tokens/colors.md), [spacing tokens](./tokens/spacing.md)
-- **Components**: [Button](./components/button.md), [Card](./components/card.md)
+- **Functions**: [Color utilities](../api/functions/generateColorSystem.md), [logging helpers](../api/functions/createLogger.md)
+- **Types**: [Color interfaces](../api/interfaces/ColorSystem.md), [token definitions](../api/type-aliases/Tone.md)
+- **Components**: [Button](./components/button.md)
 
 ## Related Sections
 

@@ -381,7 +381,7 @@ test('should load data', async () => {
     expect(screen.getByText('Data loaded')).toBeInTheDocument();
   });
 });
-````
+```
 
 ## Related Resources
 

@@ -4,9 +4,9 @@ Welcome to the Terroir Core contributing guide! This section covers everything y
 
 ## Quick Start for Contributors
 
-1. **[Development Setup](./development-setup.md)** - Get your local environment configured
-2. **[Workflow](./git-workflow.md)** - Our Git workflow and branch strategy
-3. **[Code Standards](./code-standards.md)** - Coding conventions and quality requirements
+1. **[Workflow](./git-workflow.md)** - Our Git workflow and branch strategy
+2. **[Changesets](./changesets.md)** - How we manage releases
+3. **[Branch Protection](./github-branch-protection.md)** - GitHub branch protection rules
 
 ## Development Process
 
@@ -29,7 +29,7 @@ pnpm dev
 ### Making Changes
 
 1. **Create a feature branch** from `main`
-2. **Make your changes** following our [code standards](./code-standards.md)
+2. **Make your changes** following our code standards
 3. **Run quality checks** with `pnpm fix`
 4. **Write tests** for new functionality
 5. **Update documentation** as needed
@@ -122,7 +122,7 @@ Contributors are recognized through:
 
 ### Essential Reading
 - [Design Principles](../../foundations/design-principles.md) - Understand our philosophy
-- [Architecture Overview](../../resources/architecture/README.md) - Technical architecture
+- [Architecture Overview](../../resources/architecture/) - Technical architecture
 - [Testing Guide](../testing/README.md) - Testing approaches and standards
 
 ### Tools and Scripts

@@ -1,12 +1,12 @@
 [**Terroir Core Design System v0.1.0**](../README.md)
 
----
+***
 
 [Terroir Core Design System](../globals.md) / LogContext
 
 # Interface: LogContext
 
-Defined in: [utils/types/logger.types.ts:59](https://github.com/terroir-ds/core/blob/9691713b8c512b7d2abe808c4f7084bdfab798bf/lib/utils/types/logger.types.ts#L59)
+Defined in: [utils/types/logger.types.ts:59](https://github.com/terroir-ds/core/blob/0096649176492a6e21b16e854cb30ade347b1bac/packages/core/src/utils/types/logger.types.ts#L59)
 
 Context object for structured logging.
 
@@ -23,7 +23,7 @@ const context: LogContext = {
   requestId: 'req-456',
   action: 'purchase',
   amount: 99.99,
-  items: ['item-1', 'item-2'],
+  items: ['item-1', 'item-2']
 };
 ```
 

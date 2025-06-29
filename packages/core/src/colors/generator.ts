@@ -115,22 +115,66 @@ export interface ContrastValidationResult {
 }
 
 /**
- * Generate a complete color system from a source color
+ * Generate a complete color system from a source color using Material Design 3 principles.
  * 
- * @param sourceOrOptions - Hex color or options object
- * @returns Generated color system with palettes and themes
+ * This function creates a comprehensive color palette including primary, secondary, tertiary,
+ * neutral, and error colors. It uses Google's Material Color Utilities to ensure perceptually
+ * uniform color generation with proper contrast ratios for accessibility.
  * 
- * @example
- * // Simple usage with hex color
+ * @category Colors
+ * @param sourceOrOptions - A hex color string (e.g., '#1976d2') or a ColorGeneratorOptions object
+ * @param sourceOrOptions.source - The source color in hex format or RGB object
+ * @param sourceOrOptions.contrastLevel - Contrast level from -1 (low) to 1 (high), default 0
+ * @param sourceOrOptions.variant - Color scheme variant, default 'tonalSpot'
+ * @param sourceOrOptions.tones - Array of tone values to generate (0-100), default Material Design tones
+ * @param sourceOrOptions.isDark - Whether to generate a dark theme, default false
+ * 
+ * @returns A promise that resolves to a complete ColorSystem with:
+ * - Primary, secondary, tertiary, neutral, and error palettes
+ * - Each palette containing the requested tone values
+ * - Light and dark theme variations
+ * - Metadata about the generation process
+ * 
+ * @throws {ValidationError} If the source color format is invalid
+ * @throws {Error} If color generation fails
+ * 
+ * @example Basic usage with hex color
+ * ```typescript
+ * import { generateColorSystem } from '@terroir/core';
+ * 
  * const colors = await generateColorSystem('#1976d2');
+ * console.log(colors.primary[50]); // Light primary tone
+ * console.log(colors.primary[90]); // Dark primary tone
+ * ```
  * 
- * @example
- * // Advanced usage with options
+ * @example Advanced usage with options
+ * ```typescript
  * const colors = await generateColorSystem({
  *   source: '#1976d2',
- *   contrastLevel: 0.5,
- *   variant: 'vibrant'
+ *   contrastLevel: 0.5,    // Higher contrast for accessibility
+ *   variant: 'vibrant',    // More saturated colors
+ *   isDark: true           // Generate for dark theme
  * });
+ * 
+ * // Access specific tones
+ * const primaryButton = colors.primary[40];
+ * const primaryHover = colors.primary[30];
+ * ```
+ * 
+ * @example Custom tone generation
+ * ```typescript
+ * const colors = await generateColorSystem({
+ *   source: '#1976d2',
+ *   tones: [0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 95, 100],
+ *   variant: 'expressive'
+ * });
+ * ```
+ * 
+ * @see {@link https://m3.material.io/styles/color/the-color-system/key-colors-tones Material Design 3 Color System}
+ * @see {@link ColorGeneratorOptions} for all available options
+ * @see {@link ColorSystem} for the returned data structure
+ * 
+ * @since 0.1.0
  */
 export async function generateColorSystem(
   sourceOrOptions: string | ColorGeneratorOptions
@@ -239,11 +283,37 @@ export async function generateColorSystem(
 }
 
 /**
- * Generate a single tonal palette from a hex color
+ * Generate a single tonal palette from a hex color.
  * 
- * @param hexColor - Source hex color
- * @param tones - Tone values to generate
- * @returns Tonal palette with specified tones
+ * Creates a Material Design 3 tonal palette with specified tone values.
+ * This is useful when you need just one palette rather than a complete color system.
+ * 
+ * @category Colors
+ * @param hexColor - Source color in hex format (e.g., '#1976d2')
+ * @param tones - Array of tone values to generate (0-100), defaults to Material Design standard tones
+ * @returns A TonalScale object containing the generated tones
+ * 
+ * @throws {Error} If the hex color format is invalid
+ * 
+ * @example Generate a custom palette
+ * ```typescript
+ * import { generateTonalPalette } from '@terroir/core';
+ * 
+ * const palette = generateTonalPalette('#1976d2');
+ * console.log(palette[50]); // Medium tone
+ * console.log(palette[90]); // Dark tone for backgrounds
+ * ```
+ * 
+ * @example Generate with custom tones
+ * ```typescript
+ * const customPalette = generateTonalPalette('#ff5722', [0, 25, 50, 75, 100]);
+ * console.log(customPalette[25]); // Light-medium tone
+ * ```
+ * 
+ * @see {@link generateColorSystem} for generating complete color systems
+ * @see {@link TonalScale} for the returned data structure
+ * 
+ * @since 0.1.0
  */
 export function generateTonalPalette(
   hexColor: string, 
@@ -255,11 +325,34 @@ export function generateTonalPalette(
 }
 
 /**
- * Extract dominant color from an image
- * (Placeholder - will be implemented with image processing)
+ * Extract the dominant color from an image file.
  * 
- * @param _image - Image path or buffer
- * @returns Dominant color as hex
+ * Analyzes an image to find its most prominent color, useful for generating
+ * color systems based on brand imagery or photography.
+ * 
+ * @category Colors
+ * @param image - Path to image file or Buffer containing image data
+ * @returns Promise resolving to the dominant color in hex format
+ * 
+ * @throws {Error} Currently not implemented - will be added in a future release
+ * 
+ * @example Future usage (not yet implemented)
+ * ```typescript
+ * import { extractColorFromImage, generateColorSystem } from '@terroir/core';
+ * 
+ * // Extract color from brand logo
+ * const brandColor = await extractColorFromImage('./logo.png');
+ * 
+ * // Generate color system from extracted color
+ * const colors = await generateColorSystem(brandColor);
+ * ```
+ * 
+ * @todo Implement using sharp or similar image processing library
+ * @todo Support multiple image formats (PNG, JPEG, WebP, SVG)
+ * @todo Add options for extraction algorithm (dominant, vibrant, average)
+ * 
+ * @experimental This API is not yet implemented
+ * @since 0.2.0
  */
 export async function extractColorFromImage(_image: string | Buffer): Promise<string> {
   // TODO: Implement with sharp or similar
@@ -395,11 +488,51 @@ function schemeToTokens(
 }
 
 /**
- * Validate color system against WCAG contrast requirements
+ * Validate a color system against WCAG contrast requirements.
  * 
- * @param colorSystem - Generated color system
- * @param minContrast - Minimum contrast ratio (4.5 for AA, 7 for AAA)
- * @returns Validation results with passing/failing combinations
+ * Tests all text/background color combinations in the generated themes
+ * to ensure they meet accessibility standards. This is critical for
+ * ensuring your design system is usable by people with visual impairments.
+ * 
+ * @category Colors
+ * @param colorSystem - The generated color system to validate
+ * @param minContrast - Minimum contrast ratio required:
+ *   - 4.5 for WCAG AA compliance (default)
+ *   - 7.0 for WCAG AAA compliance
+ *   - 3.0 for large text (18pt+ or 14pt+ bold)
+ * 
+ * @returns Validation results containing:
+ *   - `passed`: Array of color combinations that meet the minimum contrast
+ *   - `failed`: Array of color combinations that fail to meet minimum contrast
+ *   - `minContrast`: The minimum contrast ratio used for validation
+ * 
+ * @example Check for WCAG AA compliance
+ * ```typescript
+ * import { generateColorSystem, validateColorContrast } from '@terroir/core';
+ * 
+ * const colors = await generateColorSystem('#1976d2');
+ * const validation = validateColorContrast(colors);
+ * 
+ * if (validation.failed.length > 0) {
+ *   console.warn('Accessibility issues found:');
+ *   validation.failed.forEach(({ name, ratio }) => {
+ *     console.warn(`${name}: ${ratio.toFixed(2)} (needs 4.5)`);
+ *   });
+ * }
+ * ```
+ * 
+ * @example Check for WCAG AAA compliance
+ * ```typescript
+ * const strictValidation = validateColorContrast(colors, 7.0);
+ * 
+ * console.log(`AAA compliant combinations: ${strictValidation.passed.length}`);
+ * console.log(`Failed combinations: ${strictValidation.failed.length}`);
+ * ```
+ * 
+ * @see {@link https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html WCAG Contrast Requirements}
+ * @see {@link ContrastValidationResult} for the returned data structure
+ * 
+ * @since 0.1.0
  */
 export function validateColorContrast(
   colorSystem: ColorSystem, 

@@ -95,7 +95,7 @@ Now that Terroir Core is installed:
 
 1. **[Quick Start](./quick-start.md)** - Build your first component
 2. **[Examples](./examples.md)** - See real implementations
-3. **[Token Usage](../reference/tokens/README.md)** - Learn about design tokens
+3. **[API Reference](../api/README.md)** - Learn about the API
 
 ## Troubleshooting
 
@@ -120,7 +120,7 @@ Now that Terroir Core is installed:
 
 If you encounter issues:
 
-1. Check the [troubleshooting guide](../guides/troubleshooting.md)
+1. Check the project documentation
 2. Search [existing issues](https://github.com/terroir-ds/core/issues)
 3. Ask in [GitHub Discussions](https://github.com/terroir-ds/core/discussions)
 

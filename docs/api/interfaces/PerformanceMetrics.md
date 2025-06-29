@@ -1,12 +1,12 @@
 [**Terroir Core Design System v0.1.0**](../README.md)
 
----
+***
 
 [Terroir Core Design System](../globals.md) / PerformanceMetrics
 
 # Interface: PerformanceMetrics
 
-Defined in: [utils/types/logger.types.ts:79](https://github.com/terroir-ds/core/blob/9691713b8c512b7d2abe808c4f7084bdfab798bf/lib/utils/types/logger.types.ts#L79)
+Defined in: [utils/types/logger.types.ts:79](https://github.com/terroir-ds/core/blob/0096649176492a6e21b16e854cb30ade347b1bac/packages/core/src/utils/types/logger.types.ts#L79)
 
 Performance metrics for operation tracking.
 
@@ -28,20 +28,20 @@ timer.done({ operation: 'dataProcessing' }, 'Processing complete');
 
 > **duration**: `number`
 
-Defined in: [utils/types/logger.types.ts:81](https://github.com/terroir-ds/core/blob/9691713b8c512b7d2abe808c4f7084bdfab798bf/lib/utils/types/logger.types.ts#L81)
+Defined in: [utils/types/logger.types.ts:81](https://github.com/terroir-ds/core/blob/0096649176492a6e21b16e854cb30ade347b1bac/packages/core/src/utils/types/logger.types.ts#L81)
 
----
+***
 
 ### durationUnit
 
 > **durationUnit**: `"ms"`
 
-Defined in: [utils/types/logger.types.ts:82](https://github.com/terroir-ds/core/blob/9691713b8c512b7d2abe808c4f7084bdfab798bf/lib/utils/types/logger.types.ts#L82)
+Defined in: [utils/types/logger.types.ts:82](https://github.com/terroir-ds/core/blob/0096649176492a6e21b16e854cb30ade347b1bac/packages/core/src/utils/types/logger.types.ts#L82)
 
----
+***
 
 ### operation
 
 > **operation**: `string`
 
-Defined in: [utils/types/logger.types.ts:80](https://github.com/terroir-ds/core/blob/9691713b8c512b7d2abe808c4f7084bdfab798bf/lib/utils/types/logger.types.ts#L80)
+Defined in: [utils/types/logger.types.ts:80](https://github.com/terroir-ds/core/blob/0096649176492a6e21b16e854cb30ade347b1bac/packages/core/src/utils/types/logger.types.ts#L80)

@@ -25,12 +25,17 @@
 
 ## Functions
 
-- [createLogger](functions/createLogger.md)
+### Colors
+
 - [extractColorFromImage](functions/extractColorFromImage.md)
 - [generateColorSystem](functions/generateColorSystem.md)
 - [generateTonalPalette](functions/generateTonalPalette.md)
+- [validateColorContrast](functions/validateColorContrast.md)
+
+### Other
+
+- [createLogger](functions/createLogger.md)
 - [logPerformance](functions/logPerformance.md)
 - [logStart](functions/logStart.md)
 - [logSuccess](functions/logSuccess.md)
 - [measureTime](functions/measureTime.md)
-- [validateColorContrast](functions/validateColorContrast.md)
