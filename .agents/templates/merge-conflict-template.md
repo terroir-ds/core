@@ -7,10 +7,9 @@ Status: In Progress
 
 ### Incoming Changes Summary
 
-```bash
+````bash
 # Stats: X files changed, Y insertions(+), Z deletions(-)
-```
-
+```yaml
 ### Predicted Conflict Areas
 
 - [ ] File group 1: [description]
@@ -35,13 +34,12 @@ Status: In Progress
 
 ```typescript
 [code block]
-```
-
+```text
 ### Their Version (feat/[branch])
 
 ```typescript
 [code block]
-```
+````
 
 ### Analysis
 

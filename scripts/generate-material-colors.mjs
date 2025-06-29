@@ -210,7 +210,7 @@ async function main() {
     logger.info('Material color generation complete');
   } catch (error) {
     logger.error({ error: error.message, stack: error.stack }, 'Failed to generate Material colors');
-    // eslint-disable-next-line no-process-exit
+     
     process.exit(1);
   }
 }
