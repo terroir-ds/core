@@ -7,6 +7,7 @@
 
 import { createErrorMessage } from './index.js';
 import type { ErrorContext } from '../errors/base-error.js';
+import { getMessage } from '../errors/messages.js';
 
 /**
  * Options for creating validation errors
@@ -38,7 +39,7 @@ export function createValidationError(
     code: options.code,
     message,
     path: options.path || [],
-    context: options.context,
+    ...(options.context && { context: options.context }),
   };
 }
 
@@ -100,7 +101,7 @@ export function createTypeError(
     typeof value;
     
   return new Error(
-    `Expected ${expectedType}${pathStr}, got ${actualType}`
+    getMessage('TYPE_MISMATCH', expectedType, actualType, pathStr || undefined)
   );
 }
 
@@ -119,20 +120,12 @@ export function createRangeError(
   max?: number,
   inclusive: boolean = true
 ): Error {
-  let message = `Value ${value} is out of range`;
+  // For non-inclusive bounds, we adjust the values by a small amount
+  // since the centralized message doesn't support exclusive bounds
+  const adjustedMin = min !== undefined && !inclusive ? min + 0.01 : min;
+  const adjustedMax = max !== undefined && !inclusive ? max - 0.01 : max;
   
-  if (min !== undefined && max !== undefined) {
-    const op = inclusive ? '' : ' (exclusive)';
-    message += `: must be between ${min} and ${max}${op}`;
-  } else if (min !== undefined) {
-    const op = inclusive ? '>=' : '>';
-    message += `: must be ${op} ${min}`;
-  } else if (max !== undefined) {
-    const op = inclusive ? '<=' : '<';
-    message += `: must be ${op} ${max}`;
-  }
-  
-  return new Error(message);
+  return new Error(getMessage('VALUE_OUT_OF_RANGE', value, adjustedMin, adjustedMax));
 }
 
 /**
@@ -145,28 +138,17 @@ export function createRangeError(
  */
 export function createLengthError(
   actualLength: number,
-  constraints: { min?: number; max?: number; exact?: number },
-  itemType: string = 'value'
+  constraints: { min?: number; max?: number; exact?: number }
 ): Error {
   if (constraints.exact !== undefined) {
     return new Error(
-      `${itemType} length must be exactly ${constraints.exact}, got ${actualLength}`
+      getMessage('LENGTH_OUT_OF_RANGE', actualLength, constraints.exact, constraints.exact)
     );
   }
   
-  if (constraints.min !== undefined && actualLength < constraints.min) {
-    return new Error(
-      `${itemType} length must be at least ${constraints.min}, got ${actualLength}`
-    );
-  }
-  
-  if (constraints.max !== undefined && actualLength > constraints.max) {
-    return new Error(
-      `${itemType} length must be at most ${constraints.max}, got ${actualLength}`
-    );
-  }
-  
-  return new Error(`${itemType} length ${actualLength} does not meet constraints`);
+  return new Error(
+    getMessage('LENGTH_OUT_OF_RANGE', actualLength, constraints.min, constraints.max)
+  );
 }
 
 /**
@@ -188,9 +170,9 @@ export function createPropertyError(
     
   switch (reason) {
     case 'missing':
-      return new Error(`${objectType} is missing required property ${propStr}`);
+      return new Error(getMessage('PROPERTY_MISSING', propStr, objectType));
     case 'invalid':
-      return new Error(`${objectType} has invalid value for property ${propStr}`);
+      return new Error(getMessage('PROPERTY_UNKNOWN', propStr, objectType));
     case 'readonly':
       return new Error(`Cannot modify readonly property ${propStr} of ${objectType}`);
     case 'type':
