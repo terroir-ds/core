@@ -7,7 +7,7 @@ The multi-agent system enables a single developer to coordinate multiple paralle
 - **1 Core Agent**: Full VS Code devcontainer environment (primary development)
 - **N Assistant Agents**: Lightweight Docker containers (parallel tasks)
 
-````text
+```text
 ┌─────────────────────┐
 │   VS Code Instance  │
 │  (Core Agent Only)  │
@@ -22,7 +22,8 @@ The multi-agent system enables a single developer to coordinate multiple paralle
            └──────────────────────────┴──────────────────────────┘
                               Shared Git Repository
                                  (via worktrees)
-```text
+```
+
 ## Why Docker Exec?
 
 We evaluated several approaches:
@@ -83,6 +84,7 @@ We evaluated several approaches:
 ### Container Configuration
 
 Each agent container includes:
+
 - Node.js 22 with development tools
 - Git with worktree support
 - Essential CLI tools (ripgrep, fd, bat, exa)
@@ -92,13 +94,14 @@ Each agent container includes:
 ### Git Worktrees
 
 Each agent operates on its own git worktree:
-```text
+
+```markdown
 ~/Development/Design/
 ├── terroir-core/          # Main repository (Core agent)
 ├── terroir-agent1/        # Worktree for Agent 1
 ├── terroir-agent2/        # Worktree for Agent 2
 └── terroir-agent3/        # Worktree for Agent 3
-````
+```
 
 This provides:
 

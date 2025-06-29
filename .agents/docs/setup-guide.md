@@ -25,12 +25,13 @@ cd ~/Development/Design/terroir-core
 git worktree add ../terroir-agent1 -b feat/utilities
 git worktree add ../terroir-agent2 -b feat/infrastructure
 git worktree add ../terroir-agent3 -b feat/documentation
-```text
+
+```bash
 ### 2. Configure Environment
 
 Create a `.env` file in the Docker directory:
+```
 
-```bash
 cd .agents/docker
 cat > .env << EOF
 # Path to your development directory
@@ -41,10 +42,11 @@ OP_SERVICE_ACCOUNT_TOKEN=your-token-here
 GIT_CONFIG_ITEM=your-item-name
 GIT_SIGNING_KEY_ITEM=your-key-item
 EOF
-```text
-### 3. Build and Start Agents
 
 ```bash
+### 3. Build and Start Agents
+```
+
 # Build the Docker image
 docker-compose build agent1
 
@@ -53,7 +55,8 @@ docker-compose build agent1
 
 # Connect to the agent
 ./agent-manager.sh connect 1
-```text
+
+```bash
 ### 4. Initialize the Agent Environment
 
 When you first connect, the container will automatically:
@@ -67,19 +70,20 @@ When you first connect, the container will automatically:
 ### Understanding agent-mapping.conf
 
 All agents are configured in `.agents/config/agent-mapping.conf`:
+```
 
-```bash
 # Format: NUMBER:PURPOSE:BRANCH:COLOR
 0:core:main:white
 1:utilities:feat/utilities:green
 2:infrastructure:feat/infrastructure:blue
 3:documentation:feat/documentation:purple
-```text
+
+```bash
 ### Customizing Agent Purposes
 
 As your project evolves, agent purposes can change:
+```
 
-```bash
 # Edit the configuration
 vim .agents/config/agent-mapping.conf
 
@@ -90,29 +94,31 @@ vim .agents/config/agent-mapping.conf
 # Create the new branch in the worktree
 cd ~/Development/Design/terroir-agent1
 git checkout -b feat/color-management
-```text
+
+```bash
 ### Adding More Agents
 
 To add a fourth agent:
 
 1. Create a new worktree:
-   ```bash
-   git worktree add ../terroir-agent4 -b feat/testing
-````
-
-2. Add to agent-mapping.conf:
-
-   ```bash
-   4:testing:feat/testing:yellow
    ```
 
+   git worktree add ../terroir-agent4 -b feat/testing
+
+```markdown
+2. Add to agent-mapping.conf:
+   ```
+
+   4:testing:feat/testing:yellow
+
+   ```markdown
 3. Add to docker-compose.yml (copy an existing agent section)
 
 ## Daily Workflow
 
 ### Morning Startup
+```
 
-````bash
 cd .agents/docker
 
 # Check what's running
@@ -124,26 +130,29 @@ cd .agents/docker
 
 # Generate prompts for Claude
 ./agent-manager.sh prompt 1
-```text
+
+```bash
 ### Working with Agents
 
 Each agent has access to these commands:
+```
 
-```bash
 # Inside an agent container
 ./prompt.sh          # Generate Claude prompt
 ./session.sh save    # Save current session
 ./status.sh          # Check agent status
-```text
-### Stopping Agents
 
 ```bash
+### Stopping Agents
+```
+
 # Stop individual agent
 ./agent-manager.sh stop 1
 
 # Stop all agents
 ./agent-manager.sh stop all
-```text
+
+```bash
 ## SSH and Git Configuration
 
 ### Automatic SSH Setup
@@ -158,20 +167,21 @@ If you use 1Password, the containers will automatically:
 For other password managers or manual setup:
 
 1. Mount your SSH directory in docker-compose.yml:
-   ```yaml
+   ```
+
    volumes:
      - ${HOME}/.ssh:/home/node/.ssh:ro
-````
 
+```markdown
 2. Or use SSH agent forwarding:
+   ```
 
-   ```bash
    # On host, add key to agent
    ssh-add ~/.ssh/id_rsa
 
    # Containers will use the forwarded agent
-   ```
 
+   ```bash
 ## Resource Management
 
 ### Container Limits
@@ -184,46 +194,51 @@ Each agent container is limited to:
 - 1GB memory (reserved)
 
 ### Monitoring Resources
+```
 
-````bash
 # Check container stats
 docker stats
 
 # View agent logs
 ./agent-manager.sh logs 1
-```text
+
+```bash
 ## Troubleshooting
 
 ### Container Won't Start
+```
 
-```bash
 # Check logs
 docker-compose logs agent1
 
 # Rebuild if needed
 ./agent-manager.sh rebuild 1
-```text
-### Permission Issues
 
 ```bash
+### Permission Issues
+```
+
 # Inside container, ensure git safe directory
 git config --global --add safe.directory /workspaces/terroir-agent1
-```text
-### Broken Symlinks
 
 ```bash
+### Broken Symlinks
+```
+
 # Recreate symlinks
 rm -rf .claude .agent-coordination
 ln -sf /workspaces/terroir-core/.claude .claude
 ln -sf /workspaces/terroir-core/.agent-coordination .agent-coordination
-```text
-### Can't Generate Prompts
 
 ```bash
+### Can't Generate Prompts
+```
+
 # Ensure you're in the right directory
 cd /workspaces/terroir-core/.agents/scripts
 ./prompt.sh 1
-````
+
+```
 
 ## Best Practices
 

@@ -13,23 +13,28 @@ Each agent uses its own git worktree and branch to avoid conflicts.
 
 ### Starting Your First Agent
 
-````bash
+```bash
 # From terroir-core root:
 cd .agents/docker
 ./agent-manager.sh start 1    # Start agent 1 (utilities)
 ./agent-manager.sh connect 1  # Connect to the container
-```text
+```
+
 ### Generating a Claude Prompt
 
 **From the host (recommended - copies to clipboard):**
+
 ```bash
 ./agent-manager.sh prompt 1
-```text
+```
+
 **From inside a container:**
+
 ```bash
 cd /workspaces/terroir-core/.agents/scripts
 ./prompt.sh 1
-```text
+```
+
 ## 📊 Resource Benefits
 
 | Setup | Memory Usage | Use Case |
@@ -57,19 +62,23 @@ They are **instructions for Claude to follow**. You must:
 ## 💡 Daily Workflow
 
 ### Morning
+
 ```bash
 cd .agents/docker
 ./agent-manager.sh status         # See what's running
 ./agent-manager.sh start 1        # Start utilities agent
 ./agent-manager.sh start 2        # Start infrastructure agent
-```yaml
+```
+
 ### During Development
+
 - **Core (VS Code)**: Main development, testing, integration
 - **Agent 1**: Utilities and helper functions
 - **Agent 2**: Infrastructure and build tasks
 - **Agent 3**: Component development
 
 ### Switching Between Agents
+
 ```bash
 # Generate prompt for current work
 ./agent-manager.sh prompt 1
@@ -77,11 +86,14 @@ cd .agents/docker
 # Start new Claude conversation with the prompt
 # When done, save session for continuity:
 ./session.sh save
-```text
+```
+
 ### Evening
+
 ```bash
 ./agent-manager.sh stop all       # Stop all agents
-```yaml
+```
+
 ## 🎯 Pro Tips
 
 1. **Start small**: Begin with just one assistant agent
@@ -94,11 +106,13 @@ cd .agents/docker
 The system automatically maintains continuity between Claude sessions:
 
 ### How It Works
+
 - Sessions are saved to `.claude/sessions/agent{N}-latest.md`
 - The prompt generator automatically includes saved sessions
 - Use `./session.sh` to manage sessions
 
 ### Saving Work Before Stopping
+
 ```bash
 # Inside container, before stopping work
 ./session.sh save
@@ -108,15 +122,18 @@ The system automatically maintains continuity between Claude sessions:
 # - Recent commits
 # - Working context
 # - Any notes you add
-```text
+```
+
 ### Resuming Work
+
 ```bash
 # Generate new prompt - session is automatically included
 ./prompt.sh 1
 
 # Or clear old session and start fresh
 ./session.sh clear
-```text
+```
+
 This ensures agents never lose context, even after crashes or restarts.
 
 ## Git Workflow & Merging
@@ -124,6 +141,7 @@ This ensures agents never lose context, even after crashes or restarts.
 ### The Challenge
 
 Each agent uses a git worktree with its own branch, but some directories must remain symlinked:
+
 - `.claude/` - Session management
 - `.agent-coordination/` - Lock files
 
@@ -134,7 +152,8 @@ Each agent uses a git worktree with its own branch, but some directories must re
 git merge main --no-commit
 git reset HEAD .claude/ .agent-coordination/
 git commit -m "merge: update from core"
-```text
+```
+
 ### Merging Work TO Core
 
 ```bash
@@ -142,20 +161,24 @@ git commit -m "merge: update from core"
 git merge feat/utilities --no-commit
 # Review - agents shouldn't have .claude files
 git commit -m "merge: integrate utilities work"
-```text
+```
+
 ### Fixing Common Issues
 
 **If agent accidentally commits .claude files:**
+
 ```bash
 git rm -r --cached .claude/
 git commit -m "fix: remove .claude from tracking"
-```text
+```
+
 **If symlinks break:**
-```bash
+
+```text
 rm -rf .claude .agent-coordination
 ln -sf /workspaces/terroir-core/.claude .claude
 ln -sf /workspaces/terroir-core/.agent-coordination .agent-coordination
-````
+```
 
 ## Next Steps
 

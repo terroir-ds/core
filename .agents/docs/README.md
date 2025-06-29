@@ -45,14 +45,15 @@ A system that enables one developer to coordinate multiple parallel development 
 
 Think of yourself as a **tech lead** with a small team:
 
-````bash
+```bash
 You (Core Agent)          = Tech Lead in VS Code
 ├── Agent 1 (Docker)      = Junior dev working on utilities
 ├── Agent 2 (Docker)      = Junior dev working on infrastructure
 └── Agent 3 (Docker)      = Junior dev working on components
 
 Each on their own git branch, all coordinating through shared tools.
-```bash
+```
+
 ## Quick Start
 
 ```bash
@@ -67,7 +68,7 @@ cd .agents/docker
 ./agent-manager.sh prompt 1
 
 # 4. Work in parallel!
-````
+```
 
 ## Implementation Details
 
