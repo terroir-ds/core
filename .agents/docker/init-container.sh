@@ -181,4 +181,17 @@ if is_container && [ $# -eq 0 ]; then
   echo "  ./status.sh                - Check agent status"
   echo "  ./sync.sh                  - Sync changes between agents"
   echo "  ./check-conflicts.sh       - Check for merge conflicts"
+  
+  echo -e "\n${GREEN}Useful aliases:${NC}"
+  echo "  gitlog      - Interactive git history (tig)"
+  echo "  diskusage   - Interactive disk usage analyzer (ncdu)"
+  echo "  df          - Better disk free display (duf)"
+  echo "  ports       - Show open network ports"
+  echo "  listening   - Show listening ports"
+  
+  echo -e "\n${GREEN}Diagnostic tools:${NC}"
+  echo "  htop        - Interactive process viewer"
+  echo "  iotop       - I/O usage by process"
+  echo "  strace      - Trace system calls"
+  echo "  lsof        - List open files"
 fi

@@ -71,16 +71,44 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     xclip \
     coreutils \
     nano \
+    vim \
     # File operations
     rsync \
+    unzip \
+    zip \
+    # Diff and merge tools
+    diff-so-fancy \
+    colordiff \
     # JSON/YAML processing
     jq \
     yq \
     # Process management
     procps \
+    lsof \
+    strace \
     # Network utilities (for debugging)
     curl \
     wget \
+    httpie \
+    netcat-openbsd \
+    dnsutils \
+    iputils-ping \
+    traceroute \
+    # System diagnostics
+    sysstat \
+    iotop \
+    ncdu \
+    duf \
+    # Development helpers
+    entr \
+    watchman \
+    inotify-tools \
+    # Text processing
+    ack \
+    silversearcher-ag \
+    # Git extras
+    git-extras \
+    tig \
     # Build essentials (minimal)
     build-essential \
     # Python (for some tooling)
@@ -138,7 +166,16 @@ RUN echo 'export ZSH="$HOME/.oh-my-zsh"' >> ~/.zshrc \
   && echo 'alias grep="rg"' >> ~/.zshrc \
   && echo '# Color support for less' >> ~/.zshrc \
   && echo 'export LESS="-R"' >> ~/.zshrc \
-  && echo 'export LESSOPEN="| /usr/bin/env bat --color=always --style=plain %s 2>/dev/null"' >> ~/.zshrc
+  && echo 'export LESSOPEN="| /usr/bin/env bat --color=always --style=plain %s 2>/dev/null"' >> ~/.zshrc \
+  && echo '# Additional helpful aliases' >> ~/.zshrc \
+  && echo 'alias diff="colordiff"' >> ~/.zshrc \
+  && echo 'alias gitlog="tig"' >> ~/.zshrc \
+  && echo 'alias diskusage="ncdu"' >> ~/.zshrc \
+  && echo 'alias df="duf"' >> ~/.zshrc \
+  && echo 'alias http="httpie"' >> ~/.zshrc \
+  && echo 'alias watch="entr"' >> ~/.zshrc \
+  && echo 'alias ports="lsof -i -P -n"' >> ~/.zshrc \
+  && echo 'alias listening="lsof -i -P -n | grep LISTEN"' >> ~/.zshrc
 
 # Configure shell and package manager
 ENV SHELL=/bin/zsh
