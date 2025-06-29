@@ -79,7 +79,8 @@ try {
     userId: user.id,
   });
 }
-```text
+```
+
 ### With Retry Logic
 
 ```typescript
@@ -100,7 +101,8 @@ const result = await retry(
     timeout: 5000,
   }
 );
-```text
+```
+
 ### With Circuit Breaker
 
 ```typescript
@@ -119,26 +121,28 @@ const data = await retryWithCircuitBreaker(
   apiBreaker,
   { maxAttempts: 3 }
 );
-```text
+```
+
 ## Core Concepts
 
 ### Error Severity
 
 Errors are classified by severity to help prioritize handling:
 
-```typescript
+```text
 enum ErrorSeverity {
   LOW = 'low', // Info-level, minor issues
   MEDIUM = 'medium', // Warning-level, should be addressed
   HIGH = 'high', // Error-level, requires attention
   CRITICAL = 'critical', // Fatal-level, immediate action needed
 }
-```text
+```
+
 ### Error Categories
 
 Errors are grouped into categories for better organization:
 
-```typescript
+```text
 enum ErrorCategory {
   VALIDATION = 'validation', // Input validation failures
   CONFIGURATION = 'configuration', // Config/setup issues
@@ -149,7 +153,8 @@ enum ErrorCategory {
   INTEGRATION = 'integration', // Third-party service issues
   UNKNOWN = 'unknown', // Uncategorized errors
 }
-```text
+```
+
 ### Error Context
 
 All errors support rich context for debugging:
@@ -164,7 +169,8 @@ interface ErrorContext {
   operation?: string; // Operation being performed
   metadata?: Record<string, unknown>; // Additional data
 }
-```text
+```
+
 ## Error Classes
 
 ### BaseError
@@ -185,14 +191,15 @@ class CustomError extends BaseError {
     });
   }
 }
-```text
+```
+
 ### Built-in Error Classes
 
 #### ValidationError
 
 For input validation failures:
 
-```typescript
+```yaml
 throw new ValidationError('Invalid email format', {
   code: 'INVALID_EMAIL',
   context: {
@@ -201,12 +208,13 @@ throw new ValidationError('Invalid email format', {
     pattern: '^[^@]+@[^@]+\\.[^@]+$',
   },
 });
-```text
+```
+
 #### ConfigurationError
 
 For configuration issues:
 
-```typescript
+```yaml
 throw new ConfigurationError('Missing API key', {
   code: 'CONFIG_MISSING_API_KEY',
   context: {
@@ -214,12 +222,13 @@ throw new ConfigurationError('Missing API key', {
     environment: process.env.NODE_ENV,
   },
 });
-```text
+```
+
 #### NetworkError
 
 For network-related failures:
 
-```typescript
+```yaml
 throw new NetworkError('Connection timeout', {
   code: 'NETWORK_TIMEOUT',
   retryable: true,
@@ -228,12 +237,13 @@ throw new NetworkError('Connection timeout', {
     timeout: 5000,
   },
 });
-```text
+```
+
 #### PermissionError
 
 For authorization failures:
 
-```typescript
+```yaml
 throw new PermissionError('Insufficient permissions', {
   code: 'PERMISSION_INSUFFICIENT',
   context: {
@@ -241,12 +251,13 @@ throw new PermissionError('Insufficient permissions', {
     actual: ['read'],
   },
 });
-```text
+```
+
 #### ResourceError
 
 For missing resources:
 
-```typescript
+```yaml
 throw new ResourceError('User not found', {
   code: 'RESOURCE_USER_NOT_FOUND',
   statusCode: 404,
@@ -255,12 +266,13 @@ throw new ResourceError('User not found', {
     resourceId: userId,
   },
 });
-```text
+```
+
 #### BusinessLogicError
 
 For domain-specific failures:
 
-```typescript
+```yaml
 throw new BusinessLogicError('Insufficient balance', {
   code: 'INSUFFICIENT_BALANCE',
   context: {
@@ -269,12 +281,13 @@ throw new BusinessLogicError('Insufficient balance', {
     currency: 'USD',
   },
 });
-```text
+```
+
 #### IntegrationError
 
 For third-party service issues:
 
-```typescript
+```yaml
 throw new IntegrationError('Payment gateway error', {
   code: 'PAYMENT_GATEWAY_ERROR',
   retryable: true,
@@ -283,7 +296,8 @@ throw new IntegrationError('Payment gateway error', {
     error: stripeError,
   },
 });
-```text
+```
+
 #### MultiError
 
 For aggregating multiple errors:
@@ -298,7 +312,8 @@ if (failures.length > 0) {
     failedCount: failures.length,
   });
 }
-```text
+```
+
 ## Error Handling
 
 ### Global Error Handlers
@@ -316,7 +331,8 @@ setupGlobalErrorHandlers();
 // - unhandledRejection
 // - Node.js warnings
 // - SIGTERM/SIGINT for graceful shutdown
-```text
+```
+
 ### Custom Error Handlers
 
 Register custom handlers for specific error types:
@@ -338,7 +354,8 @@ registerRecoveryStrategy('NETWORK_TIMEOUT', async (error) => {
   // Try fallback endpoint
   return await fetch('/api/fallback').then((r) => r.json());
 });
-```text
+```
+
 ### Error Boundaries
 
 Wrap operations with error boundaries:
@@ -360,7 +377,8 @@ const result = await errorBoundary(
     },
   }
 );
-```text
+```
+
 ### Function Wrapping
 
 Add error handling to existing functions:
@@ -377,7 +395,8 @@ const safeFunction = withErrorHandling(
     context: { component: 'DataProcessor' },
   }
 );
-```text
+```
+
 ## Retry Logic
 
 ### Basic Retry
@@ -394,7 +413,8 @@ const data = await retry(() => fetchData(), {
   backoffFactor: 2,
   jitter: true,
 });
-```text
+```
+
 ### Conditional Retry
 
 Retry only specific errors:
@@ -416,7 +436,8 @@ const result = await retry(() => apiCall(), {
     logger.info(`Retrying after ${delay}ms (attempt ${attempt})`);
   },
 });
-```text
+```
+
 ### Timeout Handling
 
 Add timeouts to operations:
@@ -429,7 +450,8 @@ const result = await withTimeout(
   5000, // 5 second timeout
   abortSignal
 );
-```text
+```
+
 ### Cancellation Support
 
 Use AbortSignal for cancellation:
@@ -450,7 +472,8 @@ try {
     console.log('Operation was cancelled');
   }
 }
-```text
+```
+
 ## Circuit Breakers
 
 ### Basic Circuit Breaker
@@ -478,7 +501,8 @@ try {
   }
   throw error;
 }
-```text
+```
+
 ### Circuit Breaker States
 
 Circuit breakers have three states:
@@ -500,7 +524,8 @@ console.log({
 
 // Manually reset if needed
 breaker.reset();
-```text
+```
+
 ### Combined Patterns
 
 Use retry with circuit breaker:
@@ -518,7 +543,8 @@ const result = await retryWithCircuitBreaker(
     initialDelay: 100,
   }
 );
-```text
+```
+
 ## Error Messages
 
 ### Centralized Messages
@@ -535,7 +561,8 @@ const message = getMessage('VALIDATION_REQUIRED', 'email');
 // With multiple parameters
 const rangeMessage = getMessage('VALIDATION_RANGE', 'age', 18, 65);
 // Output: "age must be between 18 and 65"
-```text
+```
+
 ### Message Categories
 
 Messages are organized by category:
@@ -550,7 +577,8 @@ const validationKeys = ERROR_MESSAGE_CATEGORIES.VALIDATION;
 // Get all network messages
 const networkKeys = ERROR_MESSAGE_CATEGORIES.NETWORK;
 // ['NETWORK_CONNECTION_FAILED', 'NETWORK_TIMEOUT', ...]
-```text
+```
+
 ### Custom Messages
 
 Extend the message system:
@@ -563,12 +591,13 @@ throw new ValidationError(getMessage('VALIDATION_RANGE', 'score', 0, 100), {
   code: 'SCORE_OUT_OF_RANGE',
   context: { field: 'score', value: 150 },
 });
-```text
+```
+
 ## Best Practices
 
 ### 1. Always Use Structured Errors
 
-```typescript
+```yaml
 // ❌ Bad
 throw new Error('Invalid input');
 
@@ -581,10 +610,11 @@ throw new ValidationError('Invalid email format', {
     pattern: EMAIL_REGEX.source,
   },
 });
-```text
+```
+
 ### 2. Provide Rich Context
 
-```typescript
+```yaml
 // ❌ Bad
 throw new Error('Operation failed');
 
@@ -601,10 +631,11 @@ throw new IntegrationError('Payment processing failed', {
     errorCode: stripeError.code,
   },
 });
-```text
+```
+
 ### 3. Use Error Chaining
 
-```typescript
+```yaml
 try {
   await processPayment(order);
 } catch (error) {
@@ -620,7 +651,8 @@ try {
     },
   });
 }
-```text
+```
+
 ### 4. Handle Errors at the Right Level
 
 ```typescript
@@ -649,7 +681,8 @@ app.use(async (error, req, res, next) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-```text
+```
+
 ### 5. Use Appropriate Retry Strategies
 
 ```typescript
@@ -665,7 +698,8 @@ const result = await retry(() => externalApiCall(), {
   maxAttempts: 3,
   backoffFactor: 2,
 });
-```text
+```
+
 ### 6. Implement Circuit Breakers for External Services
 
 ```typescript
@@ -689,10 +723,11 @@ function getBreaker(service: string): CircuitBreaker {
 // Use breaker for each service
 const userServiceBreaker = getBreaker('UserService');
 const users = await userServiceBreaker.execute(() => userService.getUsers());
-```text
+```
+
 ### 7. Log Errors Appropriately
 
-```typescript
+```yaml
 // ✅ Good - errors are automatically logged based on severity
 try {
   await operation();
@@ -706,7 +741,8 @@ try {
   // Re-throw if needed upstream
   throw error;
 }
-```text
+```
+
 ### 8. Clean Up Resources
 
 ```typescript
@@ -724,7 +760,8 @@ async function withResource() {
     await resource.release();
   }
 }
-```text
+```
+
 ## Migration Guide
 
 ### From Basic Errors
@@ -756,7 +793,8 @@ try {
 
   throw wrappedError;
 }
-```text
+```
+
 ### From Custom Error Classes
 
 ```typescript
@@ -784,7 +822,8 @@ class MyError extends BaseError {
     });
   }
 }
-```text
+```
+
 ### From Promise Rejection Handling
 
 ```typescript
@@ -798,7 +837,8 @@ import { setupGlobalErrorHandlers } from '@terroir/core/lib/utils/errors';
 
 // This sets up all global handlers
 setupGlobalErrorHandlers();
-```text
+```
+
 ### From Manual Retry Logic
 
 ```typescript

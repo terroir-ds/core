@@ -47,7 +47,7 @@ The project includes global unhandled rejection handling both in production (via
 
 For testing expected promise rejections, use these helpers:
 
-`````typescript
+````typescript
 import { expectRejection, verifyRejection } from '@test/helpers/error-handling';
 
 // Simple assertion
@@ -59,14 +59,15 @@ await verifyRejection(promise, {
   code: 'ERROR_CODE',
   name: 'ValidationError',
 });
+
 ```text
 These helpers automatically handle the promise rejection without triggering warnings.
 
 ## Testing Error Classes
 
 ### Basic Error Creation
+```
 
-````typescript
 import { ValidationError, ErrorSeverity, ErrorCategory } from '@terroir/core/lib/utils/errors';
 
 describe('ValidationError', () => {
@@ -99,10 +100,11 @@ describe('ValidationError', () => {
     expect(error.context.value).toBe('invalid');
   });
 });
-```text
-### Error Chaining
 
-```typescript
+```bash
+### Error Chaining
+```
+
 describe('Error Chaining', () => {
   it('should preserve error chain', () => {
     const rootCause = new Error('Database connection failed');
@@ -115,10 +117,11 @@ describe('Error Chaining', () => {
     expect(topError.hasErrorType(ValidationError)).toBe(false);
   });
 });
-```text
-### Error Serialization
 
-```typescript
+```bash
+### Error Serialization
+```
+
 describe('Error Serialization', () => {
   it('should serialize to JSON', () => {
     const error = new ValidationError('Test error', {
@@ -151,12 +154,13 @@ describe('Error Serialization', () => {
     expect(publicJson).toHaveProperty('message');
   });
 });
-```text
+
+```bash
 ## Testing Error Handlers
 
 ### Handler Registration
+```
 
-```typescript
 import {
   registerErrorHandler,
   unregisterErrorHandler,
@@ -202,10 +206,11 @@ describe('Error Handlers', () => {
     unregisterErrorHandler('handler2');
   });
 });
-```text
-### Recovery Strategies
 
-```typescript
+```bash
+### Recovery Strategies
+```
+
 import { registerRecoveryStrategy, tryRecover } from '@terroir/core/lib/utils/errors';
 
 describe('Recovery Strategies', () => {
@@ -230,10 +235,11 @@ describe('Recovery Strategies', () => {
     expect(result).toBe('default');
   });
 });
-```text
-### Error Boundaries
 
-```typescript
+```bash
+### Error Boundaries
+```
+
 import { errorBoundary } from '@terroir/core/lib/utils/errors';
 
 describe('Error Boundary', () => {
@@ -270,12 +276,13 @@ describe('Error Boundary', () => {
     expect(result).toEqual({ computed: true });
   });
 });
-```text
+
+```bash
 ## Testing Retry Logic
 
 ### Basic Retry
+```
 
-```typescript
 import { retry } from '@terroir/core/lib/utils/errors';
 
 describe('Retry Logic', () => {
@@ -305,10 +312,11 @@ describe('Retry Logic', () => {
     expect(fn).toHaveBeenCalledTimes(2);
   });
 });
-```text
-### Conditional Retry
 
-```typescript
+```bash
+### Conditional Retry
+```
+
 describe('Conditional Retry', () => {
   it('should respect shouldRetry callback', async () => {
     const fn = jest
@@ -328,10 +336,11 @@ describe('Conditional Retry', () => {
     expect(fn).toHaveBeenCalledTimes(1);
   });
 });
-```text
-### Cancellation
 
-```typescript
+```bash
+### Cancellation
+```
+
 describe('Retry Cancellation', () => {
   it('should respect abort signal', async () => {
     const controller = new AbortController();
@@ -352,10 +361,11 @@ describe('Retry Cancellation', () => {
     expect(fn).toHaveBeenCalledTimes(1);
   });
 });
-```text
-### Timing and Delays
 
-```typescript
+```bash
+### Timing and Delays
+```
+
 describe('Retry Timing', () => {
   beforeEach(() => {
     jest.useFakeTimers();
@@ -396,12 +406,13 @@ describe('Retry Timing', () => {
     expect(result).toBe('Success');
   });
 });
-```text
+
+```bash
 ## Testing Circuit Breakers
 
 ### State Transitions
+```
 
-```typescript
 import { CircuitBreaker } from '@terroir/core/lib/utils/errors';
 
 describe('Circuit Breaker', () => {
@@ -453,10 +464,11 @@ describe('Circuit Breaker', () => {
     expect(breaker.getState()).toBe('half-open');
   });
 });
-```text
-### Time Window Testing
 
-```typescript
+```bash
+### Time Window Testing
+```
+
 describe('Circuit Breaker Time Window', () => {
   it('should forget old failures', async () => {
     const breaker = new CircuitBreaker({
@@ -478,12 +490,13 @@ describe('Circuit Breaker Time Window', () => {
     expect(breaker.getState()).toBe('closed'); // Still closed
   });
 });
-```text
+
+```bash
 ## Integration Testing
 
 ### Full Error Flow
+```
 
-```typescript
 describe('Error Flow Integration', () => {
   it('should handle complete error flow', async () => {
     const mockLogger = jest.spyOn(logger, 'error');
@@ -528,14 +541,15 @@ describe('Error Flow Integration', () => {
     unregisterErrorHandler('metrics');
   });
 });
-```text
+
+```bash
 ## Test Utilities
 
 ### Error Test Helpers
 
 Create a test utilities file at `lib/utils/errors/__tests__/test-utils.ts`:
+```
 
-```typescript
 import { BaseError, ErrorOptions } from '../base-error.js';
 
 /**
@@ -616,10 +630,11 @@ export const mockTimers = {
     await Promise.resolve();
   },
 };
-```text
-### Using Test Utilities
 
-```typescript
+```bash
+### Using Test Utilities
+```
+
 import { createTestError, createFailingFunction, mockTimers } from './test-utils';
 
 describe('Using Test Utilities', () => {
@@ -647,12 +662,13 @@ describe('Using Test Utilities', () => {
     expect(fn).toHaveBeenCalledTimes(3);
   });
 });
-```text
+
+```bash
 ## Common Patterns
 
 ### Testing Error Context
+```
 
-```typescript
 it('should preserve context through error chain', () => {
   const context = {
     userId: '123',
@@ -673,10 +689,11 @@ it('should preserve context through error chain', () => {
     service: 'OrderService',
   });
 });
-```text
-### Testing Async Error Flows
 
-```typescript
+```bash
+### Testing Async Error Flows
+```
+
 it('should handle async error propagation', async () => {
   async function innerOperation() {
     throw new ValidationError('Invalid data');
@@ -699,10 +716,11 @@ it('should handle async error propagation', async () => {
   const result = await outerOperation();
   expect(result).toEqual({ default: true });
 });
-```text
-### Testing Cleanup on Error
 
-```typescript
+```bash
+### Testing Cleanup on Error
+```
+
 it('should cleanup resources on error', async () => {
   const cleanup = jest.fn();
 
@@ -728,10 +746,11 @@ it('should cleanup resources on error', async () => {
 
   expect(cleanup).toHaveBeenCalled();
 });
-```text
-### Testing Error Metrics
 
-```typescript
+```bash
+### Testing Error Metrics
+```
+
 it('should track error metrics', async () => {
   const metrics = {
     errors: new Map<string, number>(),
@@ -755,7 +774,8 @@ it('should track error metrics', async () => {
 
   unregisterErrorHandler('metrics');
 });
-`````
+
+```
 
 ## Best Practices
 
@@ -787,3 +807,4 @@ it('should track error metrics', async () => {
    - Multiple errors simultaneously
    - Race conditions
    - Resource contention
+````
