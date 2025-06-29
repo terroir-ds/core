@@ -26,7 +26,7 @@ Use **UPPERCASE** for standard project files that tools expect:
 
 ### Directory Structure
 
-```text
+```markdown
 project/
 ├── README.md                    # UPPERCASE - standard file
 ├── LICENSE                      # UPPERCASE - standard file

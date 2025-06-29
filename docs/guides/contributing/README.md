@@ -12,7 +12,7 @@ Welcome to the Terroir Core contributing guide! This section covers everything y
 
 ### Setting Up Your Environment
 
-````bash
+```bash
 # Clone the repository
 git clone https://github.com/terroir-ds/core.git
 cd terroir-core
@@ -25,7 +25,8 @@ pnpm setup
 
 # Start development mode
 pnpm dev
-```bash
+```
+
 ### Making Changes
 
 1. **Create a feature branch** from `main`
@@ -38,6 +39,7 @@ pnpm dev
 ### Quality Requirements
 
 All contributions must:
+
 - ✅ Pass all automated tests (`pnpm test`)
 - ✅ Meet accessibility standards (WCAG AA minimum)
 - ✅ Include appropriate documentation
@@ -47,28 +49,36 @@ All contributions must:
 ## Types of Contributions
 
 ### 🐛 Bug Reports
+
 Help us improve by reporting issues you encounter. Include:
+
 - Steps to reproduce the problem
 - Expected vs actual behavior
 - Environment details (browser, Node.js version, etc.)
 - Minimal example if possible
 
 ### 💡 Feature Requests
+
 Suggest new features or improvements:
+
 - Describe the problem you're trying to solve
 - Explain how your suggestion would help
 - Consider alternative solutions
 - Think about implementation challenges
 
 ### 📝 Documentation
+
 Documentation improvements are always welcome:
+
 - Fix typos or unclear explanations
 - Add examples or use cases
 - Improve organization or navigation
 - Translate content (future)
 
 ### 🔧 Code Contributions
+
 Direct code contributions:
+
 - Bug fixes
 - New components or utilities
 - Performance improvements
@@ -77,6 +87,7 @@ Direct code contributions:
 ## Review Process
 
 ### Pull Request Requirements
+
 - **Clear title** describing the change
 - **Detailed description** explaining why and how
 - **Related issues** linked when applicable
@@ -84,7 +95,9 @@ Direct code contributions:
 - **Documentation updates** included
 
 ### Review Criteria
+
 We review contributions for:
+
 - **Functionality**: Does it work as intended?
 - **Quality**: Is the code well-written and maintainable?
 - **Performance**: Does it impact bundle size or runtime performance?
@@ -92,6 +105,7 @@ We review contributions for:
 - **Documentation**: Is it properly documented?
 
 ### Timeline
+
 - **Initial review**: Within 48 hours
 - **Feedback cycles**: 24-48 hours between rounds
 - **Merge**: After approval and CI passes
@@ -99,13 +113,16 @@ We review contributions for:
 ## Community Guidelines
 
 ### Code of Conduct
+
 We follow a simple principle: **Be kind and professional**. This means:
+
 - Respectful communication in all interactions
 - Constructive feedback that helps others improve
 - Welcoming newcomers and helping them get started
 - Focusing on what's best for the project and community
 
 ### Getting Help
+
 - **GitHub Discussions** for questions and ideas
 - **GitHub Issues** for bug reports and feature requests
 - **Discord** for real-time chat (link in README)
@@ -113,6 +130,7 @@ We follow a simple principle: **Be kind and professional**. This means:
 ## Recognition
 
 Contributors are recognized through:
+
 - **Commit attribution** using Co-authored-by
 - **Contributors section** in README
 - **Changelog entries** for significant contributions
@@ -121,17 +139,20 @@ Contributors are recognized through:
 ## Development Resources
 
 ### Essential Reading
+
 - [Design Principles](../../foundations/design-principles.md) - Understand our philosophy
 - [Architecture Overview](../../resources/architecture/) - Technical architecture
 - [Testing Guide](../testing/README.md) - Testing approaches and standards
 
 ### Tools and Scripts
+
 - `pnpm dev` - Start development server with file watching
 - `pnpm test` - Run all tests (lint, unit, visual, accessibility)
 - `pnpm fix` - Auto-fix formatting and linting issues
 - `pnpm build` - Build all packages and documentation
 
 ### Useful Commands
+
 ```bash
 # Quality checks (run before committing)
 pnpm fix && pnpm test
@@ -145,7 +166,7 @@ pnpm test:visual       # Visual regression tests
 pnpm tokens:watch      # Watch token changes
 pnpm storybook:dev     # Component documentation
 pnpm docs:dev          # Documentation site
-````
+```
 
 ## Questions?
 

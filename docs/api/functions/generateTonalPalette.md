@@ -47,7 +47,8 @@ import { generateTonalPalette } from '@terroir/core';
 const palette = generateTonalPalette('#1976d2');
 console.log(palette[50]); // Medium tone
 console.log(palette[90]); // Dark tone for backgrounds
-```typescript
+```
+
 ```typescript
 const customPalette = generateTonalPalette('#ff5722', [0, 25, 50, 75, 100]);
 console.log(customPalette[25]); // Light-medium tone

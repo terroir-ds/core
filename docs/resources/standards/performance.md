@@ -8,13 +8,14 @@ Performance best practices for a fast, efficient design system.
 
 ### Code Splitting
 
-````typescript
+```bash
 // Dynamic imports for large components
 const ColorPicker = lazy(() => import('./ColorPicker'));
 
 // Route-based splitting
 const AdminPanel = lazy(() => import('./routes/AdminPanel'));
-```text
+```
+
 ### Tree Shaking
 
 ```typescript
@@ -23,7 +24,8 @@ import * as utils from '@terroir/core';
 
 // ✅ DO import specific functions
 import { generateColors, validateContrast } from '@terroir/core';
-```text
+```
+
 ### Bundle Size Monitoring
 
 ```json
@@ -32,16 +34,19 @@ import { generateColors, validateContrast } from '@terroir/core';
     "analyze": "webpack-bundle-analyzer build/stats.json"
   }
 }
-```text
+```
+
 Set size budgets:
-```javascript
+
+```yaml
 // webpack.config.js
 performance: {
   maxAssetSize: 250000, // 250kb
   maxEntrypointSize: 250000,
   hints: 'error'
 }
-```text
+```
+
 ## Runtime Performance
 
 ### Memoization
@@ -58,7 +63,8 @@ const processedData = useMemo(() => {
 export const ExpensiveComponent = memo(({ data }) => {
   return <div>{/* render */}</div>;
 });
-```text
+```
+
 ### Debouncing & Throttling
 
 ```typescript
@@ -73,7 +79,8 @@ const debouncedSearch = debounce((query: string) => {
 const throttledScroll = throttle(() => {
   updateScrollPosition();
 }, 16); // 60fps
-```text
+```
+
 ### Virtual Scrolling
 
 ```typescript
@@ -92,7 +99,8 @@ function LargeList({ items }) {
     />
   );
 }
-```text
+```
+
 ## Asset Optimization
 
 ### Image Optimization
@@ -106,10 +114,11 @@ await optimizeImage('logo.png', {
   sizes: [320, 640, 1280],
   quality: 85
 });
-```text
+```
+
 ### Font Loading
 
-```css
+```yaml
 /* Preload critical fonts */
 <link rel="preload" href="/fonts/inter.woff2" as="font" crossorigin>
 
@@ -119,7 +128,8 @@ await optimizeImage('logo.png', {
   src: url('/fonts/inter.woff2') format('woff2');
   font-display: swap;
 }
-```text
+```
+
 ### SVG Optimization
 
 ```typescript
@@ -133,7 +143,8 @@ const result = optimize(svgString, {
     'removeViewBox'
   ]
 });
-```text
+```
+
 ## CSS Performance
 
 ### Critical CSS
@@ -143,7 +154,8 @@ const result = optimize(svgString, {
 import { extractCritical } from '@emotion/server';
 
 const { css, ids } = extractCritical(html);
-```text
+```
+
 ### CSS-in-JS Optimization
 
 ```typescript
@@ -159,7 +171,8 @@ items.map(item => css`color: ${item.color}`)
 
 // ✅ GOOD
 items.map(item => ({ color: item.color }))
-```text
+```
+
 ## Measurement
 
 ### Performance Tracking
@@ -177,7 +190,8 @@ performance.mark('myFeature-start');
 // ... feature code ...
 performance.mark('myFeature-end');
 performance.measure('myFeature', 'myFeature-start', 'myFeature-end');
-```text
+```
+
 ### Web Vitals
 
 ```typescript
@@ -186,7 +200,8 @@ import { getCLS, getFID, getLCP } from 'web-vitals';
 getCLS(console.log);  // Cumulative Layout Shift
 getFID(console.log);  // First Input Delay
 getLCP(console.log);  // Largest Contentful Paint
-```text
+```
+
 ## Caching Strategies
 
 ### Computation Caching
@@ -198,10 +213,11 @@ const expensiveOperation = memoize((input: string) => {
   // Complex calculation
   return result;
 });
-```text
+```
+
 ### HTTP Caching
 
-```typescript
+```yaml
 // Set cache headers
 res.set({
   'Cache-Control': 'public, max-age=31536000', // 1 year for assets
@@ -216,12 +232,13 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
-```text
+```
+
 ## Performance Budgets
 
 ### Set Targets
 
-```javascript
+```typescript
 // performance.config.js
 export const budgets = {
   javascript: 150 * 1024,      // 150kb
@@ -236,7 +253,8 @@ export const budgets = {
   fid: 100,                    // First Input Delay < 100ms
   cls: 0.1,                    // Cumulative Layout Shift < 0.1
 };
-```text
+```
+
 ### Continuous Monitoring
 
 ```json
@@ -247,7 +265,7 @@ export const budgets = {
     "perf:lighthouse": "lighthouse http://localhost:3000"
   }
 }
-````
+```
 
 ## Best Practices
 

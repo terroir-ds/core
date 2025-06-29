@@ -16,7 +16,7 @@ Ensure broad Node.js compatibility while leveraging modern features responsibly.
 
 Before adding any dependency:
 
-````bash
+```bash
 # Check engines field
 npm view [package-name] engines
 
@@ -24,7 +24,8 @@ npm view [package-name] engines
 "engines": {
   "node": ">=18.0.0"
 }
-```text
+```
+
 ### 2. Avoid Node.js 20+ Exclusive Features
 
 | Feature | Alternative |
@@ -57,7 +58,8 @@ nvm use 20 && pnpm test
 nvm use 22 && pnpm test
 
 # Or use CI matrix
-```text
+```
+
 ### 5. Handling Polyfills
 
 If polyfills are needed:
@@ -69,27 +71,29 @@ If polyfills are needed:
 
 ## Feature Detection
 
-```typescript
+```text
 // Check for feature availability
 if (typeof structuredClone === 'function') {
   return structuredClone(obj);
 } else {
   return JSON.parse(JSON.stringify(obj)); // fallback
 }
-```text
+```
+
 ## CI Configuration
 
-```yaml
+```bash
 # .github/workflows/test.yml
 strategy:
   matrix:
     node-version: [18.x, 20.x, 22.x]
-```text
+```
+
 ## Common Compatibility Issues
 
 ### 1. Module Resolution
 
-```json
+```bash
 {
   "type": "module",  // Be explicit
   "exports": {
@@ -99,20 +103,24 @@ strategy:
     }
   }
 }
-```typescript
+```
+
 ### 2. Global APIs
 
 Some globals added in newer versions:
+
 - `crypto` global (Node 19+)
 - `navigator` global (Node 21+)
 
 Always import explicitly:
+
 ```typescript
 import { webcrypto } from 'node:crypto';
-```text
+```
+
 ### 3. TypeScript Configuration
 
-```json
+```yaml
 {
   "compilerOptions": {
     "lib": ["ES2022"],  // Node 18 supports ES2022
@@ -120,7 +128,7 @@ import { webcrypto } from 'node:crypto';
     "module": "NodeNext"
   }
 }
-````
+```
 
 ## Best Practices
 

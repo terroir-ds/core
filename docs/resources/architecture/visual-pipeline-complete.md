@@ -4,7 +4,7 @@
 
 ### Google Fonts Integration
 
-```javascript
+```typescript
 // design-system/config/typography.js
 export const fontConfig = {
   families: {
@@ -21,10 +21,11 @@ export const fontConfig = {
     },
   },
 };
-```text
+```
+
 ### Material Symbols Integration
 
-```javascript
+```typescript
 // design-system/config/icons.js
 export const iconConfig = {
   library: '@material-symbols/web',
@@ -61,12 +62,13 @@ export const iconConfig = {
     'GRAD' var(--icon-grad, 0),
     'FILL' var(--icon-fill, 0);
 }
-```text
+```
+
 ## 2. Motion & Animation Tokens
 
 ### Motion Token Structure
 
-```javascript
+```yaml
 // tokens/motion.json
 {
   "motion": {
@@ -93,10 +95,11 @@ export const iconConfig = {
     }
   }
 }
-```text
+```
+
 ### Animated Loading Spinner Example
 
-```javascript
+```typescript
 // design-system/components/animated-spinner.js
 export const spinnerAnimation = {
   svg: `
@@ -144,12 +147,13 @@ export const spinnerAnimation = {
     }
   `,
 };
-```text
+```
+
 ## 3. Critical CSS Extraction
 
 ### Implementation
 
-```javascript
+```typescript
 // design-system/scripts/critical-css.js
 import { generate } from 'critical';
 
@@ -197,12 +201,13 @@ async function extractCriticalCSS() {
   <!-- Non-critical CSS loaded async -->
   <link rel="preload" href="/css/main-async.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
 </head>
-```text
+```
+
 ## 4. Visual Documentation Generator (with Storybook)
 
 ### Storybook Integration
 
-```javascript
+```bash
 // .storybook/main.js
 export default {
   stories: ['../design-system/stories/**/*.stories.js', '../design-system/docs/**/*.mdx'],
@@ -246,10 +251,11 @@ export async function generateTokenStories(tokens) {
     themes: ['light', 'dark', 'high-contrast'],
   });
 }
-```text
+```
+
 ### Static Documentation
 
-```javascript
+```typescript
 // design-system/scripts/generate-visual-docs.js
 export async function generateDocs() {
   const pages = {
@@ -278,12 +284,13 @@ export async function generateDocs() {
   // Generate static HTML/PDF
   await generateStaticSite(pages, 'dist/docs');
 }
-```text
+```
+
 ## 5. Accessibility Testing Tools
 
 ### Visual Accessibility Tests
 
-```javascript
+```typescript
 // design-system/scripts/a11y-visual-tests.js
 import { injectAxe, checkA11y } from '@axe-core/playwright';
 import { test } from '@playwright/test';
@@ -350,12 +357,13 @@ test('touch targets', async ({ page }) => {
 
   await page.screenshot({ path: 'a11y/touch-targets.png' });
 });
-```text
+```
+
 ## 6. Build Artifacts & Reports
 
 ### Visual Pipeline Report
 
-```javascript
+```typescript
 // design-system/scripts/build-report.js
 export async function generateBuildReport() {
   const report = {
@@ -405,12 +413,13 @@ export async function generateBuildReport() {
 
   return report;
 }
-```text
+```
+
 ## 7. Version Control for Visual Changes
 
 ### Visual Diff System
 
-```javascript
+```bash
 // design-system/scripts/visual-versioning.js
 import pixelmatch from 'pixelmatch';
 import { PNG } from 'pngjs';
@@ -459,10 +468,11 @@ if git diff --cached --name-only | grep -E "tokens/.*\.json$"; then
   npm run design:snapshot
   git add design-system/snapshots/
 fi
-```text
+```
+
 ## Complete Pipeline Scripts
 
-```json
+```bash
 {
   "scripts": {
     // Core building
@@ -501,12 +511,13 @@ fi
     "design:all": "npm run design:build && npm run design:test && npm run design:docs && npm run design:report"
   }
 }
-```text
+```
+
 ## 8. Design Token Linting
 
 ### Token Validation Rules
 
-```javascript
+```bash
 // design-system/.tokenlintrc.js
 module.exports = {
   rules: {
@@ -601,10 +612,11 @@ async function lintTokens() {
 
   console.log('✅ Token linting complete');
 }
-```text
+```
+
 ### Custom Validation Rules
 
-```javascript
+```typescript
 // design-system/scripts/custom-token-rules.js
 export const customRules = {
   // Ensure all interactive colors have focus states
@@ -642,10 +654,11 @@ export const customRules = {
     message: 'Version must follow semver format (x.y.z)',
   },
 };
-```text
+```
+
 ### Integration with Build Pipeline
 
-```json
+```bash
 {
   "scripts": {
     "design:lint": "node design-system/scripts/lint-tokens.js",

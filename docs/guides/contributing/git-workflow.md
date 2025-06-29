@@ -13,13 +13,14 @@ This project uses a balanced git workflow that enables rapid development while m
 
 We use [Conventional Commits](https://www.conventionalcommits.org/) for clear history and automation:
 
-```bash
+```text
 <type>(<scope>): <subject>
 
 [optional body]
 
 [optional footer(s)]
-```bash
+```
+
 ### Types
 
 - `feat`: New feature
@@ -50,7 +51,8 @@ git commit -m "docs: update README with new token architecture"
 git commit -m "feat(api): change token naming convention
 
 BREAKING CHANGE: Renamed all color tokens from camelCase to kebab-case"
-```bash
+```
+
 ## Git Hooks Behavior
 
 ### Pre-commit (Permissive)
@@ -91,7 +93,8 @@ git commit -m "feat: work in progress on color system"
 
 # Push to feature branch anytime
 git push origin feature/color-system
-```bash
+```
+
 ### Before Merging to Main
 
 ```bash
@@ -102,13 +105,15 @@ pnpm build
 
 # Fix any issues, then push
 git push origin main
-```bash
+```
+
 ### Quick Fixes
 
 ```bash
 # Bypass hooks if needed (use sparingly)
 git commit --no-verify -m "fix: emergency hotfix"
-```bash
+```
+
 ## Branch Strategy
 
 ### Protected Branches
@@ -143,7 +148,8 @@ pnpm test
 pnpm test:unit
 pnpm test:visual
 pnpm test:a11y
-```bash
+```
+
 ### Commit History
 
 ```bash
@@ -153,7 +159,8 @@ git log --oneline --pretty=format:"%C(auto)%h %s"
 # Filter by type
 git log --grep="^feat"
 git log --grep="^fix"
-```bash
+```
+
 ## CI/CD Integration
 
 The CI pipeline enforces the same standards as pre-push hooks:
@@ -169,14 +176,16 @@ The CI pipeline enforces the same standards as pre-push hooks:
 ```bash
 # Reinstall hooks
 pnpm exec husky install
-```bash
+```
+
 ### Bypass Hooks (Emergency Only)
 
 ```bash
 # Skip all hooks
 git commit --no-verify
 git push --no-verify
-```bash
+```
+
 ### Fix Commit Message
 
 ```bash

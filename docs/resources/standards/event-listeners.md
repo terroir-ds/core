@@ -6,7 +6,8 @@ Node.js has a default limit of 10 event listeners per event to prevent memory le
 
 ```text
 MaxListenersExceededWarning: Possible EventEmitter memory leak detected
-```text
+```
+
 This document outlines our standards for managing event listeners to avoid this warning and prevent actual memory leaks.
 
 ## When This Happens
@@ -31,7 +32,8 @@ process.setMaxListeners(100);
 
 // In afterAll cleanup
 process.setMaxListeners(originalMaxListeners);
-```text
+```
+
 ### 2. Using Shared Utilities
 
 We provide utilities in `@utils/shared/event-listeners`:
@@ -62,28 +64,31 @@ const result = await suppressMaxListenersWarning(async () => {
 
 // In test setup
 const cleanup = configureTestMaxListeners();
-```text
+```
+
 ### 3. Best Practices
 
 #### Always Clean Up Listeners
 
-```typescript
+```text
 // ❌ Bad - no cleanup
 process.on('exit', handler);
 
 // ✅ Good - with cleanup
 process.on('exit', handler);
 return () => process.off('exit', handler);
-```text
+```
+
 #### Use `once` for One-Time Events
 
-```typescript
+```text
 // ❌ Bad - permanent listener for one-time event
 emitter.on('ready', handler);
 
 // ✅ Good - automatically removed after first call
 emitter.once('ready', handler);
-```text
+```
+
 #### Use WeakMap/WeakSet for Tracking
 
 ```typescript
@@ -92,7 +97,8 @@ const listeners = new Map<object, Function>();
 
 // ✅ Good - allows garbage collection
 const listeners = new WeakMap<object, Function>();
-```text
+```
+
 #### Return Cleanup Functions
 
 ```typescript
@@ -106,18 +112,20 @@ export function watchSomething(handler: Function): () => void {
     process.off('SIGTERM', handler);
   };
 }
-```text
+```
+
 ## Module-Specific Guidelines
 
 ### Logger Module
 
 Already implements test environment detection:
 
-```typescript
+```text
 if (isTest()) {
   process.setMaxListeners(50);
 }
-```text
+```
+
 ### Async Utilities
 
 Use `{ once: true }` and cleanup patterns:
@@ -125,7 +133,8 @@ Use `{ once: true }` and cleanup patterns:
 ```typescript
 const controller = new AbortController();
 controller.signal.addEventListener('abort', handler, { once: true });
-```text
+```
+
 ### Error Handlers
 
 Track and clean up global handlers:
@@ -136,7 +145,8 @@ const originalHandlers = process.listeners('uncaughtException');
 // ... in cleanup
 process.removeAllListeners('uncaughtException');
 originalHandlers.forEach(h => process.on('uncaughtException', h));
-```text
+```
+
 ## Testing Considerations
 
 1. **Always use test setup** - Configure max listeners in setup files

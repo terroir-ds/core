@@ -102,12 +102,13 @@ These standards will be created as they become relevant:
 
 ### Before Every Commit
 
-````bash
+```bash
 # ALWAYS run before committing
 pnpm fix
 git diff  # Review changes
 pnpm test
-```bash
+```
+
 ### Error Handling
 
 ```typescript
@@ -120,7 +121,8 @@ throw new ValidationError('Invalid email format', {
   code: 'INVALID_EMAIL',
   context: { email: value }
 });
-```bash
+```
+
 ### Logging
 
 ```typescript
@@ -130,7 +132,7 @@ console.log('Processing...');
 // ✅ Use structured logger
 import { logger } from '@utils/logger';
 logger.info({ count: 5 }, 'Processing items');
-````
+```
 
 ## Adding New Standards
 

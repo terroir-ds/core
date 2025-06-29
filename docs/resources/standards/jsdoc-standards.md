@@ -18,13 +18,14 @@ Comprehensive JSDoc standards for the Terroir Core Design System. All public API
 
 Every TypeScript/JavaScript file should start with a file header:
 
-````typescript
+```text
 /**
  * @fileoverview Brief description of the file's purpose
  * @module @terroir/core/path/to/module
  * @category Category Name
  */
-```text
+```
+
 ### Functions
 
 All exported functions must be documented:
@@ -79,7 +80,8 @@ export async function functionName(
 ): Promise<Result> {
   // Implementation
 }
-```text
+```
+
 ### Classes
 
 Document classes and their methods:
@@ -135,7 +137,8 @@ export class ClassName {
     // Implementation
   }
 }
-```text
+```
+
 ### Interfaces and Types
 
 Document all exported types:
@@ -191,7 +194,8 @@ export type ComponentState =
   | 'error'
   /** Component completed successfully */
   | 'success';
-```text
+```
+
 ### Enums
 
 Document enums and their members:
@@ -218,7 +222,8 @@ export enum LogLevel {
   /** Critical errors that require immediate attention */
   FATAL = 4
 }
-```text
+```
+
 ### React Components
 
 Use specialized tags for components:
@@ -269,7 +274,8 @@ Use specialized tags for components:
 export const Button: React.FC<ButtonProps> = (props) => {
   // Implementation
 };
-```text
+```
+
 ## Categories
 
 Use consistent categories for organization:
@@ -355,7 +361,8 @@ Use consistent categories for organization:
  * console.log(result); // { success: true, data: {...} }
  * ```
  */
-```text
+```
+
 ## Best Practices
 
 ### Do's
@@ -387,12 +394,13 @@ Use TypeDoc validation to ensure quality:
     "notDocumented": false
   }
 }
-```text
+```
+
 ## Template Files
 
 ### Function Template
 
-```typescript
+```text
 /**
  * [Brief description]
  *
@@ -411,10 +419,11 @@ Use TypeDoc validation to ensure quality:
  * @see {@link relatedItem}
  * @since 1.0.0
  */
-```text
+```
+
 ### Class Template
 
-```typescript
+```text
 /**
  * [Brief description]
  *
@@ -428,10 +437,11 @@ Use TypeDoc validation to ensure quality:
  *
  * @since 1.0.0
  */
-```text
+```
+
 ### Component Template
 
-```typescript
+```text
 /**
  * [Brief description]
  *
@@ -453,7 +463,7 @@ Use TypeDoc validation to ensure quality:
  *
  * @since 1.0.0
  */
-````
+```
 
 ## Review Checklist
 

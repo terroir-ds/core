@@ -8,7 +8,7 @@ Always use the structured logger for consistent, secure, and performant logging 
 
 ### 1. Never Use Console
 
-````typescript
+```typescript
 // ❌ NEVER use console methods
 console.log('Processing items...');
 console.error('Error:', error);
@@ -19,10 +19,11 @@ import { logger } from '@utils/logger';
 logger.info('Processing items...');
 logger.error({ err: error }, 'Processing failed');
 logger.warn('Deprecated feature used');
-```text
+```
+
 ### 2. Use Structured Logging
 
-```typescript
+```yaml
 // ❌ DON'T log unstructured strings
 logger.info(`Processing ${count} items for user ${userId}`);
 
@@ -35,7 +36,8 @@ logger.info(
   },
   'Processing items'
 );
-```text
+```
+
 ### 3. Use Helper Functions
 
 ```typescript
@@ -57,10 +59,11 @@ try {
   logError('color generation', error);
   throw error;
 }
-```text
+```
+
 ### 4. Include Appropriate Context
 
-```typescript
+```yaml
 // ❌ DON'T log without context
 logger.error('Failed to save');
 
@@ -75,7 +78,8 @@ logger.error(
   },
   'Failed to save user profile'
 );
-```text
+```
+
 ### 5. Use Child Loggers for Context
 
 ```typescript
@@ -89,10 +93,11 @@ const requestLogger = logger.child({ requestId });
 requestLogger.info('Starting request');
 requestLogger.info('Validating input');
 requestLogger.info('Processing data');
-```text
+```
+
 ### 6. Security - Never Log Sensitive Data
 
-```typescript
+```yaml
 // ❌ NEVER log sensitive information
 logger.info({
   password: user.password,
@@ -109,10 +114,11 @@ logger.info({
   },
   hasApiKey: !!config.apiKey
 });
-```text
+```
+
 ### 7. Use Appropriate Log Levels
 
-```typescript
+```text
 // Log levels and their usage:
 
 // TRACE: Very detailed debugging info
@@ -132,7 +138,8 @@ logger.error({ err: error }, 'Operation failed');
 
 // FATAL: Critical errors that will crash the app
 logger.fatal({ err: error }, 'Unrecoverable error');
-```text
+```
+
 ### 8. Performance Tracking
 
 ```typescript
@@ -146,7 +153,8 @@ await measureTime('expensive-operation', async () => {
   await operation();
 });
 // Automatically logs: "expensive-operation completed in 123ms"
-```yaml
+```
+
 ## Environment Configuration
 
 The logger automatically adapts to the environment:
@@ -178,7 +186,8 @@ export async function handleRequest(req: Request) {
     throw error;
   }
 }
-```text
+```
+
 ### Batch Operations
 
 ```typescript
@@ -196,7 +205,7 @@ export async function processBatch(items: Item[]) {
 
   return results;
 }
-````
+```
 
 ## References
 

@@ -19,7 +19,7 @@ This document defines standards for creating and maintaining AI-focused document
 
 **Structure**:
 
-```markdown
+```bash
 # Component/Package Name
 
 **Purpose**: One-line description for AI context
@@ -41,13 +41,15 @@ Brief explanations of domain-specific concepts
 Task-oriented examples with code snippets
 
 ## AI Metadata
+```
 
-```yaml
 stability: stable|beta|experimental
 token_cost: estimated_tokens
 last_updated: YYYY-MM-DD
+
 ```text
-```text
+```
+
 ### 2. Project-level AI Documentation (`/docs/ai/`)
 
 **When to use**: Cross-cutting concerns, architectural decisions, AI-specific guides that apply project-wide.
@@ -55,17 +57,20 @@ last_updated: YYYY-MM-DD
 **Location**: `/docs/ai/` directory
 
 **Structure**:
-```text
+
+```markdown
 docs/
 └── ai/
     ├── architecture.md      # System design for AI context
     ├── contributing.md      # AI contribution guidelines
     ├── patterns.md         # Common patterns across the codebase
     └── domain-concepts.md  # Domain-specific terminology
-```typescript
+```
+
 ### 3. AI Configuration Files (Root level)
 
 **Files**:
+
 - `CLAUDE.md` - Claude-specific project instructions
 - `.cursorrules` - Cursor AI configuration (if needed)
 - `llms.txt` - Standard AI documentation index (auto-generated)
@@ -97,6 +102,7 @@ docs/
 ### Token Optimization Strategies
 
 1. **Progressive Disclosure**
+
    ```markdown
    ## Quick Start (50 tokens)
    Essential imports and basic usage
@@ -239,7 +245,7 @@ The `docs-site` package automatically generates `llms.txt` from:
 
 Format:
 
-```markdown
+```bash
 # Terroir Core Design System
 > Open-source design system with Material Color Utilities
 
@@ -250,10 +256,12 @@ Format:
 ## Guides
 - [Architecture](/docs/ai/architecture): System design
 - [Patterns](/docs/ai/patterns): Common patterns
-```bash
+```
+
 ### Documentation Build Process
 
 1. **Local Development**
+
    ```bash
    pnpm docs:dev    # Includes AI docs
    pnpm docs:build  # Generates llms.txt
@@ -268,7 +276,7 @@ Format:
 
 ### Good `.ai.md` Example
 
-```markdown
+```bash
 # @terroir/core
 
 **Purpose**: Core utilities for type safety, error handling, and logging
@@ -286,7 +294,8 @@ Format:
 ## Common Tasks
 
 ### Input Validation
-```typescript
+```
+
 import { assertDefined, isString, ValidationError } from '@terroir/core';
 
 function processUser(data: unknown) {
@@ -295,17 +304,21 @@ function processUser(data: unknown) {
     throw new ValidationError('Invalid email', { field: 'email' });
   }
 }
-```text
+
+```bash
 ## AI Metadata
-```yaml
+```
+
 stability: stable
 token_cost: 400
 last_updated: 2025-06-29
+
 ```text
-```text
+```
+
 ### Good `/docs/ai/` Example
 
-```markdown
+```bash
 # Error Handling Architecture
 
 ## Overview
@@ -313,28 +326,32 @@ last_updated: 2025-06-29
 Terroir Core uses typed errors with structured context for better debugging and AI understanding.
 
 ## Error Hierarchy
+```
 
-```text
 BaseError
 ├── ValidationError    # Input validation failures
 ├── NetworkError      # API/network failures
 ├── ConfigError       # Configuration issues
 └── InternalError     # System errors
-```text
+
+```bash
 ## Patterns
 
 ### Creating Errors
 Always include context:
-```typescript
+```
+
 throw new ValidationError('Invalid email', {
   field: 'email',
   value: input,
   expected: 'email format'
 });
-```text
+
+```bash
 ### Handling Errors
 Use type guards:
-```typescript
+```
+
 try {
   await operation();
 } catch (error) {
@@ -344,8 +361,10 @@ try {
     // Retry logic
   }
 }
+
 ```text
-```text
+```
+
 ## Migration Guide
 
 For existing documentation:
@@ -359,6 +378,7 @@ For existing documentation:
 ## Validation
 
 AI documentation must:
+
 - Pass markdown linting
 - Include required metadata
 - Follow naming conventions
@@ -378,6 +398,7 @@ Based on emerging patterns from tools like RepoAgent and ai-context:
 ### 2. **Multi-Agent Compatibility**
 
 Support multiple AI assistants by:
+
 - Using standard markdown format
 - Avoiding tool-specific syntax
 - Providing tool-agnostic examples
@@ -386,6 +407,7 @@ Support multiple AI assistants by:
 ### 3. **Documentation Freshness**
 
 Keep AI docs current:
+
 - Include `last_updated` in metadata
 - Use git hooks for auto-updates
 - Flag stale documentation
@@ -394,13 +416,15 @@ Keep AI docs current:
 ### 4. **Context Window Management**
 
 For limited context windows:
+
 - Create summary files for large modules
 - Use progressive detail levels
 - Implement smart chunking strategies
 - Provide "context packages" for specific tasks
 
 Example context package:
-```markdown
+
+```bash
 ## Context Package: Add Authentication
 
 ### Required Context

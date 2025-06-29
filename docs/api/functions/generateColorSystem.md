@@ -51,7 +51,8 @@ import { generateColorSystem } from '@terroir/core';
 const colors = await generateColorSystem('#1976d2');
 console.log(colors.primary[50]); // Light primary tone
 console.log(colors.primary[90]); // Dark primary tone
-```typescript
+```
+
 ```typescript
 const colors = await generateColorSystem({
   source: '#1976d2',
@@ -63,7 +64,8 @@ const colors = await generateColorSystem({
 // Access specific tones
 const primaryButton = colors.primary[40];
 const primaryHover = colors.primary[30];
-```typescript
+```
+
 ```typescript
 const colors = await generateColorSystem({
   source: '#1976d2',

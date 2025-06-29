@@ -19,7 +19,7 @@ Before adding any dependency, consider:
 
 ### Checklist
 
-````bash
+```bash
 # Check package info
 npm view [package]
 
@@ -34,7 +34,8 @@ npm view [package] dependencies
 # - Last publish date
 # - Open issues/PRs
 # - Download trends
-```text
+```
+
 ## Dependency Types
 
 ### Production Dependencies
@@ -42,8 +43,10 @@ npm view [package] dependencies
 ```bash
 # Only truly required at runtime
 pnpm add package-name
-```text
+```
+
 Examples:
+
 - Framework code (React, Vue)
 - Runtime utilities
 - Polyfills (if needed)
@@ -53,8 +56,10 @@ Examples:
 ```bash
 # Build/development only
 pnpm add -D package-name
-```text
+```
+
 Examples:
+
 - Build tools (Vite, Webpack)
 - Test frameworks
 - Linters
@@ -68,8 +73,10 @@ Examples:
     "react": ">=16.8.0 <19.0.0"
   }
 }
-```text
+```
+
 Use for:
+
 - Framework requirements
 - Plugin systems
 - Shared instances
@@ -78,7 +85,7 @@ Use for:
 
 ### Pinning Strategy
 
-```json
+```yaml
 {
   "dependencies": {
     // Exact for critical/unstable packages
@@ -91,7 +98,8 @@ Use for:
     "careful-package": "~3.0.1"
   }
 }
-```text
+```
+
 ### Update Strategy
 
 ```bash
@@ -106,7 +114,8 @@ pnpm update package-name --latest
 
 # Interactive update
 pnpm upgrade --interactive
-```text
+```
+
 ## Security
 
 ### Regular Audits
@@ -120,7 +129,8 @@ pnpm audit --fix
 
 # Check specific package
 pnpm why package-name
-```text
+```
+
 ### Security Policy
 
 1. **Critical**: Fix immediately
@@ -141,12 +151,13 @@ pnpm overrides  # in package.json
 "resolutions": {
   "vulnerable-package": "^2.0.0"
 }
-```text
+```
+
 ## Bundle Size
 
 ### Size Budgets
 
-```javascript
+```yaml
 // bundlesize.config.js
 module.exports = {
   files: [
@@ -160,7 +171,8 @@ module.exports = {
     }
   ]
 };
-```text
+```
+
 ### Alternatives to Heavy Packages
 
 | Heavy Package | Lightweight Alternative |
@@ -187,7 +199,8 @@ const debounce = (fn, delay) => {
     timeoutId = setTimeout(() => fn(...args), delay);
   };
 };
-```text
+```
+
 ## Monorepo Dependencies
 
 ### Workspace Protocol
@@ -199,11 +212,13 @@ const debounce = (fn, delay) => {
     "@terroir/react": "workspace:^1.0.0"
   }
 }
-```text
+```
+
 ### Shared Dependencies
 
 Root `package.json`:
-```json
+
+```yaml
 {
   "devDependencies": {
     // Shared dev tools
@@ -212,7 +227,8 @@ Root `package.json`:
     "eslint": "^8.50.0"
   }
 }
-```text
+```
+
 ## Lock File Management
 
 ### Never Ignore Lock Files
@@ -221,7 +237,8 @@ Root `package.json`:
 # Commit pnpm-lock.yaml
 git add pnpm-lock.yaml
 git commit -m "chore(deps): update lock file"
-```text
+```
+
 ### Resolving Conflicts
 
 ```bash
@@ -231,7 +248,8 @@ pnpm install
 
 # Or use pnpm's resolution
 pnpm install --force
-```text
+```
+
 ## Documentation
 
 ### Document Unusual Dependencies
@@ -245,10 +263,11 @@ pnpm install --force
  * - Will remove when Y is implemented
  */
 import { feature } from 'obscure-package';
-```text
+```
+
 ### In README
 
-```markdown
+```bash
 ## Dependencies
 
 ### Production
@@ -257,7 +276,8 @@ import { feature } from 'obscure-package';
 
 ### Development
 - **build-tool**: Custom build for Y reason
-```yaml
+```
+
 ## Best Practices
 
 1. **Audit before adding**: Research thoroughly
@@ -270,6 +290,7 @@ import { feature } from 'obscure-package';
 ## Red Flags
 
 Avoid packages with:
+
 - ❌ No recent updates (>2 years)
 - ❌ No tests
 - ❌ Huge dependency trees
@@ -289,4 +310,4 @@ pnpm remove package-name
 
 # Clean up
 pnpm prune
-````
+```

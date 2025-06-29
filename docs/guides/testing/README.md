@@ -37,7 +37,7 @@ Test individual functions and utilities in isolation.
 **Tools**: Vitest, Testing Library
 **Coverage**: Aim for 80%+ coverage on critical paths
 
-````typescript
+```bash
 // lib/utils/__tests__/colors.test.ts
 import { describe, it, expect } from 'vitest';
 import { generateColorSystem } from '../colors';
@@ -59,11 +59,13 @@ describe('generateColorSystem', () => {
     expect(contrast).toBeGreaterThan(4.5); // WCAG AA
   });
 });
-```bash
+```
+
 ### 2. Component Tests
+
 Test React components with user interactions and accessibility.
 
-```typescript
+```bash
 // packages/react/__tests__/Button.test.tsx
 import { render, screen, fireEvent } from '@testing-library/react';
 import { axe, toHaveNoViolations } from 'jest-axe';
@@ -101,8 +103,10 @@ describe('Button', () => {
     expect(handleClick).toHaveBeenCalledTimes(2);
   });
 });
-```bash
+```
+
 ### 3. Visual Regression Tests
+
 Ensure UI consistency across changes using Playwright.
 
 ```typescript
@@ -126,8 +130,10 @@ test.describe('Button Visual Tests', () => {
     await expect(button).toHaveScreenshot('button-focused.png');
   });
 });
-```bash
+```
+
 ### 4. Accessibility Tests
+
 Comprehensive accessibility validation using multiple tools.
 
 ```typescript
@@ -157,11 +163,13 @@ test.describe('Component Accessibility', () => {
     await expect(page.locator(':focus')).toHaveText('Secondary Button');
   });
 });
-```bash
+```
+
 ### 5. Contrast Validation
+
 Automated WCAG contrast compliance testing.
 
-```typescript
+```bash
 // scripts/test-contrast.js
 import { generateColorSystem } from '../lib/colors/index.js';
 import { calculateContrast } from '../lib/utils/contrast.js';
@@ -201,10 +209,12 @@ async function validateContrast() {
 }
 
 validateContrast().catch(console.error);
-```bash
+```
+
 ## Running Tests
 
 ### Local Development
+
 ```bash
 # Run all tests
 pnpm test
@@ -218,8 +228,10 @@ pnpm test:contrast      # Color contrast validation
 # Development mode
 pnpm test:watch         # Watch mode for unit tests
 pnpm test:dev           # Interactive test runner
-```bash
+```
+
 ### Continuous Integration
+
 ```bash
 # Full CI test suite
 pnpm test:ci
@@ -229,11 +241,13 @@ pnpm test:coverage:ci
 
 # Performance testing
 pnpm test:performance
-```bash
+```
+
 ## Test Organization
 
 ### Directory Structure
-```text
+
+```markdown
 lib/
 ├── utils/
 │   ├── __tests__/       # Unit tests
@@ -249,8 +263,10 @@ tests/
 ├── visual/              # Visual regression tests
 ├── accessibility/       # A11y tests
 └── performance/         # Performance tests
-```bash
+```
+
 ### Test Naming Conventions
+
 - **Unit tests**: `*.test.ts` or `*.test.tsx`
 - **Integration tests**: `*.integration.test.ts`
 - **Visual tests**: `*.visual.spec.ts`
@@ -261,6 +277,7 @@ tests/
 ### Writing Good Tests
 
 #### 1. Test User Behavior, Not Implementation
+
 ```typescript
 // ✅ Good - tests user behavior
 test('should submit form when Enter is pressed', () => {
@@ -283,9 +300,11 @@ test('should call handleSubmit when Enter is pressed', () => {
 
   expect(handleSubmit).toHaveBeenCalled();
 });
-```bash
+```
+
 #### 2. Use Descriptive Test Names
-```typescript
+
+```text
 // ✅ Good - clear what's being tested
 test('should show error message when email is invalid', () => {});
 test('should disable submit button while form is submitting', () => {});
@@ -293,8 +312,10 @@ test('should disable submit button while form is submitting', () => {});
 // ❌ Bad - unclear test purpose
 test('should work correctly', () => {});
 test('test email validation', () => {});
-```bash
+```
+
 #### 3. Test Accessibility by Default
+
 ```typescript
 test('Button component', async () => {
   const { container } = render(<Button>Click me</Button>);
@@ -311,11 +332,13 @@ test('Button component', async () => {
   button.focus();
   expect(button).toHaveFocus();
 });
-```bash
+```
+
 ### Performance Testing
 
 #### Bundle Size Testing
-```typescript
+
+```bash
 // tests/performance/bundle-size.test.ts
 import { describe, it, expect } from 'vitest';
 import { analyzeBundleSize } from '../utils/bundle-analyzer';
@@ -328,9 +351,11 @@ describe('Bundle Size', () => {
     expect(analysis.react).toBeLessThan(20 * 1024); // 20KB limit
   });
 });
-```bash
+```
+
 #### Runtime Performance
-```typescript
+
+```bash
 // tests/performance/color-generation.test.ts
 import { performance } from 'perf_hooks';
 import { generateColorSystem } from '../../lib/colors';
@@ -346,33 +371,39 @@ test('color generation should be fast', async () => {
   const duration = performance.now() - start;
   expect(duration).toBeLessThan(100); // Should complete in <100ms
 });
-```bash
+```
+
 ## Debugging Tests
 
 ### Common Issues
 
 #### 1. Accessibility Violations
+
 ```bash
 # Run accessibility tests with detailed output
 pnpm test:a11y --reporter=verbose
 
 # Debug specific violations
 npx axe-core --browser=chrome --url=http://localhost:3000
-```bash
+```
+
 #### 2. Visual Regression Failures
+
 ```bash
 # Update visual snapshots
 pnpm test:visual --update-snapshots
 
 # Debug visual differences
 npx playwright show-trace test-results/trace.zip
-```bash
+```
+
 #### 3. Flaky Tests
+
 - Use `waitFor` for async operations
 - Mock time-dependent functions
 - Ensure proper cleanup between tests
 
-```typescript
+```text
 // ✅ Good - wait for async operations
 test('should load data', async () => {
   render(<DataComponent />);

@@ -6,11 +6,12 @@ This project uses automated linting to maintain code quality and consistency. We
 
 To automatically fix all linting issues that can be fixed:
 
-````bash
+```bash
 pnpm fix
 # or
 pnpm fix:all
-```text
+```
+
 This will:
 
 - Fix TypeScript/JavaScript issues with ESLint
@@ -30,7 +31,8 @@ pnpm lint
 pnpm lint:ts       # TypeScript/JavaScript
 pnpm lint:md       # Markdown
 pnpm lint:prettier # JSON/YAML formatting
-```text
+```
+
 ### Fix Issues Automatically
 
 ```bash
@@ -42,7 +44,8 @@ pnpm lint:ts:fix        # Fix TypeScript/JavaScript
 pnpm lint:md:fix        # Fix Markdown
 pnpm lint:md:fix-blocks # Fix code block language specifiers
 pnpm lint:prettier:fix  # Fix JSON/YAML formatting
-```typescript
+```
+
 ## What Gets Fixed Automatically
 
 ### TypeScript/JavaScript (ESLint)
@@ -125,7 +128,8 @@ Add to your VS Code settings:
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   }
 }
-```bash
+```
+
 ## Configuration Files
 
 - **ESLint**: `eslint.config.js` - TypeScript/JavaScript rules
@@ -143,7 +147,8 @@ If `pnpm fix` fails, try running individual fixers to identify the issue:
 pnpm lint:ts:fix
 pnpm lint:md:fix
 pnpm lint:prettier:fix
-```text
+```
+
 ### ESLint parsing errors
 
 Check that your code is syntactically valid. ESLint can't fix syntax errors.
@@ -160,7 +165,7 @@ For large codebases, run fixers on specific directories:
 # Fix only lib directory
 eslint lib --fix
 markdownlint-cli2 'lib/**/*.md' --fix
-````
+```
 
 ## Best Practices
 

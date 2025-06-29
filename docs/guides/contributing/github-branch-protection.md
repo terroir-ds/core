@@ -76,7 +76,7 @@ For feature branches (`feature/*`, `fix/*`, `docs/*`):
 
 Create `.github/CODEOWNERS`:
 
-```yaml
+```bash
 # Global owners
 * @your-username @team-lead
 
@@ -100,7 +100,8 @@ Create `.github/CODEOWNERS`:
 # Dependencies
 package.json @your-username @team-lead
 pnpm-lock.yaml @your-username @team-lead
-```yaml
+```
+
 ## Automation Rules
 
 ### Auto-merge for Dependabot
@@ -128,7 +129,8 @@ markComment: >
   recent activity. It will be closed if no further activity occurs.
 closeComment: >
   This PR has been closed due to inactivity. Feel free to reopen if needed.
-```yaml
+```
+
 ## GitHub Actions Permissions
 
 In **Settings → Actions → General**:
@@ -171,7 +173,7 @@ Configure in **Settings → General → Pull Requests**:
 
 Create `SECURITY.md`:
 
-```markdown
+```bash
 # Security Policy
 
 ## Supported Versions

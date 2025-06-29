@@ -8,7 +8,7 @@ Keep documentation close to code, comprehensive, and up-to-date. This standard a
 
 ### Package Organization
 
-```text
+```markdown
 terroir-core/
 ├── docs/                      # Global project documentation
 │   ├── getting-started/      # Setup and installation guides
@@ -24,7 +24,8 @@ terroir-core/
 │   │   └── README.md         # Site setup guide
 │   └── react/                # React components (future)
 │       └── README.md         # Component library docs
-```bash
+```
+
 ### Import Path Documentation
 
 Always document both npm package imports and path aliases:
@@ -35,12 +36,13 @@ import { logger } from '@terroir/core/utils/logger';
 
 // Path alias import (for internal development)
 import { logger } from '@utils/logger';
-```text
+```
+
 ## Documentation Structure
 
 ### Keep Docs Close to Code
 
-```text
+```markdown
 packages/core/src/utils/logger/
 ├── index.ts                  # Implementation
 ├── __tests__/                # Co-located tests
@@ -50,7 +52,8 @@ packages/core/src/utils/logger/
 ├── __mocks__/               # Mock implementations
 │   └── logger.mock.ts
 └── README.md                # Module documentation
-```text
+```
+
 ### Documentation Hierarchy
 
 1. **Inline Comments** - For complex logic
@@ -65,7 +68,7 @@ See [JSDoc Standards](./jsdoc-standards.md) for comprehensive documentation guid
 
 ### Quick Reference
 
-````typescript
+```typescript
 /**
  * Validates an email address format per RFC 5321
  *
@@ -89,10 +92,11 @@ export function isValidEmail(email: string): boolean {
   }
   return EMAIL_REGEX.test(email);
 }
-```text
+```
+
 ### Don't Document the Obvious
 
-```typescript
+```yaml
 // ❌ DON'T over-document
 /**
  * Gets the user ID
@@ -113,12 +117,13 @@ getUserId(): string {
   }
   return this.userId;
 }
-```text
+```
+
 ## README Files
 
 ### Module README Template
 
-```markdown
+```bash
 # Module Name
 
 Brief description of what this module does.
@@ -150,7 +155,8 @@ See [API Documentation](./docs/api.md) for detailed reference.
 ## Examples
 
 See [examples](./examples/) for more use cases.
-```text
+```
+
 ## Detailed Documentation
 
 ### Package-Level Documentation
@@ -164,7 +170,7 @@ Each package should have:
 
 Example package structure:
 
-```text
+```markdown
 packages/core/
 ├── README.md                 # Package overview
 ├── CHANGELOG.md             # Version history
@@ -178,7 +184,7 @@ packages/core/
 │   │       └── docs/        # Detailed error docs
 │   └── colors/
 │       └── README.md        # Color system docs
-````
+```
 
 ### When to Create docs/ Subdirectory
 
@@ -192,7 +198,7 @@ Create detailed guides when:
 
 ### Documentation Files
 
-````text
+```markdown
 docs/
 ├── getting-started.md    # Quick start guide
 ├── api/                  # API reference
@@ -201,7 +207,8 @@ docs/
 ├── examples/             # Code examples
 ├── architecture.md       # Design decisions
 └── troubleshooting.md    # Common issues
-```text
+```
+
 ## Code Examples
 
 ### Always Include Working Examples
@@ -221,7 +228,8 @@ logger.level = 'debug';
 
 // Log with context
 logger.info({ userId: '123' }, 'User action performed');
-```text
+```
+
 ### Test Your Examples
 
 - Examples should be executable
@@ -232,7 +240,7 @@ logger.info({ userId: '123' }, 'User action performed');
 
 ### Use Consistent Formatting
 
-```markdown
+```bash
 # Main Title
 
 ## Section Title
@@ -246,19 +254,20 @@ logger.info({ userId: '123' }, 'User action performed');
 \```typescript
 // Code blocks with language
 \```
-```text
+```
+
 ### Include Table of Contents
 
 For long documents:
 
-```markdown
+```bash
 ## Table of Contents
 
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Usage](#usage)
 - [API Reference](#api-reference)
-````
+```
 
 ## Cross-Package Documentation
 
@@ -266,7 +275,7 @@ For long documents:
 
 Use relative paths for cross-package links:
 
-```markdown
+```bash
 <!-- From packages/core/README.md -->
 
 See the [documentation site](../docs-site/README.md) for interactive examples.
@@ -274,7 +283,8 @@ See the [documentation site](../docs-site/README.md) for interactive examples.
 <!-- From global docs -->
 
 See [@terroir/core](../packages/core/README.md) for utility functions.
-```bash
+```
+
 ### Shared Documentation
 
 Place shared concepts in `/docs/`:

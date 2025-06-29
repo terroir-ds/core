@@ -8,7 +8,7 @@ Maintain comprehensive test coverage with co-located tests that are easy to find
 
 ### Co-locate Tests with Source
 
-````text
+```markdown
 lib/
   utils/
     logger.ts                 # Source file
@@ -16,10 +16,11 @@ lib/
       logger.test.ts
     __mocks__/               # Mock implementations
       logger.mock.ts
-```text
+```
+
 ### Never Put Tests in Separate Directory
 
-```text
+```bash
 # ❌ DON'T separate tests from source
 src/
   utils/
@@ -34,7 +35,8 @@ lib/
     logger.ts
     __tests__/
       logger.test.ts
-```text
+```
+
 ## Writing Tests
 
 ### Test Structure
@@ -66,10 +68,12 @@ describe('FeatureName', () => {
     });
   });
 });
-```yaml
+```
+
 ### Test Coverage
 
 Aim for:
+
 - **Statements**: > 80%
 - **Branches**: > 80%
 - **Functions**: > 80%
@@ -79,7 +83,7 @@ Critical paths should have 100% coverage.
 
 ### Mock Creation
 
-```typescript
+```bash
 // In __mocks__/service.mock.ts
 export const createMockService = () => ({
   fetchData: vi.fn().mockResolvedValue(testData),
@@ -90,7 +94,8 @@ export const createMockService = () => ({
 import { createMockService } from '../__mocks__/service.mock';
 
 const mockService = createMockService();
-```text
+```
+
 ## Test Types
 
 ### Unit Tests
@@ -103,7 +108,8 @@ describe('calculateTotal', () => {
     expect(calculateTotal(items)).toBe(30);
   });
 });
-```text
+```
+
 ### Integration Tests
 
 ```typescript
@@ -118,10 +124,11 @@ describe('Order Processing', () => {
     expect(mockInventory.update).toHaveBeenCalled();
   });
 });
-```text
+```
+
 ### Error Testing
 
-```typescript
+```text
 // Always test error cases
 describe('error handling', () => {
   it('should handle network errors', async () => {
@@ -131,7 +138,8 @@ describe('error handling', () => {
     expect(logger.error).toHaveBeenCalled();
   });
 });
-```text
+```
+
 ## Handling Promise Rejections in Tests
 
 The project includes a global unhandled rejection handler that prevents test failures from unhandled promises. This means:
@@ -165,7 +173,8 @@ it('should reject with specific error details', async () => {
 it('should reject on invalid input', async () => {
   await expect(someAsyncFunction('invalid')).rejects.toThrow(ValidationError);
 });
-```text
+```
+
 ### Background Operations
 
 For tests that trigger background operations with intentional rejections (e.g., abort scenarios):
@@ -183,8 +192,10 @@ it('should handle concurrent operations with abort', async () => {
   // Test continues without failing
   await expect(promises[0]).rejects.toThrow('Operation aborted');
 });
-```typescript
+```
+
 No special handling is needed - the global setup manages background rejections.
+
 ## Best Practices
 
 1. **Test Behavior, Not Implementation**
@@ -205,6 +216,7 @@ No special handling is needed - the global setup manages background rejections.
    - Error conditions
 
 5. **Use Test Utilities**
+
    ```typescript
    // Create helpers for common operations
    export const createTestUser = (overrides = {}) => ({
@@ -212,7 +224,8 @@ No special handling is needed - the global setup manages background rejections.
      email: 'test@example.com',
      ...overrides
    });
-````
+
+```
 
 ## Running Tests
 

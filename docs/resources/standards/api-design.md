@@ -8,7 +8,7 @@ Consistent, intuitive API design for the Terroir Core Design System.
 
 ### Functions
 
-````typescript
+```typescript
 // ✅ GOOD: Verb + Noun, descriptive
 export function generateColorPalette(source: string): ColorPalette;
 export function validateContrast(fg: string, bg: string): boolean;
@@ -17,7 +17,8 @@ export function parseHexColor(hex: string): RGB;
 // ❌ BAD: Unclear, abbreviated
 export function genPal(s: string): any;
 export function check(a: string, b: string): boolean;
-```text
+```
+
 ### Boolean Returns
 
 ```typescript
@@ -25,7 +26,8 @@ export function check(a: string, b: string): boolean;
 export function isValidColor(color: string): boolean;
 export function hasAlpha(color: Color): boolean;
 export function canGeneratePalette(source: unknown): boolean;
-```text
+```
+
 ### Async Functions
 
 ```typescript
@@ -35,7 +37,8 @@ export async function loadFonts(urls: string[]): Promise<Font[]>;
 
 // Or with Async suffix for clarity
 export async function generatePaletteAsync(source: string): Promise<Palette>;
-```text
+```
+
 ## Parameter Design
 
 ### Options Objects
@@ -78,7 +81,8 @@ function createTheme(options: ThemeOptions): Theme {
 
   const config = { ...defaults, ...options };
 }
-```text
+```
+
 ### Destructuring with Defaults
 
 ```typescript
@@ -90,7 +94,8 @@ export function generateColors({
 }: ColorOptions): ColorScheme {
   // Implementation
 }
-```text
+```
+
 ## Return Values
 
 ### Consistent Types
@@ -104,7 +109,8 @@ export function parseColor(input: string): Result<Color, ParseError>;
 // ❌ BAD: Inconsistent returns
 export function findColor(name: string): Color | undefined | null;
 export function getColors(): Color[] | null;
-```text
+```
+
 ### Result Pattern
 
 ```typescript
@@ -129,7 +135,8 @@ if (result.success) {
 } else {
   console.error(result.error);
 }
-```text
+```
+
 ## Error Handling
 
 ### Throw Meaningful Errors
@@ -143,16 +150,18 @@ export function validateHex(hex: string): void {
     });
   }
 }
-```text
+```
+
 ### Never Throw Strings
 
-```typescript
+```text
 // ❌ BAD
 throw 'Invalid color';
 
 // ✅ GOOD
 throw new ValidationError('Invalid color format');
-```text
+```
+
 ## Versioning & Deprecation
 
 ### Deprecation Warnings
@@ -167,7 +176,8 @@ export function generatePalette(source: string): Palette {
   );
   return generateColorPalette(source);
 }
-```text
+```
+
 ### Version Compatibility
 
 ```typescript
@@ -180,7 +190,8 @@ export function createColor(input: string | ColorOptions): Color {
   }
   return new Color(input);
 }
-```text
+```
+
 ## TypeScript Integration
 
 ### Generics Where Helpful
@@ -198,7 +209,8 @@ export function memoize<T extends (...args: any[]) => any>(
     return cache.get(key);
   }) as T;
 }
-```text
+```
+
 ### Type Guards
 
 ```typescript
@@ -216,7 +228,8 @@ if (isColor(value)) {
   // TypeScript knows value is Color here
   console.log(value.r);
 }
-```text
+```
+
 ## Documentation
 
 ### JSDoc Everything Public
@@ -246,7 +259,8 @@ export function generateColorPalette(
 ): ColorPalette {
   // Implementation
 }
-```typescript
+```
+
 ## Best Practices
 
 1. **One Thing Well**: Each function should do one thing
@@ -274,4 +288,4 @@ export const color = {
 const primary = color.parse('#0066cc');
 const lighter = color.lighten(primary, 0.2);
 const formatted = color.format(lighter, 'hsl');
-````
+```

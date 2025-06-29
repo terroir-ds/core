@@ -23,13 +23,15 @@ This document establishes standards for consistent string manipulation across th
 
 **Old Pattern**:
 
-````typescript
+```typescript
 // ❌ Manual truncation
 const preview = text.substring(0, 100) + '...';
 const title = text.length > 50 ? text.substring(0, 50) + '...' : text;
 const excerpt = text.slice(0, 200) + (text.length > 200 ? '...' : '');
-```text
+```
+
 **New Pattern**:
+
 ```typescript
 // ✅ Use truncate utility
 import { truncate } from '@utils/string';
@@ -37,8 +39,10 @@ import { truncate } from '@utils/string';
 const preview = truncate(text, 100);
 const title = truncate(text, 50);
 const excerpt = truncate(text, 200, { ellipsis: '...' });
-```yaml
+```
+
 **Where to Apply**:
+
 - UI text that might overflow
 - Preview text in cards/lists
 - Meta descriptions
@@ -52,13 +56,16 @@ const excerpt = truncate(text, 200, { ellipsis: '...' });
 **Standard**: Use case conversion utilities for all case transformations
 
 **Old Pattern**:
+
 ```typescript
 // ❌ Manual case conversion
 const camel = str.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
 const kebab = str.replace(/([A-Z])/g, '-$1').toLowerCase();
 const pascal = str.charAt(0).toUpperCase() + str.slice(1);
-```text
+```
+
 **New Pattern**:
+
 ```typescript
 // ✅ Use case utilities
 import { camelCase, kebabCase, pascalCase } from '@utils/string';
@@ -66,8 +73,10 @@ import { camelCase, kebabCase, pascalCase } from '@utils/string';
 const camel = camelCase(str);
 const kebab = kebabCase(str);
 const pascal = pascalCase(str);
-```typescript
+```
+
 **Where to Apply**:
+
 - CSS class name generation
 - API property transformation
 - File naming
@@ -79,6 +88,7 @@ const pascal = pascalCase(str);
 **Standard**: Use `slugify()` for all URL-safe string generation
 
 **Old Pattern**:
+
 ```typescript
 // ❌ Manual slugification
 const slug = title
@@ -86,16 +96,20 @@ const slug = title
   .replace(/[^a-z0-9]/g, '-')
   .replace(/-+/g, '-')
   .replace(/^-|-$/g, '');
-```text
+```
+
 **New Pattern**:
+
 ```typescript
 // ✅ Use slugify utility
 import { slugify } from '@utils/string';
 
 const slug = slugify(title);
 const filename = slugify(name, { separator: '_' });
-```yaml
+```
+
 **Where to Apply**:
+
 - URL generation
 - File naming
 - ID generation from text
@@ -107,6 +121,7 @@ const filename = slugify(name, { separator: '_' });
 **Standard**: Use formatting utilities for consistent output
 
 **Old Pattern**:
+
 ```typescript
 // ❌ Manual formatting
 const size = bytes < 1024 ? bytes + ' B' :
@@ -116,16 +131,20 @@ const size = bytes < 1024 ? bytes + ' B' :
 const time = ms < 1000 ? ms + 'ms' :
             ms < 60000 ? (ms / 1000).toFixed(1) + 's' :
             (ms / 60000).toFixed(1) + 'm';
-```text
+```
+
 **New Pattern**:
+
 ```typescript
 // ✅ Use formatting utilities
 import { formatBytes, formatDuration } from '@utils/string';
 
 const size = formatBytes(bytes);
 const time = formatDuration(ms);
-```text
+```
+
 **Where to Apply**:
+
 - File size display
 - Download sizes
 - Duration display
@@ -151,7 +170,8 @@ rg "toLowerCase\(\).*replace.*[^a-z0-9]" --type ts
 
 # Find manual byte formatting
 rg "bytes.*1024|KB|MB|GB" --type ts
-```text
+```
+
 ### Migration Script
 
 ```typescript
@@ -177,12 +197,13 @@ async function migrateStringUtils() {
     }
   }
 }
-```text
+```
+
 ## Enforcement
 
 ### ESLint Rules (To Be Added)
 
-```javascript
+```yaml
 // .eslintrc.js
 module.exports = {
   rules: {
@@ -199,7 +220,8 @@ module.exports = {
     ]
   }
 };
-```bash
+```
+
 ### Pre-commit Hook
 
 The `pnpm fix` command will eventually auto-fix some of these patterns.
@@ -209,6 +231,7 @@ The `pnpm fix` command will eventually auto-fix some of these patterns.
 ### Hot Path Optimizations
 
 The string utilities are optimized for performance:
+
 - Cached regex patterns
 - Minimal object allocation
 - Efficient algorithms
@@ -225,7 +248,8 @@ import { truncate, slugify } from '@utils/string';
 
 // ❌ Bad - imports entire module
 import * as stringUtils from '@utils/string';
-```text
+```
+
 ## Testing Standards
 
 When using string utilities in tests:
@@ -240,7 +264,7 @@ describe('ProductCard', () => {
     expect(getByText(truncate(longName, 30))).toBeInTheDocument();
   });
 });
-````
+```
 
 ## Future Enhancements
 

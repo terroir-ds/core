@@ -12,7 +12,7 @@
 
 ### Repository Structure
 
-```text
+```bash
 stoic-design-system/                 (Separate Repository)
 ├── .github/
 │   └── workflows/
@@ -40,7 +40,8 @@ employment-pipeline/                 (Main Repository)
 ├── frontend/
 ├── backend/
 └── extension/
-```text
+```
+
 ### Option 1: Git Submodule Approach
 
 ```bash
@@ -64,7 +65,8 @@ git checkout v1.2.3
 cd ..
 git add design-system
 git commit -m "Lock design system to v1.2.3"
-```text
+```
+
 #### Pros
 
 - Version locking per project
@@ -79,7 +81,7 @@ git commit -m "Lock design system to v1.2.3"
 
 ### Option 2: NPM Package Approach (Recommended)
 
-```json
+```bash
 // stoic-design-system/package.json
 {
   "name": "@stoic/design-system",
@@ -104,10 +106,11 @@ git commit -m "Lock design system to v1.2.3"
     "@stoic/design-system": "^1.0.0"
   }
 }
-```text
+```
+
 #### Usage in Projects
 
-```javascript
+```typescript
 // Import tokens
 import { colors, spacing } from '@stoic/design-system/tokens';
 
@@ -119,12 +122,13 @@ import { Button, Card } from '@stoic/design-system/react';
 
 // Import icons
 import { SearchIcon } from '@stoic/design-system/icons';
-```text
+```
+
 ### Option 3: Hybrid Approach (Best of Both)
 
 Use NPM for production, git submodule for development:
 
-```json
+```bash
 // employment-pipeline/package.json
 {
   "dependencies": {
@@ -132,7 +136,8 @@ Use NPM for production, git submodule for development:
     // "@stoic/design-system": "^1.0.0"           // For production
   }
 }
-```text
+```
+
 ### Development Workflow
 
 ```bash
@@ -145,10 +150,11 @@ fi
 # Link for local development
 cd design-system && npm link
 cd .. && npm link @stoic/design-system
-```text
+```
+
 ### CI/CD Integration
 
-```yaml
+```bash
 # .github/workflows/design-system-integration.yml
 name: Design System Integration
 on:
@@ -179,10 +185,11 @@ jobs:
         with:
           title: 'chore: Update design system to ${{ env.VERSION }}'
           branch: update-design-system
-```text
+```
+
 ### Publishing Workflow
 
-```javascript
+```bash
 // stoic-design-system/scripts/release.js
 import { execSync } from 'child_process';
 
@@ -208,7 +215,8 @@ async function release() {
   // 7. Deploy docs
   execSync('npm run deploy:docs');
 }
-```text
+```
+
 ### Multi-Project Benefits
 
 ```text
@@ -221,7 +229,8 @@ stoic-studio/
 │   └── uses @stoic/design-system@^1.0.0
 └── stoic-design-system/
     └── source repository
-```text
+```
+
 ### Migration Strategy
 
 1. **Phase 1**: Create design system repo, copy existing tokens
@@ -233,7 +242,7 @@ stoic-studio/
 
 ### Package Structure
 
-```javascript
+```typescript
 // @stoic/design-system exports
 export {
   // Tokens

@@ -6,7 +6,7 @@
 
 We use a three-tier token system that's compatible with Style Dictionary, Figma Tokens plugin, and WCAG standards:
 
-```text
+```markdown
 tokens/
 ├── tier-1-primitives/      # Raw values (colors, numbers)
 │   ├── colors.json         # Raw color palette
@@ -19,7 +19,8 @@ tokens/
 └── tier-3-component/       # Component-specific
     ├── button.json         # component.button.background
     └── card.json           # component.card.shadow
-```text
+```
+
 ### 2. **Token Naming Convention**
 
 Use dot notation with clear hierarchy:
@@ -42,10 +43,11 @@ Use dot notation with clear hierarchy:
     }
   }
 }
-```text
+```
+
 ### 3. **File Format Strategy**
 
-```javascript
+```yaml
 // config/tokens.config.js
 module.exports = {
   // Use JSON for maximum compatibility
@@ -90,12 +92,13 @@ module.exports = {
     },
   },
 };
-```text
+```
+
 ### 4. **WCAG Compliance Structure**
 
 Organize tokens to support WCAG contrast checking:
 
-```json
+```yaml
 {
   "color": {
     "text": {
@@ -110,10 +113,11 @@ Organize tokens to support WCAG contrast checking:
     }
   }
 }
-```text
+```
+
 ### 5. **Theme Organization**
 
-```text
+```markdown
 tokens/
 ├── global/           # Shared across all themes
 │   ├── spacing.json
@@ -127,7 +131,8 @@ tokens/
 └── brands/          # Multi-brand support
     ├── default/
     └── enterprise/
-```text
+```
+
 ### 6. **Tooling Compatibility Matrix**
 
 | Tool              | Format     | Structure      | Notes                    |
@@ -139,7 +144,7 @@ tokens/
 
 ### 7. **Conversion Strategy**
 
-```javascript
+```typescript
 // scripts/transform-tokens.js
 const transforms = {
   // Style Dictionary → Figma Tokens
@@ -160,7 +165,8 @@ const transforms = {
     };
   },
 };
-```text
+```
+
 ### 8. **Best Practices**
 
 1. **Source of Truth**: Keep Style Dictionary format as source
@@ -193,7 +199,7 @@ This approach ensures:
 
 For converting SVG templates to raster formats, we use:
 
-```javascript
+```typescript
 // design-system/build/images.js
 const pipeline = {
   // SVGO for optimization and token replacement
@@ -208,10 +214,11 @@ const pipeline = {
   // Post-process compression
   compress: imagemin,
 };
-```text
+```
+
 ### SVG Token Replacement with SVGO
 
-```javascript
+```typescript
 // design-system/scripts/svg-token-plugin.js
 export const tokenReplacerPlugin = {
   name: 'replaceDesignTokens',
@@ -256,7 +263,8 @@ export const tokenReplacerPlugin = {
 function getTokenValue(tokens, path) {
   return path.split('.').reduce((obj, key) => obj?.[key], tokens);
 }
-```text
+```
+
 #### Why Sharp over ImageMagick?
 
 - **Performance**: 4-5x faster processing
@@ -276,7 +284,7 @@ function getTokenValue(tokens, path) {
 
 #### Recommended Build Structure
 
-```javascript
+```typescript
 // design-system/scripts/build-assets.js
 import { StyleDictionary } from 'style-dictionary';
 import sharp from 'sharp';
@@ -310,10 +318,11 @@ if (process.argv.includes('--watch')) {
 } else {
   buildAssets();
 }
-```text
+```
+
 #### Package.json Scripts
 
-```json
+```bash
 {
   "scripts": {
     "design:build": "node design-system/scripts/build-assets.js",
@@ -323,10 +332,11 @@ if (process.argv.includes('--watch')) {
     "prebuild": "npm run design:build"
   }
 }
-```text
+```
+
 #### Complete SVG Processing Pipeline
 
-```javascript
+```bash
 // design-system/scripts/build-svg-assets.js
 import { optimize } from 'svgo';
 import sharp from 'sharp';
@@ -378,10 +388,11 @@ async function generateThemedAssets(iconName, theme) {
     await sharp(Buffer.from(result.data)).resize(32, 32).toFile(`dist/favicon-${theme}.ico`);
   }
 }
-```text
+```
+
 #### SVG Template Example
 
-```xml
+```text
 <!-- assets/icons/search.svg -->
 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
   <!-- Use design tokens for all colors -->
@@ -400,7 +411,8 @@ async function generateThemedAssets(iconName, theme) {
     stroke-linecap="round"
   />
 </svg>
-```text
+```
+
 ### Alternative Build Tools
 
 If you prefer a task runner:
@@ -415,7 +427,7 @@ If you prefer a task runner:
 
 ### Integration with CI/CD
 
-```yaml
+```bash
 # .github/workflows/design-system.yml
 name: Build Design System
 on:

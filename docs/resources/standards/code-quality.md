@@ -8,12 +8,13 @@ Maintain high code quality through automated tooling and consistent practices.
 
 ### Always Run Fixes Before Committing
 
-````bash
+```bash
 # STANDARD: Run this before EVERY commit
 pnpm fix
 git diff    # Review automated changes
 pnpm test   # Ensure tests still pass
-```text
+```
+
 ### Commit Even If Fixes Fail
 
 ```bash
@@ -21,7 +22,8 @@ pnpm test   # Ensure tests still pass
 git commit --no-verify
 
 # The goal is to catch low-hanging fruit, not block progress
-```text
+```
+
 ## Linting Standards
 
 ### TypeScript/JavaScript
@@ -33,19 +35,22 @@ const foo = bar as any;
 
 // ✅ DO fix the underlying issue
 const foo = bar as SpecificType;
-```text
+```
+
 ### Import Organization
 
-```typescript
+```bash
 // ❌ DON'T use relative imports
 import { logger } from '../../../utils/logger';
 
 // ✅ DO use path aliases
 import { logger } from '@utils/logger';
-```text
+```
+
 ### Markdown
 
 All markdown files should:
+
 - Have language specifiers on code blocks
 - Use consistent heading levels
 - Include blank lines around lists
@@ -73,7 +78,8 @@ export const processItem = (item: Item): ProcessedItem => {
 export const handleError = (error: Error): void => {
   logger.error({ err: error }, 'Error occurred');
 };
-```text
+```
+
 ### Type Safety
 
 ```typescript
@@ -90,7 +96,8 @@ interface DataItem {
 function process(data: DataItem[]): string[] {
   return data.map(item => item.value);
 }
-```bash
+```
+
 ## Automated Tools
 
 ### What Gets Fixed Automatically
@@ -121,6 +128,7 @@ function process(data: DataItem[]): string[] {
 ### Manual Review Required
 
 Some issues require human judgment:
+
 - Logic errors
 - Type errors
 - Unused variables (decide whether to remove or use)
@@ -159,6 +167,6 @@ Some issues require human judgment:
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   }
 }
-````
+```
 
 This provides real-time feedback and automatic fixing on save.

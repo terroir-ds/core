@@ -4,7 +4,7 @@
 
 ### 1. **Typography Testing**
 
-```javascript
+```typescript
 // Test font loading and metrics
 async function testTypography() {
   const fonts = tokens.typography.families;
@@ -23,10 +23,11 @@ async function testTypography() {
     assert(lineHeightRatio >= 1.2, `Line height too tight for ${size.name}`);
   });
 }
-```text
+```
+
 ### 2. **Spacing Consistency Testing**
 
-```javascript
+```typescript
 // Validate spacing scale follows consistent ratios
 function testSpacingScale() {
   const spacings = Object.values(tokens.spacing);
@@ -40,10 +41,11 @@ function testSpacingScale() {
     }
   });
 }
-```text
+```
+
 ### 3. **Animation Performance Testing**
 
-```javascript
+```typescript
 // Test animation tokens for performance
 function testAnimations() {
   tokens.motion.transitions.forEach((transition) => {
@@ -56,10 +58,11 @@ function testAnimations() {
     }
   });
 }
-```text
+```
+
 ### 4. **Icon Consistency Testing**
 
-```javascript
+```typescript
 // Validate SVG icons follow design guidelines
 async function testIcons() {
   const icons = await glob('assets/icons/*.svg');
@@ -82,10 +85,11 @@ async function testIcons() {
     );
   }
 }
-```text
+```
+
 ### 5. **Focus Indicator Testing**
 
-```javascript
+```typescript
 // Ensure all interactive elements have visible focus states
 async function testFocusIndicators(page) {
   const interactiveElements = ['button', 'a', 'input', 'select', 'textarea'];
@@ -111,14 +115,15 @@ async function testFocusIndicators(page) {
     );
   }
 }
-```text
+```
+
 ## Part 2: Advanced Color Generation (Best-in-Class Approach)
 
 ### Material Color Utilities (Recommended for 2024)
 
 Google's Material Color Utilities (MCU) provides the most sophisticated color generation system available:
 
-```javascript
+```typescript
 // design-system/scripts/color-generator.js
 import {
   argbFromHex,
@@ -370,7 +375,8 @@ export function generateColorTokens(brandColor, options = {}) {
     },
   };
 }
-```text
+```
+
 ### Key Benefits of Material Color Utilities
 
 1. **HCT Color Space**: Google's proprietary space provides better perceptual uniformity than even LCH
@@ -383,7 +389,7 @@ export function generateColorTokens(brandColor, options = {}) {
 
 ### Continuous Tone Access Examples
 
-```javascript
+```typescript
 // Access any tone from 0 (black) to 100 (white)
 const palette = colorSystem.palettes.primary;
 
@@ -399,10 +405,11 @@ console.log(palette.tone(87)); // In-between shade
 // Find exact tone for contrast requirement
 const accessibleTone = findAccessibleTone(palette, backgroundArgb, 4.5);
 console.log(`Use tone ${accessibleTone.tone} for AA compliance`);
-```text
+```
+
 ### Implementation Strategy
 
-```javascript
+```typescript
 // design-system/config/color-config.js
 export default {
   // Define only brand colors
@@ -431,7 +438,8 @@ export default {
     'custom.brand.DEFAULT': { tone: 47 },
   },
 };
-```text
+```
+
 ### Build Integration
 
 ```json
@@ -442,7 +450,8 @@ export default {
     "design:preview": "node design-system/scripts/preview-server.js"
   }
 }
-```text
+```
+
 ### Why MCU is Best-in-Class
 
 1. **Google Scale Testing**: Validated across billions of devices and applications
@@ -454,7 +463,7 @@ export default {
 
 ### Integration with Design Tools
 
-```javascript
+```typescript
 // Export for Figma Tokens plugin
 function exportForFigma(colorSystem) {
   const figmaTokens = {};

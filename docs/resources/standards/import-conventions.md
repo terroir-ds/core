@@ -8,7 +8,7 @@ Use path aliases for clean, maintainable imports throughout the codebase.
 
 ### Always Use Path Aliases
 
-````typescript
+```bash
 // ❌ DON'T use relative imports
 import { logger } from '../../../lib/utils/logger';
 import { generateColors } from './colors/generator';
@@ -17,7 +17,8 @@ import { generateColors } from './colors/generator';
 import { logger } from '@utils/logger';
 import { generateColors } from '@colors/generator';
 import { Button } from '@packages/react/src/Button';
-```typescript
+```
+
 ## Available Aliases
 
 | Alias | Points To | Usage |
@@ -40,6 +41,7 @@ import { Button } from '@packages/react/src/Button';
 ## Configuration
 
 Path aliases are configured in:
+
 - `tsconfig.json` - TypeScript resolution
 - `vitest.config.ts` - Test resolution
 - Package bundler configs
@@ -48,7 +50,7 @@ Path aliases are configured in:
 
 Organize imports in this order:
 
-```typescript
+```bash
 // 1. Node built-ins
 import { readFile } from 'node:fs/promises';
 
@@ -62,12 +64,13 @@ import { Button } from '@packages/react';
 
 // 4. Relative imports (if absolutely necessary)
 import { helper } from './helper';
-```text
+```
+
 ## ESLint Enforcement
 
 ESLint will warn about relative imports that could use aliases:
 
-```json
+```bash
 {
   "rules": {
     "no-restricted-imports": ["error", {
@@ -75,4 +78,4 @@ ESLint will warn about relative imports that could use aliases:
     }]
   }
 }
-````
+```

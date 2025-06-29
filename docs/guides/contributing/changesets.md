@@ -53,7 +53,7 @@ You typically **don't** need a changeset for:
 
 ### Good Examples
 
-````markdown
+```markdown
 ---
 '@terroir/core': minor
 ---
@@ -65,9 +65,9 @@ Add color contrast validation utilities
 - Include detailed validation reports
 
 This helps developers ensure their color combinations meet accessibility standards.
+```
 
-````text
-```markdown
+```text
 ---
 '@terroir/core': patch
 ---
@@ -75,23 +75,26 @@ This helps developers ensure their color combinations meet accessibility standar
 Fix memory leak in logger child instances
 
 Child loggers were not being properly cleaned up when their parent was destroyed, causing memory leaks in long-running applications.
-```text
+```
+
 ### Poor Examples
 
-```markdown
+```text
 ---
 '@terroir/core': patch
 ---
 
 Updated stuff
+```
+
 ```text
-```markdown
 ---
 '@terroir/core': minor
 ---
 
 Refactored code
-```text
+```
+
 ## Changeset Workflow
 
 1. Make your changes in a feature branch
@@ -108,12 +111,13 @@ To see what changes are pending release:
 
 ```bash
 pnpm changeset:status
-```text
+```
+
 ## Manual Changeset Files
 
 You can also create changeset files manually in `.changeset/`:
 
-```markdown
+```text
 ---
 '@terroir/core': patch
 '@terroir/react': patch
@@ -122,14 +126,15 @@ You can also create changeset files manually in `.changeset/`:
 Fix theme switching in React components
 
 The theme context wasn't properly updating when the theme changed, causing components to retain the old theme values.
-```text
+```
+
 The filename should be descriptive, like `fix-theme-switching.md`.
 
 ## Multiple Package Changes
 
 In a monorepo, you can update multiple packages:
 
-```markdown
+```text
 ---
 '@terroir/core': minor
 '@terroir/react': minor
@@ -137,7 +142,8 @@ In a monorepo, you can update multiple packages:
 ---
 
 Add dark mode support across all packages
-```text
+```
+
 ## Pre-releases
 
 For alpha/beta releases, changesets supports pre-release modes:
@@ -148,7 +154,8 @@ pnpm changeset
 pnpm changeset version
 pnpm changeset publish
 pnpm changeset pre exit
-```text
+```
+
 ## Tips
 
 1. **Be specific**: Describe what changed from the user's perspective
@@ -171,6 +178,6 @@ pnpm changeset:version
 
 # Publish packages (usually done by CI)
 pnpm changeset:publish
-````
+```
 
-````
+```

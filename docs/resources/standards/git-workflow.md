@@ -8,7 +8,7 @@ Consistent Git practices for collaboration and clean history.
 
 ### Branch Naming
 
-````bash
+```bash
 # Features
 feat/user-authentication
 feat/color-system
@@ -28,7 +28,8 @@ refactor/logger-optimization
 # Tests
 test/color-utils
 test/integration-suite
-```bash
+```
+
 ### Main Branches
 
 - `main` - Production-ready code
@@ -51,7 +52,8 @@ test(utils): increase coverage to 90%
 refactor(api): simplify response handling
 build(deps): upgrade to TypeScript 5.3
 chore(lint): fix ESLint warnings
-```bash
+```
+
 ### Types
 
 - `feat`: New feature
@@ -71,7 +73,7 @@ chore(lint): fix ESLint warnings
 2. **Body**: Wrap at 72 chars, explain why not what
 3. **Footer**: Reference issues, breaking changes
 
-```bash
+```yaml
 feat(auth): add OAuth2 integration
 
 Implement OAuth2 flow for third-party authentication.
@@ -82,18 +84,21 @@ This allows users to sign in with Google/GitHub.
 - Add token refresh logic
 
 Closes #123
-```bash
+```
+
 ## Pull Request Standards
 
 ### PR Title
 
 Follow commit conventions:
-```bash
+
+```text
 feat(component): add dark mode support
-```bash
+```
+
 ### PR Description Template
 
-```markdown
+```bash
 ## Summary
 Brief description of changes
 
@@ -111,7 +116,8 @@ Brief description of changes
 
 ## Breaking Changes
 (if any)
-```bash
+```
+
 ## Git Commands
 
 ### Daily Workflow
@@ -133,7 +139,8 @@ git rebase origin/main
 
 # Push and create PR
 git push -u origin feat/new-feature
-```bash
+```
+
 ### Useful Commands
 
 ```bash
@@ -152,7 +159,8 @@ git stash pop
 
 # View pretty log
 git log --oneline --graph --all
-```bash
+```
+
 ## Best Practices
 
 1. **Commit Often**: Small, logical commits
@@ -164,6 +172,7 @@ git log --oneline --graph --all
 ## Protected Branches
 
 `main` branch protections:
+
 - Require PR reviews
 - Pass CI/CD checks
 - No direct pushes
@@ -181,15 +190,18 @@ git rebase --continue
 
 # Or abort if needed
 git rebase --abort
-```bash
+```
+
 ## Git Hooks
 
 Pre-commit hooks run automatically:
+
 - Lint checks
 - Type checks
 - Test runs
 
 Skip if necessary:
+
 ```bash
 git commit --no-verify -m "emergency fix"
-````
+```

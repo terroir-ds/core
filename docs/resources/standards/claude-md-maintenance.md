@@ -86,9 +86,10 @@ When CLAUDE.md grows too large:
 
 [50+ lines of examples and explanations]
 
-````text
+```bash
 ### After (Concise)
-```markdown
+```
+
 ### Logging
 
 See [Logging Standards](./docs/standards/logging.md) for structured logging practices.
@@ -112,5 +113,6 @@ When updating CLAUDE.md:
 - **On PR**: Check if additions are necessary
 
 Remember: CLAUDE.md should be a **roadmap**, not an **encyclopedia**.
-````
-`````
+
+```text
+```

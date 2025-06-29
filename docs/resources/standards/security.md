@@ -8,7 +8,7 @@ Security best practices for the Terroir Core Design System.
 
 ### Regular Audits
 
-````bash
+```bash
 # Check for vulnerabilities
 pnpm audit
 
@@ -17,7 +17,8 @@ pnpm audit --fix
 
 # Check specific package
 pnpm why package-name
-```text
+```
+
 ### Dependency Updates
 
 1. **Regular Updates**: Weekly for patches, monthly for minor
@@ -38,7 +39,8 @@ const API_KEY = process.env.API_KEY;
 if (!API_KEY) {
   throw new ConfigError('API_KEY not configured');
 }
-```text
+```
+
 ### Environment Files
 
 ```bash
@@ -49,7 +51,8 @@ DATABASE_URL=postgresql://localhost/mydb
 # .env (never commit - in .gitignore)
 API_KEY=sk-real-secret-key
 DATABASE_URL=postgresql://prod-server/proddb
-```text
+```
+
 ### Git Secrets Protection
 
 ```bash
@@ -62,7 +65,8 @@ git secrets --register-aws
 
 # Add custom patterns
 git secrets --add 'sk-[a-zA-Z0-9]{32}'
-```text
+```
+
 ## Input Validation
 
 ### Always Validate User Input
@@ -83,7 +87,8 @@ export function validateEmail(input: unknown): string {
     });
   }
 }
-```text
+```
+
 ### Sanitize Output
 
 ```typescript
@@ -104,7 +109,8 @@ const query = `SELECT * FROM users WHERE id = ${userId}`;
 // ✅ Use parameters
 const query = 'SELECT * FROM users WHERE id = $1';
 const result = await db.query(query, [userId]);
-```text
+```
+
 ## Authentication & Authorization
 
 ### Token Security
@@ -119,7 +125,8 @@ export function generateToken(): string {
 
 // Set proper expiration
 const TOKEN_EXPIRY = 60 * 60 * 1000; // 1 hour
-```text
+```
+
 ### Password Handling
 
 ```typescript
@@ -131,17 +138,19 @@ import bcrypt from 'bcrypt';
 
 const hashedPassword = await bcrypt.hash(password, 10);
 const isValid = await bcrypt.compare(password, hashedPassword);
-```text
+```
+
 ## Secure Communication
 
 ### HTTPS Only
 
-```typescript
+```text
 // Enforce HTTPS in production
 if (process.env.NODE_ENV === 'production' && !req.secure) {
   return res.redirect(`https://${req.headers.host}${req.url}`);
 }
-```text
+```
+
 ### CORS Configuration
 
 ```typescript
@@ -150,7 +159,8 @@ const corsOptions = {
   credentials: true,
   optionsSuccessStatus: 200
 };
-```text
+```
+
 ## Security Headers
 
 ```typescript
@@ -167,12 +177,13 @@ app.use(helmet({
     },
   },
 }));
-```text
+```
+
 ## Logging Security
 
 ### Never Log Sensitive Data
 
-```typescript
+```yaml
 // ❌ DON'T log sensitive info
 logger.info({
   user: fullUserObject,
@@ -186,10 +197,12 @@ logger.info({
   action: 'login',
   ip: req.ip
 });
-```text
+```
+
 ### Redact Sensitive Fields
 
 Our logger automatically redacts:
+
 - `password`, `pass`, `pwd`
 - `token`, `auth`, `authorization`
 - `secret`, `apiKey`, `api_key`
@@ -199,7 +212,7 @@ Our logger automatically redacts:
 
 ### Don't Leak Information
 
-```typescript
+```yaml
 // ❌ DON'T expose internals
 catch (error) {
   res.status(500).json({
@@ -216,7 +229,7 @@ catch (error) {
     id: generateErrorId()
   });
 }
-````
+```
 
 ## Regular Security Tasks
 

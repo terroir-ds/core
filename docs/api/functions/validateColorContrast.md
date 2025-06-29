@@ -58,7 +58,8 @@ if (validation.failed.length > 0) {
     console.warn(`${name}: ${ratio.toFixed(2)} (needs 4.5)`);
   });
 }
-```typescript
+```
+
 ```typescript
 const strictValidation = validateColorContrast(colors, 7.0);
 

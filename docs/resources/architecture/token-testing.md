@@ -19,12 +19,13 @@ Define color relationships through naming conventions:
     }
   }
 }
-```text
+```
+
 **Naming Pattern**: `on-{background}` indicates text/content color for that background
 
 ### 2. Contrast Testing Implementation
 
-```javascript
+```bash
 // design-system/scripts/test-contrast.js
 import { getContrast } from 'color-contrast-checker';
 import tokens from '../dist/tokens.json';
@@ -89,7 +90,8 @@ function testContrast(pairs) {
 
   return { results, failures };
 }
-```text
+```
+
 ### 3. Token Metadata for Testing
 
 Enhance tokens with accessibility metadata:
@@ -120,10 +122,11 @@ Enhance tokens with accessibility metadata:
     }
   }
 }
-```text
+```
+
 ### 4. Build-time Testing
 
-```javascript
+```bash
 // design-system/scripts/build-assets.js
 import { testColorContrast } from './test-contrast.js';
 
@@ -147,10 +150,11 @@ async function buildAssets() {
 
   // 3. Continue with asset generation...
 }
-```text
+```
+
 ### 5. Git Hook Integration
 
-```javascript
+```bash
 // .husky/pre-commit
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
@@ -163,10 +167,11 @@ if git diff --cached --name-only | grep -E "tokens/.*\.json$"; then
     exit 1
   }
 fi
-```text
+```
+
 ### 6. Visual Regression Testing
 
-```javascript
+```bash
 // design-system/tests/visual-regression.test.js
 import { test } from '@playwright/test';
 import tokens from '../dist/tokens.json';
@@ -189,10 +194,11 @@ colorPairs.forEach((pair) => {
     await expect(page).toHaveScreenshot(`contrast-${pair.background.name}.png`);
   });
 });
-```text
+```
+
 ### 7. Continuous Monitoring
 
-```javascript
+```bash
 // design-system/scripts/contrast-report.js
 import { generateContrastReport } from './test-contrast.js';
 
@@ -232,10 +238,11 @@ async function generateReport() {
 
   await fs.writeFile('dist/contrast-report.html', html);
 }
-```text
+```
+
 ### 8. Integration with Style Dictionary
 
-```javascript
+```typescript
 // style-dictionary.config.js
 module.exports = {
   hooks: {
@@ -268,10 +275,11 @@ module.exports = {
     },
   },
 };
-```text
+```
+
 ### 9. Testing Commands
 
-```json
+```bash
 {
   "scripts": {
     "design:test": "npm run design:test:contrast && npm run design:test:visual",
@@ -281,10 +289,11 @@ module.exports = {
     "design:report": "node design-system/scripts/contrast-report.js"
   }
 }
-```text
+```
+
 ### 10. CI/CD Integration
 
-```yaml
+```bash
 # .github/workflows/design-system.yml
 name: Design System Testing
 on:

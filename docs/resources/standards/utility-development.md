@@ -30,7 +30,8 @@ export function isArray<T = unknown>(value: unknown): value is T[] {
 export function isArray(value: any): boolean {
   return Array.isArray(value);
 }
-```yaml
+```
+
 ### 2. Dependency Evaluation Framework
 
 **Principle**: Every potential dependency must be thoroughly researched and evaluated before implementation.
@@ -60,6 +61,7 @@ export function isArray(value: any): boolean {
    - **Major dependency**: Only if significant functionality that would be error-prone to reimplement
 
 **Documentation Requirement**: All dependency decisions must be documented with:
+
 - Research findings
 - Alternatives considered
 - Decision rationale
@@ -72,7 +74,8 @@ export function isArray(value: any): boolean {
 **Implementation Standards**:
 
 #### Shared Module Structure
-```text
+
+```markdown
 utils/
 ├── shared/           # Common utilities used across modules
 │   ├── index.ts     # Performance helpers, type patterns
@@ -82,14 +85,17 @@ utils/
 │   ├── [feature].ts # Feature implementations
 │   └── __tests__/   # Tests
 └── index.ts         # Convenience re-exports
-```yaml
+```
+
 #### Required Shared Utilities
+
 - **Performance optimizations**: Cached prototype methods, object pooling
 - **Common type patterns**: `isObjectLike`, `getObjectType`, `hasOwnProp`
 - **Development helpers**: `devWarn`, `isDevelopment`
 - **Error utilities**: `createErrorMessage`, `toError`
 
 #### Usage Guidelines
+
 ```typescript
 // ✅ Good: Use shared utilities
 import { isObjectLike, getObjectType } from '@utils/shared';
@@ -103,7 +109,8 @@ export function isDate(value: unknown): value is Date {
   return typeof value === 'object' && value !== null && 
          Object.prototype.toString.call(value) === '[object Date]';
 }
-```yaml
+```
+
 ### 4. Performance-First Implementation
 
 **Principle**: Utilities must be optimized for performance, especially in hot paths.
@@ -111,18 +118,21 @@ export function isDate(value: unknown): value is Date {
 **Performance Standards**:
 
 #### Hot Path Optimization
+
 - Use cached prototype methods
 - Minimize object allocation
 - Prefer native methods where available
 - Use efficient algorithms (O(1) vs O(n) operations)
 
 #### Benchmarking Requirements
+
 - Performance tests for critical utilities
 - Comparison with popular alternatives
 - Bundle size impact measurement
 - Memory usage analysis
 
 #### Example Optimizations
+
 ```typescript
 // Cached for performance
 const { toString: objectToString, hasOwnProperty } = Object.prototype;
@@ -136,18 +146,21 @@ export function isString(value: unknown): value is string {
 export function hasOwnProp(obj: unknown, key: string): boolean {
   return isObjectLike(obj) && hasOwnProperty.call(obj, key);
 }
-```yaml
+```
+
 ### 5. Battle-Tested Pattern Integration
 
 **Principle**: Leverage proven implementations from established libraries while maintaining our architectural goals.
 
 **Pattern Sources**:
+
 - **Lodash**: Object type checking, utility patterns
 - **Remeda**: TypeScript-first functional utilities
 - **Zod**: Validation patterns and error handling
 - **Industry standards**: RFC specifications, WHATWG standards
 
 **Integration Standards**:
+
 ```typescript
 // ✅ Good: Adapt proven patterns to our architecture
 export function isPlainObject(value: unknown): value is Record<string, unknown> {
@@ -157,8 +170,10 @@ export function isPlainObject(value: unknown): value is Record<string, unknown> 
   }
   // ... rest of proven logic
 }
-```yaml
+```
+
 #### Documentation Requirements
+
 - Credit original source/inspiration
 - Document any modifications made
 - Explain why the pattern was chosen
@@ -170,18 +185,22 @@ export function isPlainObject(value: unknown): value is Record<string, unknown> 
 **API Standards**:
 
 #### Naming Conventions
+
 - Type guards: `is*` (e.g., `isString`, `isValidEmail`)
 - Assertions: `assert*` (e.g., `assertDefined`, `assertType`)
 - Validation: `validate*` (e.g., `validateEmail`, `validateUrl`)
 - Predicates: Descriptive names (e.g., `isPositive`, `hasMinLength`)
 
 #### Parameter Patterns
+
 ```typescript
 // ✅ Consistent: value first, options second
 export function validateEmail(email: string, options?: EmailOptions): ValidationResult;
 export function isInRange(value: number, min: number, max: number): boolean;
-```text
+```
+
 #### Return Type Consistency
+
 ```typescript
 // Type guards: boolean with type predicate
 export function isString(value: unknown): value is string;

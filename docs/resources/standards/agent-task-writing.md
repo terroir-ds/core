@@ -8,7 +8,7 @@ Optimize task specifications for AI agents with limited context windows while ma
 
 ### 1. Progressive Disclosure
 
-````markdown
+```markdown
 # Task: Component Architecture ← One line summary
 
 ## Quick Start (20 lines max)
@@ -19,9 +19,11 @@ Essential info only
 <summary>Full Specifications</summary>
 Detailed requirements here
 </details>
-```text
+```
+
 ### 2. Front-Load Critical Information
-```markdown
+
+```bash
 # BAD: Burying the lead
 After considering various options and researching...
 we need to implement a Button component.
@@ -31,12 +33,13 @@ we need to implement a Button component.
 IMPLEMENT: Button component with variants
 PATH: packages/react/src/components/Button/
 TEST: pnpm test:watch button
+```
 
-````text
 ### 3. Use Structured Formats
 
 #### Task Template
-```markdown
+
+```bash
 # Task: [One Line Summary]
 
 **Agent**: [0-3]
@@ -51,43 +54,56 @@ TEST: pnpm test:watch button
 - [ ] Docs updated
 
 ## Quick Implementation
-```bash
+```
+
 # Copy-paste commands
+
 mkdir -p [path]
 pnpm test:watch [module]
-```text
+
+```bash
 ## Examples
-```typescript
+```
+
 // Minimal working example
 export function example(): string {
   return "pattern to follow";
 }
+
 ```text
-```text
+```
+
 ### 4. Token-Optimized Formatting
 
 #### Use Tables for Dense Info
-```markdown
+
+```text
 | Input | Output | Note |
 |-------|--------|------|
 | "hello-world" | "helloWorld" | kebab→camel |
 | "HelloWorld" | "helloWorld" | pascal→camel |
-```text
+```
+
 #### Use Code Blocks for Examples
+
 Instead of prose descriptions, show code:
+
 ```typescript
 // Instead of: "The function should accept a string and return..."
 type StringTransform = (input: string) => string;
-```yaml
+```
+
 ### 5. Context-Aware Sections
 
 #### Always Include
+
 1. **Task** (1 line)
 2. **Location** (exact path)
 3. **Test Command** (copy-paste ready)
 4. **Success Criteria** (checklist)
 
 #### Include When Relevant
+
 - Dependencies (only if blocked)
 - Examples (only if complex)
 - Background (only if critical)
@@ -95,12 +111,14 @@ type StringTransform = (input: string) => string;
 ### 6. Avoid Context Bloat
 
 #### ❌ Don't Include
+
 - Project history
 - Alternative approaches considered
 - Philosophical discussions
 - Redundant explanations
 
 #### ✅ Do Include
+
 - Exact file paths
 - Specific commands
 - Clear success metrics
@@ -109,29 +127,35 @@ type StringTransform = (input: string) => string;
 ## Task Size Guidelines
 
 ### Optimal Task Sizes
+
 - **Atomic**: 1-2 hour tasks when possible
 - **Grouped**: 4-6 hours for related items
 - **Maximum**: 8 hours (1 day) chunks
 
 ### Task Breakdown Example
-```markdown
+
+```bash
 # BAD: Implement string utilities (20 hours)
 
 # GOOD: Break into atomic tasks
 - Task 1: Case converters (camel, kebab, pascal) - 4h
 - Task 2: Text formatters (truncate, wrap, pad) - 4h
 - Task 3: Template functions (interpolate) - 3h
-```text
+```
+
 ## AI-Specific Optimizations
 
 ### 1. Include Type Signatures
+
 ```typescript
 // Always show expected types
 export function camelCase(input: string): string;
 export function truncate(text: string, length: number): string;
-```text
+```
+
 ### 2. Provide Test Patterns
-```typescript
+
+```text
 // Show test structure
 describe('camelCase', () => {
   it.each([
@@ -141,18 +165,22 @@ describe('camelCase', () => {
     expect(camelCase(input)).toBe(expected);
   });
 });
-```text
+```
+
 ### 3. Reference Existing Patterns
-```markdown
+
+```bash
 ## Pattern
 Follow existing utils structure:
 - See: `packages/core/src/utils/guards/` for examples
 - Export from: `packages/core/src/utils/index.ts`
-```text
+```
+
 ## Metadata for Agents
 
 ### Task Metadata Block
-```yaml
+
+```markdown
 ---
 agent: 1
 sprint: 1
@@ -161,10 +189,12 @@ dependencies: []
 skills: [typescript, testing, strings]
 context_tokens: 500  # Estimated
 ---
-```text
+```
+
 ## Quick Reference Card
 
 ### Task Writing Checklist
+
 - [ ] One line summary
 - [ ] Exact file paths
 - [ ] Copy-paste commands
@@ -179,25 +209,30 @@ context_tokens: 500  # Estimated
 ## Examples
 
 ### Good Task Example
-```markdown
+
+```bash
 # Task: Implement truncate utility
 
 **Location**: `packages/core/src/utils/strings/truncate.ts`
 **Test**: `pnpm test:watch strings/truncate`
 
 ## Implementation
-```typescript
+```
+
 export function truncate(text: string, maxLength: number): string {
   // "hello world" → "hello..."
 }
-```text
+
+```bash
 ## Success
 - [ ] Handles unicode correctly
 - [ ] Configurable ellipsis
 - [ ] 100% test coverage
-```text
+```
+
 ### Bad Task Example
-```markdown
+
+```bash
 # String Utilities Enhancement
 
 After our last meeting, we discussed the need for better string
@@ -208,9 +243,9 @@ control over the implementation and allow us to optimize for our
 specific use cases...
 
 [200 more lines of context]
-````
+```
 
-````
+```
 
 ## Summary
 

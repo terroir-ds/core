@@ -8,7 +8,7 @@ Always use the project's error handling utilities for consistent, type-safe erro
 
 ### 1. Use Typed Error Classes
 
-````typescript
+```typescript
 // ❌ DON'T throw generic errors
 throw new Error('User not found');
 
@@ -18,10 +18,11 @@ throw new NotFoundError('User not found', {
   code: 'USER_NOT_FOUND',
   context: { userId }
 });
-```text
+```
+
 ### 2. Always Include Error Context
 
-```typescript
+```yaml
 // ❌ DON'T omit context
 throw new ValidationError('Invalid input');
 
@@ -35,10 +36,11 @@ throw new ValidationError('Invalid email format', {
   },
   help: 'Email must be in format: user@example.com'
 });
-```text
+```
+
 ### 3. Use Error Chaining
 
-```typescript
+```yaml
 // ❌ DON'T lose original errors
 try {
   await fetchUser(id);
@@ -56,10 +58,11 @@ try {
     context: { userId: id }
   });
 }
-```text
+```
+
 ### 4. Handle Errors at Appropriate Levels
 
-```typescript
+```yaml
 // ❌ DON'T catch and ignore
 try {
   await riskyOperation();
@@ -85,7 +88,8 @@ try {
     code: 'OPERATION_FAILED'
   });
 }
-```text
+```
+
 ### 5. Use Retry and Circuit Breaker Patterns
 
 ```typescript
@@ -118,7 +122,8 @@ const breaker = new CircuitBreaker({
   timeout: 60000
 });
 const result = await breaker.execute(() => apiCall());
-```text
+```
+
 ### 6. Global Error Handling
 
 ```typescript
@@ -146,7 +151,8 @@ app.use((error, req, res, next) => {
     error: error.toJSON()
   });
 });
-```text
+```
+
 ## Available Error Types
 
 ```typescript
@@ -160,7 +166,8 @@ import {
   ConfigError,       // Configuration issues
   TimeoutError      // Operation timeouts
 } from '@utils/errors';
-```text
+```
+
 ## Testing Errors
 
 ```typescript
@@ -179,7 +186,7 @@ try {
   expect(error.code).toBe('INVALID_EMAIL');
   expect(error.context.value).toBe(invalidEmail);
 }
-````
+```
 
 ## References
 

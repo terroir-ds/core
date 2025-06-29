@@ -6,10 +6,12 @@ This project includes comprehensive automated fixing for common code quality iss
 
 Run this single command to automatically fix most linting issues:
 
-````bash
+```bash
 pnpm fix
-```typescript
+```
+
 This command will:
+
 1. Fix TypeScript/JavaScript issues (ESLint)
 2. Add language specifiers to code blocks
 3. Fix Markdown formatting issues
@@ -19,6 +21,7 @@ This command will:
 ## What Gets Fixed Automatically
 
 ### TypeScript/JavaScript (ESLint)
+
 - Unused imports removal
 - Quote consistency (`'` vs `"`)
 - Semicolon consistency
@@ -29,6 +32,7 @@ This command will:
 - Indentation and spacing
 
 ### Markdown
+
 - Code block language specifiers (custom script)
 - Heading formatting
 - List formatting
@@ -37,12 +41,14 @@ This command will:
 - Link formatting
 
 ### JSON/YAML (Prettier)
+
 - Consistent indentation (2 spaces)
 - Trailing commas
 - Quote style consistency
 - Line width formatting
 
 ### Package.json
+
 - Alphabetical sorting of fields
 - Consistent formatting
 
@@ -62,10 +68,12 @@ pnpm lint:md:fix-blocks
 
 # JSON/YAML only
 pnpm lint:prettier:fix
-```yaml
+```
+
 ## Pre-commit Hooks
 
 The project uses Husky and lint-staged to automatically fix issues before commit:
+
 - Staged files are automatically fixed
 - If fixes fail, the commit is blocked
 - This ensures consistent code quality
@@ -73,11 +81,13 @@ The project uses Husky and lint-staged to automatically fix issues before commit
 ## Configuration
 
 ### ESLint Configuration
+
 - Location: `eslint.config.js`
 - Uses @typescript-eslint for TypeScript support
 - Custom rules for project conventions
 
 ### Markdownlint Configuration
+
 - Location: `.markdownlint-cli2.jsonc`
 - Disabled rules:
   - MD013: Line length (for flexibility)
@@ -88,6 +98,7 @@ The project uses Husky and lint-staged to automatically fix issues before commit
   - MD051: Link fragments (false positives)
 
 ### Prettier Configuration
+
 - Location: `.prettierrc.json`
 - Standard formatting rules
 - Ignore patterns in `.prettierignore`
@@ -95,12 +106,14 @@ The project uses Husky and lint-staged to automatically fix issues before commit
 ## Custom Scripts
 
 ### Code Block Language Fixer
+
 - Location: `scripts/utils/fix-markdown-code-blocks.js`
 - Automatically detects and adds language specifiers
 - Uses content analysis and file context
 - Handles: bash, typescript, json, yaml, text
 
 ### Fix-All Script
+
 - Location: `scripts/utils/fix-all.sh`
 - Orchestrates all fixing tools
 - Provides clear progress feedback
@@ -109,14 +122,19 @@ The project uses Husky and lint-staged to automatically fix issues before commit
 ## Troubleshooting
 
 ### Fix Command Fails
+
 Try running individual fixers to identify the issue:
+
 ```bash
 pnpm lint:ts:fix
 pnpm lint:md:fix
 pnpm lint:prettier:fix
-```text
+```
+
 ### Some Issues Can't Be Fixed
+
 These require manual intervention:
+
 - Logic errors
 - Type errors
 - Missing content
@@ -124,11 +142,13 @@ These require manual intervention:
 - Security issues
 
 ### Performance
+
 For large codebases, fix specific directories:
-```bash
+
+```text
 eslint lib --fix
 markdownlint-cli2 'docs/**/*.md' --fix
-````
+```
 
 ## Best Practices
 

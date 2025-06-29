@@ -23,7 +23,7 @@ Build an inclusive design system that works for everyone.
 
 ### Contrast Requirements
 
-````typescript
+```typescript
 import { validateContrast } from '@utils/accessibility';
 
 // Text contrast
@@ -43,10 +43,11 @@ validateContrast(foreground, background, {
   level: 'AA',
   component: true // 3:1 ratio
 });
-```text
+```
+
 ### Color Independence
 
-```css
+```yaml
 /* ❌ DON'T rely on color alone */
 .error { color: red; }
 
@@ -58,7 +59,8 @@ validateContrast(foreground, background, {
     content: "⚠️ Error: ";
   }
 }
-```text
+```
+
 ## Keyboard Navigation
 
 ### Focus Management
@@ -75,10 +77,11 @@ const firstInput = useRef<HTMLInputElement>(null);
 useEffect(() => {
   firstInput.current?.focus();
 }, []);
-```text
+```
+
 ### Keyboard Shortcuts
 
-```typescript
+```yaml
 // Implement standard patterns
 useKeyboard({
   'Escape': closeModal,
@@ -88,10 +91,11 @@ useKeyboard({
   'ArrowDown': selectNext,
   'ArrowUp': selectPrevious
 });
-```text
+```
+
 ### Skip Links
 
-```html
+```text
 <!-- Skip to main content -->
 <a href="#main" class="skip-link">
   Skip to main content
@@ -99,21 +103,23 @@ useKeyboard({
 
 <nav><!-- navigation --></nav>
 <main id="main"><!-- content --></main>
-```text
+```
+
 ## Screen Reader Support
 
 ### Semantic HTML
 
-```typescript
+```html
 // ❌ DON'T use divs for everything
 <div onclick={handleClick}>Click me</div>
 
 // ✅ DO use semantic elements
 <button onClick={handleClick}>Click me</button>
-```text
+```
+
 ### ARIA Labels
 
-```typescript
+```text
 // When text isn't descriptive enough
 <button aria-label="Close dialog" onClick={close}>
   <Icon name="x" />
@@ -128,10 +134,11 @@ useKeyboard({
 <span id="email-error" role="alert">
   Invalid email format
 </span>
-```text
+```
+
 ### Live Regions
 
-```typescript
+```html
 // Announce dynamic changes
 <div aria-live="polite" aria-atomic="true">
   {status && <p>{status}</p>}
@@ -141,12 +148,13 @@ useKeyboard({
 <div role="alert" aria-live="assertive">
   {error && <p>{error}</p>}
 </div>
-```text
+```
+
 ## Form Accessibility
 
 ### Label Association
 
-```typescript
+```text
 // ❌ DON'T use placeholder as label
 <input placeholder="Email" />
 
@@ -159,7 +167,8 @@ useKeyboard({
   Email
   <input type="email" />
 </label>
-```text
+```
+
 ### Error Handling
 
 ```typescript
@@ -187,12 +196,13 @@ function AccessibleForm() {
     </form>
   );
 }
-```text
+```
+
 ## Touch Target Size
 
 ### Minimum Sizes
 
-```css
+```yaml
 /* Minimum 44x44px (WCAG) */
 button, a, input {
   min-height: 44px;
@@ -208,12 +218,13 @@ button, a, input {
     inset: -4px; /* Expand hit area */
   }
 }
-```text
+```
+
 ## Motion & Animation
 
 ### Respect Preferences
 
-```css
+```yaml
 /* Reduce motion for users who prefer it */
 @media (prefers-reduced-motion: reduce) {
   * {
@@ -222,7 +233,8 @@ button, a, input {
     transition-duration: 0.01ms !important;
   }
 }
-```text
+```
+
 ```typescript
 // In JavaScript
 const prefersReducedMotion = window.matchMedia(
@@ -230,7 +242,8 @@ const prefersReducedMotion = window.matchMedia(
 ).matches;
 
 const animationDuration = prefersReducedMotion ? 0 : 300;
-```text
+```
+
 ## Testing
 
 ### Automated Testing
@@ -254,10 +267,12 @@ test('should be accessible', async () => {
   const results = await axe(container);
   expect(results).toHaveNoViolations();
 });
-```text
+```
+
 ### Manual Testing
 
 Checklist:
+
 - [ ] Navigate with keyboard only
 - [ ] Test with screen reader (NVDA/JAWS/VoiceOver)
 - [ ] Check color contrast
@@ -303,7 +318,7 @@ function AccessibleModal({ isOpen, onClose, children }) {
     </div>
   );
 }
-````
+```
 
 ## Resources
 

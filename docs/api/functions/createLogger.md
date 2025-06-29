@@ -42,7 +42,8 @@ authLogger.info('User login attempt');
 
 authLogger.error({ userId, error }, 'Login failed');
 // Includes module context automatically
-```typescript
+```
+
 ```typescript
 function handleRequest(req: Request) {
   const reqLogger = createLogger({

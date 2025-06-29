@@ -63,15 +63,17 @@ const result = await measureTime(
 );
 // Logs: "database query took 45ms" on success
 // Logs error with duration on failure
-```typescript
+```
+
 ```typescript
 const data = await measureTime(
   'API fetch',
   async () => fetch('/api/data').then(r => r.json()),
   { endpoint: '/api/data', method: 'GET' }
 );
-```typescript
-```typescript
+```
+
+```yaml
 try {
   await measureTime(
     'risky operation',

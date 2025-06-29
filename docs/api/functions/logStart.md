@@ -35,7 +35,7 @@ Additional context to include in the log
 
 ## Example
 
-```typescript
+```text
 logStart('database migration');
 // Logs: "Starting database migration" with phase: 'start'
 

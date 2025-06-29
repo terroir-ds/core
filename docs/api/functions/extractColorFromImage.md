@@ -35,7 +35,7 @@ Currently not implemented - will be added in a future release
 
 ## Example
 
-```typescript
+```bash
 import { extractColorFromImage, generateColorSystem } from '@terroir/core';
 
 // Extract color from brand logo
