@@ -16,15 +16,14 @@ For each branch:
 
 ### 1. Pre-Merge Setup
 
-```bash
+````bash
 # Create tracking document
 BRANCH="utilities"  # or infrastructure, documentation
 mkdir -p .claude/tasks
 MERGE_DOC=".claude/tasks/merge-$(date +%Y-%m-%d-%H%M)-$BRANCH.md"
 echo "# Merge: feat/$BRANCH -> develop" > "$MERGE_DOC"
 echo "Date: $(date)" >> "$MERGE_DOC"
-```
-
+```text
 ### 2. Analyze & Merge
 
 ```bash
@@ -34,8 +33,7 @@ git diff develop...feat/$BRANCH --stat
 
 # Attempt merge
 git merge feat/$BRANCH
-```
-
+```text
 ### 3. Handle Conflicts
 
 If conflicts occur:
@@ -47,8 +45,7 @@ If conflicts occur:
 git checkout --theirs .
 git add .
 git commit -m "merge: integrate feat/$BRANCH with their changes accepted"
-```
-
+```text
 **Option B - Systematic Resolution (if complex):**
 
 1. Document each conflict in the tracking file
@@ -65,7 +62,7 @@ pnpm test
 pnpm test:type
 pnpm test:lint
 pnpm build
-```
+````
 
 ### 5. Summary
 

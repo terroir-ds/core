@@ -1,88 +1,55 @@
-# INSTRUCTIONS: You are now Agent [NUMBER] in the Terroir Core Multi-Agent System
+# Terroir Core Agent Instructions
 
-You are a specialized development agent working on the Terroir Core Design System project. You are part of a multi-agent development team with the following key responsibilities:
+You are Agent [NUMBER] working on the Terroir Core Design System.
 
-## Core Context
+## Quick Start
 
-- **Project**: Terroir Core - An open-source design system with Material Color Utilities
-- **Working Directory**: You are in a git worktree specific to your role
-- **Coordination**: You coordinate with other agents through:
-  - `.claude/` directory (shared via symbolic link)
-  - `.agent-coordination/` directory (shared task management)
-  - Regular sync windows for integration
+Check your START file: `.claude/agent-[NUMBER]-START.md`
 
-## Key Project Standards
+## Core Rules
 
 1. **Package Manager**: Always use `pnpm`, never `npm`
+2. **Quality**: Run `pnpm fix` before commits
+3. **Errors**: Use typed errors from `@utils/errors`
+4. **Logging**: Use structured logger from `@utils/logger`
+5. **Testing**: Co-locate tests in `__tests__/`
+6. **Imports**: Use aliases (@utils) not relative paths
 
-   ```bash
-   pnpm install       # NOT npm install
-   pnpm add package   # NOT npm install package
-   pnpm test         # NOT npm test
-   ```
+## Development Rhythm
 
-2. **Development Workflow**:
-   - Run `pnpm fix` before all commits
-   - Use conventional commits: `type(scope): description`
-   - Follow structured logging (no console.log)
-   - Use typed errors with context
+- Sprints 1-2: [TICK] New features
+- Sprint 3: [TOCK] Refactor with standards
+- Sprint 4: [REVIEW] Integration
 
-3. **Testing**: Co-locate tests in `__tests__` subdirectories
+## 5-Pass Development
 
-4. **Import Paths**: Use aliases (@utils/logger) not relative paths
+1. Make it Work (30%) - Basic functionality
+2. Make it Right (20%) - Refactoring
+3. Make it Safe (20%) - Security/performance
+4. Make it Tested (20%) - Full test coverage
+5. Make it Documented (10%) - JSDoc + guides
 
-## Multi-Agent Coordination
+## Standards
 
-- **Check shared tasks**: Review `.claude/tasks/` directory and `AGENT-REGISTRY.md`
-- **Use coordination directories**: `.agent-coordination/locks/`, `claims/`, `blocks/`
-- **Sync windows**: Coordinate at 10am, 2pm, 6pm
-- **Branch isolation**: Work only on your assigned feature branch
+Check `/docs/resources/standards/` for:
 
-## Environment Awareness
+- Error handling patterns
+- Logging conventions
+- Code quality rules
+- Testing practices
+- Import conventions
 
-- You are in a VS Code Dev Container
-- Each agent has a unique color theme for visual distinction
-- Git worktrees are configured for your specific branch
-- Node modules and build artifacts are excluded from file watchers
+## Workflow
 
-## Session Management
+1. Read START file for current task
+2. Implement following 5-pass approach
+3. Run `pnpm fix` before commit
+4. Update START file progress
+5. Move to next task
 
-Use session files to maintain continuity across restarts:
+## Important
 
-1. **Starting Complex Tasks**:
-   - Run: `.agents/scripts/session.sh save`
-   - Edit the file to add specific context
-   - This will be automatically included in future prompts
-
-2. **Completing Tasks**:
-   - Run: `.agents/scripts/session.sh clear`
-   - Update task files in `.claude/tasks/`
-   - Commit your changes
-
-3. **Checking Status**:
-   - Run: `.agents/scripts/session.sh show`
-
-## Recovery Context
-
-If you're being restarted after a crash or system reboot:
-
-1. Your previous session will be automatically loaded if saved
-2. Check `.claude/tasks/` and `AGENT-REGISTRY.md` for current assignments
-3. Review recent commits on your branch
-4. Check `.agent-coordination/` for any locks, claims, or blocks
-5. Continue with assigned tasks or await new instructions
-
-## Important Reminders
-
-- NEVER create files unless absolutely necessary
+- NEVER create files unless necessary
 - Always prefer editing existing files
-- Don't create documentation unless explicitly requested
-- Use the structured logger from @utils/logger
-- Run `pnpm fix` before commits
-- Stay within your assigned scope and branch
-
----
-
-## Agent-Specific Instructions
-
-Add agent-specific instructions below this line.
+- No console.log - use structured logger
+- Follow existing code patterns

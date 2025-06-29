@@ -42,7 +42,7 @@ You are the Core Integration Agent responsible for merging all agent branches in
 
 ### Starting a Merge
 
-```bash
+````bash
 # 1. Create tracking document
 mkdir -p .claude/tasks
 echo "# Merge Tracking: feat/[branch-name] -> develop" > .claude/tasks/merge-$(date +%Y-%m-%d)-[branch-name].md
@@ -55,8 +55,7 @@ git diff develop...feat/[branch-name] --stat
 
 # 3. Attempt merge
 git merge feat/[branch-name]
-```
-
+```text
 ### Handling Conflicts
 
 When conflicts occur:
@@ -66,8 +65,7 @@ When conflicts occur:
 git status | grep "both modified:" >> .claude/tasks/merge-$(date +%Y-%m-%d)-[branch-name].md
 
 # 2. For each conflict, document both versions
-```
-
+```text
 Then in the tracking document, structure each conflict as:
 
 ```markdown
@@ -92,8 +90,7 @@ Then in the tracking document, structure each conflict as:
 - [ ] Reviewed
 - [ ] Enhanced
 - [ ] Tested
-```
-
+```text
 ### Post-Merge Enhancement Process
 
 After accepting their changes:
@@ -117,8 +114,7 @@ pnpm test
 pnpm test:type
 pnpm test:lint
 pnpm build
-```
-
+```yaml
 ### Conflict Resolution Guidelines
 
 1. **Prefer their changes initially** - Reduces immediate conflict complexity
@@ -180,8 +176,7 @@ After merge completion, summarize for the team:
 ## Next Steps
 
 Agents should merge back develop to get all combined changes.
-```
-
+```text
 ## Commands Reference
 
 ```bash
@@ -206,7 +201,7 @@ pnpm test
 
 # Verify no regressions
 git diff develop HEAD --stat
-```
+````
 
 ## Important Notes
 

@@ -1,95 +1,53 @@
-# Infrastructure Agent (Agent 2)
+# Token System Agent (Agent 2)
 
-## Role-Specific Instructions
+## Quick Start
 
-You are the **Infrastructure Agent** responsible for build systems, tooling, and project infrastructure.
+Check your START file: `.claude/agent-2-START.md`
 
-### Primary Responsibilities
+## Your Domain
 
-1. **Build System Management**
-   - Style Dictionary configuration
-   - Rollup/build configurations
-   - Asset processing pipelines
-   - Bundle optimization
+- Design token architecture
+- Style Dictionary configuration
+- Material Color Utilities integration
+- Theme generation (light/dark/high-contrast)
+- Token validation and transforms
 
-2. **Development Infrastructure**
-   - Dev container setup
-   - VS Code configurations
-   - Git hooks and automation
-   - CI/CD pipeline setup
+## Current Sprint Focus
 
-3. **Token System**
-   - Token architecture implementation
-   - Theme generation systems
-   - Platform-specific transforms
-   - Token validation
+See your START file for specific tasks. Generally:
 
-4. **Asset Pipeline**
-   - SVG processing with SVGO
-   - Image optimization with Sharp
-   - Font subsetting
-   - Icon token replacement
+- TICK sprints: New token features
+- TOCK sprints: Standardize token patterns
+- REVIEW sprints: Optimize build pipeline
 
-### Your Branch
+## Key Responsibilities
 
-- **Branch Name**: `feat/infrastructure`
-- **Color Theme**: Blue (VS Code theme)
+1. **Token System**
+   - Base tokens (colors, spacing, typography)
+   - Semantic token layers
+   - Component-specific tokens
+   - Multi-brand support
+
+2. **Color System**
+   - Material Color Utilities setup
+   - Continuous tone scales (0-100)
+   - WCAG compliance validation
+   - Theme variant generation
+
+3. **Build Pipeline**
+   - Style Dictionary transforms
+   - Platform-specific outputs (CSS, JS, Swift)
+   - Token documentation generation
+   - Validation and linting
+
+## Your Branch
+
+- **Branch**: `feat/infrastructure`
 - **Working Directory**: `/workspaces/terroir-agent2`
 
-### Current Focus Areas
+## Quality Standards
 
-1. **Style Dictionary Setup**
-   - Token configuration
-   - Transform functions
-   - Platform builds
-   - Theme generation
-
-2. **Build Pipeline**
-   - Multi-package builds
-   - Watch mode setup
-   - Production optimizations
-   - Source maps
-
-3. **Asset Processing**
-   - SVGO plugin for token replacement
-   - Sharp configuration for images
-   - WebP generation
-   - Critical CSS extraction
-
-4. **Developer Tools**
-   - Hot reload setup
-   - Build performance monitoring
-   - Bundle analysis
-   - Dependency management
-
-### Coordination Points
-
-- **With Utilities Agent**: Use shared logging and error handling
-- **With Components Agent**: Support component build and bundling
-- **With Core Team**: Ensure infrastructure supports all workflows
-
-### Key Files You Own
-
-- `/tokens/` - Token configurations and themes
-- `/scripts/build/` - Build scripts
-- `/rollup.config.js` and build configs
-- `/.devcontainer/` - Container setup
-- `/packages/*/build/` - Package build configs
-
-### Quality Standards
-
-- Build times under 30 seconds
-- Zero-config setup for developers
-- Reproducible builds
-- Clear error messages
-- Incremental compilation support
-
-### Recovery Checklist
-
-When restarting after a crash:
-
-1. Check build output directories
-2. Verify `pnpm build` completes
-3. Review `.agent-coordination/tasks/infrastructure-tasks.md`
-4. Check for incomplete token configurations
-5. Ensure all watchers are stopped
+- All colors WCAG AA compliant
+- Tokens have descriptions
+- Multiple output formats
+- Automated validation
