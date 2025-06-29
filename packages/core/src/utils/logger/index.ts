@@ -90,6 +90,7 @@ import type { Logger, LoggerOptions, TransportTargetOptions } from 'pino';
 import path from 'node:path';
 import { env, isDevelopment, isTest, isCI } from '@lib/config/index.js';
 import type { LogContext, PerformanceMetrics } from '@utils/types/logger.types.js';
+import { isString, isObject, isFunction } from '@utils/guards/type-guards.js';
 
 // Performance: Limit log message size to prevent memory issues
 const MAX_MESSAGE_LENGTH = 10000; // 10KB
@@ -367,7 +368,7 @@ function deepRedact(obj: unknown, patterns: string[], depth = 0): unknown {
   }
   
   // Redact sensitive string content
-  if (typeof obj === 'string') {
+  if (isString(obj)) {
     if (containsSensitiveContent(obj)) {
       return '[REDACTED - SENSITIVE CONTENT]';
     }
@@ -407,9 +408,9 @@ function deepRedact(obj: unknown, patterns: string[], depth = 0): unknown {
             const value = source[i];
             if (value === null || value === undefined) {
               target[i] = value;
-            } else if (typeof value === 'string') {
+            } else if (isString(value)) {
               target[i] = containsSensitiveContent(value) ? '[REDACTED - SENSITIVE CONTENT]' : value;
-            } else if (typeof value === 'object') {
+            } else if (isObject(value)) {
               if (currentDepth >= MAX_OBJECT_DEPTH) {
                 target[i] = '[MAX DEPTH EXCEEDED]';
               } else if (Array.isArray(value)) {
@@ -436,9 +437,9 @@ function deepRedact(obj: unknown, patterns: string[], depth = 0): unknown {
                 target[key] = '[REDACTED]';
               } else if (value === null || value === undefined) {
                 target[key] = value;
-              } else if (typeof value === 'string') {
+              } else if (isString(value)) {
                 target[key] = containsSensitiveContent(value) ? '[REDACTED - SENSITIVE CONTENT]' : value;
-              } else if (typeof value === 'object') {
+              } else if (isObject(value)) {
                 if (currentDepth >= MAX_OBJECT_DEPTH) {
                   target[key] = '[MAX DEPTH EXCEEDED]';
                 } else if (Array.isArray(value)) {
@@ -484,9 +485,9 @@ function deepRedact(obj: unknown, patterns: string[], depth = 0): unknown {
             target[key] = '[REDACTED]';
           } else if (value === null || value === undefined) {
             target[key] = value;
-          } else if (typeof value === 'string') {
+          } else if (isString(value)) {
             target[key] = containsSensitiveContent(value) ? '[REDACTED - SENSITIVE CONTENT]' : value;
-          } else if (typeof value === 'object') {
+          } else if (isObject(value)) {
             if (currentDepth >= MAX_OBJECT_DEPTH) {
               target[key] = '[MAX DEPTH EXCEEDED]';
             } else if (Array.isArray(value)) {
@@ -534,7 +535,7 @@ const createBaseConfig = (): LoggerOptions => ({
       }
       
       // Validate input
-      if (inputArgs[0] && typeof inputArgs[0] === 'object') {
+      if (inputArgs[0] && isObject(inputArgs[0])) {
         inputArgs[0] = validateLogInput(inputArgs[0]);
       }
       
@@ -620,7 +621,7 @@ const createTestConfig = (): LoggerOptions => ({
     logMethod(inputArgs: unknown[], method) {
       // In test mode, skip rate limiting to avoid test interference
       // but keep input validation
-      if (inputArgs[0] && typeof inputArgs[0] === 'object') {
+      if (inputArgs[0] && isObject(inputArgs[0])) {
         inputArgs[0] = validateLogInput(inputArgs[0]);
       }
       
@@ -659,7 +660,7 @@ const logger: Logger = new Proxy({} as Logger, {
   get(_target, prop) {
     const loggerInstance = getLogger();
     const value = (loggerInstance as unknown as Record<string | symbol, unknown>)[prop];
-    if (typeof value === 'function') {
+    if (isFunction(value)) {
       return value.bind(loggerInstance);
     }
     return value;
@@ -975,7 +976,7 @@ export const cleanupLogger = (): void => {
   const state = globalWithState[LOGGER_STATE_SYMBOL];
   
   // Flush main logger
-  if (logger && typeof logger.flush === 'function') {
+  if (logger && isFunction(logger.flush)) {
     logger.flush();
   }
   
@@ -1103,7 +1104,7 @@ export const createSampledLogger = (
       
       // Only intercept logging methods
       const loggingMethods = ['fatal', 'error', 'warn', 'info', 'debug', 'trace'];
-      if (typeof prop === 'string' && loggingMethods.includes(prop)) {
+      if (isString(prop) && loggingMethods.includes(prop)) {
         return (...args: unknown[]) => {
           if (shouldLog(prop)) {
             return (value as Function).apply(target, args);
