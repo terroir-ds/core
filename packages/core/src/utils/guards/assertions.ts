@@ -198,7 +198,7 @@ export function assertMaxLength(
   const result = validateLength(value, { max: maxLength }, itemType);
   
   if (!result.valid) {
-    const error = createLengthError(result.actualLength, { max: maxLength }, itemType);
+    const error = createLengthError(result.actualLength, { max: maxLength });
     throw new AssertionError(message ?? error.message, {
       code: 'MAX_LENGTH_VIOLATION',
       context: {

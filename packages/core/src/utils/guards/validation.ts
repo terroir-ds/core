@@ -217,10 +217,13 @@ export function validateEmail(
   // Length validation
   const lengthResult = validateLength(emailValue, { max: maxLength }, 'Email');
   if (!lengthResult.valid && lengthResult.errors.length > 0) {
-    errors.push(new ValidationError(lengthResult.errors[0], {
-      code: 'EMAIL_TOO_LONG',
-      context: { value: emailValue, length: emailValue.length, maxLength },
-    }));
+    const firstError = lengthResult.errors[0];
+    if (firstError) {
+      errors.push(new ValidationError(firstError, {
+        code: 'EMAIL_TOO_LONG',
+        context: { value: emailValue, length: emailValue.length, maxLength },
+      }));
+    }
   }
   
   // Plus sign check
