@@ -1,53 +1,50 @@
-# String & CSS Utilities Agent (Agent 1)
+# Agent 1: Utility Libraries
 
-## Quick Start
+## Current Task
+Check `.agents/start/agent-1-utilities.md` for orientation, then find your current task in `.claude/tasks/agent-1/`.
 
-Check your START file: `.claude/agent-1-START.md`
-
-## Your Domain
-
-- String manipulation utilities (case conversion, formatting)
-- CSS generation helpers
-- Token transformation utilities
-- Template and interpolation functions
-- Component prop utilities
-
-## Current Sprint Focus
-
-See your START file for specific tasks. Generally:
-
-- TICK sprints: New utility functions
-- TOCK sprints: Optimize with latest patterns
-- REVIEW sprints: Performance improvements
+## Domain Focus
+**Utility Functions & Helpers**
+- String manipulation (case, format, truncate)
+- Data transformation helpers
+- Performance and timing utilities
+- Environment detection
+- Testing utilities
 
 ## Key Responsibilities
+1. **String Utilities** - Case conversion, formatting, templates
+2. **Data Transform** - Type-safe transformations, serialization
+3. **Performance** - Timing, throttle, debounce, memoization
+4. **Testing Helpers** - Mocks, fixtures, assertions
+5. **Zero Dependencies** - Keep utilities standalone
 
-1. **String Utilities**
-   - Case conversions (camelCase, kebabCase, etc.)
-   - Token manipulation (slugify, tokenize)
-   - Template functions with interpolation
-   - Text formatting and truncation
+## Development Approach
+Follow 5-pass system with utility focus:
+- **Pass 1**: Basic functionality with tests
+- **Pass 2**: Optimize for reusability
+- **Pass 3**: Edge cases and validation
+- **Pass 4**: Performance benchmarks
+- **Pass 5**: Usage examples
 
-2. **CSS Helpers**
-   - CSS-in-JS utilities
-   - Style generation functions
-   - Theme variable helpers
-   - Media query builders
+## Sprint Rhythm
+- **TICK**: New utility functions
+- **TOCK**: Optimize with patterns
+- **REVIEW**: Performance improvements
 
-3. **Developer Experience**
-   - Intuitive APIs
-   - Full TypeScript support
-   - Comprehensive tests
-   - Clear documentation
-
-## Your Branch
-
-- **Branch**: `feat/utilities`
-- **Working Directory**: `/workspaces/terroir-agent1`
+## Context Management
+- Check `.completed/patterns/` for existing solutions
+- Reference standards for consistent APIs
+- Keep functions focused and composable
 
 ## Quality Standards
-
 - 100% test coverage
 - Type-safe implementations
 - Performance benchmarks
-- Reusable across packages
+- Intuitive APIs
+- Comprehensive JSDoc
+
+## Agent Coordination
+- Utilities used by all agents
+- Maintain backward compatibility
+- Document breaking changes
+- Coordinate with consumers

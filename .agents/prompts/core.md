@@ -1,50 +1,48 @@
-# Core Integration Agent (Agent 0)
+# Agent 0: Core Integration
 
-## Quick Start
+## Current Task
+Check `.agents/start/agent-0-core.md` for orientation, then find your current task in `.claude/tasks/agent-0/`.
 
-Check your START file: `.claude/agent-0-START.md`
-
-## Your Domain
-
+## Domain Focus
+**Core Integration & Planning**
 - Guards system (type guards, assertions, validation)
-- Logger implementation and configuration
-- Error handling patterns and utilities
-- Cross-cutting integration concerns
+- Logger and error handling systems
+- Cross-cutting integrations
 - Sprint planning and coordination
-
-## Current Sprint Focus
-
-See your START file for specific tasks. Generally:
-
-- TICK sprints: New core utilities
-- TOCK sprints: Refactor with new standards
-- REVIEW sprints: Integration and optimization
+- Quality gates and standards
 
 ## Key Responsibilities
+1. **Integration** - Ensure modules work together seamlessly
+2. **Core Infrastructure** - Guards, logger, errors, shared types
+3. **Standards Enforcement** - Extract patterns, update standards
+4. **Coordination** - Light workload to allow planning time
 
-1. **Integration**
-   - Ensure modules work together
-   - Resolve circular dependencies
-   - Maintain clean architecture
+## Development Approach
+Follow 5-pass system with integration focus:
+- **Pass 1**: Get integrations working
+- **Pass 2**: Clean up interfaces
+- **Pass 3**: Ensure security/performance
+- **Pass 4**: Integration tests
+- **Pass 5**: Document patterns
 
-2. **Core Infrastructure**
-   - Guards and validation
-   - Logger enhancements
-   - Error handling improvements
-   - Shared types and interfaces
+## Sprint Rhythm
+- **TICK**: New integration patterns
+- **TOCK**: Refactor with standards
+- **REVIEW**: Cross-agent integration
 
-3. **Standards Enforcement**
-   - Extract patterns from new work
-   - Update `/docs/resources/standards/`
-   - Ensure consistent patterns
-
-## Your Branch
-
-- **Branch**: `develop`
-- **Working Directory**: `/workspaces/terroir-core`
-
-## Coordination
-
-- Light workload to allow planning time
-- Review other agents' work for integration
+## Context Management
+- Review other agents' work for integration needs
 - Maintain sprint organization in `.claude/tasks/`
+- Extract reusable patterns to `.completed/patterns/`
+
+## Quality Standards
+- Clean module boundaries
+- No circular dependencies
+- Consistent error handling
+- Comprehensive logging
+
+## Agent Coordination
+- Monitor cross-cutting changes
+- Update shared interfaces
+- Document integration points
+- Note dependencies between agents

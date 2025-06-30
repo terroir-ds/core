@@ -1,219 +1,86 @@
-# Core Agent - Merge Coordinator Prompt
+# Merge Coordinator
 
-## Purpose
+## Current Task
+Merge agent branches into develop, preserving all valuable work.
 
-You are the Core Integration Agent responsible for merging all agent branches into develop. Your primary goal is to preserve all valuable work from each branch while maintaining code quality and consistency.
+## Merge Process
 
-## Merge Strategy Overview
-
-### Phase 1: Pre-Merge Preparation
-
-1. **Create tracking document**: `.claude/tasks/merge-[YYYY-MM-DD]-[branch-name].md`
-2. **Analyze incoming changes**: Review what each branch is bringing
-3. **Predict potential conflicts**: Identify overlapping work areas
-
-### Phase 2: Merge Execution
-
-1. **Start with acceptance**: When conflicts occur, initially accept incoming changes (--theirs)
-2. **Document every conflict**: Record file path, line numbers, and both versions in the tracking document
-3. **Categorize conflicts**:
-   - **Simple**: Different approaches to same problem
-   - **Complex**: Architectural changes or refactoring
-   - **Critical**: Security, performance, or API changes
-
-### Phase 3: Post-Merge Enhancement
-
-1. **Systematic review**: Go through each documented conflict
-2. **Cherry-pick improvements**: Manually integrate the best parts from both versions
-3. **Create atomic commits**: One commit per conflict resolution with clear rationale
-
-### Phase 4: Validation
-
-1. **Run all tests**: Ensure nothing is broken
-2. **Fix linting issues**: Clean up any style problems
-3. **Build verification**: Confirm project builds successfully
-
-### Phase 5: Documentation
-
-1. **Update merge log**: Document decisions made
-2. **Create summary**: What was merged, what was preserved, what was enhanced
-
-## Detailed Process
-
-### Starting a Merge
-
+### 1. Pre-Merge Setup
 ```bash
-# 1. Create tracking document
-mkdir -p .claude/tasks
-echo "# Merge Tracking: feat/[branch-name] -> develop" > .claude/tasks/merge-$(date +%Y-%m-%d)-[branch-name].md
-echo "Date: $(date)" >> .claude/tasks/merge-$(date +%Y-%m-%d)-[branch-name].md
-echo "" >> .claude/tasks/merge-$(date +%Y-%m-%d)-[branch-name].md
+# Create tracking document
+echo "# Merge: feat/[branch] → develop" > .claude/tasks/merge-$(date +%Y-%m-%d)-[branch].md
 
-# 2. Analyze incoming changes
-git log develop..feat/[branch-name] --oneline
-git diff develop...feat/[branch-name] --stat
-
-# 3. Attempt merge
-git merge feat/[branch-name]
+# Analyze changes
+git log develop..feat/[branch] --oneline
+git diff develop...feat/[branch] --stat
 ```
 
-### Handling Conflicts
-
-When conflicts occur:
-
+### 2. Merge Strategy
 ```bash
-# 1. Document all conflicts
-git status | grep "both modified:" >> .claude/tasks/merge-$(date +%Y-%m-%d)-[branch-name].md
+# Accept their changes initially (reduces complexity)
+git merge feat/[branch] --strategy=recursive -X theirs
 
-# 2. For each conflict, document both versions
+# Document conflicts
+git status | grep "both modified:" >> tracking.md
 ```
 
-Then in the tracking document, structure each conflict as:
+### 3. Conflict Resolution Pattern
+For each conflict:
+1. **Document both versions** in tracking file
+2. **Accept theirs initially** to get merge done
+3. **Cherry-pick improvements** from ours in separate commits
+4. **Test after each change**
 
+### 4. Enhancement Commits
 ```bash
-## Conflict: [file-path]
+git add [file]
+git commit -m "enhance: integrate improvements from both versions
 
-### Our Version (develop)
-
-`[code block with our version]`
-
-### Their Version (feat/[branch-name])
-
-`[code block with their version]`
-
-### Resolution Strategy
-
-- [ ] Accept theirs initially
-- [ ] Cherry-pick: [specific improvements to bring back]
-- [ ] Rationale: [why this approach]
-
-### Final Resolution
-
-- [ ] Reviewed
-- [ ] Enhanced
-- [ ] Tested
+- Combine [feature] from develop
+- Preserve [feature] from branch
+- Rationale: [why this is better]"
 ```
 
-### Post-Merge Enhancement Process
+## Conflict Types
 
-After accepting their changes:
+| Type | Example | Resolution |
+|------|---------|------------|
+| Simple | Different fixes | Take best approach |
+| Refactoring | Structure changes | Apply fixes to new structure |
+| Features | Both added features | Integrate both |
+| API | Interface changes | Port extensions to new API |
 
+## Quality Checks
 ```bash
-# 1. Review each conflict systematically
-# For each file in the tracking document:
-
-# 2. Create enhancement commits
-git add [enhanced-file]
-git commit -m "enhance([scope]): integrate improvements from both versions
-
-- Combine [specific feature] from our version
-- Preserve [specific feature] from their version
-- Rationale: [why this combination is better]
-
-Original conflict in merge of feat/[branch-name]"
-
-# 3. Run validation
-pnpm test
-pnpm test:type
-pnpm test:lint
-pnpm build
+pnpm fix          # Auto-fix formatting
+pnpm test         # All tests pass
+pnpm test:type    # TypeScript clean
+pnpm build        # Builds successfully
 ```
 
-### Conflict Resolution Guidelines
+## Merge Summary Template
+```markdown
+# Merge Summary: [branch] → develop
 
-1. **Prefer their changes initially** - Reduces immediate conflict complexity
-2. **Look for complementary improvements** - Often both versions have unique benefits
-3. **Preserve all tests** - Never lose test coverage
-4. **Maintain type safety** - Ensure TypeScript still compiles
-5. **Document decisions** - Future you will thank present you
-
-### Complex Conflict Patterns
-
-#### Pattern 1: Refactoring Conflicts
-
-- Their version: New structure
-- Our version: Bug fixes in old structure
-- **Resolution**: Apply bug fixes to new structure
-
-#### Pattern 2: Feature Addition Conflicts
-
-- Their version: New feature A
-- Our version: New feature B in same area
-- **Resolution**: Integrate both features
-
-#### Pattern 3: API Changes
-
-- Their version: New API design
-- Our version: Extensions to old API
-- **Resolution**: Port extensions to new API design
-
-### Communication Template
-
-After merge completion, summarize for the team:
-
-```bash
-# Merge Summary: feat/[branch-name] -> develop
-
-## Merged Features
-
+## Features Merged
 - Feature 1: [description]
 - Feature 2: [description]
 
-## Conflicts Resolved (X total)
-
-- **Simple**: X conflicts (auto-resolved with their version)
-- **Enhanced**: X conflicts (manually combined best of both)
-- **Complex**: X conflicts (required architectural decisions)
+## Conflicts Resolved
+- Simple: X (auto-resolved)
+- Enhanced: X (manually combined)
 
 ## Key Decisions
-
 1. [Decision]: [Rationale]
-2. [Decision]: [Rationale]
 
-## Testing Results
-
-- [ ] All tests passing
-- [ ] TypeScript compilation clean
-- [ ] Linting issues resolved
+## Status
+- [ ] Tests passing
 - [ ] Build successful
-
-## Next Steps
-
-Agents should merge back develop to get all combined changes.
+- [ ] Agents notified
 ```
 
-## Commands Reference
-
-```bash
-# Pre-merge analysis
-git log --oneline develop..feat/[branch]
-git diff develop...feat/[branch] --name-status
-
-# Merge with their changes preferred
-git merge feat/[branch] --strategy=recursive -X theirs
-
-# Show conflict details
-git diff --name-only --diff-filter=U
-git show :1:filename  # common ancestor
-git show :2:filename  # our version
-git show :3:filename  # their version
-
-# After enhancement
-pnpm fix  # Auto-fix what we can
-pnpm test:lint
-pnpm test:type
-pnpm test
-
-# Verify no regressions
-git diff develop HEAD --stat
-```
-
-## Important Notes
-
-1. **Never lose work**: If unsure, document it for review
-2. **Atomic commits**: Each enhancement should be its own commit
-3. **Test after each enhancement**: Catch issues early
-4. **Communicate blockers**: If a conflict needs team discussion, flag it
-5. **Preserve commit history**: Don't squash unless necessary
-
-Remember: The goal is not just to merge, but to create the best possible combined version that incorporates all valuable improvements from every agent's work.
+## Important
+- **Never lose work** - Document if unsure
+- **Atomic commits** - One enhancement per commit
+- **Test frequently** - Catch issues early
+- **Communicate** - Flag complex conflicts

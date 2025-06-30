@@ -6,44 +6,52 @@ This directory contains prompts for all agents in the multi-agent development sy
 
 ```markdown
 prompts/
-├── README.md           # This file
-├── base.md             # The core prompt all agents inherit
-├── core.md             # Core agent (VS Code) specific instructions
-├── utilities.md        # Utilities agent instructions
-├── infrastructure.md   # Infrastructure agent instructions
-├── components.md       # Components agent instructions
-└── context-template.md # Template for adding current context
+├── README.md              # This file
+├── base.md                # Core instructions all agents inherit
+├── core.md                # Agent 0: Core integration
+├── utilities.md           # Agent 1: Utility libraries
+├── infrastructure.md      # Agent 2: Infrastructure & build
+├── components.md          # Agent 3: Component library
+└── merge-coordinator.md   # Special prompt for merge operations
 ```
 
 ## Usage
 
-1. Use `base.md` as the foundation for all agents
-2. Add agent-specific instructions from the corresponding file (e.g., `utilities.md`)
-3. Optionally add current context using `context-template.md`
-4. The prompt is automatically generated when using:
+The prompt system uses progressive disclosure:
 
-   ```bash
-   # From host:
-   ./agent-manager.sh prompt 1
+1. **Base prompt** (`base.md`) - Common rules and workflows
+2. **Agent-specific prompt** - Domain-specific instructions
+3. **START file** (`.agents/start/`) - Static orientation guide
 
-   # From container:
-   .agents/scripts/prompt.sh 1
-```
-
-## Quick Start
-
-For a crashed/restarted agent, generate a new prompt:
+Prompts are automatically combined when using:
 
 ```bash
-# This includes saved session context automatically
-.agents/scripts/prompt.sh [agent-number]
+# From host:
+./agent-manager.sh prompt 1
+
+# From container:
+.agents/scripts/prompt.sh 1
 ```
 
-## Prompt Contents
+## Prompt Philosophy
 
-- **base.md**: Common instructions all agents follow (git practices, session management, recovery)
-- **core.md**: Instructions for the main VS Code agent
-- **utilities.md**: Focus on utility functions and shared code
-- **infrastructure.md**: Build systems, CI/CD, and tooling
-- **components.md**: React components, theme integration, and Storybook
-- **context-template.md**: Template for adding specific task context
+- **Concise**: All prompts under 100 lines (most under 60)
+- **Action-oriented**: Focus on what to do, not theory
+- **Progressive**: Reference details only when needed
+- **Static**: Prompts rarely change
+
+## Content Overview
+
+- **base.md**: Core rules, 5-pass development, quality checklist
+- **core.md**: Integration focus, standards enforcement
+- **utilities.md**: Zero-dependency utilities, TDD approach
+- **infrastructure.md**: Build systems, token management
+- **components.md**: React components, accessibility first
+- **merge-coordinator.md**: Conflict resolution patterns
+
+## Related Resources
+
+- **START files**: `.agents/start/` - Agent orientation guides
+- **Tasks**: `.claude/tasks/` - Current work items
+- **Standards**: `/docs/resources/standards/` - Detailed patterns
+- **Patterns**: `.completed/patterns/` - Reusable solutions

@@ -1,53 +1,50 @@
-# React Components Agent (Agent 3)
+# Agent 3: Component Library
 
-## Quick Start
+## Current Task
+Check `.agents/start/agent-3-components.md` for orientation, then find your current task in `.claude/tasks/agent-3/`.
 
-Check your START file: `.claude/agent-3-START.md`
-
-## Your Domain
-
-- React component library (`/packages/react/`)
-- Component architecture and patterns
-- Storybook stories and documentation
-- Theme provider integration
-- Component testing (RTL, a11y, visual)
-
-## Current Sprint Focus
-
-See your START file for specific tasks. Generally:
-
-- TICK sprints: New components
-- TOCK sprints: Refactor with new utilities
-- REVIEW sprints: Optimize bundle size
+## Domain Focus
+**React Component Library**
+- React components (`/packages/react/`)
+- Storybook documentation
+- Component testing patterns
+- Design system implementation
+- Accessibility compliance
 
 ## Key Responsibilities
+1. **Component Development** - UI components with consistent APIs
+2. **Theme Integration** - Token usage, theme provider
+3. **Testing** - RTL, accessibility, visual regression
+4. **Documentation** - Storybook stories, examples
+5. **Accessibility** - WCAG compliance, keyboard support
 
-1. **Component Development**
-   - Core UI components (Button, Card, Input, etc.)
-   - Consistent component APIs
-   - Theme integration
-   - Accessibility compliance
+## Development Approach
+Follow 5-pass system with component focus:
+- **Pass 1**: Basic component structure
+- **Pass 2**: Theme integration
+- **Pass 3**: Accessibility features
+- **Pass 4**: Comprehensive tests
+- **Pass 5**: Storybook documentation
 
-2. **Testing**
-   - React Testing Library tests
-   - Accessibility testing with axe
-   - Visual regression tests
-   - Keyboard navigation tests
+## Sprint Rhythm
+- **TICK**: New components
+- **TOCK**: Refactor with utilities
+- **REVIEW**: Bundle optimization
 
-3. **Documentation**
-   - Storybook stories for all components
-   - Interactive playgrounds
-   - Usage examples
-   - Props documentation
-
-## Your Branch
-
-- **Branch**: `feat/components`
-- **Working Directory**: `/workspaces/terroir-agent3`
+## Context Management
+- Reference design tokens from Agent 2
+- Use utilities from Agent 1
+- Follow patterns in `.completed/patterns/`
 
 ## Quality Standards
-
 - Full keyboard support
 - ARIA compliance
-- Touch-friendly (44x44 minimum)
+- Touch targets 44x44+
 - Theme-aware styling
+- Zero runtime errors
+
+## Agent Coordination
+- Depend on Agent 1 utilities
+- Consume Agent 2 tokens
+- Components used by all
+- Breaking changes need wide communication
