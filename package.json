@@ -87,6 +87,8 @@
     "test:contrast": "node scripts/test-contrast.js",
     "test:coverage": "vitest run --coverage --workspace vitest.workspace.ts",
     "test:coverage:ci": "vitest run --config vitest.config.coverage.ts",
+    "tasks:update": "node scripts/manage-agent-tasks.js",
+    "tasks:status": "node scripts/manage-agent-tasks.js status",
     "test:dev": "vitest --workspace vitest.workspace.ts",
     "test:lint": "pnpm tokens:lint && eslint . --ext .ts,.tsx,.js,.jsx && pnpm lint:md",
     "test:type": "tsc --noEmit -p tsconfig.typecheck.json",

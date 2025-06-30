@@ -14,5 +14,13 @@ pnpm exec lint-staged --quiet --concurrent false || {
   echo ""
 }
 
+# Update task metadata if any .claude/tasks files changed
+if git diff --cached --name-only | grep -q "^\.claude/tasks/.*\.md$"; then
+  echo "📝 Updating task metadata..."
+  pnpm tasks:update
+  # Stage any updated files
+  git add .claude/tasks/
+fi
+
 # Always exit 0 to allow commits
 exit 0
