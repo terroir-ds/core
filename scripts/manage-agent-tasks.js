@@ -17,15 +17,65 @@ const CONFIG = {
   techDebtAfterTasks: 3,    // Tech debt review every 3 tasks
 };
 
+// Method definitions
+const METHODS = {
+  'multi-pass-development': {
+    phases: { tick: 5, tock: 6 },
+    phaseNames: [
+      'Phase 1 - Make it Work',
+      'Phase 2 - Make it Right', 
+      'Phase 3 - Make it Safe',
+      'Phase 4 - Make it Tested',
+      'Phase 5 - Make it Documented',
+      'Phase 6 - Tech Debt Review'
+    ]
+  },
+  'rapid-fix': {
+    phases: { tick: 2, tock: 2 },
+    phaseNames: ['Phase 1 - Fix Issue', 'Phase 2 - Add Test']
+  },
+  'docs-only': {
+    phases: { tick: 1, tock: 1 },
+    phaseNames: ['Phase 1 - Write Documentation']
+  }
+};
+
+/**
+ * Determine which method to use for a task
+ */
+function determineMethod(taskContent, taskFileName) {
+  // Look for explicit method declaration
+  const methodMatch = taskContent.match(/Method:\s*([^\n]+)/i);
+  if (methodMatch) {
+    const methodName = methodMatch[1].toLowerCase().replace(/\s+/g, '-');
+    if (METHODS[methodName]) return methodName;
+  }
+  
+  // Default based on task type
+  if (taskFileName.includes('fix') || taskFileName.includes('bug')) {
+    return 'rapid-fix';
+  }
+  if (taskFileName.includes('doc') || taskFileName.includes('readme')) {
+    return 'docs-only';
+  }
+  
+  // Default to multi-pass
+  return 'multi-pass-development';
+}
+
 /**
  * Update auto-managed section in a task file
  */
-function updateAutoSection(content, afterCompletion, nextAction) {
+function updateAutoSection(content, method, phaseCount, afterCompletion, nextAction) {
   const autoStart = '<!-- AUTO-MANAGED: Do not edit below this line -->';
   const autoEnd = '<!-- END AUTO-MANAGED -->';
   
+  const methodDisplay = method.split('-').map(w => 
+    w.charAt(0).toUpperCase() + w.slice(1)
+  ).join(' ');
+  
   const newSection = `${autoStart}
-**After Completion**: ${afterCompletion}
+**Method**: ${methodDisplay} with ${phaseCount} Phases
 **Next Action**: ${nextAction}
 ${autoEnd}`;
 
@@ -72,29 +122,37 @@ async function updateAgentTasks(agentDir) {
     const taskNum = parseInt(tasks[i].split('-')[0]);
     if (isNaN(taskNum)) continue;
     
-    // Determine what happens after this task
-    let afterCompletion;
+    // Determine method and phase count
+    const method = determineMethod(content, tasks[i]);
+    const isTock = taskNum % CONFIG.techDebtAfterTasks === 0;
+    const phaseCount = METHODS[method].phases[isTock ? 'tock' : 'tick'];
+    
+    // Determine next action based on current phase
     let nextAction;
     
-    if (taskNum % CONFIG.techDebtAfterTasks === 0) {
-      // This is a tech debt review point
-      afterCompletion = 'tech debt review, then merge to develop';
+    // Check if we're in the middle of phases
+    const currentPhaseMatch = content.match(/\*\*Current Phase\*\*:\s*Phase\s*(\d+)/);
+    if (currentPhaseMatch) {
+      const currentPhase = parseInt(currentPhaseMatch[1]);
+      if (currentPhase < phaseCount) {
+        nextAction = `continue to phase ${currentPhase + 1}`;
+      } else {
+        // Last phase completed
+        const nextTask = tasks[i + 1];
+        if (nextTask) {
+          const nextNum = parseInt(nextTask.split('-')[0]);
+          nextAction = nextNum ? `continue to task ${String(nextNum).padStart(3, '0')}` : 'continue to next task';
+        } else {
+          nextAction = 'await new tasks';
+        }
+      }
     } else {
-      // Regular task - just merge
-      afterCompletion = 'merge to develop';
-    }
-    
-    // Determine next action
-    const nextTask = tasks[i + 1];
-    if (nextTask) {
-      const nextNum = parseInt(nextTask.split('-')[0]);
-      nextAction = nextNum ? `continue to task ${String(nextNum).padStart(3, '0')}` : 'continue to next task';
-    } else {
-      nextAction = 'await new tasks';
+      // No current phase, start from phase 1
+      nextAction = 'continue to phase 1';
     }
     
     // Update the file
-    const updated = updateAutoSection(content, afterCompletion, nextAction);
+    const updated = updateAutoSection(content, method, phaseCount, null, nextAction);
     if (updated !== content) {
       await writeFile(taskPath, updated);
       console.log(`✅ Updated: ${tasks[i]}`);
