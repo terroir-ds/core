@@ -43,7 +43,8 @@ directory/
 
 **Keep `README.md`:**
 - Repository root (GitHub expects it)
-- When required by external tools
+- Package directories (`packages/*/README.md` - npm expects it)
+- When required by external tools (e.g., changesets)
 - Legacy systems that expect README
 
 ### Implementation Examples
