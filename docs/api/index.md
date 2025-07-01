@@ -141,7 +141,7 @@ cd .agents/docker
 
 ### Learn More
 
-See [.agents/README.md](_media/README.md) for complete documentation on this accelerated development approach.
+See [.agents/index.md](../../.agents/index.md) for complete documentation on this accelerated development approach.
 
 ## Contributing
 

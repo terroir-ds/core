@@ -11,7 +11,7 @@ Template for AI-first module documentation with:
 - Token cost metadata
 - Common patterns and mistakes
 
-**Usage**: Copy this template when creating README.ai.md files for new modules.
+**Usage**: Copy this template when creating index.ai.md files for new modules.
 
 ## Template Guidelines
 

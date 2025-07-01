@@ -38,7 +38,7 @@ macOS ships with bash 3.x which lacks modern features. The scripts are compatibl
 │   ├── agent-manager.sh    # Container management
 │   ├── Dockerfile.agent    # Container image
 │   ├── scripts/            # Container-specific scripts
-│   └── README.md           # Docker documentation
+│   └── index.md            # Docker documentation
 ├── prompts/                # Agent prompt templates
 ├── scripts/                # Shared scripts
 └── docs/                   # System documentation

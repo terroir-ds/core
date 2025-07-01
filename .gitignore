@@ -42,6 +42,8 @@ assets/icons/optimized/
 !.vscode/extensions.json
 !.vscode/cspell.json
 !.vscode/README.md
+!.vscode/index.md
+!.vscode/index.ai.md
 !.vscode/settings.json
 .idea/
 *.swp
