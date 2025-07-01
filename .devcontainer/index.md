@@ -12,7 +12,7 @@ This directory contains the development container configuration for the Terroir 
 The post-create setup script has been moved to a shared location:
 
 - **Script**: [`scripts/utils/post-create.sh`](../scripts/utils/post-create.sh)
-- **Documentation**: [`scripts/utils/README.md`](../scripts/utils/README.md)
+- **Documentation**: [`scripts/utils/index.md`](../scripts/utils/index.md)
 
 ## Quick Start
 
@@ -68,4 +68,4 @@ The devcontainer follows security best practices:
 - Secure handling of authentication tokens
 - Input validation for all external data
 
-For security details of the post-create script, see the [script documentation](../scripts/utils/README.md).
+For security details of the post-create script, see the [script documentation](../scripts/utils/index.md).

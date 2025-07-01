@@ -35,8 +35,12 @@ const METHODS = {
     phaseNames: ['Phase 1 - Fix Issue', 'Phase 2 - Add Test']
   },
   'docs-only': {
-    phases: { tick: 1, tock: 1 },
+    phases: 1,
     phaseNames: ['Phase 1 - Write Documentation']
+  },
+  'system-documentation': {
+    phases: 2,
+    phaseNames: ['Phase 1 - Plan & Write', 'Phase 2 - Review & Polish']
   }
 };
 
@@ -124,8 +128,17 @@ async function updateAgentTasks(agentDir) {
     
     // Determine method and phase count
     const method = determineMethod(content, tasks[i]);
-    const isTock = taskNum % CONFIG.techDebtAfterTasks === 0;
-    const phaseCount = METHODS[method].phases[isTock ? 'tock' : 'tick'];
+    const methodConfig = METHODS[method];
+    let phaseCount;
+    
+    // Check if method uses tick/tock pattern
+    if (typeof methodConfig.phases === 'object') {
+      const isTock = taskNum % CONFIG.techDebtAfterTasks === 0;
+      phaseCount = methodConfig.phases[isTock ? 'tock' : 'tick'];
+    } else {
+      // Simple phase count (no tick/tock)
+      phaseCount = methodConfig.phases;
+    }
     
     // Determine next action based on current phase
     let nextAction;

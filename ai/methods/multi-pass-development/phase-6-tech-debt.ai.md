@@ -11,13 +11,14 @@
 - After Phase 5 completion
 
 ## Checklist
-- [ ] Review recent patterns in `/ai/patterns/`
-- [ ] Review recent standards in `/ai/standards/`
-- [ ] Check `.completed/patterns/` for new discoveries
+- [ ] Review ALL recent patterns in `/ai/patterns/`
+- [ ] Review ALL recent standards in `/ai/standards/`
+- [ ] Identify patterns relevant to current code domain
 - [ ] Apply relevant patterns to current code
 - [ ] Update old code in related files
 - [ ] Run new linting rules
 - [ ] Update documentation
+- [ ] Extract any new patterns discovered during tech debt work
 
 ## What TO Do
 - Load recently created standards
@@ -57,17 +58,31 @@ import { truncate } from '@utils/string';
 ```
 
 ## Review Sources
-1. **Recent Patterns**: Check last 5-10 completed tasks
+1. **Global Pattern Library**: Review ALL patterns for relevance
    ```bash
-   ls -la .completed/patterns/ | tail -10
+   # Review pattern index
+   cat /ai/patterns/index.ai.md
+   
+   # Check patterns by domain/tag relevant to current work
+   grep -l "tags:.*backend" /ai/patterns/*.ai.md
    ```
 
-2. **New Standards**: Check recently added
+2. **Recent Additions**: Focus on newest patterns/standards
    ```bash
-   ls -la /ai/standards/ | tail -10
+   # Last 10 patterns added
+   ls -lt /ai/patterns/*.ai.md | head -10
+   
+   # Last 10 standards added  
+   ls -lt /ai/standards/*.ai.md | head -10
    ```
 
-3. **Linting Rules**: Run with auto-fix
+3. **Completed Tasks**: Check patterns from recent work
+   ```bash
+   # Recent completed tasks for inspiration
+   ls -la .completed/ | tail -10
+   ```
+
+4. **Linting Rules**: Run with auto-fix
    ```bash
    pnpm fix
    ```
@@ -85,13 +100,15 @@ import { truncate } from '@utils/string';
 ✅ Linting violations fixed
 ✅ Consistency improved
 
-## Task Completion
-After Phase 6:
-1. Summarize improvements made
-2. List standards applied
-3. Commit tech debt changes
-4. Mark task complete
-5. Move to `.completed/`
+## Phase Transition
+When complete, follow standard transition protocol:
+1. Extract any patterns discovered during tech debt work
+2. Score examples using [@pattern:pattern-quality-scoring]
+3. Update pattern .ref.md files
+4. Summarize improvements made
+5. List standards applied
+6. Commit tech debt changes
+7. Proceed to task completion
 
 ## Time Management
 - Box time to 20% of original task
