@@ -6,18 +6,15 @@ This directory contains the version-controlled history of completed work on the 
 
 ```markdown
 .completed/
-├── tasks/             # Completed tasks organized by date
-│   ├── 2025-06-29/   # Tasks completed on June 29, 2025
-│   │   ├── agent-0-reorganize-task-structure.md
-│   │   └── agent-1-string-formatting-utilities.md
-│   ├── 2025-06-30/   # Tasks completed on June 30, 2025
-│   │   └── agent-0-extract-all-tasks-from-backup.md
-│   └── YYYY-MM-DD/   # Standard date format for sorting
-└── patterns/          # Reusable patterns discovered during development
-    ├── error-handling.md
-    ├── test-structure.md
-    └── api-design.md
+├── 2025-06-29/       # Tasks completed on June 29, 2025
+│   ├── agent-0-reorganize-task-structure.md
+│   └── agent-1-string-formatting-utilities.md
+├── 2025-06-30/       # Tasks completed on June 30, 2025
+│   └── agent-0-extract-all-tasks-from-backup.md
+└── YYYY-MM-DD/       # Standard date format for sorting
 ```
+
+**Note**: Patterns have been moved to `/ai/patterns/` for better organization and AI-first access.
 
 ## Task Organization
 
@@ -33,45 +30,6 @@ This directory contains the version-controlled history of completed work on the 
 - **Fluid releases**: Merge to develop as tasks complete
 - **Natural history**: Chronological record of project evolution
 
-## Pattern Library
-
-Patterns are extracted from completed work and stored for reuse:
-
-1. **[Error Handling](./patterns/error-handling.md)** - Typed errors with context
-2. **[Test Structure](./patterns/test-structure.md)** - Co-located test organization
-3. **[API Design](./patterns/api-design.md)** - Consistent function signatures
-4. **[Script Error Handling](./patterns/script-error-handling.md)** - Bash script safety patterns
-
-### Pattern Format
-Patterns should be optimized for AI consumption with:
-- Quick reference tables
-- Minimal prose
-- Code-first examples
-- Cross-references to detailed docs in `/docs/ai/` or `/docs/resources/`
-- Task references using format: `YYYY-MM-DD agent-N-task-name`
-
-Example pattern with task references:
-```markdown
-# Pattern: Typed Error Handling
-
-## Quick Reference
-| Error Type | Usage | Context Required |
-|------------|-------|------------------|
-| ValidationError | Input validation | field, value |
-| ConfigError | Configuration issues | key, expected |
-
-## Implementation
-\`\`\`typescript
-throw new ValidationError('Invalid email', { 
-  field: 'email', 
-  value: input 
-});
-\`\`\`
-
-## Tasks Using This Pattern
-- `2025-06-30 agent-0-extract-all-tasks-from-backup`: Enhanced pattern with context
-- `2025-06-29 agent-1-string-formatting-utilities`: Initial implementation
-```
 
 ## How to Use
 
@@ -79,25 +37,25 @@ throw new ValidationError('Invalid email', {
 
 ```bash
 # 1. Create today's folder if it doesn't exist
-mkdir -p .completed/tasks/$(date +%Y-%m-%d)
+mkdir -p .completed/$(date +%Y-%m-%d)
 
 # 2. MOVE (not copy) completed task with proper naming
 mv .claude/tasks/agent-0/002-task-name.md \
-   .completed/tasks/$(date +%Y-%m-%d)/agent-0-task-name.md
+   .completed/$(date +%Y-%m-%d)/agent-0-task-name.md
 # NOTE: This removes the task from the active directory
 
-# 3. Extract patterns (IMPORTANT)
-# - Review task for reusable patterns
-# - Check if similar pattern exists in .completed/patterns/
-# - Update existing pattern OR create new one
-# - Add task reference to pattern: "2025-06-30 agent-0-task-name"
+# 3. Review for task-specific insights
+# - Most patterns were already extracted in Phase 5
+# - Only add truly task-specific discoveries here
+# - Reference main patterns: [@pattern:name] in /ai/patterns/
 
 # 4. Commit the completion
 git add .completed/
 git commit -m "feat: complete agent-0 task-name
 
 - [Brief summary of what was accomplished]
-- Patterns: [list any patterns created/updated]
+- Patterns: [list any patterns created/updated in /ai/patterns/]
+- Insights: [task-specific discoveries if any]
 "
 ```
 
@@ -107,10 +65,10 @@ Tasks older than 2 weeks are moved to year folders:
 
 ```bash
 # Archive tasks older than 14 days
-.completed/tasks/2025-06-15/ → .completed/tasks/2025/2025-06-15/
+.completed/2025-06-15/ → .completed/2025/2025-06-15/
 
 # Directory structure after archiving:
-.completed/tasks/
+.completed/
 ├── 2025-06-30/        # Recent (today)
 ├── 2025-06-29/        # Recent (yesterday)
 ├── 2025/              # Archived 2025 tasks
@@ -123,16 +81,16 @@ Tasks older than 2 weeks are moved to year folders:
 
 ```bash
 # List all completed tasks by date
-ls -la .completed/tasks/
+ls -la .completed/
 
 # Find tasks by agent
-find .completed/tasks -name "agent-1-*.md"
+find .completed -name "agent-1-*.md"
 
-# Search for specific patterns
-grep -r "pattern-name" .completed/patterns/
+# Search for patterns in AI docs
+grep -r "pattern-name" /ai/patterns/
 
 # View recent completions
-ls -la .completed/tasks/$(date +%Y-%m-%d)/
+ls -la .completed/$(date +%Y-%m-%d)/
 ```
 
 ## Metrics and Reporting
@@ -141,15 +99,15 @@ Track progress with simple commands:
 
 ```bash
 # Count tasks per agent
-find .completed/tasks -name "agent-*" | cut -d'-' -f2 | sort | uniq -c
+find .completed -name "agent-*" | cut -d'-' -f2 | sort | uniq -c
 
 # Tasks completed per day
-for dir in .completed/tasks/*/; do
+for dir in .completed/*/; do
   echo "$(basename $dir): $(ls -1 $dir | wc -l) tasks"
 done
 
 # Pattern usage frequency
-grep -r "Pattern:" .completed/tasks/ | cut -d':' -f3 | sort | uniq -c
+grep -r "@pattern:" /ai/patterns/ | cut -d':' -f2 | sort | uniq -c
 ```
 
 ## Pattern Extraction Workflow

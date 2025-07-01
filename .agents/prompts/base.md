@@ -46,13 +46,13 @@ Before marking complete:
 ## Task Completion
 1. Verify all requirements met
 2. Review for patterns to extract
-3. **MOVE** to `.completed/tasks/YYYY-MM-DD/agent-N-task-name.md`
-4. Extract/update patterns in `.completed/patterns/`
+3. **MOVE** to `.completed/YYYY-MM-DD/agent-N-task-name.md`
+4. Extract/update patterns in `/ai/patterns/` (during Phase 5)
 5. Follow "After Completion" instructions (usually merge)
 
 ```bash
 mv .claude/tasks/agent-[N]/###-task.md \
-   .completed/tasks/$(date +%Y-%m-%d)/agent-[N]-task.md
+   .completed/$(date +%Y-%m-%d)/agent-[N]-task.md
 ```
 
 ## Important
