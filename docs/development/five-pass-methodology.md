@@ -138,7 +138,7 @@ This methodology is designed for both human and AI developers:
 
 ## See Also
 
-- AI phase guides: `/ai/methods/multi-pass-development/`
+- AI phase guides: `/ai/methods/multi-pass-development/` (*.ai.md files)
 - Pattern library: `/ai/patterns/`
 - Standards: `/ai/standards/` (coming soon)
 - Task management: `/.claude/tasks/`

@@ -11,7 +11,7 @@ Only load the phase guide you're currently working on:
 ```markdown
 <!-- In your task file -->
 **Current Phase**: Phase 3 - Make it Safe
-**Phase Guide**: /ai/methods/multi-pass-development/phase-3-make-safe.md
+**Phase Guide**: /ai/methods/multi-pass-development/phase-3-make-safe.ai.md
 ```
 
 ## Phase Overview
