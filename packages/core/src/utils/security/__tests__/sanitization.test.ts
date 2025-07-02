@@ -475,7 +475,7 @@ describe('Sanitization Utilities', () => {
     });
 
     it('should handle deeply nested objects efficiently', () => {
-      let obj: any = { value: '  trim  ' };
+      let obj: Record<string, unknown> = { value: '  trim  ' };
       for (let i = 0; i < 50; i++) {
         obj = { nested: obj };
       }

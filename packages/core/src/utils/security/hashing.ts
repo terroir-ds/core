@@ -23,7 +23,12 @@
  */
 
 import objectHash from 'object-hash';
-import type { Hash as XXHash } from 'xxhash-wasm';
+
+// Type-only import for xxhash-wasm
+type XXHash = {
+  h32(input: string, seed?: number): number;
+  h64(input: string, seed?: bigint): bigint;
+};
 
 // =============================================================================
 // TYPES
@@ -42,7 +47,7 @@ export interface ObjectHashOptions {
   /** Ignore unknown object types. Default: true */
   ignoreUnknown?: boolean;
   /** Replace objects of unserializable types. Default: true */
-  replacer?: (value: any) => any;
+  replacer?: (value: unknown) => unknown;
   /** Sort object keys. Default: true */
   unorderedObjects?: boolean;
   /** Sort arrays. Default: false */
@@ -381,10 +386,10 @@ export function createMaskedValue(
  * // }
  * ```
  */
-export function anonymize<T>(
+export async function anonymize<T>(
   data: T,
   options: AnonymizeOptions = {}
-): T {
+): Promise<T> {
   const {
     preserveTypes = true,
     preserveLength = false,
@@ -395,7 +400,7 @@ export function anonymize<T>(
   
   // Create a deterministic random generator if seed provided
   const getRandom = deterministicSeed
-    ? createSeededRandom(deterministicSeed)
+    ? await createSeededRandom(deterministicSeed)
     : Math.random;
   
   function anonymizeValue(value: unknown, key: string, depth: number): unknown {
@@ -423,9 +428,9 @@ export function anonymize<T>(
       if (value.includes('@')) {
         // Email-like string
         const parts = value.split('@');
-        const userLen = preserveLength ? parts[0].length : Math.floor(getRandom() * 10) + 3;
+        const userLen = preserveLength ? parts[0]?.length || 0 : Math.floor(getRandom() * 10) + 3;
         const domainParts = parts[1]?.split('.') || ['example', 'com'];
-        const domainLen = preserveLength ? domainParts[0].length : Math.floor(getRandom() * 8) + 3;
+        const domainLen = preserveLength ? domainParts[0]?.length || 0 : Math.floor(getRandom() * 8) + 3;
         
         return `${'x'.repeat(userLen)}@${'x'.repeat(domainLen)}.${domainParts[domainParts.length - 1]}`;
       }
@@ -495,12 +500,12 @@ export function anonymize<T>(
  * @param seed - Seed string
  * @returns Random number generator function
  */
-function createSeededRandom(seed: string): () => number {
-  let hash = consistentHash(seed);
+async function createSeededRandom(seed: string): Promise<() => number> {
+  let hash = await hashString(seed, { format: 'number' }) as number;
   
   return (): number => {
     // Simple linear congruential generator
-    hash = (hash * 1664525 + 1013904223) >>> 0;
-    return hash / 0xFFFFFFFF;
+    hash = ((hash * 1664525 + 1013904223) >>> 0);
+    return (hash >>> 0) / 0xFFFFFFFF;
   };
 }

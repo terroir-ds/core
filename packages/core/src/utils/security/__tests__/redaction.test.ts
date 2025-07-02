@@ -82,7 +82,7 @@ describe('Redaction Utilities', () => {
     });
 
     it('should handle circular references', () => {
-      const obj: any = { name: 'test', password: 'secret' };
+      const obj: Record<string, unknown> = { name: 'test', password: 'secret' };
       obj.self = obj;
       
       const result = redact(obj);
@@ -349,7 +349,7 @@ describe('Redaction Utilities', () => {
     });
 
     it('should handle circular references', () => {
-      const obj: any = { name: 'test' };
+      const obj: Record<string, unknown> = { name: 'test' };
       obj.self = obj;
       
       const json = safeStringify(obj);
@@ -507,7 +507,7 @@ describe('Redaction Utilities', () => {
 
   describe('Performance', () => {
     it('should handle large objects efficiently', () => {
-      const largeObj: any = {};
+      const largeObj: Record<string, unknown> = {};
       for (let i = 0; i < 1000; i++) {
         largeObj[`field${i}`] = {
           data: 'value',
@@ -532,7 +532,7 @@ describe('Redaction Utilities', () => {
     });
 
     it('should handle deep nesting efficiently', () => {
-      let obj: any = { password: 'secret' };
+      let obj: Record<string, unknown> = { password: 'secret' };
       for (let i = 0; i < 50; i++) {
         obj = { nested: obj, level: i };
       }

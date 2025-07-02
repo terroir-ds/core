@@ -146,7 +146,7 @@ export function sanitizeInput<T>(
   
   // Type checking
   const type = getType(input);
-  if (allowedTypes && !allowedTypes.includes(type as any)) {
+  if (allowedTypes && !allowedTypes.includes(type as InputType)) {
     throw new TypeError(`Type '${type}' is not allowed`);
   }
   
@@ -211,7 +211,9 @@ export function sanitizeInput<T>(
       const limit = Math.min(entries.length, maxProperties);
       
       for (let i = 0; i < limit; i++) {
-        const [key, val] = entries[i];
+        const entry = entries[i];
+        if (!entry) continue;
+        const [key, val] = entry;
         // Sanitize key as well
         const sanitizedKey = typeof key === 'string' 
           ? key.substring(0, 100).replace(/[^\w.-]/g, '_')
@@ -220,7 +222,7 @@ export function sanitizeInput<T>(
       }
       
       if (entries.length > maxProperties) {
-        sanitized._truncated = `${entries.length - maxProperties} MORE PROPERTIES`;
+        sanitized['_truncated'] = `${entries.length - maxProperties} MORE PROPERTIES`;
       }
       
       return sanitized;
@@ -376,7 +378,7 @@ export function sanitizePath(
   
   // Resolve path
   try {
-    const path = await import('node:path');
+    const path = require('node:path');
     const resolved = isAbsolute
       ? path.resolve(normalized)
       : path.resolve(basePath, normalized);

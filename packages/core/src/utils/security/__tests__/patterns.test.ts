@@ -56,9 +56,9 @@ describe('Security Patterns', () => {
       });
 
       it('should handle edge cases', () => {
-        expect(isSensitiveFieldName(null as any)).toBe(false);
-        expect(isSensitiveFieldName(undefined as any)).toBe(false);
-        expect(isSensitiveFieldName(123 as any)).toBe(false);
+        expect(isSensitiveFieldName(null as unknown as string)).toBe(false);
+        expect(isSensitiveFieldName(undefined as unknown as string)).toBe(false);
+        expect(isSensitiveFieldName(123 as unknown as string)).toBe(false);
       });
     });
   });
@@ -132,9 +132,9 @@ describe('Security Patterns', () => {
 
       it('should handle edge cases', () => {
         expect(containsSensitiveContent('')).toBe(false);
-        expect(containsSensitiveContent(null as any)).toBe(false);
-        expect(containsSensitiveContent(undefined as any)).toBe(false);
-        expect(containsSensitiveContent(123 as any)).toBe(false);
+        expect(containsSensitiveContent(null as unknown as string)).toBe(false);
+        expect(containsSensitiveContent(undefined as unknown as string)).toBe(false);
+        expect(containsSensitiveContent(123 as unknown as string)).toBe(false);
       });
     });
 
@@ -170,8 +170,8 @@ describe('Security Patterns', () => {
 
       it('should handle edge cases', () => {
         expect(isBinaryContent('')).toBe(false);
-        expect(isBinaryContent(null as any)).toBe(false);
-        expect(isBinaryContent(undefined as any)).toBe(false);
+        expect(isBinaryContent(null as unknown as string)).toBe(false);
+        expect(isBinaryContent(undefined as unknown as string)).toBe(false);
       });
     });
   });
@@ -219,9 +219,9 @@ describe('Security Patterns', () => {
       it('should validate input types', () => {
         const matcher = createMatcher([/test/]);
         expect(matcher('')).toBe(false);
-        expect(matcher(null as any)).toBe(false);
-        expect(matcher(undefined as any)).toBe(false);
-        expect(matcher(123 as any)).toBe(false);
+        expect(matcher(null as unknown as string)).toBe(false);
+        expect(matcher(undefined as unknown as string)).toBe(false);
+        expect(matcher(123 as unknown as string)).toBe(false);
       });
     });
 
