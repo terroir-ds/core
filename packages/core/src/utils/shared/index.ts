@@ -202,9 +202,9 @@ export function isArrayLike(value: unknown): value is ArrayLike<unknown> {
     value != null &&
     typeof value !== 'function' &&
     typeof value !== 'string' &&
-    typeof (value as any).length === 'number' &&
-    (value as any).length >= 0 &&
-    Number.isInteger((value as any).length)
+    typeof (value as { length?: unknown }).length === 'number' &&
+    (value as { length: number }).length >= 0 &&
+    Number.isInteger((value as { length: number }).length)
   );
 }
 
@@ -414,7 +414,7 @@ export function memoize<TArgs extends unknown[], TReturn>(
     
     if (cache.has(key)) {
       // Move to end (LRU)
-      const value = cache.get(key)!;
+      const value = cache.get(key) as V;
       cache.delete(key);
       cache.set(key, value);
       return value;

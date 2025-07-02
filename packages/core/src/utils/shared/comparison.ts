@@ -103,7 +103,7 @@ export function deepEquals(
     if (isObjectLike(x) && isObjectLike(y)) {
       let seenX = seen.get(x as object);
       if (seenX && seenX.has(y as object)) {
-        return seenX.get(y as object)!;
+        return seenX.get(y as object) ?? false;
       }
       if (!seenX) {
         seenX = new WeakMap();
@@ -234,7 +234,7 @@ export function deepEquals(
             return false;
           }
           
-          if (!equals((x as any)[key], (y as any)[key])) {
+          if (!equals((x as Record<string, unknown>)[key], (y as Record<string, unknown>)[key])) {
             return false;
           }
         }
@@ -252,7 +252,7 @@ export function deepEquals(
             return false;
           }
           
-          if (!equals((x as any)[sym], (y as any)[sym])) {
+          if (!equals((x as Record<symbol, unknown>)[sym], (y as Record<symbol, unknown>)[sym])) {
             return false;
           }
         }
@@ -294,7 +294,7 @@ export function shallowEquals(a: unknown, b: unknown): boolean {
   }
   
   for (const key of keysA) {
-    if (!hasOwnProp(b, key) || (a as any)[key] !== (b as any)[key]) {
+    if (!hasOwnProp(b, key) || (a as Record<string, unknown>)[key] !== (b as Record<string, unknown>)[key]) {
       return false;
     }
   }
