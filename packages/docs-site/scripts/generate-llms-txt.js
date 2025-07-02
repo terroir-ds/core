@@ -68,7 +68,7 @@ async function generatePackageSection() {
         quickRef,
         path: `/packages/${pkg}`
       });
-    } catch (err) {
+    } catch {
       // Package might not have AI docs yet
       // Silent skip - no console output in production scripts
     }
