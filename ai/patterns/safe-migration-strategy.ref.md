@@ -1,6 +1,7 @@
 # Safe Migration Strategy Pattern References
 
 ## Task Usage (WHEN)
+
 - 2025-07-01: task-001-five-pass-development-guide - Documented from previous work
   - Pattern Score: 5/5 (Exemplary pattern instance)
   - Scoring breakdown (using pattern-quality-scoring):
@@ -18,19 +19,23 @@
 <!-- END AUTO-GENERATED -->
 
 ## Manual References
+
 ### Potential Applications
+
 - README.md to index.md migration
 - Pattern file reorganization
 - Multi-workspace migrations
 - Asset restructuring
 
 ## Insights
+
 - Timestamped backups prevent collision and enable multiple attempts
 - Phased approach allows early error detection
 - One-command rollback critical for confidence
 - Verification step often reveals edge cases
 
 ## Audit Notes
+
 - [ ] Create reusable migration script template
 - [ ] Add dry-run capability
 - [ ] Include migration progress tracking

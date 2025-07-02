@@ -1,12 +1,15 @@
 # JSDoc Pattern & Standard Tags
 
 ## Quick Context
+
 Use JSDoc tags to mark where patterns and standards are implemented in code, enabling automated reference tracking and compliance checking.
 
 ## Tag Definitions
 
 ### @implements-pattern
+
 Marks where a pattern is implemented in code.
+
 ```typescript
 /**
  * Process color tokens through validation pipeline
@@ -18,7 +21,9 @@ export async function processColorTokens(tokens: Token[]): Promise<ProcessedToke
 ```
 
 ### @implements-standard
+
 Marks where a standard is followed.
+
 ```typescript
 /**
  * @implements-standard structured-logging
@@ -39,7 +44,9 @@ export function validateInput(data: unknown): ValidationResult {
 ```
 
 ### @pattern-instance
+
 Marks a specific instance of a pattern with quality score.
+
 ```typescript
 /**
  * @pattern-instance error-handling-pattern
@@ -52,7 +59,9 @@ class RobustProcessor {
 ```
 
 ### @standard-compliance
+
 Marks standard compliance with score.
+
 ```typescript
 /**
  * @standard-compliance structured-logging
@@ -67,7 +76,9 @@ function processRequest(req: Request): Response {
 ## Tag Placement Rules
 
 ### Function/Method Level
+
 Place tags on the function that implements the pattern/standard:
+
 ```typescript
 /**
  * Fetches user data with proper error handling
@@ -80,7 +91,9 @@ async function fetchUser(id: string): Promise<User> {
 ```
 
 ### Class Level
+
 Place tags on the class when the entire class follows a pattern:
+
 ```typescript
 /**
  * Repository implementing unit of work pattern
@@ -93,7 +106,9 @@ export class UserRepository {
 ```
 
 ### Inline Comments
+
 For specific lines implementing a standard:
+
 ```typescript
 function processData(input: string): Result {
   // @implements-standard input-validation
@@ -113,13 +128,16 @@ function processData(input: string): Result {
 ## Automation Integration
 
 ### Reference Scanner
+
 The reference scanner will:
+
 1. Parse all TypeScript/JavaScript files
 2. Extract JSDoc tags and inline comments
 3. Update .ref.md files automatically
 4. Track line numbers and git commits
 
 ### Example Scanner Output
+
 ```javascript
 // scripts/scan-references.js
 {
@@ -151,21 +169,25 @@ The reference scanner will:
 ## Best Practices
 
 ### 1. Tag at the Right Level
+
 - Function level for specific implementations
 - Class level for architectural patterns
 - Inline for specific lines
 
 ### 2. Include Scores When Known
+
 - Add scores during phase transitions
 - Update scores when code changes
 - Document why score changed
 
 ### 3. Use Consistent Naming
+
 - Pattern tags: kebab-case ending in `-pattern`
 - Standard tags: kebab-case descriptive names
 - Match exact names in `/ai/patterns/` and `/ai/standards/`
 
 ### 4. Avoid Over-Tagging
+
 - Tag significant implementations only
 - Don't tag trivial uses
 - Focus on examples worth learning from
@@ -173,6 +195,7 @@ The reference scanner will:
 ## Examples
 
 ### Complete Function Documentation
+
 ```typescript
 /**
  * Processes design tokens with validation and transformation
@@ -217,6 +240,7 @@ export async function processTokens(tokens: RawToken[]): Promise<ProcessedToken[
 ```
 
 ### Class with Multiple Patterns
+
 ```typescript
 /**
  * Service implementing multiple architectural patterns
@@ -248,6 +272,7 @@ export class UserService {
 ## Migration from Existing Code
 
 ### Step 1: Identify Patterns/Standards
+
 ```bash
 # Find error handling patterns
 grep -r "try.*catch" --include="*.ts" | grep -E "(logger|throw)"
@@ -257,14 +282,17 @@ grep -r "logger\." --include="*.ts"
 ```
 
 ### Step 2: Add Tags
+
 During code review or phase transitions, add appropriate tags.
 
 ### Step 3: Run Scanner
+
 ```bash
 pnpm scan-references
 ```
 
 ### Step 4: Verify Updates
+
 Check that .ref.md files are updated correctly.
 
 ## Future Enhancements
@@ -276,6 +304,7 @@ Check that .ref.md files are updated correctly.
 5. **Automatic Scoring**: AI-assisted score suggestions
 
 ## Related Standards
+
 - [JSDoc Standards](./jsdoc-standards.ai.md)
 - [Documentation Standards](./documentation.ai.md)
 - [Code Quality Standards](./code-quality.ai.md)

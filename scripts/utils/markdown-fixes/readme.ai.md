@@ -26,7 +26,7 @@ Comprehensive code block formatting and language detection:
 
 - **Language Detection**: Automatically detects and adds missing language identifiers
 - **Fence Cleanup**: Removes language identifiers from closing backticks
-- **Blank Line Management**: 
+- **Blank Line Management**:
   - Ensures blank line before opening backticks
   - Ensures blank line after closing backticks
   - Removes blank lines inside code blocks
@@ -209,6 +209,7 @@ git add -u
 ### Benchmarks
 
 On a typical codebase:
+
 - 100 files: ~2 seconds
 - 1000 files: ~15 seconds
 - 10000 files: ~2 minutes

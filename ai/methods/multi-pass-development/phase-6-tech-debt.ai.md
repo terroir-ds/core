@@ -1,16 +1,19 @@
 # Phase 6: Tech Debt Review (TOCK Tasks Only)
 
 ## Quick Context
+
 - **Goal**: Apply accumulated standards and patterns
 - **Time Budget**: Varies (typically 10-20% additional)
 - **Focus**: Retroactive improvements using new standards
 
 ## When This Phase Appears
+
 - Every 3-5 tasks (configured in task manager)
 - Task shows: `**Method**: Multi-Pass Development with 6 Phases`
 - After Phase 5 completion
 
 ## Checklist
+
 - [ ] Review ALL recent patterns in `/ai/patterns/`
 - [ ] Review ALL recent standards in `/ai/standards/`
 - [ ] Identify patterns relevant to current code domain
@@ -21,6 +24,7 @@
 - [ ] Extract any new patterns discovered during tech debt work
 
 ## What TO Do
+
 - Load recently created standards
 - Search for old patterns to replace
 - Apply new utilities where applicable
@@ -29,6 +33,7 @@
 - Improve based on lessons learned
 
 ## What NOT to Do
+
 ❌ Don't refactor unrelated code
 ❌ Don't apply every possible pattern
 ❌ Don't spend excessive time
@@ -36,6 +41,7 @@
 ❌ Don't skip tests after changes
 
 ## Example Tech Debt Review
+
 ```typescript
 // Recent standard: Use truncate() instead of substring
 // Search for old patterns:
@@ -58,7 +64,9 @@ import { truncate } from '@utils/string';
 ```
 
 ## Review Sources
+
 1. **Global Pattern Library**: Review ALL patterns for relevance
+
    ```bash
    # Review pattern index
    cat /ai/patterns/index.ai.md
@@ -68,6 +76,7 @@ import { truncate } from '@utils/string';
    ```
 
 2. **Recent Additions**: Focus on newest patterns/standards
+
    ```bash
    # Last 10 patterns added
    ls -lt /ai/patterns/*.ai.md | head -10
@@ -77,23 +86,27 @@ import { truncate } from '@utils/string';
    ```
 
 3. **Completed Tasks**: Check patterns from recent work
+
    ```bash
    # Recent completed tasks for inspiration
    ls -la .completed/ | tail -10
    ```
 
 4. **Linting Rules**: Run with auto-fix
+
    ```bash
    pnpm fix
    ```
 
 ## Scope Guidelines
+
 - Focus on files touched in current task
 - Include closely related files
 - Don't refactor the entire codebase
 - Prioritize high-impact improvements
 
 ## Success Criteria
+
 ✅ New standards applied
 ✅ Related code updated
 ✅ Tests still passing
@@ -101,7 +114,9 @@ import { truncate } from '@utils/string';
 ✅ Consistency improved
 
 ## Phase Transition
+
 When complete, follow standard transition protocol:
+
 1. Extract any patterns discovered during tech debt work
 2. Score examples using [@pattern:pattern-quality-scoring]
 3. Update pattern .ref.md files
@@ -111,6 +126,7 @@ When complete, follow standard transition protocol:
 7. Proceed to task completion
 
 ## Time Management
+
 - Box time to 20% of original task
 - Focus on highest value improvements
 - Leave minor issues for future TOCK

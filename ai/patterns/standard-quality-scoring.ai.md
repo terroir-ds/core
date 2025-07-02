@@ -11,11 +11,13 @@ related: [pattern-quality-scoring, standard-enforcement, code-quality]
 # Standard Quality Scoring Pattern
 
 ## Quick Context
+
 When evaluating how well a standard is implemented during phase transitions or code reviews, score each implementation's quality (1-5) to track compliance and identify exemplary code that demonstrates best practices.
 
 ## The Pattern
 
 ### When to Apply
+
 - During phase transitions when standards are applied
 - When reviewing code for standard compliance
 - During tech debt review (Phase 6) to assess existing code
@@ -25,6 +27,7 @@ When evaluating how well a standard is implemented during phase transitions or c
 ### Implementation
 
 #### 1. Scoring Structure
+
 ```typescript
 interface StandardScore {
   score: 1 | 2 | 3 | 4 | 5;
@@ -49,6 +52,7 @@ interface StandardScore {
 #### 2. Scoring Rubric
 
 **5 - Exemplary** (Gold standard implementation)
+
 - Perfect adherence to the standard
 - All edge cases handled elegantly
 - Exceptional code quality and readability
@@ -57,6 +61,7 @@ interface StandardScore {
 - Performance optimized
 
 **4 - Good** (Solid implementation)
+
 - Correctly follows the standard
 - Most edge cases handled
 - Clean, maintainable code
@@ -65,6 +70,7 @@ interface StandardScore {
 - Reasonable performance
 
 **3 - Adequate** (Meets minimum requirements)
+
 - Basic standard compliance
 - Core functionality correct
 - Acceptable code quality
@@ -73,6 +79,7 @@ interface StandardScore {
 - Acceptable performance
 
 **2 - Poor** (Needs improvement)
+
 - Partial standard compliance
 - Some aspects missing or wrong
 - Code quality issues
@@ -81,6 +88,7 @@ interface StandardScore {
 - Performance concerns
 
 **1 - Non-Compliant** (Fails standard)
+
 - Does not follow the standard
 - Major implementation errors
 - Poor code quality
@@ -200,18 +208,22 @@ function calculateStandardCompliance(implementations) {
 ## Common Pitfalls
 
 ### 1. Focusing Only on Correctness
+
 **Problem**: High correctness score but poor code quality
 **Solution**: Use weighted scoring to balance all aspects
 
 ### 2. Ignoring Security
+
 **Problem**: Functional code with security vulnerabilities
 **Solution**: Security must be explicitly evaluated, even for internal tools
 
 ### 3. Test Coverage vs Test Quality
+
 **Problem**: High coverage with poor quality tests
 **Solution**: Evaluate test meaningfulness, not just percentages
 
 ### 4. Performance Over-Optimization
+
 **Problem**: Premature optimization hurting readability
 **Solution**: Balance performance with maintainability
 
@@ -224,6 +236,7 @@ function calculateStandardCompliance(implementations) {
 - **Learning Resources**: High-scored examples teach best practices
 
 ## Related Patterns
+
 - Pattern Quality Scoring (for pattern instances)
 - Standard Enforcement
 - Code Quality Metrics

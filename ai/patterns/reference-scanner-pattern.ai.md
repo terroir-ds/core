@@ -11,11 +11,13 @@ related: [pattern-quality-scoring, standard-quality-scoring]
 # Reference Scanner Pattern
 
 ## Quick Context
+
 Build automated scanners that extract pattern and standard references from code using JSDoc tags and comments, maintaining up-to-date .ref.md files.
 
 ## The Pattern
 
 ### Core Structure
+
 ```typescript
 interface Scanner {
   // Parse source files
@@ -32,6 +34,7 @@ interface Scanner {
 ### Implementation Steps
 
 #### 1. File Discovery
+
 ```typescript
 async function discoverFiles(rootDir: string): Promise<string[]> {
   return glob('**/*.{ts,tsx,js,jsx}', {
@@ -42,6 +45,7 @@ async function discoverFiles(rootDir: string): Promise<string[]> {
 ```
 
 #### 2. AST Parsing
+
 ```typescript
 import { parse } from '@typescript-eslint/parser';
 
@@ -61,6 +65,7 @@ function parseFile(filePath: string, content: string): SourceFile {
 ```
 
 #### 3. Tag Extraction
+
 ```typescript
 function extractJSDocTags(node: any): Tag[] {
   const tags: Tag[] = [];
@@ -91,6 +96,7 @@ function extractJSDocTags(node: any): Tag[] {
 ```
 
 #### 4. Reference Building
+
 ```typescript
 interface Reference {
   type: 'pattern' | 'standard';
@@ -128,6 +134,7 @@ function buildReferences(files: SourceFile[]): Map<string, Reference[]> {
 ```
 
 #### 5. Score Extraction
+
 ```typescript
 function extractScore(tags: Tag[]): number | undefined {
   const scoreTag = tags.find(t => 
@@ -147,6 +154,7 @@ function extractScore(tags: Tag[]): number | undefined {
 ```
 
 #### 6. Reference File Updates
+
 ```typescript
 async function updateReferenceFile(
   type: 'pattern' | 'standard',
@@ -236,22 +244,28 @@ scanner.scan().catch(console.error);
 ## Common Pitfalls
 
 ### 1. Performance Issues
+
 **Problem**: Scanning large codebases is slow
-**Solution**: 
+**Solution**:
+
 - Cache parsed ASTs
 - Process files in parallel
 - Skip unchanged files (git diff)
 
 ### 2. Invalid References
+
 **Problem**: Tags reference non-existent patterns
 **Solution**:
+
 - Validate against existing patterns/standards
 - Report warnings for invalid references
 - Suggest similar names
 
 ### 3. Merge Conflicts
+
 **Problem**: AUTO-GENERATED sections cause conflicts
 **Solution**:
+
 - Use deterministic sorting
 - Include minimal information
 - Consider separate files for auto-generated content
@@ -265,6 +279,7 @@ scanner.scan().catch(console.error);
 - **Improves Discovery**: Find all uses of a pattern
 
 ## Related Patterns
+
 - Pattern Quality Scoring
 - Standard Quality Scoring
 - Automated Documentation Generation

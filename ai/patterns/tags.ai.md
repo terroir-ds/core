@@ -1,11 +1,13 @@
 # Pattern Tags Taxonomy
 
 ## Overview
+
 Tags provide flexible, non-hierarchical organization for patterns. Multiple tags can apply to a single pattern, enabling discovery from different perspectives.
 
 ## Core Tags
 
 ### By Purpose
+
 - **reliability**: Patterns that improve system stability and error handling
 - **performance**: Optimization and efficiency patterns
 - **security**: Security-focused patterns and practices
@@ -18,6 +20,7 @@ Tags provide flexible, non-hierarchical organization for patterns. Multiple tags
 - **standards**: Patterns related to standard compliance and enforcement
 
 ### By Domain
+
 - **backend**: Server-side patterns
 - **frontend**: Client-side patterns
 - **cli**: Command-line interface patterns
@@ -26,23 +29,27 @@ Tags provide flexible, non-hierarchical organization for patterns. Multiple tags
 - **all**: Universal patterns applicable everywhere
 
 ### By Complexity
+
 - **beginner**: Easy to understand and implement
 - **intermediate**: Requires some experience
 - **advanced**: Complex patterns requiring deep knowledge
 
 ### By Type
+
 - **architectural**: High-level design patterns
 - **implementation**: Code-level patterns
 - **process**: Workflow and methodology patterns
 - **meta-pattern**: Patterns about patterns
 
 ### By Lifecycle
+
 - **initialization**: Startup and setup patterns
 - **runtime**: Operational patterns
 - **error-handling**: Failure management patterns
 - **cleanup**: Teardown and resource management
 
 ### Special Tags
+
 - **automation**: Patterns that enable automation
 - **ai-friendly**: Optimized for AI agent usage
 - **human-focused**: Primarily for human developers
@@ -50,13 +57,16 @@ Tags provide flexible, non-hierarchical organization for patterns. Multiple tags
 ## Tag Relationships
 
 ### Commonly Paired Tags
+
 - `reliability` + `error-handling`: Robust error management
 - `performance` + `caching`: Speed optimization
 - `security` + `validation`: Input safety
 - `documentation` + `automation`: Self-maintaining docs
 
 ### Tag Hierarchies (Informal)
+
 While we maintain a flat structure, some tags naturally group:
+
 - Quality: `reliability`, `testability`, `maintainability`
 - User-facing: `accessibility`, `performance`, `security`
 - Development: `documentation`, `automation`, `process`
@@ -64,6 +74,7 @@ While we maintain a flat structure, some tags naturally group:
 ## Usage Guidelines
 
 ### When Tagging Patterns
+
 1. Use 3-5 tags per pattern
 2. Include at least one purpose tag
 3. Include at least one domain tag
@@ -71,6 +82,7 @@ While we maintain a flat structure, some tags naturally group:
 5. Use special tags sparingly
 
 ### Tag Evolution
+
 - New tags can be added as patterns emerge
 - Unused tags should be deprecated
 - Tag meanings should remain stable
@@ -79,6 +91,7 @@ While we maintain a flat structure, some tags naturally group:
 ## Tag Statistics
 <!-- AUTO-GENERATED - Do not edit -->
 ### Most Used Tags
+
 1. `documentation` - 2 patterns (pattern-quality-scoring, standard-quality-scoring)
 2. `quality-control` - 2 patterns (pattern-quality-scoring, standard-quality-scoring)
 3. `automation` - 2 patterns (pattern-quality-scoring, standard-quality-scoring)
@@ -89,6 +102,7 @@ While we maintain a flat structure, some tags naturally group:
 <!-- END AUTO-GENERATED -->
 
 ## Proposed Tags (Under Consideration)
+
 - `event-driven`: For event-based patterns
 - `real-time`: For real-time system patterns
 - `data-processing`: For data pipeline patterns

@@ -1,6 +1,7 @@
 # Phase Transition Protocol
 
 ## Quick Context
+
 - **Purpose**: Ensure clean transitions between development phases
 - **When**: Before moving to next phase
 - **Time**: 5-10 minutes per transition
@@ -8,6 +9,7 @@
 ## Transition Checklist
 
 ### Before ANY Transition
+
 1. **Extract Patterns & Standards**
    - Identify reusable patterns from phase work
    - Document new standards discovered
@@ -16,6 +18,7 @@
    - Add references to `.ref.md` files with scores
 
 2. **Summarize Current Phase**
+
    ```markdown
    ## Phase [N] Summary
    - What was accomplished: [list key items]
@@ -25,6 +28,7 @@
    ```
 
 3. **Pattern Extraction Process**
+
    ```markdown
    For each pattern identified:
    a) Create pattern file if new (or update existing)
@@ -37,7 +41,8 @@
    ```
 
 4. **Get User Confirmation**
-   ```
+
+   ```text
    "Phase [N] complete. Summary:
    [brief summary]
    Patterns extracted: [list with scores]
@@ -45,6 +50,7 @@
    ```
 
 5. **Update Task File**
+
    ```markdown
    **Current Phase**: Phase [N+1] - [Phase Name]
    **Phase Guide**: /ai/methods/multi-pass-development/phase-[N+1]-[name].md
@@ -56,6 +62,7 @@
    ```
 
 6. **Commit Current Work**
+
    ```bash
    git add .
    git commit -m "feat: complete phase [N] - [brief summary]
@@ -72,30 +79,35 @@
 ## Specific Transition Requirements
 
 ### Pass 1 → Pass 2
+
 ✅ Basic functionality works
 ✅ At least one test passes
 ✅ No blocking errors
 ❌ Don't need all features yet
 
 ### Pass 2 → Pass 3  
+
 ✅ Code is clean and organized
 ✅ Patterns properly applied
 ✅ Types well-defined
 ❌ Don't need performance yet
 
 ### Pass 3 → Pass 4
+
 ✅ All edge cases handled
 ✅ Input validation complete
 ✅ Security considered
 ❌ Don't need full test coverage yet
 
 ### Pass 4 → Pass 5
+
 ✅ Test coverage >90%
 ✅ All tests passing
 ✅ Performance acceptable
 ❌ Don't need documentation yet
 
 ### Pass 5 → Done (or Pass 6)
+
 ✅ Documentation complete
 ✅ Final pattern extraction performed
 ✅ All patterns scored and documented
@@ -104,6 +116,7 @@
 Note: Still follow full transition protocol!
 
 ### Pass 6 → Done (TOCK only)
+
 ✅ Recent standards applied
 ✅ Related code updated
 ✅ Tech debt addressed
@@ -113,7 +126,7 @@ Note: Still follow full transition protocol!
 
 ## Example Transition
 
-```
+```yaml
 Agent: "Phase 2 complete. Summary:
 - Refactored truncate function with options interface  
 - Extracted normalizeOptions helper
@@ -138,7 +151,8 @@ The transition from the last phase to task completion follows the same protocol:
 6. **Mark Task Complete** - Update task status
 
 ### Example Final Transition
-```
+
+```yaml
 Agent: "Phase 5 complete. Summary:
 - Documentation completed for human and AI audiences
 - Final patterns extracted:
@@ -155,6 +169,7 @@ Agent: [Updates task file to completed status, final commit]
 ```
 
 ## Common Mistakes
+
 ❌ Moving to next phase without user confirmation
 ❌ Not updating task file metadata
 ❌ Carrying too much context forward

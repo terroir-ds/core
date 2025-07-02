@@ -1,6 +1,7 @@
 # Methodical File Processing Pattern References
 
 ## Task Usage (WHEN)
+
 - 2025-07-01: task-001-five-pass-development-guide - Documented from previous work
   - Pattern Score: 4/5 (Good pattern instance)
   - Scoring breakdown (using pattern-quality-scoring):
@@ -18,19 +19,23 @@
 <!-- END AUTO-GENERATED -->
 
 ## Manual References
+
 ### Potential Applications
+
 - Migration scripts for file reorganization
 - Bulk asset processing pipelines
 - Pattern extraction across codebase
 - Documentation generation scripts
 
 ## Insights
+
 - Renaming approach provides visual progress in file system
 - Resumability is critical for long-running operations
 - Progress tracking prevents duplicate processing
 - Could be enhanced with parallel processing support
 
 ## Audit Notes
+
 - [ ] Add error recovery examples
 - [ ] Include parallel processing variant
 - [ ] Add checkpointing for very large sets

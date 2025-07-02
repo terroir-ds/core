@@ -11,6 +11,7 @@ related: [pattern-extraction, reference-management]
 # Pattern Quality Scoring Pattern
 
 ## Quick Context
+
 When extracting patterns or standards during phase transitions, score each pattern instance's quality (1-5) to enable automatic selection of the best implementations for documentation.
 
 **Note**: This is a specialized scoring pattern for pattern instances. For other artifact types, see [@pattern:contextual-scoring-pattern].
@@ -18,6 +19,7 @@ When extracting patterns or standards during phase transitions, score each patte
 ## The Pattern
 
 ### When to Apply
+
 - During phase transitions when extracting patterns/standards
 - When adding new pattern instances to existing patterns
 - During automated documentation updates
@@ -26,6 +28,7 @@ When extracting patterns or standards during phase transitions, score each patte
 ### Implementation
 
 #### 1. Scoring Structure
+
 ```typescript
 interface ExampleScore {
   score: 1 | 2 | 3 | 4 | 5;
@@ -48,6 +51,7 @@ interface ExampleScore {
 #### 2. Scoring Rubric
 
 **5 - Exemplary** (Conference talk quality)
+
 - Crystal clear implementation
 - Shows complete pattern with edge cases
 - Rich context: problem → solution → result
@@ -55,6 +59,7 @@ interface ExampleScore {
 - Teaches best practices
 
 **4 - Good** (Documentation quality)
+
 - Clear, understandable code
 - Demonstrates core pattern well
 - Good context provided
@@ -62,6 +67,7 @@ interface ExampleScore {
 - Others can learn from it
 
 **3 - Adequate** (Functional but not ideal)
+
 - Basic implementation works
 - Pattern is visible but not highlighted
 - Minimal context
@@ -69,6 +75,7 @@ interface ExampleScore {
 - Requires effort to understand
 
 **2 - Poor** (Needs improvement)
+
 - Unclear or convoluted implementation
 - Pattern obscured by other concerns
 - Missing important context
@@ -76,6 +83,7 @@ interface ExampleScore {
 - Hard to learn from
 
 **1 - Unsuitable** (Do not use)
+
 - Anti-pattern or wrong approach
 - Misleading or incorrect
 - No context provided
@@ -169,14 +177,17 @@ function needsRescoring(example, currentHash) {
 ## Common Pitfalls
 
 ### 1. Grade Inflation
+
 **Problem**: Scoring everything as 4-5
 **Solution**: Reserve 5 for truly exceptional examples. Most should be 3-4.
 
 ### 2. Missing Context
+
 **Problem**: High code quality but no explanation
 **Solution**: Even perfect code needs context to score above 3
 
 ### 3. Outdated Examples
+
 **Problem**: High-scored examples that no longer apply
 **Solution**: Automated rescoring based on age and code changes
 
@@ -189,6 +200,7 @@ function needsRescoring(example, currentHash) {
 - **Learning Optimization**: Developers see only the best examples
 
 ## Related Patterns
+
 - Pattern Extraction at Phase Boundaries
 - Reference Management System
 - Automated Documentation Generation

@@ -11,6 +11,7 @@ related: [documentation-standards, ai-documentation]
 # Index File Convention Standard
 
 ## Quick Context
+
 Use `index.md` or `index.ai.md` as the main entry point for directories instead of `README.md`, providing better organization and progressive disclosure for both humans and AI.
 
 ## The Standard
@@ -30,18 +31,21 @@ directory/
 ### When to Use Each
 
 **Use `index.md`:**
+
 - Main entry point for any documentation directory
 - When content serves both humans and AI equally
 - For web-based documentation systems
 - In component directories (replaces README.md)
 
 **Use `index.ai.md`:**
+
 - When AI needs different content structure than humans
 - For progressive disclosure optimization
 - When human docs are verbose but AI needs concise info
 - In `/ai/` directory structures
 
 **Keep `README.md`:**
+
 - Repository root (GitHub expects it)
 - Package directories (`packages/*/README.md` - npm expects it)
 - When required by external tools (e.g., changesets)
@@ -50,7 +54,8 @@ directory/
 ### Implementation Examples
 
 #### Before (Scattered READMEs)
-```
+
+```text
 packages/
 ├── core/
 │   └── README.md
@@ -61,7 +66,8 @@ packages/
 ```
 
 #### After (Organized Indexes)
-```
+
+```text
 packages/
 ├── core/
 │   ├── index.md      # Main documentation
@@ -105,20 +111,25 @@ done
 ## Common Pitfalls
 
 ### 1. Forgetting Root README
+
 **Problem**: Removing repository root README.md
 **Solution**: Always keep root README.md for GitHub
 
 ### 2. Duplicating Content
+
 **Problem**: Same content in index.md and index.ai.md
 **Solution**: Only create index.ai.md when content differs
 
 ### 3. Deep Nesting
+
 **Problem**: index.md files too deep in hierarchy
 **Solution**: Only add indexes where navigation needed
 
 ## Related Standards
+
 - Documentation Standards
 - AI Documentation Standards
 
 ## Related Patterns  
+
 - [@pattern:progressive-disclosure]

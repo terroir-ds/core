@@ -1,6 +1,7 @@
 # Index File Convention Standard References
 
 ## Task Usage (WHEN)
+
 - 2025-07-01: task-001-five-pass-development-guide - Created standard while organizing /ai directory
   - Standard Score: 5/5 (Exemplary - using contextual scoring)
   - Scoring breakdown (Documentation Standard):
@@ -19,24 +20,29 @@
 <!-- END AUTO-GENERATED -->
 
 ## Manual References
+
 ### Already Applied
+
 - `/ai/index.ai.md` - Main AI documentation entry
 - `/ai/patterns/index.ai.md` - Pattern catalog
 - `/ai/standards/index.ai.md` - Standards catalog
 - `/ai/guides/index.ai.md` - Guides overview
 
 ### Planned Implementations
+
 - Package directories (core, react, tokens)
 - Component directories
 - Documentation sections
 
 ## Insights
+
 - Provides consistency across the codebase
 - Makes progressive disclosure natural
 - Aligns with web conventions (index.html)
 - Allows AI-specific documentation without confusion
 
 ## Audit Notes
+
 - [ ] Audit all README.md files in repo
 - [ ] Create migration plan for gradual adoption
 - [ ] Update documentation generators to use index.md

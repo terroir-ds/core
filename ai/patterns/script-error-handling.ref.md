@@ -1,6 +1,7 @@
 # Script Error Handling Pattern References
 
 ## Task Usage (WHEN)
+
 - 2025-07-01: task-001-five-pass-development-guide - Documented from previous work
   - Pattern Score: 4/5 (Good pattern instance)
   - Scoring breakdown (using pattern-quality-scoring):
@@ -18,19 +19,23 @@
 <!-- END AUTO-GENERATED -->
 
 ## Manual References
+
 ### Potential Applications
+
 - manage-agent-tasks.js script
 - Pattern scanning scripts
 - Migration utilities
 - Build and deployment scripts
 
 ## Insights
+
 - Test environment suppression prevents noise
 - Centralized handler ensures consistency
 - Process event handlers catch all error types
 - Environment-aware behavior critical for CI/CD
 
 ## Audit Notes
+
 - [ ] Add retry logic examples
 - [ ] Include logging integration
 - [ ] Add error categorization

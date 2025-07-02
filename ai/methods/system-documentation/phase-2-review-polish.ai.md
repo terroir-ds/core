@@ -1,11 +1,13 @@
 # Phase 2: Review & Polish (20%)
 
 ## Objective
+
 Quick review to ensure clarity and add any missing examples.
 
 ## Quick Checklist (10-15 min)
 
 ### 1. Content Check
+
 ```markdown
 - [ ] Clear title and opening context
 - [ ] "When to Use" has concrete scenarios
@@ -15,6 +17,7 @@ Quick review to ensure clarity and add any missing examples.
 ```
 
 ### 2. Test Examples
+
 ```bash
 # Quick validation
 - Copy and run each command/code block
@@ -23,6 +26,7 @@ Quick review to ensure clarity and add any missing examples.
 ```
 
 ### 3. Polish Pass
+
 ```markdown
 ## Quick improvements:
 - Add a second example if time permits
@@ -32,13 +36,16 @@ Quick review to ensure clarity and add any missing examples.
 ```
 
 ### 4. Final Touches
+
 ```markdown
 # Optional metadata (if helpful)
 *Created: YYYY-MM-DD | Complexity: Low/Medium/High | Time: X-Y min*
 ```
 
 ## Ship It
+
 Documentation doesn't need to be perfect to be useful. If it answers:
+
 - What is this?
 - When do I use it?
 - How do I do it?
@@ -47,6 +54,7 @@ Documentation doesn't need to be perfect to be useful. If it answers:
 Then it's ready to ship. You can always iterate later.
 
 ## Quick Commands
+
 ```bash
 # Move completed documentation
 mv draft.md .completed/$(date +%Y-%m-%d)/agent-X-task-name.md

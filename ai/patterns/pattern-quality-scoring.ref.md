@@ -1,6 +1,7 @@
 # Pattern Quality Scoring Pattern References
 
 ## Task Usage (WHEN)
+
 - 2025-07-01: task-001-five-pass-development-guide - Created initial pattern during Phase 2 system documentation
   - Pattern Score: 5/5 (Exemplary pattern instance)
   - Scoring breakdown (using pattern-quality-scoring):
@@ -26,16 +27,19 @@
 ## Implementation Locations (WHERE)
 <!-- To be populated when pattern is implemented in code -->
 ### Planned Implementations
+
 - `scripts/score-example.js` - CLI tool for scoring examples
 - `scripts/update-references.js` - Auto-update logic using scores
 - `.github/workflows/update-docs.yml` - CI/CD integration
 
 ## Insights
+
 - First meta-pattern: a pattern about managing patterns
 - Enables self-maintaining documentation system
 - Critical for long-term sustainability of AI-first docs
 
 ## Audit Notes
+
 - [ ] Create scoring CLI tool
 - [ ] Integrate with phase transition workflow
 - [ ] Add to git hooks for automatic scoring prompts

@@ -1,6 +1,7 @@
 # Pattern: Progressive Disclosure
 
 ## Quick Context
+
 - **Problem**: AI context windows fill up with unnecessary documentation
 - **Solution**: Load information only when needed
 - **Benefit**: 50-70% context savings
@@ -8,12 +9,14 @@
 ## Implementation
 
 ### In Documentation
+
 ```markdown
 For error handling, see [@standard:error-handling]
 <!-- Don't inline the entire standard -->
 ```
 
 ### In Task Files
+
 ```markdown
 **Current Phase**: Phase 3 - Make it Safe
 **Phase Guide**: /ai/methods/multi-pass-development/phase-3-make-safe.md
@@ -21,6 +24,7 @@ For error handling, see [@standard:error-handling]
 ```
 
 ### In Code
+
 ```typescript
 /**
  * @see {@link TruncateOptions} for options
@@ -30,6 +34,7 @@ For error handling, see [@standard:error-handling]
 ```
 
 ## Anti-Pattern
+
 ```markdown
 <!-- BAD: Loading everything upfront -->
 1. Read all method documentation
@@ -39,6 +44,7 @@ For error handling, see [@standard:error-handling]
 ```
 
 ## Best Practice
+
 ```markdown
 <!-- GOOD: Load as needed -->
 1. Read task file
@@ -48,6 +54,7 @@ For error handling, see [@standard:error-handling]
 ```
 
 ## Enforcement
+
 - Keep task files under 200 lines
 - Use references instead of inline docs
 - Load rate: <20% context for documentation

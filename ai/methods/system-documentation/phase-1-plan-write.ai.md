@@ -1,11 +1,13 @@
 # Phase 1: Plan & Write (80%)
 
 ## Objective
+
 Research, structure, and write the documentation in one focused effort.
 
 ## Quick Steps
 
 ### 1. Identify What to Document
+
 ```bash
 # Quick scope check
 - What specific task/pattern/method am I documenting?
@@ -14,6 +16,7 @@ Research, structure, and write the documentation in one focused effort.
 ```
 
 ### 2. Gather Context (5-10 min)
+
 ```bash
 # Find related examples
 rg "pattern-name" .completed/
@@ -24,6 +27,7 @@ git log --oneline -n 10 path/to/implementation
 ```
 
 ### 3. Write Documentation
+
 Start with this template and fill it out:
 
 ```markdown
@@ -53,10 +57,12 @@ Start with this template and fill it out:
 ```
 
 ## Writing Tips
+
 - Lead with the most important info
 - Include real file paths and commands
 - Test your examples as you write
 - Keep it practical and actionable
 
 ## Time Check
+
 Aim to complete Phase 1 in 30-45 minutes. If it's taking longer, ship what you have and iterate later.

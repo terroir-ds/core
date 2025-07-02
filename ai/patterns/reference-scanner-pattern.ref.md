@@ -1,6 +1,7 @@
 # Reference Scanner Pattern References
 
 ## Task Usage (WHEN)
+
 - 2025-07-01: task-001-five-pass-development-guide - Created during Phase 2 system documentation
   - Pattern Score: 4/5 (Good implementation)
   - Scoring breakdown:
@@ -18,18 +19,22 @@
 <!-- END AUTO-GENERATED -->
 
 ## Manual References
+
 ### Planned Implementations
+
 - `scripts/scan-references.ts` - Main scanner implementation
 - `scripts/utils/ast-helpers.ts` - AST parsing utilities
 - `.github/workflows/update-references.yml` - CI integration
 
 ## Insights
+
 - AST parsing provides robust tag extraction
 - Deterministic updates prevent unnecessary churn
 - Performance optimization crucial for large codebases
 - Could extend to other languages beyond JS/TS
 
 ## Audit Notes
+
 - [ ] Build working prototype
 - [ ] Add caching for performance
 - [ ] Create incremental scanning (git diff)

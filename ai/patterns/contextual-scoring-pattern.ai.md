@@ -11,6 +11,7 @@ related: [pattern-quality-scoring, standard-quality-scoring]
 # Contextual Scoring Pattern
 
 ## Quick Context
+
 Apply consistent scoring criteria (1-5) across different artifact types by interpreting the criteria contextually rather than literally, maintaining simplicity while ensuring relevance.
 
 ## The Pattern
@@ -28,6 +29,7 @@ All artifacts are scored on these 5 criteria, but their interpretation varies by
 ### Contextual Interpretations
 
 #### For Code Standards
+
 ```markdown
 - **Correctness**: Does the code follow the standard correctly?
 - **Completeness**: Are all edge cases handled?
@@ -37,6 +39,7 @@ All artifacts are scored on these 5 criteria, but their interpretation varies by
 ```
 
 #### For Documentation Standards
+
 ```markdown
 - **Correctness**: Is the information accurate?
 - **Completeness**: Are all topics covered?
@@ -46,6 +49,7 @@ All artifacts are scored on these 5 criteria, but their interpretation varies by
 ```
 
 #### For Configuration Standards
+
 ```markdown
 - **Correctness**: Are settings properly configured?
 - **Completeness**: Are all required options set?
@@ -55,6 +59,7 @@ All artifacts are scored on these 5 criteria, but their interpretation varies by
 ```
 
 #### For Process Standards
+
 ```markdown
 - **Correctness**: Does the process achieve its goals?
 - **Completeness**: Are all steps defined?
@@ -115,21 +120,25 @@ When scoring the index-file-convention standard:
 ## Common Pitfalls
 
 ### 1. Literal Interpretation
+
 **Problem**: Trying to find "tests" for documentation
 **Solution**: Interpret "validation" as "examples" or "clarity checks"
 
 ### 2. Forcing Bad Fits
+
 **Problem**: Some criteria seem irrelevant
 **Solution**: Every artifact has correctness, completeness, quality, validation, and impact - just different forms
 
 ### 3. Over-Specialization
+
 **Problem**: Creating too many specific rubrics
 **Solution**: Stick to universal criteria with contextual interpretation
 
 ## When to Use Which Scoring Pattern
 
 ### Decision Tree
-```
+
+```text
 What are you scoring?
 ├── A pattern instance? → Use [@pattern:pattern-quality-scoring]
 ├── A code implementation? → Use [@pattern:standard-quality-scoring]
@@ -142,7 +151,8 @@ What are you scoring?
 ```
 
 ### Hierarchy
-```
+
+```text
 contextual-scoring-pattern (Universal - use for anything)
 ├── pattern-quality-scoring (Specialized for patterns)
 └── standard-quality-scoring (Specialized for code)
@@ -151,5 +161,6 @@ contextual-scoring-pattern (Universal - use for anything)
 The specialized patterns provide more specific criteria while this pattern provides the universal fallback.
 
 ## Related Patterns
+
 - Pattern Quality Scoring (specialized variant for patterns)
 - Standard Quality Scoring (specialized variant for code standards)

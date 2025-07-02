@@ -5,7 +5,9 @@ This directory contains templates for creating consistent documentation across t
 ## Available Templates
 
 ### ai-readme-template.md
+
 Template for AI-first module documentation with:
+
 - Quick reference tables
 - Progressive disclosure sections
 - Token cost metadata

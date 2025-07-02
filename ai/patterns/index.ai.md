@@ -16,29 +16,36 @@
 ## Pattern Categories
 
 ### Documentation & Quality
+
 - pattern-quality-scoring
 - standard-quality-scoring
 
 ### File Operations
+
 - methodical-file-processing
 - safe-migration-strategy
 
 ### AI Optimization
+
 - progressive-disclosure
 - pattern-quality-scoring
 
 ### Error Handling
+
 - script-error-handling
 
 ### Meta-Patterns
+
 - pattern-quality-scoring
 - standard-quality-scoring
 - reference-scanner-pattern
 
 ### Standards & Compliance
+
 - standard-quality-scoring
 
 ### Automation & Tooling
+
 - reference-scanner-pattern
 - methodical-file-processing
 
@@ -54,6 +61,7 @@ Only load patterns when implementing related functionality:
 ## Contributing
 
 New patterns should follow the standard format:
+
 1. Quick Context
 2. Implementation
 3. Anti-Pattern

@@ -15,9 +15,11 @@ A streamlined 2-phase approach for creating AI-optimized documentation that gets
 ## Phase Structure
 
 ### Phase 1: Plan & Write (80%)
+
 Research, structure, and write the documentation in one focused effort.
 
 ### Phase 2: Review & Polish (20%)
+
 Quick review to ensure clarity and add any missing examples.
 
 ## Key Principles

@@ -1,6 +1,7 @@
 # AI-First Module Documentation Template
 
 ## Overview
+
 This template shows how to write module documentation optimized for AI agents using npm packages.
 
 ---
@@ -60,6 +61,7 @@ const preview = truncate(longDescription, 100);
 ## 🔧 Common Patterns
 
 ### Pattern 1: Transform and validate
+
 ```typescript
 const slug = pipe(
   kebabCase,
@@ -69,6 +71,7 @@ const slug = pipe(
 ```
 
 ### Pattern 2: Batch processing
+
 ```typescript
 const formatted = items.map(item => ({
   ...item,
