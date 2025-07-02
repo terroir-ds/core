@@ -11,6 +11,53 @@ A comprehensive design system built with Style Dictionary, featuring Material Co
 - **SVG Asset Pipeline**: Dynamic icon theming with SVGO optimization
 - **Type Safety**: Full TypeScript support throughout
 
+## 2025 Roadmap
+
+Based on comprehensive research of the current design system landscape, Terroir Core is adopting a next-generation architecture that combines the best of modern approaches:
+
+### Strategic Direction
+
+- **Open-Code Distribution**: Adopting shadcn/ui's revolutionary approach where users get full control over component source code
+- **AI-Native Design**: Built for seamless integration with AI generation tools like V0
+- **Scientific Color Foundation**: Material Color Utilities provide perceptually uniform colors
+- **Performance-First**: Zero runtime overhead through build-time optimization
+
+### Implementation Phases
+
+**Phase 1 - Core Foundation (v0.1.0)** ✅ Current
+- Material Color Utilities integration
+- Design token architecture with Style Dictionary
+- TailwindCSS configuration system
+- Basic build pipeline
+
+**Phase 2 - Component CLI (v0.2.0)** 🚧 Next
+- Component installation CLI tool (like shadcn/ui)
+- Basic component templates (Button, Card, Input, Select)
+- Headless UI primitives integration
+- Component registry system
+
+**Phase 3 - AI Integration (v0.3.0)**
+- V0 template compatibility
+- AI-friendly component APIs
+- Automated component documentation
+- LLM-optimized code patterns
+
+**Phase 4 - Enterprise Features (v1.0.0)**
+- Multi-brand theming system
+- Advanced component variants
+- Performance optimization tools
+- Complete component library
+
+### Why This Approach?
+
+1. **AI Readiness**: Open-code components work seamlessly with AI generation tools
+2. **Developer Control**: Full customization without library constraints
+3. **Performance**: No runtime overhead from traditional component libraries
+4. **Future-Proof**: Architecture adapts to new frameworks and tools
+5. **Scientific Foundation**: Material Color Utilities provide proven color science
+
+This positions Terroir Core as a bridge between AI-generated components and scientific design principles, making it highly relevant for modern development workflows.
+
 ## Quick Start
 
 ```bash
