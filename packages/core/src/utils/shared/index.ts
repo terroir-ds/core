@@ -414,7 +414,7 @@ export function memoize<TArgs extends unknown[], TReturn>(
     
     if (cache.has(key)) {
       // Move to end (LRU)
-      const value = cache.get(key) as V;
+      const value = cache.get(key) as TReturn;
       cache.delete(key);
       cache.set(key, value);
       return value;

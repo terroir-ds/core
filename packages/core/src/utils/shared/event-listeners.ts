@@ -124,6 +124,6 @@ export function configureTestMaxListeners(
     return () => {}; // No-op in non-test environments
   }
   
-  // Set a high limit for tests
-  return withMaxListeners(target, 100);
+  // Set a high limit for tests (200 to handle async tests with many listeners)
+  return withMaxListeners(target, 200);
 }
