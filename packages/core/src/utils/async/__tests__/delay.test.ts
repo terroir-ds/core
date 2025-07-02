@@ -21,8 +21,8 @@ import {
   delayValue,
   randomDelay,
   debouncedDelay
-} from '../delay.js';
-import { expectRejection } from '@test/helpers/error-handling.js';
+} from '@utils/async/delay';
+import { expectRejection } from '@test/helpers/error-handling';
 
 describe('delay utilities', () => {
   beforeEach(() => {

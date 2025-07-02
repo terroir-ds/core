@@ -34,7 +34,7 @@ import {
   isRetryableError,
   wrapError,
   createErrorFromResponse,
-} from '../base-error.js';
+} from '@utils/errors/base-error';
 
 describe('BaseError', () => {
   describe('Error Construction', () => {

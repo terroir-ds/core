@@ -23,7 +23,7 @@ import {
   RateLimiter,
   createRateLimiter,
   SlidingWindowRateLimiter,
-} from '../rate-limit';
+} from '@utils/async/helpers/rate-limit';
 
 describe('rate-limit helpers', () => {
   beforeEach(() => {

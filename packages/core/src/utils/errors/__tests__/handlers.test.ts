@@ -31,13 +31,13 @@ import {
   extractErrorDetails,
   assert,
   assertDefined,
-} from '../handlers.js';
-import { ValidationError, ErrorSeverity } from '../base-error.js';
-import { logger } from '../../logger/index.js';
-import { expectRejection } from '@test/helpers/error-handling.js';
+} from '@utils/errors/handlers';
+import { ValidationError, ErrorSeverity } from '@utils/errors/base-error';
+import { logger } from '@utils/logger';
+import { expectRejection } from '@test/helpers/error-handling';
 
 // Mock the logger
-vi.mock('../../logger/index.js', () => ({
+vi.mock('@utils/logger', () => ({
   logger: {
     debug: vi.fn(),
     info: vi.fn(),

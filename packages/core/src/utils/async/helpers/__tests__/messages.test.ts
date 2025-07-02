@@ -21,7 +21,7 @@ import {
   AsyncWarnings,
   AsyncDebugMessages,
   getErrorMessage,
-} from '../messages';
+} from '@utils/async/helpers/messages';
 
 describe('messages helpers', () => {
   describe('AsyncErrorMessages', () => {

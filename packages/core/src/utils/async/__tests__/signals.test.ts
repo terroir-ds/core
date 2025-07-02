@@ -23,8 +23,8 @@ import {
   isAbortError,
   waitForAbort,
   manualSignal
-} from '../signals.js';
-import { expectRejection } from '@test/helpers/error-handling.js';
+} from '@utils/async/signals';
+import { expectRejection } from '@test/helpers/error-handling';
 
 describe('signal utilities', () => {
   beforeEach(() => {

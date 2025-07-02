@@ -20,8 +20,8 @@ import {
   processChunked,
   mapConcurrent,
   processRateLimited
-} from '../batch.js';
-import { expectRejection } from '@test/helpers/error-handling.js';
+} from '@utils/async/batch';
+import { expectRejection } from '@test/helpers/error-handling';
 
 describe('batch processing utilities', () => {
   beforeEach(() => {

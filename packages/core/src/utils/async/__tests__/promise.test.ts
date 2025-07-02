@@ -22,9 +22,9 @@ import {
   promiseWithFallback,
   allSettledWithTimeout,
   firstSuccessful
-} from '../promise.js';
-import { getMessage } from '@utils/errors/messages.js';
-import { expectRejection, verifyRejection } from '@test/helpers/error-handling.js';
+} from '@utils/async/promise';
+import { getMessage } from '@utils/errors/messages';
+import { expectRejection, verifyRejection } from '@test/helpers/error-handling';
 
 describe('promise utilities', () => {
   beforeEach(() => {

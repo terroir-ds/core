@@ -23,7 +23,7 @@ import {
   processQueue,
   PriorityQueue,
   createWorkQueue,
-} from '../queue';
+} from '@utils/async/helpers/queue';
 
 describe('queue helpers', () => {
   beforeEach(() => {

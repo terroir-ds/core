@@ -19,7 +19,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 // Mock the logger module
-vi.mock('@utils/logger/index.js', () => ({
+vi.mock('@utils/logger', () => ({
   logger: {
     error: vi.fn(),
     warn: vi.fn(),
@@ -35,7 +35,7 @@ import {
   raceUntil,
   raceWithCancellation,
   raceFirstN,
-} from '../race';
+} from '@utils/async/helpers/race';
 
 describe('race helpers', () => {
   beforeEach(() => {

@@ -24,7 +24,7 @@ import {
   createLocalizedMessages,
   validateMessages,
   type ErrorMessageKey,
-} from '../messages.js';
+} from '@utils/errors/messages';
 
 describe('Error Messages', () => {
   describe('ERROR_MESSAGES', () => {

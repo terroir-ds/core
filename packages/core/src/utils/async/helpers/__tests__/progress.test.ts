@@ -20,7 +20,7 @@ import {
   ProgressTracker,
   createSimpleProgressTracker,
   createProgressBar,
-} from '../progress';
+} from '@utils/async/helpers/progress';
 
 describe('progress helpers', () => {
   beforeEach(() => {

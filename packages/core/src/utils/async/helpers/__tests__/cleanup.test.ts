@@ -23,10 +23,10 @@ import {
   createEventCleanup,
   createTimeoutCleanup,
   createIntervalCleanup,
-} from '../cleanup';
+} from '@utils/async/helpers/cleanup';
 
 // Mock the logger module
-vi.mock('@utils/logger/index.js', () => ({
+vi.mock('@utils/logger', () => ({
   logger: {
     error: vi.fn(),
     warn: vi.fn(),

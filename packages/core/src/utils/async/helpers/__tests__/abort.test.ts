@@ -21,7 +21,7 @@ import {
   isAbortError,
   createTimeoutAbortController,
   combineAbortSignals,
-} from '../abort';
+} from '@utils/async/helpers/abort';
 
 describe('abort helpers', () => {
   beforeEach(() => {

@@ -17,8 +17,8 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { withTimeout, timeout, raceWithTimeout, TimeoutError } from '../timeout.js';
-import { expectRejection, verifyRejection } from '@test/helpers/error-handling.js';
+import { withTimeout, timeout, raceWithTimeout, TimeoutError } from '@utils/async/timeout';
+import { expectRejection, verifyRejection } from '@test/helpers/error-handling';
 
 describe('timeout utilities', () => {
   beforeEach(() => {

@@ -20,7 +20,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi, beforeAll, afterAll } from 'vitest';
 
 // Mock the logger module to avoid environment variable issues
-vi.mock('../../../logger/index.js', () => {
+vi.mock('@utils/logger', () => {
   return {
     logger: {
       info: vi.fn(),
@@ -39,9 +39,9 @@ import {
   retryWithCircuitBreaker,
   batchRetry,
   makeRetryable,
-} from '../retry.js';
-import { getMessage } from '../messages.js';
-import { expectRejection } from '@test/helpers/error-handling.js';
+} from '@utils/errors/retry';
+import { getMessage } from '@utils/errors/messages';
+import { expectRejection } from '@test/helpers/error-handling';
 
 // Suppress unhandled rejection warnings for the entire test suite
 let unhandledRejectionHandler: ((reason: unknown, promise: Promise<unknown>) => void) | null = null;
