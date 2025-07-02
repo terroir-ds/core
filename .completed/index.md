@@ -19,17 +19,18 @@ This directory contains the version-controlled history of completed work on the 
 ## Task Organization
 
 ### Date-Based Structure
+
 - Each day's completed work goes in a folder named `YYYY-MM-DD`
 - Tasks are renamed to `agent-{id}-{task-title}.md` when moved
 - This provides natural chronological sorting and workload visibility
 
 ### Benefits
+
 - **No sprint overhead**: Agents work at their own pace
 - **Clear daily progress**: See what was accomplished each day
 - **Workload balance**: Easily spot if one agent is over/under-utilized
 - **Fluid releases**: Merge to develop as tasks complete
 - **Natural history**: Chronological record of project evolution
-
 
 ## How to Use
 

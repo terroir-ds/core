@@ -1,11 +1,13 @@
 # Phase 2: Make it Right
 
 ## Quick Context
+
 - **Goal**: Refactor for clarity and maintainability
 - **Time Budget**: 20% of total task time
 - **Focus**: Code quality, patterns, readability
 
 ## Checklist
+
 - [ ] Apply appropriate design patterns
 - [ ] Extract common logic
 - [ ] Improve naming throughout
@@ -14,6 +16,7 @@
 - [ ] Follow project conventions
 
 ## What TO Do
+
 - Refactor duplicated code (DRY)
 - Create clean interfaces/types
 - Extract helper functions
@@ -22,6 +25,7 @@
 - Match existing codebase patterns
 
 ## What NOT to Do
+
 ❌ Don't add new features
 ❌ Don't optimize performance yet
 ❌ Don't handle edge cases yet
@@ -29,6 +33,7 @@
 ❌ Don't over-engineer
 
 ## Example Approach
+
 ```typescript
 // Phase 1 code (works but messy)
 export function truncate(str: string, length: number): string {
@@ -64,12 +69,14 @@ function normalizeOptions(options: TruncateOptions | number): Required<TruncateO
 ```
 
 ## Refactoring Patterns
+
 - **Extract Method**: Pull out complex logic
 - **Introduce Parameter Object**: Group related parameters
 - **Replace Magic Numbers**: Use named constants
 - **Simplify Conditionals**: Make logic clearer
 
 ## Success Criteria
+
 ✅ Code is clean and readable
 ✅ Follows project patterns
 ✅ No code duplication
@@ -77,13 +84,16 @@ function normalizeOptions(options: TruncateOptions | number): Required<TruncateO
 ✅ Still passes Phase 1 tests
 
 ## Phase Transition
+
 When complete:
+
 1. Summarize refactoring done
 2. Note any patterns applied
 3. Update task: `**Current Phase**: Phase 3 - Make it Safe`
 4. Clean context before Phase 3
 
 ## Time Management
+
 - Don't perfect everything
 - Focus on biggest improvements
 - Leave minor issues for later

@@ -6,6 +6,7 @@
 <!-- END AUTO-MANAGED -->
 
 ## Objective
+
 Update agent prompt system to align with new organizational structure, emphasizing START files, sprint rhythm, and simplified coordination patterns.
 
 ## Implementation Requirements
@@ -13,14 +14,17 @@ Update agent prompt system to align with new organizational structure, emphasizi
 ### Phase 1: Core Prompt Updates (1 hour)
 
 #### 1. START File Integration
+
 Update all agent prompts to reference START files as primary entry point:
 
 **Remove from prompts**:
+
 - References to checking multiple directories
 - Complex task discovery patterns
 - Session management scripts
 
 **Add to all prompts**:
+
 ```markdown
 ## Current Task
 - Check your START file at `.claude/agent-N-START.md` for current task
@@ -30,6 +34,7 @@ Update all agent prompts to reference START files as primary entry point:
 ```
 
 #### 2. Sprint Rhythm Awareness
+
 Add TICK-TOCK-REVIEW rhythm to all agent prompts:
 
 ```markdown
@@ -43,6 +48,7 @@ Adapt your approach based on current sprint phase.
 ```
 
 #### 3. 5-Pass Development System
+
 Add development methodology to each agent prompt:
 
 ```markdown
@@ -78,7 +84,9 @@ Your work follows a 5-pass system for quality:
 ### Phase 2: Domain-Specific Updates (1 hour)
 
 #### 1. Agent 0 (Core Integration) Updates
+
 **Domain Focus**:
+
 ```markdown
 ## Agent 0: Core Integration & Planning
 
@@ -97,7 +105,9 @@ Your work follows a 5-pass system for quality:
 ```
 
 #### 2. Agent 1 (Utilities) Updates
+
 **Domain Focus**:
+
 ```markdown
 ## Agent 1: Utility Libraries
 
@@ -116,7 +126,9 @@ Your work follows a 5-pass system for quality:
 ```
 
 #### 3. Agent 2 (Infrastructure) Updates
+
 **Domain Focus**:
+
 ```markdown
 ## Agent 2: Infrastructure & Build Systems
 
@@ -135,7 +147,9 @@ Your work follows a 5-pass system for quality:
 ```
 
 #### 4. Agent 3 (Components) Updates
+
 **Domain Focus**:
+
 ```markdown
 ## Agent 3: Component Library
 
@@ -156,6 +170,7 @@ Your work follows a 5-pass system for quality:
 ### Phase 3: Context Management (30 minutes)
 
 #### 1. Context Optimization Section
+
 Add to all agent prompts:
 
 ```markdown
@@ -174,6 +189,7 @@ Add to all agent prompts:
 ```
 
 #### 2. Simplified Coordination
+
 Replace complex coordination sections with:
 
 ```markdown
@@ -193,6 +209,7 @@ Replace complex coordination sections with:
 ### Phase 4: Standards Integration (30 minutes)
 
 #### 1. Living Standards Section
+
 Add to all agent prompts:
 
 ```markdown
@@ -211,6 +228,7 @@ Add to all agent prompts:
 ```
 
 #### 2. Quality Checklist
+
 Add standard quality checklist:
 
 ```markdown
@@ -230,7 +248,9 @@ Before marking any task complete:
 ### Phase 5: Prompt Optimization (30 minutes)
 
 #### 1. Remove Outdated Sections
+
 Remove from all prompts:
+
 - Complex coordination directories
 - Sync windows and scheduling
 - Multiple branch management
@@ -238,13 +258,16 @@ Remove from all prompts:
 - Overcomplicated task discovery
 
 #### 2. Streamline for Efficiency
+
 Target under 100 lines per prompt:
+
 - Focus on essential information
 - Use bullet points over paragraphs
 - Include quick reference sections
 - Prioritize actionable guidance
 
 #### 3. Template Structure
+
 Standardize all agent prompts with:
 
 ```markdown
@@ -320,6 +343,7 @@ Standardize all agent prompts with:
 ### Implementation Pattern for Future Updates
 
 When updating prompts:
+
 1. Backup to `archive-YYYYMMDD/`
 2. Focus on removing, not adding
 3. Test line count stays under 100
@@ -331,6 +355,7 @@ Task ready for completion!
 ## Migration Plan
 
 ### Phase 1: Backup and Preparation
+
 ```bash
 # Backup current prompts
 cd /workspaces/terroir-core/.agents/prompts
@@ -339,6 +364,7 @@ cp *.md archive/
 ```
 
 ### Phase 2: Systematic Updates
+
 1. **Update base.md** with common changes (reduce from 89 to 45 lines)
    - Add START file reference in first 5 lines
    - Add 5-pass development methodology
@@ -357,7 +383,9 @@ cp *.md archive/
    - Any other prompt-referencing scripts
 
 ### Phase 3: Validation Checklist
+
 After migration, verify each prompt has:
+
 - [ ] Under 100 lines total
 - [ ] START file referenced in first 5 lines
 - [ ] Domain clearly defined and focused
@@ -367,13 +395,16 @@ After migration, verify each prompt has:
 - [ ] Simplified coordination patterns
 
 ### Phase 4: Testing and Rollout
+
 1. **Test with one agent first** - validate effectiveness
 2. **Roll out to all agents** if successful
 3. **Monitor performance** - measure context savings
 4. **Gather feedback** and iterate as needed
 
 ### Rollback Plan
+
 If issues arise:
+
 ```bash
 cd /workspaces/terroir-core/.agents/prompts
 cp archive/*.md .
@@ -405,6 +436,7 @@ cp archive/*.md .
 ## Testing
 
 ### Validation Checklist
+
 - [ ] Each agent can find their current task quickly
 - [ ] Domain responsibilities are clear and non-overlapping
 - [ ] Quality standards are actionable
@@ -412,6 +444,7 @@ cp archive/*.md .
 - [ ] Coordination patterns are simple and effective
 
 ### Test Scenarios
+
 1. **New Agent Session**: Can agent quickly understand current context?
 2. **Task Switching**: Can agent transition between tasks efficiently?
 3. **Cross-Agent Work**: Are coordination patterns clear?
@@ -426,4 +459,5 @@ cp archive/*.md .
 - Iterate based on actual usage patterns
 
 ## Source Files
+
 - Extracted from: agent-prompt-updates.md (comprehensive prompt system updates)

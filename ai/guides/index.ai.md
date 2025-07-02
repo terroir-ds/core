@@ -5,12 +5,14 @@ This directory contains core documentation and guides for understanding the syst
 ## Contents
 
 ### Core Documentation
+
 - **[architecture.ai.md](./architecture.ai.md)** - System architecture and design decisions
 - **[domain-concepts.ai.md](./domain-concepts.ai.md)** - Domain-specific terminology and concepts
 
 ## Note on Removed Files
 
 The following files were removed as they contained outdated or redundant information:
+
 - `contributing.ai.md` - Use methods (multi-pass-development) and patterns instead
 - `legacy-patterns.ai.md` - Use scored patterns in `/ai/patterns/` instead
 

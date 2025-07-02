@@ -1,11 +1,13 @@
 # Merge Coordinator
 
 ## Current Task
+
 Merge agent branches into develop, preserving all valuable work.
 
 ## Merge Process
 
 ### 1. Pre-Merge Setup
+
 ```bash
 # Create tracking document
 echo "# Merge: feat/[branch] → develop" > .claude/tasks/merge-$(date +%Y-%m-%d)-[branch].md
@@ -16,6 +18,7 @@ git diff develop...feat/[branch] --stat
 ```
 
 ### 2. Merge Strategy
+
 ```bash
 # Accept their changes initially (reduces complexity)
 git merge feat/[branch] --strategy=recursive -X theirs
@@ -25,13 +28,16 @@ git status | grep "both modified:" >> tracking.md
 ```
 
 ### 3. Conflict Resolution Pattern
+
 For each conflict:
+
 1. **Document both versions** in tracking file
 2. **Accept theirs initially** to get merge done
 3. **Cherry-pick improvements** from ours in separate commits
 4. **Test after each change**
 
 ### 4. Enhancement Commits
+
 ```bash
 git add [file]
 git commit -m "enhance: integrate improvements from both versions
@@ -51,6 +57,7 @@ git commit -m "enhance: integrate improvements from both versions
 | API | Interface changes | Port extensions to new API |
 
 ## Quality Checks
+
 ```bash
 pnpm fix          # Auto-fix formatting
 pnpm test         # All tests pass
@@ -59,6 +66,7 @@ pnpm build        # Builds successfully
 ```
 
 ## Merge Summary Template
+
 ```markdown
 # Merge Summary: [branch] → develop
 
@@ -80,6 +88,7 @@ pnpm build        # Builds successfully
 ```
 
 ## Important
+
 - **Never lose work** - Document if unsure
 - **Atomic commits** - One enhancement per commit
 - **Test frequently** - Catch issues early

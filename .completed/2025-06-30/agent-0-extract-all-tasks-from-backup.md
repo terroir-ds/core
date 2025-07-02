@@ -6,15 +6,18 @@
 <!-- END AUTO-MANAGED -->
 
 ## Objective
+
 Thoroughly review ALL files in the backup directory (`.claude-backup-20250630-045811/tasks/`) and extract ALL valuable task ideas, ensuring no work is lost. This includes ~80 files across multiple subdirectories, not just the 22 specifications.
 
 **CRITICAL**: Each backup file may:
+
 - Create one or more NEW tasks (possibly for different agents)
 - Update one or more EXISTING tasks with additional details
 - Contain overlapping ideas that need to be consolidated
 - Be irrelevant (but still needs review to confirm)
 
 **When processing files, you MUST**:
+
 1. Read the ENTIRE file from backup
 2. Identify ALL relevant tasks it relates to (new or existing)
 3. For existing tasks: Compare content to ensure ALL information is preserved
@@ -27,12 +30,15 @@ This is a methodical process - prioritize completeness over speed. One backup fi
 ## File Tracking Process
 
 ### Naming Convention
+
 When a file has been FULLY reviewed and its content extracted:
+
 - Rename: `original-name.md` → `REVIEWED-original-name.md`
 - Only rename AFTER confirming ALL relevant tasks have been created
 - Do NOT delete any files during this process
 
 ### Review Process
+
 1. **One file at a time** - Focus on complete extraction before moving on
 2. **Identify all impacts** - One file may affect multiple tasks across agents
 3. **For existing tasks** - ALWAYS compare full content to ensure nothing is missing
@@ -44,13 +50,16 @@ When a file has been FULLY reviewed and its content extracted:
 9. **Never rush** - It's better to be thorough than fast
 
 ### Overlap Resolution
+
 When the same idea appears in multiple files:
+
 - Choose the most detailed version as the primary source
 - Merge unique details from other sources
 - Note in the task which backup files contributed to it
 - Avoid duplication across tasks
 
 ### Benefits
+
 - Clear visibility across context windows
 - No lost information
 - Easy to resume from any point
@@ -59,8 +68,10 @@ When the same idea appears in multiple files:
 ## Extraction Plan
 
 ### Full Scope (~80 files total)
+
 The backup contains multiple directories with valuable content:
-```
+
+```text
 .claude-backup-20250630-045811/tasks/
 ├── specifications/       # 22 detailed spec files
 ├── active/              # Sprint plans and active work
@@ -71,31 +82,37 @@ The backup contains multiple directories with valuable content:
 ```
 
 ### 1. Specifications Directory (22 files)
+
 - Detailed technical specifications
 - Each may create multiple tasks or update existing ones
 - Extract ALL subtasks, implementation details, and examples
 
 ### 2. Active/Sprint-1 Directory
+
 - Agent-specific task breakdowns
 - Sprint planning documents
 - Work-in-progress items that need continuation
 
 ### 3. Sprint Planning Documents
+
 - sprint-1-plan-v2.md (detailed 5-pass breakdowns)
 - comprehensive-improvements.md (multiple improvement ideas)
 - revised-sprint-1-tasks.md (documentation tasks)
 - infrastructure-immediate-tasks.md
 
 ### 4. Completed Work
+
 - Check for partially completed tasks
 - Extract refactoring opportunities noted
 - Identify future work mentioned
 
 ### 5. Backlog Items
+
 - Ensure all are properly categorized
 - May contain hidden gems of ideas
 
 ### 6. Root Level Files
+
 - Planning documents
 - Architecture decisions
 - Cross-cutting concerns
@@ -103,6 +120,7 @@ The backup contains multiple directories with valuable content:
 ## Extracted Tasks by Agent
 
 ### Agent 0 (Integration & Planning)
+
 1. ✅ 001-reorganize-task-structure.md (current)
 2. ✅ 002-extract-all-tasks-from-backup.md (this task) - MOVED UP
 3. ✅ 003-claude-directory-improvements.md (CREATED)
@@ -126,6 +144,7 @@ The backup contains multiple directories with valuable content:
 21. ✅ 027-process-improvements-implementation.md (CREATED)
 
 ### Agent 1 (Utilities) - MAJOR ADDITIONS NEEDED
+
 Current tasks are too high-level. Need to break down:
 
 1. ✅ 001-string-formatting-utilities.md (EXISTS)
@@ -151,6 +170,7 @@ Current tasks are too high-level. Need to break down:
 21. 021-date-utilities.md (TODO)
 
 ### Agent 2 (Infrastructure)
+
 1. ✅ 001-token-system-setup.md (EXISTS)
 2. ✅ 002-material-color-integration.md (EXISTS)
 3. ✅ 003-security-scanning-implementation.md (EXISTS)
@@ -173,6 +193,7 @@ Current tasks are too high-level. Need to break down:
 20. 020-critical-css-extraction.md (TODO)
 
 ### Agent 3 (Components)
+
 1. ✅ 001-component-architecture.md (EXISTS)
 2. ✅ 002-button-component.md (EXISTS)
 3. ✅ 003-theme-provider.md (EXISTS)
@@ -195,23 +216,27 @@ Current tasks are too high-level. Need to break down:
 20. 020-component-documentation-templates.md (TODO)
 
 ## Progress Status
+
 - **Total Tasks Identified**: ~80
 - **Tasks Created**: 27 new tasks (35 agent tasks total)
 - **Tasks Remaining**: ~53  
 - **Completion**: 35%
 
 ### Latest Additions
+
 - Agent 2: 010-dev-debug-tooling.md ✅
 - Agent 2: 011-error-tracking-setup.md ✅
 - Agent 2: 012-environment-validation.md ✅
 
 ### Currently Extracting
+
 - Agent 1: 008-021 (Type guards, environment, performance, testing utilities)
 - Agent 2: 006-008, 010-020 (Coverage, dependencies, tooling, optimization)
 - Agent 3: 005-020 (Core component library)
 - Agent 0: 016-022 (AI docs, patterns, integration)
 
 ### Current Agent Task Distribution
+
 - **Agent 0**: 21 tasks (Integration & Planning)
   - 001-003: Task reorganization, extraction, .claude improvements
   - 010-015: Quality gates, CI/CD, security framework
@@ -233,6 +258,7 @@ Current tasks are too high-level. Need to break down:
   - 005-009: Doc infrastructure, API docs, project docs, Storybook, migration guides
 
 ### Summary
+
 - Created detailed, implementation-ready tasks
 - Properly decomposed large specifications
 - Maintained agent domain boundaries
@@ -255,6 +281,7 @@ Current tasks are too high-level. Need to break down:
 ## Files Reviewed
 
 ### Specifications Directory
+
 - [x] `REVIEWED-guard-utilities-spec.md` → Agent 1 Task 008 (Type Guards) ✓
 - [x] `REVIEWED-environment-utilities-spec.md` → Agent 1 Task 009 (Environment Detection) ✓
 - [x] `REVIEWED-error-patterns-spec.md` → Agent 1 Task 014 (Error Patterns) ✓
@@ -279,6 +306,7 @@ Current tasks are too high-level. Need to break down:
 - [x] `REVIEWED-vscode-configuration-spec.md` → Agent 2 Task 009 (VS Code Config) ✓ UPDATED
 
 ### Active Sprint Directory
+
 - [x] `REVIEWED-sprint-1-plan-v2.md` → Agent 0 Tasks 010-011 (Quality Gates & Sprint Planning) ✓ UPDATED
 - [x] `REVIEWED-comprehensive-improvements.md` → Agent 0 Tasks 003, 016-017 (.claude, AI docs, Sprint history) ✓
 - [x] `REVIEWED-claude-directory-improvements.md` → Agent 0 Task 003 (.claude improvements) ✓ ENHANCED
@@ -306,12 +334,14 @@ Current tasks are too high-level. Need to break down:
 - [x] `agent-2/REVIEWED-comprehensive-security-scanning-implementation.md` → Already exists as Agent 2 Task 003 ✓ NOTED
 
 ### Progress Tracking
+
 - **Total Files to Review**: ~80 files across all directories
 - **Last Reviewed**: `agent-2/comprehensive-security-scanning-implementation.md`
 - **Next to Review**: remaining directories (completed/, backlog/, root files)
 - **Method**: One file at a time, complete extraction before moving on
 
 #### Directory Progress
+
 - **specifications/**: 22/22 files reviewed (100%) ✅ COMPLETE
 - **active/sprint-1/**: 18/18 files reviewed (100%) ✅ COMPLETE
 - **active/**: 3/3 root files reviewed (100%) ✅ COMPLETE
@@ -324,6 +354,7 @@ Current tasks are too high-level. Need to break down:
 - **OVERALL**: 80/80 files reviewed (100%) ✅ COMPLETE
 
 ### Recent Updates
+
 - **github-actions-ci-cd-spec.md**: Updated Agent 0 Task 013 with FULL specification details (was missing ~80% of content)
 - **package-exports-spec.md**: Created Agent 2 Task 007 with complete exports configuration
 - **performance-utilities-spec.md**: Created Agent 1 Task 010 with comprehensive performance utilities
@@ -378,7 +409,7 @@ Current tasks are too high-level. Need to break down:
 ## Success Criteria
 
 - [x] All ~80 tasks created with details ✅ COMPLETE (80/80 files reviewed)
-- [x] No valuable information lost from backup ✅ 
+- [x] No valuable information lost from backup ✅
 - [x] Each task has clear objectives and requirements ✅
 - [x] Auto-managed sections updated ✅
 - [x] All source files renamed with REVIEWED- prefix ✅
@@ -391,7 +422,8 @@ Current tasks are too high-level. Need to break down:
 **Tasks Enhanced**: 14 existing tasks with additional details
 **Total Impact**: 27 tasks created or significantly enhanced
 
-### Key Accomplishments:
+### Key Accomplishments
+
 - Extracted comprehensive utility specifications into granular tasks
 - Created infrastructure implementation guides and patterns
 - Enhanced 5-pass development documentation
@@ -403,4 +435,5 @@ Current tasks are too high-level. Need to break down:
 All valuable content from the backup has been successfully extracted and integrated into the current task structure.
 
 ## Patterns Extracted
+
 - [methodical-file-processing.md](../../patterns/methodical-file-processing.md): Systematic approach to processing large file sets with progress tracking

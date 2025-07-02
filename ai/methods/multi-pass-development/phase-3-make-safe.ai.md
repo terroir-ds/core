@@ -1,11 +1,13 @@
 # Phase 3: Make it Safe
 
 ## Quick Context
+
 - **Goal**: Handle edge cases and ensure reliability
 - **Time Budget**: 20% of total task time
 - **Focus**: Security, validation, performance, edge cases
 
 ## Checklist
+
 - [ ] Add input validation
 - [ ] Handle all edge cases
 - [ ] Consider security implications
@@ -15,6 +17,7 @@
 - [ ] Check memory usage
 
 ## What TO Do
+
 - Validate all inputs thoroughly
 - Handle null/undefined/empty cases
 - Add proper error handling
@@ -24,6 +27,7 @@
 - Check performance bottlenecks
 
 ## What NOT to Do
+
 ❌ Don't skip edge cases
 ❌ Don't assume happy path
 ❌ Don't ignore security
@@ -31,6 +35,7 @@
 ❌ Don't trust external input
 
 ## Example Approach
+
 ```typescript
 // Phase 2 code (clean but not safe)
 export function truncate(
@@ -87,6 +92,7 @@ function truncateUnicodeSafe(str: string, length: number): string {
 ```
 
 ## Common Edge Cases
+
 - Null/undefined inputs
 - Empty strings/arrays
 - Negative numbers
@@ -96,6 +102,7 @@ function truncateUnicodeSafe(str: string, length: number): string {
 - Resource exhaustion
 
 ## Security Checklist
+
 - [ ] Validate all external input
 - [ ] Prevent injection attacks
 - [ ] Check for buffer overflows
@@ -103,12 +110,14 @@ function truncateUnicodeSafe(str: string, length: number): string {
 - [ ] Use safe defaults
 
 ## Performance Checks
+
 - [ ] No unnecessary loops
 - [ ] Efficient algorithms
 - [ ] Proper memoization
 - [ ] Resource pooling if needed
 
 ## Success Criteria
+
 ✅ All edge cases handled
 ✅ Input validation complete
 ✅ No security vulnerabilities
@@ -116,7 +125,9 @@ function truncateUnicodeSafe(str: string, length: number): string {
 ✅ Error handling robust
 
 ## Phase Transition
+
 When complete:
+
 1. List all edge cases handled
 2. Note security measures added
 3. Update task: `**Current Phase**: Phase 4 - Make it Tested`

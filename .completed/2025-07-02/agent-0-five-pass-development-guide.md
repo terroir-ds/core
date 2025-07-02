@@ -14,7 +14,9 @@
 ## Phase Progress
 
 ### ✅ Phase 1: Core Documentation - COMPLETED
+
 **What We Built:**
+
 1. **Chose `/ai/` as peer directory** (not `/docs/ai/`) for AI-first documentation
 2. **Created complete multi-pass method documentation**:
    - `/ai/methods/multi-pass-development/` with all 6 phases
@@ -44,6 +46,7 @@
    - Will be foundation for all phase references
 
 **Key Decisions Made:**
+
 - AI docs deserve peer status to human docs
 - Progressive disclosure is critical for context efficiency  
 - Patterns extracted in Phase 5, not after task completion
@@ -55,6 +58,7 @@
 - Made tick/tock pattern optional (only for coding tasks)
 
 ## Objective
+
 Create comprehensive documentation for the 5-pass development methodology, including detailed guidance for each pass, examples, and integration with existing standards.
 
 ## Implementation Requirements
@@ -62,7 +66,9 @@ Create comprehensive documentation for the 5-pass development methodology, inclu
 ### Phase 1: Core Documentation (2 hours)
 
 #### 1. Create Main Guide
+
 Create `docs/development/five-pass-methodology.md`:
+
 ```markdown
 # Five-Pass Development Methodology
 
@@ -89,14 +95,15 @@ The 5-pass system ensures consistent quality by breaking feature development int
 - Don't focus on code beauty
 
 #### Example
-```typescript
+```
+
 // Pass 1: Basic truncate function
 export function truncate(str: string, length: number): string {
   if (str.length <= length) return str;
   return str.slice(0, length) + '...';
 }
-```
 
+```bash
 ### Pass 2: Make it Right (20% of effort)
 **Goal**: Refactor for clarity and maintainability
 **Focus**: Code quality, patterns, readability
@@ -115,7 +122,8 @@ export function truncate(str: string, length: number): string {
 - Don't write all tests yet
 
 #### Example
-```typescript
+```
+
 // Pass 2: Refactored with options and better structure
 export interface TruncateOptions {
   length: number;
@@ -124,7 +132,7 @@ export interface TruncateOptions {
 }
 
 export function truncate(
-  str: string, 
+  str: string,
   options: TruncateOptions | number
 ): string {
   const opts = normalizeOptions(options);
@@ -134,11 +142,11 @@ export function truncate(
   const truncated = opts.wordBoundary
     ? truncateAtWordBoundary(str, opts.length)
     : str.slice(0, opts.length);
-    
+
   return truncated + opts.ellipsis;
 }
-```
 
+```bash
 ### Pass 3: Make it Safe (20% of effort)
 **Goal**: Handle edge cases and optimize performance
 **Focus**: Security, performance, reliability
@@ -157,7 +165,8 @@ export function truncate(
 - Don't assume happy path
 
 #### Example
-```typescript
+```
+
 // Pass 3: Safe with validation and edge cases
 export function truncate(
   str: unknown,
@@ -187,11 +196,11 @@ export function truncate(
   const truncated = opts.wordBoundary
     ? truncateAtWordBoundary(str, opts.length)
     : truncateUnicodeSafe(str, opts.length);
-    
+
   return truncated + opts.ellipsis;
 }
-```
 
+```bash
 ### Pass 4: Make it Tested (20% of effort)
 **Goal**: Comprehensive test coverage
 **Focus**: Unit tests, edge cases, integration
@@ -210,7 +219,8 @@ export function truncate(
 - Don't test implementation details
 
 #### Example
-```typescript
+```
+
 describe('truncate', () => {
   // Happy path
   it('truncates long strings', () => {
@@ -240,8 +250,8 @@ describe('truncate', () => {
     expect(duration).toBeLessThan(1);
   });
 });
-```
 
+```bash
 ### Pass 5: Make it Documented (10% of effort)
 **Goal**: Complete documentation and standards extraction
 **Focus**: JSDoc, examples, guides, standards
@@ -269,46 +279,51 @@ describe('truncate', () => {
    - @migration tag for updating old code
 
 2. **Standards Documentation**
-   ```typescript
+   ```
+
    /**
-    * @standard Use this instead of string.substring() for all truncation
+    *@standard Use this instead of string.substring() for all truncation
     * @migration grep -r "\.substring(0," --include="*.ts" | update to truncate()
     * @eslint-rule no-manual-truncation
     */
+
+   ```markdown
+3. **Usage Examples**
    ```
 
-3. **Usage Examples**
-   ```typescript
    // Basic usage
    const title = truncate(longTitle, 50);
-   
+
    // With options
    const preview = truncate(article, 200, {
      ellipsis: '... Read more',
      preserveWords: true
    });
-   
+
    // Component usage
    <Card title={truncate(product.name, 30)} />
+
+   ```markdown
+4. **Migration Guide**
    ```
 
-4. **Migration Guide**
-   ```markdown
-   ## Migrating to truncate()
-   
-   ### Find instances:
+## Migrating to truncate()
+
+### Find instances
+
    ```bash
    rg "\.substring\(0,.*\)" --type ts
    rg "\.slice\(0,.*\).*\+" --type ts
    ```
-   
-   ### Update patterns:
+
+### Update patterns
+
    ```diff
    - const preview = text.substring(0, 100) + '...';
    + const preview = truncate(text, 100);
    ```
-   ```
 
+   ```markdown
 5. **Standards Extraction**
    - Identify what old pattern this replaces
    - Document where it should be used
@@ -342,50 +357,58 @@ describe('truncate', () => {
    - Create lint rules
 
 #### Example Complete Documentation
-```typescript
-/**
- * Truncates a string to a specified length with customizable options.
- * 
- * @category String
- * @since 1.0.0
- * @standard Use this instead of string.substring() for all truncation
- * @migration grep -r "\.substring(0," --include="*.ts" | update to truncate()
- * 
- * @param str - The string to truncate
- * @param options - Truncation options or maximum length
- * @returns The truncated string with ellipsis
- * 
- * @throws {ValidationError} When input is not a string
- * @throws {ValidationError} When length is negative
- * 
- * @example Basic usage
- * ```typescript
- * truncate('Hello World', 5); // "Hello..."
- * ```
- * 
- * @example With options
- * ```typescript
- * truncate('Hello World', {
- *   length: 5,
- *   ellipsis: '…',
- *   wordBoundary: true
- * }); // "Hello…"
- * ```
- * 
- * @example Migrating from substring
- * ```typescript
- * // Before
- * const preview = text.substring(0, 100) + '...';
- * 
- * // After
- * const preview = truncate(text, 100);
- * ```
- * 
- * @see {@link TruncateOptions} for available options
- * @see {@link truncateWords} for word-based truncation
- */
 ```
 
+/**
+
+- Truncates a string to a specified length with customizable options.
+-
+- @category String
+- @since 1.0.0
+- @standard Use this instead of string.substring() for all truncation
+- @migration grep -r "\.substring(0," --include="*.ts" | update to truncate()
+-
+- @param str - The string to truncate
+- @param options - Truncation options or maximum length
+- @returns The truncated string with ellipsis
+-
+- @throws {ValidationError} When input is not a string
+- @throws {ValidationError} When length is negative
+-
+- @example Basic usage
+
+- ```typescript
+- truncate('Hello World', 5); // "Hello..."
+
+- ```
+-
+- @example With options
+
+- ```typescript
+- truncate('Hello World', {
+- length: 5,
+- ellipsis: '…',
+- wordBoundary: true
+- }); // "Hello…"
+
+- ```
+-
+- @example Migrating from substring
+
+- ```typescript
+- // Before
+- const preview = text.substring(0, 100) + '...';
+-
+- // After
+- const preview = truncate(text, 100);
+
+- ```
+-
+- @see {@link TruncateOptions} for available options
+- @see {@link truncateWords} for word-based truncation
+ */
+
+```bash
 ## Pass Transitions
 
 ### From Pass 1 to Pass 2
@@ -452,7 +475,9 @@ describe('truncate', () => {
 ```
 
 #### 2. Create Quick Reference
+
 Create `docs/development/five-pass-quick-ref.md`:
+
 ```markdown
 # 5-Pass Quick Reference
 
@@ -533,10 +558,13 @@ Create `docs/development/five-pass-quick-ref.md`:
 ### Phase 2: Integration with Existing Systems (1 hour)
 
 #### 1. Update Sprint Planning Template
+
 Enhance `.claude/templates/sprint-plan.md` with detailed pass breakdowns
 
 #### 2. Create Pass Transition Checklist
+
 Create `.claude/templates/pass-transition-checklist.md`:
+
 ```markdown
 # Pass Transition Checklist
 
@@ -572,7 +600,9 @@ Create `.claude/templates/pass-transition-checklist.md`:
 ```
 
 #### 3. Create Status Reporting Template
+
 Create `.claude/templates/pass-status.md`:
+
 ```markdown
 # Feature: [Name]
 Status: Pass [N] of 5
@@ -597,7 +627,9 @@ Status: Pass [N] of 5
 ### Phase 2.5: Pass 5 Documentation Templates (30 min)
 
 #### Standards Entry Template
+
 Create `.claude/templates/standards-entry.md`:
+
 ```markdown
 ## [Feature Name] Standards
 
@@ -606,25 +638,29 @@ Create `.claude/templates/standards-entry.md`:
 **Author**: Agent [N]
 
 **Old Pattern**:
-```typescript
+```
+
 // What we're replacing
-```
 
+```text
 **New Pattern**:
-```typescript
-// What to use instead
 ```
 
+// What to use instead
+
+```text
 **Where to Use**:
 - [Scenario 1]
 - [Scenario 2]
 
 **Migration**:
-```bash
-# How to find old patterns
-# How to update them
 ```
 
+# How to find old patterns
+
+# How to update them
+
+```text
 **Enforcement**:
 - ESLint: [rule name]
 - Pre-commit: [check name]
@@ -636,8 +672,10 @@ Create `.claude/templates/standards-entry.md`:
 ```
 
 #### Documentation Output Structure
+
 Create `.claude/templates/documentation-structure.md`:
-```
+
+```text
 feature-name/
 ├── README.md           # Overview and quick start
 ├── API.md             # Detailed API documentation
@@ -647,6 +685,7 @@ feature-name/
 ```
 
 #### Pass 5 Success Metrics
+
 ```markdown
 ✅ **Good Pass 5**:
 - Future developers know when to use your utility
@@ -668,12 +707,15 @@ feature-name/
 ### Phase 3: Training Materials (1 hour)
 
 #### 1. Create Examples Directory
+
 Create `docs/development/five-pass-examples/`:
+
 - `example-utility.md` - Step-by-step utility development
 - `example-component.md` - Component through 5 passes
 - `example-infrastructure.md` - Infrastructure feature example
 
 #### 2. Create Video Script
+
 Create `docs/development/five-pass-training-script.md` for future video creation
 
 ## Success Criteria
@@ -695,30 +737,35 @@ Create `docs/development/five-pass-training-script.md` for future video creation
 - Emphasize standards extraction in Pass 5
 - Create visual diagrams if possible
 
-## Remaining Items to Complete:
+## Remaining Items to Complete
 
 ### 1. Create Human-Focused Summary Doc ✅
+
 - [x] Create `/docs/development/five-pass-methodology.md`
 - [x] Explain the system for human developers
 - [x] Include examples and rationale
 
 ### 2. Create Documentation Method ✅
+
 - [x] Created `/ai/methods/system-documentation/` with 2-phase approach
 - [x] Phase 1: Plan & Write (80%), Phase 2: Review & Polish (20%)
 - [x] Updated task manager to support method with optional tick/tock
 - [x] Made tick/tock only apply to coding tasks that accumulate tech debt
 
 ### 3. Examples Strategy ✅
+
 - [x] Decided: real-world examples with quality scoring
 - [x] Examples build naturally from work, scored 1-5
 - [x] Only 4+ scores included in documentation
 
 ### 4. Organize /ai Root Files ✅
+
 - [x] Moved docs to guides/ subdirectory
 - [x] Renamed README.ai.md to index.ai.md
 - [x] Removed outdated contributing.ai.md and legacy-patterns.ai.md
 
 ### 5. Review Agent Sessions ✅
+
 - [x] Check `.claude/sessions/` for saved agent states
 - [x] Merge session info with appropriate tasks
 - [x] Ensure each agent has clear task 001
@@ -726,6 +773,7 @@ Create `docs/development/five-pass-training-script.md` for future video creation
 - [x] Created session-summary-2025-01-29.md with comprehensive status
 
 ### 6. Standardize index.md Convention ✅
+
 - [x] Define when to use README.md vs index.md vs index.ai.md
 - [x] Find all README.md files that should be index.md
 - [x] Find all README.ai.md files that should be index.ai.md
@@ -733,18 +781,22 @@ Create `docs/development/five-pass-training-script.md` for future video creation
 - [x] Document the standard for future use (created index-file-convention standard)
 
 ## Source
+
 - Extracted from: agent-registry.md and reorganization-plan-2025-06-29.md (5-pass system details)
 
 ## Phase 2 Progress
 
 ### Pattern Reference System Design ✅
+
 - Decided to keep "tasks" vs "stories" for methodology flexibility
 - Designed .ref.md companion files for patterns and standards
 - Created JSDoc tag system for robust code references
 - Planned automated reference maintenance via CI/CD
 
 ### AIKMS Discovery ✅
+
 During the reference system design discussion, we identified a significant product opportunity:
+
 - Building an "AI-focused Knowledge Management System" (AIKMS)
 - Essentially an AI second brain / knowledge graph for pattern extraction
 - Market research revealed significant gaps in current solutions
@@ -752,6 +804,7 @@ During the reference system design discussion, we identified a significant produ
 - Unique positioning at intersection of dev workflows, pattern extraction, knowledge graphs, and multi-domain applicability
 
 Key findings:
+
 - Current tools are fragmented (code analysis ≠ pattern extraction ≠ knowledge management)
 - No bidirectional linking between patterns/standards and code implementations
 - Missing automatic pattern evolution and lineage tracking
@@ -760,7 +813,9 @@ Key findings:
 Product concept documented in: `.claude/projects/aikms/`
 
 ### Pattern Quality Scoring System ✅
+
 Created comprehensive scoring system for patterns and standards:
+
 - Created pattern-quality-scoring for pattern instances (5 criteria: clarity, completeness, context, outcomes, teachability)
 - Created standard-quality-scoring for code implementations (weighted: correctness 30%, completeness 20%, etc.)
 - Created contextual-scoring-pattern as universal fallback with context-aware interpretation
@@ -768,6 +823,7 @@ Created comprehensive scoring system for patterns and standards:
 - Scored all existing patterns and standards with appropriate rubrics
 
 ### Reference Management Implementation ✅
+
 - Created .ref.md files for all patterns and standards
 - Established bidirectional linking structure
 - Added scoring breakdowns to all reference files
@@ -775,7 +831,9 @@ Created comprehensive scoring system for patterns and standards:
 - Designed reference-scanner-pattern for automation
 
 ### Index.md Convention Migration ✅
+
 Successfully migrated all internal documentation:
+
 - Migrated all internal directories to use index.md instead of README.md
 - Kept README.md for external-facing files (root, packages/*)
 - Updated all references throughout the codebase
@@ -787,10 +845,13 @@ Total files migrated: ~40 README.md → index.md conversions
 ## Task Status
 
 ### Phase 1: Core Documentation ✅ COMPLETED
+
 All documentation created, patterns migrated, .ai.md extension adopted.
 
 ### Phase 2: System Documentation ✅ COMPLETED
+
 All remaining items from the task have been completed:
+
 - Pattern Quality Scoring System implemented
 - Reference Management System created (.ref.md files)
 - Index.md Convention established and applied

@@ -1,11 +1,13 @@
 # Multi-Pass Development Method
 
 ## Quick Context
+
 - **Purpose**: Systematic feature development through focused phases
 - **Phases**: 5 core phases + optional tech debt phase
 - **Time Split**: 30% / 20% / 20% / 20% / 10%
 
 ## Phase Loading Strategy
+
 Only load the phase guide you're currently working on:
 
 ```markdown
@@ -26,6 +28,7 @@ Only load the phase guide you're currently working on:
 | 6 | Tech Debt Review | Apply standards (TOCK only) | Varies |
 
 ## When to Use This Method
+
 - General feature development
 - Utility functions
 - System components
@@ -33,14 +36,17 @@ Only load the phase guide you're currently working on:
 - Most coding tasks
 
 ## When NOT to Use This Method
+
 - Quick bug fixes (use rapid-fix method)
 - Pure documentation (use docs-only method)
 - Component stories (use storybook-component method)
 
 ## Phase Transition Protocol
+
 See [@method:multi-pass-development/phase-transitions] for detailed protocol.
 
 Key steps:
+
 1. Summarize current phase results
 2. Get user confirmation
 3. Update task file with new phase
@@ -48,6 +54,7 @@ Key steps:
 5. Clean context window
 
 ## See Also
+
 - [@method:multi-pass-development/phase-transitions] for transition details
 - [@pattern:progressive-disclosure] for context management
 - [@standard:phase-tracking] for task file updates

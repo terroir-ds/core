@@ -1,11 +1,13 @@
 # Phase 4: Make it Tested
 
 ## Quick Context
+
 - **Goal**: Comprehensive test coverage
 - **Time Budget**: 20% of total task time
 - **Focus**: Unit tests, edge cases, integration
 
 ## Checklist
+
 - [ ] Test all happy paths
 - [ ] Test all edge cases from Phase 3
 - [ ] Test error conditions
@@ -15,6 +17,7 @@
 - [ ] No flaky tests
 
 ## What TO Do
+
 - Write focused unit tests
 - Test each edge case separately
 - Mock external dependencies
@@ -24,6 +27,7 @@
 - Test error messages
 
 ## What NOT to Do
+
 ❌ Don't test implementation details
 ❌ Don't write brittle tests
 ❌ Don't skip edge cases
@@ -31,6 +35,7 @@
 ❌ Don't over-mock
 
 ## Example Test Structure
+
 ```typescript
 describe('truncate', () => {
   // Happy path tests
@@ -101,6 +106,7 @@ describe('truncate', () => {
 ```
 
 ## Test Patterns
+
 - **Arrange-Act-Assert**: Clear test structure
 - **One Assertion Per Test**: Focused tests
 - **Test Descriptions**: Should read like requirements
@@ -108,6 +114,7 @@ describe('truncate', () => {
 - **Parameterized Tests**: For similar scenarios
 
 ## Coverage Guidelines
+
 ```bash
 # Check coverage
 pnpm test:coverage
@@ -120,6 +127,7 @@ pnpm test:coverage
 ```
 
 ## Success Criteria
+
 ✅ All code paths tested
 ✅ All edge cases covered
 ✅ Error scenarios tested
@@ -128,7 +136,9 @@ pnpm test:coverage
 ✅ Tests run fast
 
 ## Phase Transition
+
 When complete:
+
 1. Show coverage report
 2. List test categories added
 3. Update task: `**Current Phase**: Phase 5 - Make it Documented`

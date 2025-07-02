@@ -6,26 +6,30 @@
 <!-- END AUTO-MANAGED -->
 
 ## Objective
+
 Reorganize the `.claude/tasks` directory to implement the new simplified structure with auto-managed embedded state.
 
 ## Current State Analysis
 
 ### Existing Structure Issues
+
 1. Complex nested directories (active/sprint-1/agent-X)
 2. Specifications directory with 22 files that are really just tasks
 3. Multiple competing organizational patterns
 4. Unclear task prioritization
 
 ### Files to Migrate
+
 - 3 agent-specific tasks already in correct location
-- 4 tasks in sprint-1 subdirectories 
+- 4 tasks in sprint-1 subdirectories
 - 22 specifications that need to become tasks
 - 5 backlog items
 
 ## Implementation Plan
 
 ### Phase 1: Create New Structure
-```
+
+```text
 .claude/tasks/
 ├── agent-0/
 ├── agent-1/  
@@ -38,6 +42,7 @@ Reorganize the `.claude/tasks` directory to implement the new simplified structu
 ### Phase 2: Migration Mapping
 
 #### Agent 0 Tasks (Integration & Planning)
+
 1. 001-reorganize-task-structure.md (this task)
 2. 002-quality-gates-setup.md
 3. 003-sprint-planning.md
@@ -47,6 +52,7 @@ Reorganize the `.claude/tasks` directory to implement the new simplified structu
 7. 007-bash-script-security-framework.md (existing)
 
 #### Agent 1 Tasks (Utilities)
+
 1. 001-string-formatting-utilities.md (from sprint-1 + spec)
 2. 002-case-conversion-utilities.md
 3. 003-security-utilities.md (from spec)
@@ -58,6 +64,7 @@ Reorganize the `.claude/tasks` directory to implement the new simplified structu
 9. 009-testing-utilities.md (from spec)
 
 #### Agent 2 Tasks (Infrastructure)
+
 1. 001-token-system-setup.md (from sprint-1)
 2. 002-material-color-integration.md
 3. 003-security-scanning-implementation.md (existing + spec)
@@ -71,6 +78,7 @@ Reorganize the `.claude/tasks` directory to implement the new simplified structu
 11. 011-error-tracking-setup.md (from spec)
 
 #### Agent 3 Tasks (Components)
+
 1. 001-component-architecture.md (from sprint-1)
 2. 002-button-component.md
 3. 003-card-component.md
@@ -78,6 +86,7 @@ Reorganize the `.claude/tasks` directory to implement the new simplified structu
 5. 005-theme-provider.md
 
 #### Backlog (Unassigned)
+
 - i18n-migration-plan.md
 - i18n-todo-list.md
 - infrastructure-overview.md
@@ -99,6 +108,7 @@ Reorganize the `.claude/tasks` directory to implement the new simplified structu
 ### Phase 4: Create Auto-Management Script
 
 Create `scripts/manage-agent-tasks.js` with:
+
 - Auto-embedded state management
 - Git hook integration
 - Manual trigger via pnpm command
@@ -116,6 +126,7 @@ Create `scripts/manage-agent-tasks.js` with:
 ## Task Status: IN PROGRESS
 
 ### What Was Accomplished
+
 1. Created new simplified directory structure
 2. Migrated existing tasks with proper numbering
 3. Converted key specifications to tasks
@@ -125,7 +136,9 @@ Create `scripts/manage-agent-tasks.js` with:
 7. Updated README with new process
 
 ### Still TODO: Deep Review of Backup
+
 Need to thoroughly review `.claude-backup-20250630-045811/tasks/` to extract ALL valuable task ideas, especially:
+
 - Decompose tasks for Agent 1
 - Hidden tasks in various documents
 - Sprint plans with specific work items
@@ -138,6 +151,7 @@ The backup should be treated as READ-ONLY.
 ## Rollback Plan
 
 If issues arise:
+
 ```bash
 # Remove botched migration
 rm -rf .claude
@@ -154,4 +168,5 @@ cp -r .claude-backup-20250630-045811 .claude
 - Some specs may be split into multiple tasks if too large
 
 ## Patterns Extracted
+
 - [safe-migration-strategy.md](../../patterns/safe-migration-strategy.md): Phased migration with backup and rollback plan
