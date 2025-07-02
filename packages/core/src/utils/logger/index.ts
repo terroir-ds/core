@@ -348,43 +348,60 @@ const createProdConfig = (): LoggerOptions => ({
 
 
 // Test configuration - minimal output  
-const createTestConfig = (): LoggerOptions => ({
-  ...createBaseConfig(),
-  level: 'error', // Only errors in tests
-  transport: {
-    target: 'pino-pretty',
-    options: {
-      colorize: false,
-      ignore: 'time,pid,hostname,script',
-      messageFormat: '{msg}',
-      singleLine: true,
-    }
-  },
-  // Override hooks to bypass rate limiting in tests
-  hooks: {
-    logMethod(inputArgs: unknown[], method) {
-      // In test mode, skip rate limiting to avoid test interference
-      // but keep input validation
-      if (inputArgs[0] && isObject(inputArgs[0])) {
-        inputArgs[0] = validateLogInput(inputArgs[0]);
+const createTestConfig = (): LoggerOptions => {
+  const isLoggerTest = process.env['VITEST_LOGGER_TEST'] === 'true';
+  const isLoggerSilent = process.env['VITEST_LOGGER_SILENT'] === 'true';
+  
+  const config: LoggerOptions = {
+    ...createBaseConfig(),
+    level: isLoggerTest ? 'trace' : isLoggerSilent ? 'silent' : 'error', // Allow all levels when testing logger, silence when requested, otherwise errors only
+    // Override hooks to bypass rate limiting in tests
+    hooks: {
+      logMethod(inputArgs: unknown[], method) {
+        if (inputArgs[0] && isObject(inputArgs[0])) {
+          inputArgs[0] = validateLogInput(inputArgs[0]);
+        }
+        
+        // Always call the method - transport and level will handle suppression
+        return method.apply(this, inputArgs as Parameters<typeof method>);
       }
-      
-      return method.apply(this, inputArgs as Parameters<typeof method>);
     }
+  };
+  
+  // Only add transport if needed for logger tests
+  if (isLoggerTest) {
+    config.transport = {
+      target: 'pino-pretty',
+      options: {
+        colorize: false,
+        ignore: 'time,pid,hostname,script',
+        messageFormat: '{msg}',
+        singleLine: true,
+      }
+    };
   }
-});
+  
+  return config;
+};
 
 // Create logger instance based on environment
 let _logger: Logger | undefined;
+let _lastLoggerTestEnv: string | undefined;
 
 function getLogger(): Logger {
-  if (!_logger) {
+  const currentLoggerTestEnv = process.env['VITEST_LOGGER_TEST'];
+  
+  // Recreate logger if test environment flag changed
+  if (!_logger || (isTest() && _lastLoggerTestEnv !== currentLoggerTestEnv)) {
+    _lastLoggerTestEnv = currentLoggerTestEnv;
+    
     // Increase max listeners to prevent warnings in tests
     if (isTest()) {
       // Only increase if current limit is lower than what we need
+      // Use 200 to match test setup for async tests
       const currentMax = process.getMaxListeners();
-      if (currentMax < 100) {
-        process.setMaxListeners(100);
+      if (currentMax < 200) {
+        process.setMaxListeners(200);
       }
       _logger = pino(createTestConfig());
     } else if (isDevelopment() && !isCI()) {

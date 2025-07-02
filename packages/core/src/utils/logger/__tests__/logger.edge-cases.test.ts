@@ -15,6 +15,55 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+
+vi.mock('pino', () => {
+  // Create mock logger inside the factory to avoid hoisting issues
+  const mockLogger = {
+    info: vi.fn(),
+    error: vi.fn(),
+    debug: vi.fn(),
+    warn: vi.fn(),
+    trace: vi.fn(),
+    fatal: vi.fn(),
+    child: vi.fn(function(this: typeof mockLogger) { return this; }),
+    level: 'silent',
+    startTimer: vi.fn(() => ({ done: vi.fn() })),
+    bindings: vi.fn(() => ({})),
+  };
+  
+  // Store reference globally for test assertions
+  globalThis.__mockLoggerInstance = mockLogger;
+
+  // Create mock serializers and time functions inside the factory
+  const mockSerializers = {
+    err: vi.fn(err => ({ name: err?.name, message: err?.message, stack: err?.stack })),
+    req: vi.fn(req => ({ method: req?.method, url: req?.url })),
+    res: vi.fn(res => ({ statusCode: res?.statusCode })),
+  };
+
+  const mockTimeFunctions = {
+    isoTime: vi.fn(() => new Date().toISOString()),
+    epochTime: vi.fn(() => Date.now()),
+    nullTime: vi.fn(() => ''),
+  };
+
+  // Mock pino constructor with proper static properties
+  const pinoCtor = vi.fn(() => mockLogger);
+  pinoCtor.stdSerializers = mockSerializers;
+  pinoCtor.stdTimeFunctions = mockTimeFunctions;
+
+  return {
+    default: pinoCtor,
+    stdSerializers: mockSerializers,
+    stdTimeFunctions: mockTimeFunctions,
+  };
+});
+
+// Mock the transport
+vi.mock('pino-pretty', () => ({
+  default: vi.fn(() => ({})),
+}));
+
 import { 
   logger,
   createLogger,
@@ -29,7 +78,8 @@ import {
   updateAsyncContext,
   createAsyncLogger,
   type LogContext
-} from '../index.js';
+} from '@utils/logger';
+
 
 describe('Logger Edge Cases', () => {
   beforeEach(() => {
@@ -47,6 +97,8 @@ describe('Logger Edge Cases', () => {
       };
       
       expect(() => logger.info(data, 'BigInt test')).not.toThrow();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      expect((globalThis as any).__mockLoggerInstance.info).toHaveBeenCalledWith(expect.any(Object), 'BigInt test');
     });
 
     it('should handle Symbol values', () => {
@@ -89,9 +141,14 @@ describe('Logger Edge Cases', () => {
         })
       };
       
+      // Test that error logging doesn't throw (output is suppressed via mock)
       Object.entries(errors).forEach(([type, error]) => {
         expect(() => logger.error({ err: error }, `${type} error test`)).not.toThrow();
       });
+      
+      // Verify error logging was called
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      expect((globalThis as any).__mockLoggerInstance.error).toHaveBeenCalled();
     });
 
     it('should handle ArrayBuffer and typed arrays', () => {
@@ -140,11 +197,16 @@ describe('Logger Edge Cases', () => {
     it('should handle measureTime with synchronous errors', async () => {
       const error = new Error('Sync error');
       
+      // Test that measureTime properly handles and re-throws errors (logging is suppressed via mock)
       await expect(
         measureTime('sync-error-op', async () => {
           throw error;
         })
       ).rejects.toThrow('Sync error');
+      
+      // Verify error was logged
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      expect((globalThis as any).__mockLoggerInstance.error).toHaveBeenCalled();
     });
 
     it('should handle measureTime with very fast operations', async () => {
@@ -377,7 +439,7 @@ describe('Logger Edge Cases', () => {
       vi.resetModules();
       
       expect(async () => {
-        const { logger: newLogger } = await import('../index.js');
+        const { logger: newLogger } = await import('@utils/logger');
         newLogger.info('Test without argv');
       }).not.toThrow();
       
@@ -389,7 +451,7 @@ describe('Logger Edge Cases', () => {
       
       for (const env of environments) {
         vi.resetModules();
-        vi.doMock('@lib/config/index.js', () => ({
+        vi.doMock('@lib/config', () => ({
           env: { NODE_ENV: env, LOG_LEVEL: 'info' },
           isDevelopment: () => env === 'development',
           isProduction: () => env === 'production',
@@ -397,7 +459,7 @@ describe('Logger Edge Cases', () => {
           isCI: () => false
         }));
         
-        const { logger: envLogger } = await import('../index.js');
+        const { logger: envLogger } = await import('@utils/logger');
         expect(() => envLogger.info(`Testing in ${env}`)).not.toThrow();
       }
     });
