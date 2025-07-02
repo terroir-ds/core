@@ -257,8 +257,8 @@ describe('Specialized Assertions', () => {
     });
 
     it('should throw for non-arrays', () => {
-      expect(() => assertMinLength('string' as any, 2)).toThrow(AssertionError);
-      expect(() => assertMinLength({} as any, 1)).toThrow(AssertionError);
+      expect(() => assertMinLength('string' as unknown as unknown[], 2)).toThrow(AssertionError);
+      expect(() => assertMinLength({} as unknown as unknown[], 1)).toThrow(AssertionError);
     });
 
     it('should generate appropriate error messages', () => {
@@ -295,8 +295,8 @@ describe('Specialized Assertions', () => {
     });
 
     it('should throw for non-numbers', () => {
-      expect(() => assertInRange('5' as any, 0, 10)).toThrow(AssertionError);
-      expect(() => assertInRange({} as any, 0, 10)).toThrow(AssertionError);
+      expect(() => assertInRange('5' as unknown as number, 0, 10)).toThrow(AssertionError);
+      expect(() => assertInRange({} as unknown as number, 0, 10)).toThrow(AssertionError);
     });
 
     it('should generate appropriate error messages', () => {
@@ -334,8 +334,8 @@ describe('Specialized Assertions', () => {
     });
 
     it('should throw for non-strings', () => {
-      expect(() => assertPattern(123 as any, /^\d+$/)).toThrow(AssertionError);
-      expect(() => assertPattern({} as any, /@/)).toThrow(AssertionError);
+      expect(() => assertPattern(123 as unknown as string, /^\d+$/)).toThrow(AssertionError);
+      expect(() => assertPattern({} as unknown as string, /@/)).toThrow(AssertionError);
     });
 
     it('should include pattern information in context', () => {
@@ -381,8 +381,8 @@ describe('Specialized Assertions', () => {
     });
 
     it('should throw for non-objects', () => {
-      expect(() => assertProperties('string' as any, ['length'])).toThrow(AssertionError);
-      expect(() => assertProperties(null as any, ['prop'])).toThrow(AssertionError);
+      expect(() => assertProperties('string' as unknown as Record<string, unknown>, ['length'])).toThrow(AssertionError);
+      expect(() => assertProperties(null as unknown as Record<string, unknown>, ['prop'])).toThrow(AssertionError);
     });
 
     it('should list missing properties in error message', () => {
@@ -490,14 +490,16 @@ describe('Utility Assertions', () => {
     });
 
     it('should be useful for non-breaking validation', () => {
-      function validateConfig(config: any) {
-        let validConfig = config;
+      function validateConfig(config: unknown) {
+        let validConfig: { port?: number } = {};
 
-        if (!softAssert(typeof config === 'object', 'Config should be an object')) {
-          validConfig = {};
+        if (typeof config === 'object' && config !== null) {
+          validConfig = config as { port?: unknown };
+        } else {
+          softAssert(false, 'Config should be an object');
         }
 
-        if (!softAssert(typeof config.port === 'number', 'Port should be a number')) {
+        if (!softAssert(typeof validConfig.port === 'number', 'Port should be a number')) {
           validConfig.port = 3000;
         }
 
@@ -564,9 +566,9 @@ describe('Custom Assertions', () => {
       const assertUser = createAssertion(
         (obj: unknown): obj is User => {
           return typeof obj === 'object' && obj !== null &&
-                 typeof (obj as any).id === 'number' &&
-                 typeof (obj as any).name === 'string' &&
-                 typeof (obj as any).email === 'string';
+                 'id' in obj && typeof (obj as User).id === 'number' &&
+                 'name' in obj && typeof (obj as User).name === 'string' &&
+                 'email' in obj && typeof (obj as User).email === 'string';
         },
         'Invalid user object',
         'INVALID_USER'
@@ -601,9 +603,9 @@ describe('Performance Tests', () => {
   it('should handle assertion chains efficiently', () => {
     function validateUser(data: unknown) {
       assertType(data, 'object');
-      assertProperties(data as any, ['id', 'name', 'email', 'age']);
+      assertProperties(data as Record<string, unknown>, ['id', 'name', 'email', 'age']);
       
-      const user = data as any;
+      const user = data as Record<string, unknown>;
       assertType(user.id, 'number');
       assertType(user.name, 'string');
       assertType(user.email, 'string');

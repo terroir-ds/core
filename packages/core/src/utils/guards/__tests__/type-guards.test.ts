@@ -604,9 +604,9 @@ describe('Custom Type Guard Creation', () => {
 
       const isUser = createTypeGuard((obj: unknown): obj is User => {
         return isPlainObject(obj) &&
-               typeof (obj as any).id === 'number' &&
-               typeof (obj as any).name === 'string' &&
-               typeof (obj as any).email === 'string';
+               'id' in obj && typeof (obj as User).id === 'number' &&
+               'name' in obj && typeof (obj as User).name === 'string' &&
+               'email' in obj && typeof (obj as User).email === 'string';
       });
 
       expect(isUser({ id: 1, name: 'John', email: 'john@example.com' })).toBe(true);
@@ -662,7 +662,7 @@ describe('Edge Cases', () => {
   });
 
   it('should handle circular references', () => {
-    const circular: any = { a: 1 };
+    const circular: Record<string, unknown> = { a: 1 };
     circular.self = circular;
 
     expect(isObject(circular)).toBe(true);

@@ -902,7 +902,7 @@ describe('Predicate Composition', () => {
       hasProperties(['id', 'name', 'email', 'status']),
       hasPropertyValue('status', 'active'),
       (user: unknown) => {
-        const u = user as any;
+        const u = user as { id: number; name: string; email: string; status: string };
         return isPositive(u.id) &&
                hasMinLength(2)(u.name) &&
                matches(/@/)(u.email);
@@ -994,7 +994,7 @@ describe('Performance Tests', () => {
       hasProperty('id'),
       hasProperty('value'),
       hasPropertyValue('active', true),
-      (item: unknown) => isInRange(0, 50)((item as any).value)
+      (item: unknown) => isInRange(0, 50)((item as { value: number }).value)
     );
     
     const start = performance.now();
@@ -1038,7 +1038,7 @@ describe('Performance Tests', () => {
       hasProperties(['id', 'name', 'email', 'age', 'role']),
       hasPropertyValue('active', true),
       (user: unknown) => {
-        const u = user as any;
+        const u = user as { id: number; name: string; email: string; age: number; role: string; active: boolean };
         return isInRange(18, 65)(u.age) &&
                oneOf(['user', 'admin'])(u.role) &&
                matches(/@/)(u.email);

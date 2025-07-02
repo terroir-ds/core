@@ -584,10 +584,10 @@ describe('Custom Validators', () => {
       const validateUser = createValidator(
         (obj: unknown): obj is User => {
           return typeof obj === 'object' && obj !== null &&
-                 typeof (obj as any).id === 'number' &&
-                 typeof (obj as any).name === 'string' &&
-                 typeof (obj as any).email === 'string' &&
-                 isValidEmail((obj as any).email);
+                 'id' in obj && typeof (obj as User).id === 'number' &&
+                 'name' in obj && typeof (obj as User).name === 'string' &&
+                 'email' in obj && typeof (obj as User).email === 'string' &&
+                 isValidEmail((obj as User).email);
         },
         'Invalid user object'
       );
@@ -797,11 +797,11 @@ describe('Security Tests', () => {
     });
 
     expect(result.valid).toBe(true);
-    expect(({} as any).polluted).toBeUndefined(); // Should not pollute prototype
+    expect(({} as Record<string, unknown>).polluted).toBeUndefined(); // Should not pollute prototype
   });
 
   it('should handle circular references in validation context', () => {
-    const circular: any = { email: 'test@example.com' };
+    const circular: Record<string, unknown> = { email: 'test@example.com' };
     circular.self = circular;
 
     expect(() => {

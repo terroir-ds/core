@@ -77,18 +77,24 @@ describe('Guards Integration Tests', () => {
       // Use assertions for required structure
       try {
         assertProperties(data, ['email', 'password', 'profile', 'preferences']);
-        assertType((data as any).email, 'string');
-        assertType((data as any).password, 'string');
-        assertType((data as any).profile, 'object');
-        assertType((data as any).preferences, 'object');
+        const typedData = data as {
+          email: unknown;
+          password: unknown;
+          profile: unknown;
+          preferences: unknown;
+        };
+        assertType(typedData.email, 'string');
+        assertType(typedData.password, 'string');
+        assertType(typedData.profile, 'object');
+        assertType(typedData.preferences, 'object');
         
-        const profile = (data as any).profile;
+        const profile = typedData.profile as Record<string, unknown>;
         assertProperties(profile, ['firstName', 'lastName', 'age']);
         assertType(profile.firstName, 'string');
         assertType(profile.lastName, 'string');
         assertType(profile.age, 'number');
         
-        const preferences = (data as any).preferences;
+        const preferences = typedData.preferences as Record<string, unknown>;
         assertProperties(preferences, ['newsletter', 'theme']);
         assertType(preferences.newsletter, 'boolean');
         assertType(preferences.theme, 'string');
@@ -102,7 +108,19 @@ describe('Guards Integration Tests', () => {
 
       // Use detailed validation for specific fields
       const errors: ValidationError[] = [];
-      const typedData = data as any;
+      const typedData = data as {
+        email: string;
+        password: string;
+        profile: {
+          firstName: string;
+          lastName: string;
+          age: number;
+        };
+        preferences: {
+          newsletter: boolean;
+          theme: string;
+        };
+      };
       const profile = typedData.profile;
       const preferences = typedData.preferences;
 
@@ -188,7 +206,7 @@ describe('Guards Integration Tests', () => {
       const result = validateUserRegistration(incompleteRegistration);
       expect(result.valid).toBe(false);
       expect(result.errors).toHaveLength(1);
-      expect(result.errors![0]).toBeInstanceOf(AssertionError);
+      expect(result.errors?.[0]).toBeInstanceOf(AssertionError);
     });
 
     it('should validate individual field errors', () => {
@@ -209,10 +227,10 @@ describe('Guards Integration Tests', () => {
 
       const result = validateUserRegistration(invalidRegistration);
       expect(result.valid).toBe(false);
-      expect(result.errors!.length).toBeGreaterThan(4); // Multiple validation errors
+      expect(result.errors?.length).toBeGreaterThan(4); // Multiple validation errors
       
       // Check that we get specific error types
-      const errorCodes = result.errors!.map(e => e.code);
+      const errorCodes = result.errors?.map(e => e.code) || [];
       expect(errorCodes).toContain('EMAIL_INVALID_FORMAT');
       expect(errorCodes).toContain('PASSWORD_TOO_SHORT');
     });
@@ -260,9 +278,12 @@ describe('Guards Integration Tests', () => {
     function processApiResponse(response: unknown): ApiResponse {
       // Type checking with guards
       assertType(response, 'object', 'API response must be an object');
-      assertProperties(response as any, ['data', 'pagination']);
+      assertProperties(response as Record<string, unknown>, ['data', 'pagination']);
       
-      const typedResponse = response as any;
+      const typedResponse = response as {
+        data: unknown;
+        pagination: unknown;
+      };
       
       // Validate data array
       assertType(typedResponse.data, 'object');
@@ -272,9 +293,18 @@ describe('Guards Integration Tests', () => {
       const processedData = typedResponse.data.map((item: unknown, index: number) => {
         try {
           assertType(item, 'object', `Item ${index} must be an object`);
-          assertProperties(item as any, ['id', 'name', 'email', 'status', 'metadata']);
+          assertProperties(item as Record<string, unknown>, ['id', 'name', 'email', 'status', 'metadata']);
           
-          const typedItem = item as any;
+          const typedItem = item as {
+            id: number;
+            name: string;
+            email: string;
+            status: 'active' | 'inactive' | 'pending';
+            metadata: {
+              lastLogin?: string;
+              preferences: Record<string, unknown>;
+            };
+          };
           
           // Validate individual fields
           assertType(typedItem.id, 'number');
@@ -540,7 +570,14 @@ describe('Guards Integration Tests', () => {
       const isValidUser = and(
         hasProperties(['id', 'name', 'email', 'age', 'active', 'roles']),
         (user: unknown) => {
-          const u = user as any;
+          const u = user as {
+            id: number;
+            name: string;
+            email: string;
+            age: number;
+            active: boolean;
+            roles: unknown[];
+          };
           return isPositive(u.id) &&
                  hasMinLength(3)(u.name) &&
                  validateEmail(u.email).valid &&
@@ -566,7 +603,7 @@ describe('Guards Integration Tests', () => {
       
       const expensiveValidation = (value: unknown) => {
         expensiveCallCount++;
-        return validateEmail((value as any).email || '').valid;
+        return validateEmail((value as { email?: string }).email || '').valid;
       };
 
       const optimizedValidator = and(
@@ -665,7 +702,7 @@ describe('Guards Integration Tests', () => {
           return 'User must be an object';
         }
 
-        assertProperties(typedData.user as any, ['name', 'email']);
+        assertProperties(typedData.user as Record<string, unknown>, ['name', 'email']);
         const user = typedData.user as { name: unknown; email: unknown };
 
         if (!isString(user.name)) {

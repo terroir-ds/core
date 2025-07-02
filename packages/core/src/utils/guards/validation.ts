@@ -71,8 +71,10 @@ export interface PasswordValidationOptions {
   disallowCommon?: boolean;
 }
 
+export type CreditCardType = 'visa' | 'mastercard' | 'amex' | 'discover' | 'diners' | 'jcb';
+
 export interface CreditCardValidationOptions {
-  allowedTypes?: ('visa' | 'mastercard' | 'amex' | 'discover' | 'diners' | 'jcb')[];
+  allowedTypes?: CreditCardType[];
   validateExpiry?: boolean;
   validateCvv?: boolean;
 }
@@ -711,7 +713,7 @@ export function validateCreditCard(
   
   // Card type validation
   if (allowedTypes && allowedTypes.length > 0) {
-    if (!detectedCardType || !allowedTypes.includes(detectedCardType as any)) {
+    if (!detectedCardType || !allowedTypes.includes(detectedCardType as CreditCardType)) {
       errors.push(new ValidationError('Credit card type not allowed', {
         code: 'CARD_TYPE_NOT_ALLOWED',
         context: { value: '[REDACTED]', allowedTypes, detectedType: detectedCardType },
@@ -792,10 +794,10 @@ export function validateSchema<T extends Record<string, unknown>>(
   
   const errors: ValidationError[] = [];
   const fieldErrors: Record<string, ValidationError[]> = {};
-  const result: any = {};
+  const result: Record<string, unknown> = {};
   
   for (const [field, validator] of Object.entries(schema)) {
-    const fieldValue = (data as any)[field];
+    const fieldValue = (data as Record<string, unknown>)[field];
     const fieldResult = validator(fieldValue);
     
     if (fieldResult.valid) {

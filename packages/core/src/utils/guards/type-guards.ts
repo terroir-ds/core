@@ -316,7 +316,7 @@ export { isPromise } from '@utils/types/async.types.js';
  * 
  * @public
  */
-export function isAsyncFunction(value: unknown): value is (...args: any[]) => Promise<any> {
+export function isAsyncFunction(value: unknown): value is (...args: unknown[]) => Promise<unknown> {
   return isFunction(value) && getObjectType(value) === '[object AsyncFunction]';
 }
 
@@ -420,7 +420,7 @@ export function isBuffer(value: unknown): value is Buffer {
  * @public
  */
 export function isStream(value: unknown): value is NodeJS.ReadableStream | NodeJS.WritableStream {
-  return isObjectLike(value) && isFunction((value as any).pipe);
+  return isObjectLike(value) && isFunction((value as { pipe?: unknown }).pipe);
 }
 
 /**
@@ -432,7 +432,7 @@ export function isStream(value: unknown): value is NodeJS.ReadableStream | NodeJ
  * @public
  */
 export function isReadableStream(value: unknown): value is NodeJS.ReadableStream {
-  return isStream(value) && isFunction((value as any).read);
+  return isStream(value) && isFunction((value as { read?: unknown }).read);
 }
 
 /**
@@ -444,7 +444,7 @@ export function isReadableStream(value: unknown): value is NodeJS.ReadableStream
  * @public
  */
 export function isWritableStream(value: unknown): value is NodeJS.WritableStream {
-  return isStream(value) && isFunction((value as any).write);
+  return isStream(value) && isFunction((value as { write?: unknown }).write);
 }
 
 // =============================================================================
@@ -576,7 +576,7 @@ export function isPrimitive(value: unknown): value is string | number | boolean 
  * @public
  */
 export function isIterable(value: unknown): value is Iterable<unknown> {
-  return value != null && isFunction((value as any)[Symbol.iterator]);
+  return value != null && isFunction((value as { [Symbol.iterator]?: unknown })[Symbol.iterator]);
 }
 
 // =============================================================================

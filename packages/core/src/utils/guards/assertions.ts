@@ -133,20 +133,20 @@ export function assertType<T extends 'string' | 'number' | 'boolean' | 'object' 
 
 export function assertInstanceOf<T>(
   value: unknown,
-  constructor: new (...args: any[]) => T,
+  constructor: new (...args: unknown[]) => T,
   message?: string
 ): asserts value is T {
   if (!(value instanceof constructor)) {
     const constructorName = constructor.name || 'Unknown';
     const actualType = value === null ? 'null' 
       : value === undefined ? 'undefined'
-      : (value as any).constructor?.name || typeof value;
+      : (value as { constructor?: { name?: string } }).constructor?.name || typeof value;
     
     const defaultMessage = `Expected instance of ${constructorName}, got ${actualType}`;
     
     throw new AssertionError(message ?? defaultMessage, {
       code: 'INSTANCE_MISMATCH',
-      context: (value as any).constructor === undefined && typeof value === 'object' ? {
+      context: (value as { constructor?: unknown }).constructor === undefined && typeof value === 'object' ? {
         expected: constructorName,
         actual: 'object'
       } : {
@@ -309,7 +309,7 @@ export function assertProperties<T extends object>(
 export function softAssert(
   condition: unknown,
   message: string,
-  customLogger?: string | ((message: string, context: any) => void)
+  customLogger?: string | ((message: string, context: Record<string, unknown>) => void)
 ): boolean {
   if (!condition) {
     const context = {
