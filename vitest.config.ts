@@ -42,9 +42,28 @@ export default defineConfig({
     },
   },
   test: {
+    // Use projects configuration for multi-package testing
+    projects: [
+      {
+        name: 'core',
+        root: './packages/core',
+        testMatch: ['src/**/__tests__/**/*.test.{js,ts}', 'src/**/*.test.{js,ts}'],
+      },
+      {
+        name: 'scripts', 
+        root: './scripts',
+        testMatch: ['**/__tests__/**/*.test.{js,ts}', '**/*.test.{js,ts}'],
+      }
+    ],
+    
+    // Global test configuration
     globals: true,
     environment: 'jsdom',
-    setupFiles: [path.resolve(__dirname, './test/setup.ts')],
+    setupFiles: [
+      path.resolve(__dirname, './test/worker-setup.ts'),
+      path.resolve(__dirname, './test/setup.ts')
+    ],
+    exclude: ['**/node_modules/**'],
     onConsoleLog: (log) => {
       // Suppress expected abort error warnings in tests
       if (log.includes('PromiseRejectionHandledWarning') || log.includes('AbortError: Operation aborted')) {
@@ -75,5 +94,22 @@ export default defineConfig({
         '**/__mocks__/**',
       ],
     },
+    // Pool configuration to handle event listener warnings and prevent crashes
+    pool: 'threads',
+    poolOptions: {
+      threads: {
+        // Use fewer threads to reduce concurrent listener creation
+        // This helps prevent crashes when running many tests
+        maxThreads: 2,
+        minThreads: 1,
+        // Single thread mode can be enabled for debugging
+        // singleThread: true,
+      }
+    },
+    // Shard configuration for better test distribution
+    // This can help when running large test suites
+    maxConcurrency: 5,
+    // Increase test timeout for async-heavy tests
+    testTimeout: 10000,
   },
 });
