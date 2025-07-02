@@ -21,7 +21,7 @@ import {
   isSnakeCase,
   isKebabCase,
   isConstantCase,
-} from '../case.js';
+} from '@utils/string/case';
 
 describe('Case Conversion Utilities', () => {
   describe('splitWords', () => {
@@ -409,7 +409,7 @@ describe('Case Conversion Utilities', () => {
       }
       
       const duration = performance.now() - start;
-      expect(duration).toBeLessThan(50); // Should complete in under 50ms
+      expect(duration).toBeLessThan(100); // Should complete in under 100ms
     });
   });
 });

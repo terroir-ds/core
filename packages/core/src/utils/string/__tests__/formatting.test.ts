@@ -14,7 +14,7 @@ import {
   formatNumber,
   formatPercentage,
   formatCurrency,
-} from '../formatting.js';
+} from '@utils/string/formatting';
 
 describe('String Formatting Utilities', () => {
   describe('truncate', () => {

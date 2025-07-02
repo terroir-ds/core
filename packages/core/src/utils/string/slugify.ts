@@ -71,7 +71,8 @@ const DEFAULT_REPLACEMENTS: Record<string, string> = {
   'Ī': 'I', 'ī': 'i', 'Ĭ': 'I', 'ĭ': 'i', 'Į': 'I', 'į': 'i', 'İ': 'I',
   'ı': 'i', 'Ĳ': 'IJ', 'ĳ': 'ij', 'Ĵ': 'J', 'ĵ': 'j', 'Ķ': 'K', 'ķ': 'k',
   'ĸ': 'k', 'Ĺ': 'L', 'ĺ': 'l', 'Ļ': 'L', 'ļ': 'l', 'Ľ': 'L', 'ľ': 'l',
-  'Ŀ': 'L', 'ŀ': 'l', 'Ł': 'L', 'ł': 'l',
+  'Ŀ': 'L', 'ŀ': 'l', 'Ł': 'L', 'ł': 'l', 'Ń': 'N', 'ń': 'n',
+  'Ś': 'S', 'ś': 's', 'Ź': 'Z', 'ź': 'z', 'Ż': 'Z', 'ż': 'z',
   
   // Currency and symbols
   '€': 'euro', '$': 'dollar', '£': 'pound', '¥': 'yen', '¢': 'cent',
@@ -126,7 +127,7 @@ const LANGUAGE_REPLACEMENTS: Record<string, Record<string, string>> = {
   ar: {
     'ا': 'a', 'ب': 'b', 'ت': 't', 'ث': 'th', 'ج': 'j', 'ح': 'h',
     'خ': 'kh', 'د': 'd', 'ذ': 'dh', 'ر': 'r', 'ز': 'z', 'س': 's',
-    'ش': 'sh', 'ص': 's', 'ض': 'd', 'ط': 't', 'ظ': 'z', 'ع': 'a',
+    'ش': 'sh', 'ص': 's', 'ض': 'd', 'ط': 't', 'ظ': 'z', 'ع': '',
     'غ': 'gh', 'ف': 'f', 'ق': 'q', 'ك': 'k', 'ل': 'l', 'م': 'm',
     'ن': 'n', 'ه': 'h', 'و': 'w', 'ي': 'y'
   }
@@ -179,8 +180,30 @@ export function slugify(str: string, options: SlugifyOptions = {}): string {
   }
 
   // Apply default character replacements
-  for (const [from, to] of Object.entries(DEFAULT_REPLACEMENTS)) {
-    result = result.replace(new RegExp(escapeRegExp(from), 'g'), to);
+  if (strict) {
+    // In strict mode, replace all mapped characters
+    for (const [from, to] of Object.entries(DEFAULT_REPLACEMENTS)) {
+      result = result.replace(new RegExp(escapeRegExp(from), 'g'), to);
+    }
+  } else {
+    // In non-strict mode, only replace symbols and keep accented letters
+    const symbolReplacements = {
+      // Currency and symbols
+      '€': 'euro', '$': 'dollar', '£': 'pound', '¥': 'yen', '¢': 'cent',
+      '©': 'c', '®': 'r', '™': 'tm', '°': 'deg',
+      // Mathematical symbols
+      '×': 'x', '÷': 'div', '±': 'plus-minus', '≤': 'lte', '≥': 'gte',
+      '≠': 'ne', '≈': 'approx', '∞': 'infinity',
+      // Common symbols
+      '&': 'and', '@': 'at', '#': 'hash', '%': 'percent',
+      '+': 'plus', '=': 'equals', '<': 'lt', '>': 'gt',
+      // Quotes and dashes
+      '"': '', "'": '', '`': '', '\u201C': '', '\u201D': '',
+      '–': '-', '—': '-', '…': '...',
+    };
+    for (const [from, to] of Object.entries(symbolReplacements)) {
+      result = result.replace(new RegExp(escapeRegExp(from), 'g'), to);
+    }
   }
 
   // Convert to lowercase if requested
@@ -190,30 +213,47 @@ export function slugify(str: string, options: SlugifyOptions = {}): string {
 
   // Replace non-alphanumeric characters with separator
   if (strict) {
-    result = result.replace(/[^a-zA-Z0-9]/g, separator);
+    // In strict mode, only allow ASCII alphanumeric
+    result = result.replace(/[^a-zA-Z0-9]+/g, separator);
   } else {
-    // More permissive: allow Unicode letters and numbers
-    result = result.replace(/[^\p{L}\p{N}]/gu, separator);
+    // More permissive: allow Unicode letters, numbers, hyphens and underscores
+    result = result.replace(/[^\p{L}\p{N}\-_]+/gu, separator);
   }
 
   // Replace multiple consecutive separators with single separator
-  const separatorRegex = new RegExp(`\\${separator}+`, 'g');
-  result = result.replace(separatorRegex, separator);
+  if (separator) {
+    const separatorRegex = new RegExp(`\\${separator}+`, 'g');
+    result = result.replace(separatorRegex, separator);
+  }
 
   // Trim separators from start and end
-  if (trim) {
+  if (trim && separator) {
     const trimRegex = new RegExp(`^\\${separator}+|\\${separator}+$`, 'g');
     result = result.replace(trimRegex, '');
   }
 
   // Apply maximum length if specified
   if (maxLength && result.length > maxLength) {
+    // Store the full string before truncation to check what comes after
+    const fullString = result;
     result = result.substring(0, maxLength);
     
-    // Trim separator from end if truncation created one
-    if (trim) {
-      const endTrimRegex = new RegExp(`\\${separator}+$`);
-      result = result.replace(endTrimRegex, '');
+    // Check if we truncated in the middle of a word
+    // by seeing if the next character after truncation is not a separator
+    const nextChar = fullString[maxLength];
+    const truncatedMidWord = nextChar && nextChar !== separator;
+    
+    // If we truncated in the middle of a word, remove the partial word
+    if (truncatedMidWord && separator && result.includes(separator)) {
+      const lastSeparatorIndex = result.lastIndexOf(separator);
+      if (lastSeparatorIndex > 0) {
+        result = result.substring(0, lastSeparatorIndex);
+      }
+    }
+    
+    // Trim separator from end if present
+    if (trim && separator && result.endsWith(separator)) {
+      result = result.replace(new RegExp(`\\${separator}+$`), '');
     }
   }
 
@@ -268,16 +308,23 @@ export function safeFilename(filename: string, options: SlugifyOptions = {}): st
     extension = filename.substring(lastDotIndex + 1);
   }
 
-  // Slugify the name part
-  const safeName = slugify(name, {
-    separator: '-',
-    ...options
-  });
-
   // Slugify the extension (but keep it simple)
   const safeExtension = extension
     .toLowerCase()
     .replace(/[^a-z0-9]/g, '');
+
+  // Calculate max length for name if maxLength is specified
+  let nameOptions = { separator: '-', ...options };
+  if (options.maxLength && safeExtension) {
+    // Reserve space for dot and extension
+    nameOptions.maxLength = options.maxLength - safeExtension.length - 1;
+    if (nameOptions.maxLength < 1) {
+      nameOptions.maxLength = 1; // At least one character for name
+    }
+  }
+
+  // Slugify the name part
+  const safeName = slugify(name, nameOptions);
 
   return safeExtension ? `${safeName}.${safeExtension}` : safeName;
 }
@@ -369,7 +416,9 @@ export function isValidSlug(str: string, separator = '-', strict = true): boolea
     const validChars = new RegExp(`^[a-z0-9\\${escapedSeparator}]+$`);
     return validChars.test(str);
   } else {
-    const validChars = new RegExp(`^[\\p{L}\\p{N}\\${escapedSeparator}]+$`, 'u');
+    // Non-strict mode: lowercase Unicode letters, numbers, separator, hyphen, underscore
+    // Note: Still case-sensitive, only lowercase allowed
+    const validChars = new RegExp(`^[\\p{Ll}\\p{Lo}\\p{N}\\-_\\${escapedSeparator}]+$`, 'u');
     return validChars.test(str);
   }
 }

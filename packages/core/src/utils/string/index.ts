@@ -118,12 +118,23 @@ export {
  * ```
  */
 export function trim(str: string, chars?: string): string {
-  if (!str) return str;
+  // Handle null/undefined
+  if (str == null) return '';
   
-  if (!chars) {
+  // Convert to string if needed
+  str = String(str);
+  
+  // If no chars specified, use native trim
+  if (chars === undefined) {
     return str.trim();
   }
   
+  // If chars is empty string, don't trim anything
+  if (chars === '') {
+    return str;
+  }
+  
+  // Escape special regex characters
   const escapedChars = chars.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const regex = new RegExp(`^[${escapedChars}]+|[${escapedChars}]+$`, 'g');
   return str.replace(regex, '');
@@ -146,7 +157,17 @@ export function trim(str: string, chars?: string): string {
  * ```
  */
 export function pad(str: string, length: number, padString = ' ', padStart = false): string {
-  if (!str || str.length >= length) return str;
+  // Handle null/undefined
+  if (str == null) str = '';
+  
+  // Convert to string
+  str = String(str);
+  
+  // If target length is not positive or already met, return original
+  if (length <= 0 || str.length >= length) return str;
+  
+  // Handle empty pad string
+  if (!padString) padString = ' ';
   
   const padLength = length - str.length;
   let padding = '';
@@ -196,9 +217,16 @@ export function repeat(str: string, count: number): string {
  * ```
  */
 export function reverse(str: string): string {
-  if (!str) return str;
+  if (!str) return '';
   
-  // Handle Unicode properly using Array.from
+  // Use Intl.Segmenter for proper grapheme cluster handling if available
+  if (typeof Intl !== 'undefined' && Intl.Segmenter) {
+    const segmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
+    const graphemes = Array.from(segmenter.segment(str), seg => seg.segment);
+    return graphemes.reverse().join('');
+  }
+  
+  // Fallback to Array.from for older environments
   return Array.from(str).reverse().join('');
 }
 
@@ -269,11 +297,13 @@ export function count(str: string, searchStr: string, caseSensitive = true): num
   let count = 0;
   let position = 0;
   
+  // Always count overlapping matches for consistency
   while (true) {
     const index = haystack.indexOf(needle, position);
     if (index === -1) break;
     count++;
-    position = index + needle.length;
+    // Advance by 1 to find overlapping matches
+    position = index + 1;
   }
   
   return count;
@@ -331,12 +361,38 @@ export function isEmpty(str: string): boolean {
 export function charAt(str: string, index: number): string {
   if (!str) return '';
   
-  // Handle negative indices
-  if (index < 0) {
-    index = str.length + index;
+  // Use Intl.Segmenter for proper grapheme cluster handling if available
+  if (typeof Intl !== 'undefined' && Intl.Segmenter) {
+    const segmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
+    const graphemes = Array.from(segmenter.segment(str), seg => seg.segment);
+    
+    // Handle negative indices
+    if (index < 0) {
+      index = graphemes.length + index;
+    }
+    
+    // Return empty string if out of bounds
+    if (index < 0 || index >= graphemes.length) {
+      return '';
+    }
+    
+    return graphemes[index] || '';
   }
   
-  return str.charAt(index);
+  // Fallback to Array.from for older environments
+  const chars = Array.from(str);
+  
+  // Handle negative indices
+  if (index < 0) {
+    index = chars.length + index;
+  }
+  
+  // Return empty string if out of bounds
+  if (index < 0 || index >= chars.length) {
+    return '';
+  }
+  
+  return chars[index] || '';
 }
 
 /**
@@ -433,7 +489,8 @@ export function template(
     if (Object.prototype.hasOwnProperty.call(values, key)) {
       return transform(values[key]);
     }
-    return fallback;
+    // Transform the fallback as well if a transform is provided
+    return transform ? transform(fallback) : fallback;
   });
 }
 
