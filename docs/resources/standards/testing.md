@@ -224,7 +224,6 @@ No special handling is needed - the global setup manages background rejections.
      email: 'test@example.com',
      ...overrides
    });
-
 ```
 
 ## Running Tests

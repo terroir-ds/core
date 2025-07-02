@@ -1,0 +1,95 @@
+# Terroir Core Design System
+
+> A comprehensive, open-source design system built with modern web standards.
+> Features Material Color Utilities, automated WCAG compliance, and multi-format asset generation.
+
+## Quick Start
+
+Install a package:
+```bash
+pnpm add @terroir/core
+```
+
+Import and use:
+```typescript
+import { logger, guards, errors } from '@terroir/core';
+```
+
+## Packages
+
+### @terroir/core v0.1.0
+
+Core design tokens and utilities for the Terroir Design System
+
+
+
+Documentation: /packages/core/README.ai.md
+
+### @terroir/docs v0.1.0
+
+Documentation site for Terroir Core Design System
+
+## Quick Reference
+
+| Task              | Command              | Description                         |
+| ----------------- | -------------------- | ----------------------------------- |
+| Start dev server  | `pnpm dev`           | Local development at localhost:4321 |
+| Build site        | `pnpm build`         | Generate static site                |
+| Generate llms.txt | `pnpm llms:generate` | Create AI documentation index       |
+| Preview build     | `pnpm preview`       | Preview production build            |
+
+Documentation: /packages/docs-site/README.ai.md
+
+### @terroir/react v0.0.1
+
+React components for the Terroir Design System
+
+## Quick Reference
+
+| Task       | Import          | Example                                            |
+| ---------- | --------------- | -------------------------------------------------- |
+| Use Button | `Button`        | `<Button variant="primary">Click</Button>`         |
+| Use Card   | `Card`          | `<Card><Card.Header>Title</Card.Header></Card>`    |
+| Use theme  | `ThemeProvider` | `<ThemeProvider theme="light">...</ThemeProvider>` |
+
+Documentation: /packages/react/README.ai.md
+
+### @terroir/web-components v0.0.1
+
+Web Components for the Terroir Design System
+
+## Quick Reference
+
+| Task       | Element            | Example                                                     |
+| ---------- | ------------------ | ----------------------------------------------------------- |
+| Use Button | `<terroir-button>` | `<terroir-button variant="primary">Click</terroir-button>`  |
+| Use Card   | `<terroir-card>`   | `<terroir-card><h2 slot="header">Title</h2></terroir-card>` |
+| Set theme  | CSS variables      | `--terroir-theme: light;`                                   |
+
+Documentation: /packages/web-components/README.ai.md
+
+
+## Architecture & Patterns
+
+
+
+## Key Features
+
+- **Material Color Utilities**: Perceptually uniform color generation
+- **Token System**: Three-tier architecture (primitive, semantic, component)
+- **WCAG Compliance**: Automated contrast testing
+- **Multi-format**: SVG, PNG, WebP asset generation
+- **TypeScript First**: Full type safety
+- **Tree-shakeable**: Optimized bundles
+
+## Common Tasks
+
+For detailed task-oriented documentation, see the package-specific .ai.md files above.
+
+## Contributing
+
+See [AI Contributing Guide](/ai/contributing.md) for agent-specific contribution guidelines.
+
+---
+Generated: 2025-07-02T04:46:52.136Z
+Source: https://github.com/terroir-ds/core

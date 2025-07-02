@@ -51,7 +51,7 @@ jobs:
           done
 
           # Validate AI documentation metadata
-          for ai_doc in packages/*/README.ai.md docs/ai/*.md; do
+          for ai_doc in packages/*/README.ai.md ai/*.md; do
             if [ -f "$ai_doc" ]; then
               if ! grep -q "## AI Metadata" "$ai_doc"; then
                 echo "Missing AI Metadata section in: $ai_doc"

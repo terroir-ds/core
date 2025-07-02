@@ -624,7 +624,7 @@ See [AI Documentation Standards](./docs/resources/standards/ai-documentation.md)
 - Create `.ai.md` files alongside human documentation
 - Include task-oriented examples and quick reference tables
 - Add AI metadata with token costs and stability
-- Update `/docs/ai/` for cross-cutting patterns
+- Update `/ai/` for cross-cutting patterns
 
 **Documentation Structure**:
 ```

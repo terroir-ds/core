@@ -28,7 +28,8 @@ For test setup files, increase the limit globally:
 ```typescript
 // In test/setup.ts or vitest.setup.ts
 const originalMaxListeners = process.getMaxListeners();
-process.setMaxListeners(100);
+// Use 200 for async-heavy test suites
+process.setMaxListeners(200);
 
 // In afterAll cleanup
 process.setMaxListeners(originalMaxListeners);
@@ -52,7 +53,7 @@ const cleanup = increaseMaxListeners(process, 50);
 cleanup();
 
 // Set to specific value
-const restore = withMaxListeners(process, 100);
+const restore = withMaxListeners(process, 200);
 // ... do work
 restore();
 
@@ -120,9 +121,12 @@ export function watchSomething(handler: Function): () => void {
 
 Already implements test environment detection:
 
-```text
+```typescript
 if (isTest()) {
-  process.setMaxListeners(50);
+  const currentMax = process.getMaxListeners();
+  if (currentMax < 200) {
+    process.setMaxListeners(200);
+  }
 }
 ```
 
@@ -154,6 +158,27 @@ originalHandlers.forEach(h => process.on('uncaughtException', h));
 3. **Use test helpers** - Leverage `@test/helpers/event-helpers`
 4. **Monitor in CI** - Watch for warnings in test output
 
+### Vitest Worker Threads
+
+When using Vitest with worker threads (default), each worker has its own process object with its own max listeners limit. To handle this:
+
+1. Create a `worker-setup.ts` file that runs in each worker:
+
+```typescript
+// test/worker-setup.ts
+process.setMaxListeners(200);
+export {};
+```
+
+2. Include it in your vitest config before other setup files:
+
+```typescript
+// vitest.config.ts
+setupFiles: [
+  './test/worker-setup.ts',  // Runs first in each worker
+  './test/setup.ts'          // Main setup
+]
+
 ## When to Investigate Further
 
 Increase the limit temporarily, but investigate if:
@@ -166,8 +191,8 @@ Increase the limit temporarily, but investigate if:
 These may indicate actual memory leaks that need fixing.
 
 ## Quick Reference
+```
 
-```typescript
 // In any module that might create many listeners
 import { isTestEnvironment } from '@utils/shared/event-listeners';
 

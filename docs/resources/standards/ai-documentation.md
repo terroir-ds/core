@@ -50,17 +50,16 @@ last_updated: YYYY-MM-DD
 ```text
 ```
 
-### 2. Project-level AI Documentation (`/docs/ai/`)
+### 2. Project-level AI Documentation (`/ai/`)
 
 **When to use**: Cross-cutting concerns, architectural decisions, AI-specific guides that apply project-wide.
 
-**Location**: `/docs/ai/` directory
+**Location**: `/ai/` directory
 
 **Structure**:
 
 ```markdown
-docs/
-└── ai/
+ai/
     ├── architecture.md      # System design for AI context
     ├── contributing.md      # AI contribution guidelines
     ├── patterns.md         # Common patterns across the codebase
@@ -116,7 +115,7 @@ docs/
 2. **Cross-References Instead of Duplication**
 
    ```markdown
-   For error handling patterns, see [Error Handling Architecture](/docs/ai/architecture#error-handling)
+   For error handling patterns, see [Error Handling Architecture](/ai/architecture#error-handling)
    ```
 
 3. **Code Snippets with Context**
@@ -147,7 +146,7 @@ docs/
    ```
 
 3. **Domain Vocabulary**
-   Define terms once in `/docs/ai/domain-concepts.md`:
+   Define terms once in `/ai/domain-concepts.md`:
 
    ```markdown
    ## Glossary
@@ -182,7 +181,7 @@ docs/
    - Need navigation? → Link
    ```
 
-### For `/docs/ai/` Files
+### For `/ai/` Files
 
 1. **Architecture Documentation**
    - High-level system design
@@ -208,7 +207,7 @@ docs/
 - Implementing domain-specific logic
 - Building reusable utilities
 
-### Create `/docs/ai/` files when
+### Create `/ai/` files when
 
 - Defining architectural patterns
 - Documenting cross-package concepts
@@ -229,7 +228,7 @@ When completing a feature (Phase 5 of development), ensure:
 
 2. **AI Documentation**
    - Create/update `.ai.md` for modified packages
-   - Update `/docs/ai/` for architectural changes
+   - Update `/ai/` for architectural changes
    - Ensure examples are task-focused
    - Verify metadata is current
 
@@ -240,7 +239,7 @@ When completing a feature (Phase 5 of development), ensure:
 The `docs-site` package automatically generates `llms.txt` from:
 
 - All `.ai.md` files
-- Selected `/docs/ai/` content
+- Selected `/ai/` content
 - Package metadata
 
 Format:
@@ -254,8 +253,8 @@ Format:
 - [@terroir/react](/packages/react): React component library
 
 ## Guides
-- [Architecture](/docs/ai/architecture): System design
-- [Patterns](/docs/ai/patterns): Common patterns
+- [Architecture](/ai/architecture): System design
+- [Patterns](/ai/patterns): Common patterns
 ```
 
 ### Documentation Build Process
@@ -316,7 +315,7 @@ last_updated: 2025-06-29
 ```text
 ```
 
-### Good `/docs/ai/` Example
+### Good `/ai/` Example
 
 ```bash
 # Error Handling Architecture
@@ -371,7 +370,7 @@ For existing documentation:
 
 1. Identify AI-relevant content in existing docs
 2. Extract to `.ai.md` files with task focus
-3. Create `/docs/ai/` content for patterns
+3. Create `/ai/` content for patterns
 4. Add metadata sections
 5. Update build configuration
 

@@ -6,6 +6,7 @@
 |----------|---------|---------|
 | [@standard:jsdoc-pattern-tags] | Mark pattern/standard usage in code with JSDoc tags | Documentation, Automation |
 | [@standard:index-file-convention] | Use index.md/index.ai.md as directory entry points | Documentation, Organization |
+| [@standard:test-environment-compatibility] | Write tests compatible with worker thread environments | Testing, Environment |
 
 ## Standard Categories
 
@@ -20,7 +21,7 @@
 
 ### Testing Standards
 
-*(Standards to be migrated from /docs/resources/standards/)*
+- test-environment-compatibility - Worker thread compatibility for tests
 
 ### Security Standards
 
