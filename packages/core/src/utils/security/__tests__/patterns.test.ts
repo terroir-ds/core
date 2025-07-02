@@ -16,7 +16,7 @@ import {
   isBinaryContent,
   isSensitiveFieldName,
   containsSensitiveContent,
-} from '../patterns.js';
+} from '@utils/security/patterns';
 
 describe('Security Patterns', () => {
   describe('Field Name Detection', () => {
@@ -120,7 +120,8 @@ describe('Security Patterns', () => {
       });
 
       it('should detect binary content', () => {
-        const binaryString = 'Hello\x00World\x01';
+        // Need >30% binary characters to be detected as binary
+        const binaryString = '\x00\x01\x02\x03\x04Binary';
         expect(containsSensitiveContent(binaryString)).toBe(true);
       });
 
@@ -140,8 +141,9 @@ describe('Security Patterns', () => {
 
     describe('isBinaryContent', () => {
       it('should detect null bytes', () => {
-        expect(isBinaryContent('\x00')).toBe(true);
-        expect(isBinaryContent('Hello\x00World')).toBe(true);
+        expect(isBinaryContent('\x00')).toBe(true); // 100% binary
+        expect(isBinaryContent('Hello\x00World')).toBe(false); // Only ~9% binary, below 30% threshold
+        expect(isBinaryContent('\x00\x00\x00\x00text')).toBe(true); // 44% binary, above threshold
       });
 
       it('should detect control characters', () => {

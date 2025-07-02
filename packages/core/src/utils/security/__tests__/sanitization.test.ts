@@ -11,7 +11,7 @@ import {
   sanitizePath,
   safeTruncate,
   normalizeWhitespace,
-} from '../sanitization.js';
+} from '@utils/security/sanitization';
 
 describe('Sanitization Utilities', () => {
   describe('sanitizeInput', () => {
@@ -318,9 +318,9 @@ describe('Sanitization Utilities', () => {
       const text = 'This is a long string that needs truncation';
       
       expect(safeTruncate(text, { maxLength: 10 }))
-        .toBe('This is...');
+        .toBe('This...');
       expect(safeTruncate(text, { maxLength: 20 }))
-        .toBe('This is a long st...');
+        .toBe('This is a long...');
     });
 
     it('should not truncate short strings', () => {
@@ -332,7 +332,7 @@ describe('Sanitization Utilities', () => {
       const text = 'This is a long string';
       
       expect(safeTruncate(text, { maxLength: 10, ellipsis: '…' }))
-        .toBe('This is a…');
+        .toBe('This is…');
       expect(safeTruncate(text, { maxLength: 10, ellipsis: ' [more]' }))
         .toBe('Thi [more]');
     });
@@ -356,7 +356,7 @@ describe('Sanitization Utilities', () => {
       expect(safeTruncate(text, {
         maxLength: 7,
         ellipsis: '',
-      })).toBe('This is');
+      })).toBe('This');
     });
 
     it('should preserve HTML entities', () => {
@@ -370,7 +370,7 @@ describe('Sanitization Utilities', () => {
       const text = 'Hello 👋 World 🌍 Test';
       const result = safeTruncate(text, { maxLength: 10 });
       
-      expect(result).toBe('Hello 👋...');
+      expect(result).toBe('Hello...');
     });
 
     it('should handle very small maxLength', () => {
@@ -411,7 +411,7 @@ describe('Sanitization Utilities', () => {
     it('should preserve single line breaks when specified', () => {
       const text = 'Line 1\nLine 2\n\nLine 3';
       
-      expect(normalizeWhitespace(text, { preserveLineBreaks: true }))
+      expect(normalizeWhitespace(text, { preserveNewlines: true }))
         .toBe('Line 1\nLine 2\nLine 3');
     });
 

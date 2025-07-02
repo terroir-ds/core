@@ -62,7 +62,7 @@ export interface ObjectHashOptions {
  * Options for string hashing.
  */
 export interface StringHashOptions {
-  /** Output format. Default: 'number' */
+  /** Output format. Default: 'number' for 32-bit, 'hex' for 64-bit */
   format?: 'number' | 'hex' | 'base64';
   /** Seed for xxhash. Default: 0 */
   seed?: number;
@@ -80,7 +80,7 @@ export interface AnonymizeOptions {
   preserveLength?: boolean;
   /** Deterministic seed for consistent results. Default: random */
   deterministicSeed?: string;
-  /** Fields to skip anonymization */
+  /** Fields to skip anonymization. Use dot notation for nested fields (e.g., 'user.account.id') and bracket notation for arrays (e.g., 'users[0].id') */
   skipFields?: string[];
   /** Maximum depth to traverse. Default: 10 */
   maxDepth?: number;
@@ -148,7 +148,12 @@ export async function hashObject(
     excludeKeys,
   } = options;
   
-  return objectHash(obj, {
+  // object-hash requires non-undefined input
+  if (obj === undefined) {
+    throw new TypeError('Cannot hash undefined value');
+  }
+  
+  return objectHash(obj as Record<string, unknown>, {
     algorithm,
     excludeValues,
     encoding,
@@ -189,17 +194,20 @@ export async function hashString(
   options: StringHashOptions = {}
 ): Promise<string | number> {
   const {
-    format = 'number',
+    format,
     seed = 0,
     use64bit = false,
   } = options;
+  
+  // Default format: number for 32-bit, hex for 64-bit
+  const actualFormat = format ?? (use64bit ? 'hex' : 'number');
   
   const xxhash = await getXXHash();
   
   if (use64bit) {
     const result = xxhash.h64(str, BigInt(seed));
     
-    switch (format) {
+    switch (actualFormat) {
       case 'hex':
         return result.toString(16);
       case 'base64': {
@@ -216,7 +224,7 @@ export async function hashString(
   } else {
     const result = xxhash.h32(str, seed);
     
-    switch (format) {
+    switch (actualFormat) {
       case 'hex':
         return result.toString(16);
       case 'base64':
@@ -254,8 +262,25 @@ export async function consistentHash(
   buckets: number,
   seed = 0
 ): Promise<number> {
-  const hash = await hashString(value, { seed, format: 'number' }) as number;
-  return Math.abs(hash) % buckets;
+  // Use jump consistent hash algorithm for better distribution
+  // This ensures minimal redistribution when bucket count changes
+  // Based on "A Fast, Minimal Memory, Consistent Hash Algorithm" by Lamping & Veach
+  let key = await hashString(value, { seed, format: 'number' }) as number;
+  key = Math.abs(key);
+  
+  let b = -1;
+  let j = 0;
+  
+  while (j < buckets) {
+    b = j;
+    // Linear congruential generator step
+    // Original uses 2862933555777941757, but we truncate to fit JS number range
+    key = ((key * 2862933555) & 0xFFFFFFFF) + 1;
+    // Jump to next bucket with probability (b+1)/j
+    j = Math.floor((b + 1) * (2147483648 / ((key >>> 0) + 1)));
+  }
+  
+  return b;
 }
 
 // =============================================================================
@@ -409,7 +434,9 @@ export async function anonymize<T>(
     }
     
     // Skip specified fields
-    if (skipFields.includes(key)) {
+    // Remove leading dot if present (from recursive calls)
+    const fullPath = key.startsWith('.') ? key.substring(1) : key;
+    if (skipFields.includes(fullPath)) {
       return value;
     }
     

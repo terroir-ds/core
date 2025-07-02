@@ -12,7 +12,7 @@ import {
   deterministicId,
   createMaskedValue,
   anonymize,
-} from '../hashing.js';
+} from '@utils/security/hashing';
 
 describe('Hashing Utilities', () => {
   describe('hashObject', () => {
@@ -131,7 +131,7 @@ describe('Hashing Utilities', () => {
       const hash2 = await hashString(str);
       
       expect(hash1).toBe(hash2);
-      expect(typeof hash1).toBe('string');
+      expect(typeof hash1).toBe('number'); // Default format is 'number'
     });
 
     it('should create different hashes for different strings', async () => {

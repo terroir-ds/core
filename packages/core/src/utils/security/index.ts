@@ -169,9 +169,11 @@ export const logRedactor = _createRedactor({
       const parts = original.split('@');
       if (parts.length === 2) {
         const [local, domain] = parts;
-        const domainParts = domain.split('.');
-        const tld = domainParts.length > 0 ? domainParts[domainParts.length - 1] : '';
-        return `${local.substring(0, 2)}***@***.${tld}`;
+        if (local && domain) {
+          const domainParts = domain.split('.');
+          const tld = domainParts.length > 0 ? domainParts[domainParts.length - 1] : '';
+          return `${local.substring(0, 2)}***@***.${tld}`;
+        }
       }
     }
     return '[REDACTED]';

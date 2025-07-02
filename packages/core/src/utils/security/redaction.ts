@@ -214,15 +214,18 @@ export function redact<T>(data: T, options: RedactionOptions = {}): T {
   
   // Deep redaction with iterative processing
   const stack = getStackFromPool();
+  const visited = new WeakSet<object>();
   
   try {
     let result: unknown;
     
     if (Array.isArray(data)) {
       result = [];
+      visited.add(data);
       stack.push({ source: data, target: result as unknown[], depth: 0 });
     } else {
       result = {};
+      visited.add(data as object);
       stack.push({ 
         source: data as Record<string, unknown>, 
         target: result as Record<string, unknown>, 
@@ -240,16 +243,14 @@ export function redact<T>(data: T, options: RedactionOptions = {}): T {
       if (!item) continue;
       const { source, target, depth } = item;
       
-      // Check depth limit
+      // Check depth limit - copy without redaction if beyond maxDepth
       if (depth > maxDepth) {
-        if (Array.isArray(target) && typeof target.length === 'number') {
-          for (let i = 0; i < (source as unknown[]).length; i++) {
-            target[i] = '[MAX DEPTH EXCEEDED]';
+        if (Array.isArray(source) && Array.isArray(target)) {
+          for (let i = 0; i < source.length; i++) {
+            target[i] = source[i];
           }
-        } else {
-          for (const key of Object.keys(source as Record<string, unknown>)) {
-            (target as Record<string, unknown>)[key] = '[MAX DEPTH EXCEEDED]';
-          }
+        } else if (typeof source === 'object' && source !== null) {
+          Object.assign(target as Record<string, unknown>, source as Record<string, unknown>);
         }
         continue;
       }
@@ -271,20 +272,51 @@ export function redact<T>(data: T, options: RedactionOptions = {}): T {
               target[i] = value;
             }
           } else if (value !== null && typeof value === 'object') {
-            if (Array.isArray(value)) {
-              target[i] = [];
-              stack.push({ 
-                source: value, 
-                target: target[i] as unknown[], 
-                depth: depth + 1 
-              });
+            // Check for circular reference
+            if (visited.has(value)) {
+              target[i] = '[Circular]';
+            } else if (value instanceof Date) {
+              // Preserve Date objects
+              target[i] = new Date(value);
+            } else if (value instanceof Map) {
+              // Handle Map objects
+              const newMap = new Map();
+              for (const [k, v] of value) {
+                if (shouldRedactValue(k, v, allPatterns, customRedactor, checkContent)) {
+                  newMap.set(k, getRedactedValue(v));
+                } else {
+                  newMap.set(k, v);
+                }
+              }
+              target[i] = newMap;
+            } else if (value instanceof Set) {
+              // Handle Set objects
+              const newSet = new Set();
+              for (const v of value) {
+                if (checkContent && typeof v === 'string' && checkSensitiveContent(v)) {
+                  newSet.add(getRedactedValue(v));
+                } else {
+                  newSet.add(v);
+                }
+              }
+              target[i] = newSet;
             } else {
-              target[i] = {};
-              stack.push({ 
-                source: value as Record<string, unknown>, 
-                target: target[i] as Record<string, unknown>, 
-                depth: depth + 1 
-              });
+              visited.add(value);
+              if (Array.isArray(value)) {
+                target[i] = [];
+                stack.push({ 
+                  source: value, 
+                  target: target[i] as unknown[], 
+                  depth: depth + 1 
+                });
+              } else {
+                target[i] = {};
+                stack.push({ 
+                  source: value as Record<string, unknown>, 
+                  target: target[i] as Record<string, unknown>, 
+                  depth: depth + 1 
+                });
+              }
             }
           } else {
             target[i] = value;
@@ -308,20 +340,51 @@ export function redact<T>(data: T, options: RedactionOptions = {}): T {
               (target as Record<string, unknown>)[key] = value;
             }
           } else if (value !== null && typeof value === 'object') {
-            if (Array.isArray(value)) {
-              (target as Record<string, unknown>)[key] = [];
-              stack.push({ 
-                source: value, 
-                target: (target as Record<string, unknown>)[key] as unknown[], 
-                depth: depth + 1 
-              });
+            // Check for circular reference
+            if (visited.has(value)) {
+              (target as Record<string, unknown>)[key] = '[Circular]';
+            } else if (value instanceof Date) {
+              // Preserve Date objects
+              (target as Record<string, unknown>)[key] = new Date(value);
+            } else if (value instanceof Map) {
+              // Handle Map objects
+              const newMap = new Map();
+              for (const [k, v] of value) {
+                if (shouldRedactValue(k, v, allPatterns, customRedactor, checkContent)) {
+                  newMap.set(k, getRedactedValue(v));
+                } else {
+                  newMap.set(k, v);
+                }
+              }
+              (target as Record<string, unknown>)[key] = newMap;
+            } else if (value instanceof Set) {
+              // Handle Set objects
+              const newSet = new Set();
+              for (const v of value) {
+                if (checkContent && typeof v === 'string' && checkSensitiveContent(v)) {
+                  newSet.add(getRedactedValue(v));
+                } else {
+                  newSet.add(v);
+                }
+              }
+              (target as Record<string, unknown>)[key] = newSet;
             } else {
-              (target as Record<string, unknown>)[key] = {};
-              stack.push({ 
-                source: value as Record<string, unknown>, 
-                target: (target as Record<string, unknown>)[key] as Record<string, unknown>, 
-                depth: depth + 1 
-              });
+              visited.add(value);
+              if (Array.isArray(value)) {
+                (target as Record<string, unknown>)[key] = [];
+                stack.push({ 
+                  source: value, 
+                  target: (target as Record<string, unknown>)[key] as unknown[], 
+                  depth: depth + 1 
+                });
+              } else {
+                (target as Record<string, unknown>)[key] = {};
+                stack.push({ 
+                  source: value as Record<string, unknown>, 
+                  target: (target as Record<string, unknown>)[key] as Record<string, unknown>, 
+                  depth: depth + 1 
+                });
+              }
             }
           } else {
             (target as Record<string, unknown>)[key] = value;
@@ -413,7 +476,7 @@ export function createRedactor(options: RedactionOptions): <T>(data: T) => T {
 export interface PathRedactionOptions {
   /** Value to use for redacted fields */
   redactedValue?: string;
-  /** Case sensitive path matching. Default: false */
+  /** Case sensitive path matching. Default: true */
   caseSensitive?: boolean;
   /** Path separator. Default: '.' */
   separator?: string;
@@ -450,7 +513,7 @@ export function redactPaths<T>(
 ): T {
   const {
     redactedValue = DEFAULT_REDACTED_VALUE,
-    caseSensitive = false,
+    caseSensitive = true,
     separator = '.',
   } = options;
   
@@ -461,50 +524,118 @@ export function redactPaths<T>(
   // Deep clone the data
   const result = JSON.parse(JSON.stringify(data));
   
-  // Normalize paths
-  const normalizedPaths = paths.map(path => 
-    caseSensitive ? path : path.toLowerCase()
-  );
+  // Process each path
+  for (const path of paths) {
+    redactPath(result, path, redactedValue, caseSensitive, separator);
+  }
   
-  // Redact each path
-  for (const path of normalizedPaths) {
-    const parts = path.split(separator);
-    let current = result;
+  return result;
+}
+
+/**
+ * Helper function to redact a single path
+ */
+function redactPath(
+  obj: unknown,
+  path: string,
+  redactedValue: string,
+  caseSensitive: boolean,
+  separator: string
+): void {
+  // Parse path into segments, handling array notation
+  const segments: Array<{ key: string; isArray: boolean; index?: number | '*' }> = [];
+  
+  // Split by separator but keep array notation intact
+  const parts = path.split(separator);
+  for (const part of parts) {
+    const arrayMatch = part.match(/^(.+?)\[(\d+|\*)\]$/);
+    if (arrayMatch && arrayMatch[1] && arrayMatch[2]) {
+      segments.push({
+        key: arrayMatch[1],
+        isArray: true,
+        index: arrayMatch[2] === '*' ? '*' : parseInt(arrayMatch[2], 10)
+      });
+    } else {
+      segments.push({ key: part, isArray: false });
+    }
+  }
+  
+  // Navigate through the object
+  let current = obj;
+  for (let i = 0; i < segments.length - 1; i++) {
+    const segment = segments[i];
     
-    // Navigate to the parent of the target
-    for (let i = 0; i < parts.length - 1; i++) {
-      const part = parts[i];
-      
-      if (!current || typeof current !== 'object') {
-        break;
-      }
-      
-      // Find matching key (case-insensitive if needed)
-      const key = Object.keys(current).find(k =>
-        caseSensitive ? k === part : k.toLowerCase() === part
-      );
-      
-      if (key && key in current) {
-        current = (current as Record<string, unknown>)[key];
-      } else {
-        break;
-      }
+    if (!current || typeof current !== 'object') {
+      return;
     }
     
-    // Redact the final property
-    if (current && typeof current === 'object') {
-      const lastPart = parts[parts.length - 1];
-      const key = Object.keys(current).find(k =>
-        caseSensitive ? k === lastPart : k.toLowerCase() === lastPart
-      );
-      
-      if (key && key in current) {
-        (current as Record<string, unknown>)[key] = redactedValue;
+    // Find matching key
+    const actualKey = segment ? findKey(current, segment.key, caseSensitive) : null;
+    if (!actualKey) {
+      return;
+    }
+    
+    current = (current as Record<string, unknown>)[actualKey];
+    
+    // Handle array access
+    if (segment && segment.isArray && Array.isArray(current)) {
+      if (segment.index === '*') {
+        // Process remaining path for all array elements
+        const remainingPath = segments.slice(i + 1).map(s => 
+          s.isArray ? `${s.key}[${s.index}]` : s.key
+        ).join(separator);
+        
+        for (let j = 0; j < current.length; j++) {
+          redactPath(current[j], remainingPath, redactedValue, caseSensitive, separator);
+        }
+        return;
+      } else if (typeof segment.index === 'number' && segment.index < current.length) {
+        current = current[segment.index];
+      } else {
+        return;
       }
     }
   }
   
-  return result;
+  // Redact the final value(s)
+  const lastSegment = segments[segments.length - 1];
+  if (lastSegment && current && typeof current === 'object') {
+    // For case-insensitive matching, we need to find ALL matching keys
+    const keys = Object.keys(current as Record<string, unknown>);
+    
+    if (caseSensitive) {
+      // Case sensitive - only exact match
+      if (keys.includes(lastSegment.key)) {
+        (current as Record<string, unknown>)[lastSegment.key] = redactedValue;
+      }
+    } else {
+      // Case insensitive - match all variations
+      const lowerKey = lastSegment.key.toLowerCase();
+      for (const key of keys) {
+        if (key.toLowerCase() === lowerKey) {
+          (current as Record<string, unknown>)[key] = redactedValue;
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Find a key in an object with optional case-insensitive matching
+ */
+function findKey(obj: unknown, key: string, caseSensitive: boolean): string | undefined {
+  if (!obj || typeof obj !== 'object') {
+    return undefined;
+  }
+  
+  const keys = Object.keys(obj as Record<string, unknown>);
+  
+  if (caseSensitive) {
+    return keys.find(k => k === key);
+  } else {
+    const lowerKey = key.toLowerCase();
+    return keys.find(k => k.toLowerCase() === lowerKey);
+  }
 }
 
 // =============================================================================
@@ -542,7 +673,7 @@ export function redactByPattern<T>(
   
   return redact(data, {
     ...options,
-    customRedactor: (key, value) => {
+    customRedactor: (_key, value) => {
       if (typeof value === 'string') {
         let result = value;
         for (const pattern of patterns) {
@@ -622,18 +753,71 @@ export function containsSensitive(
   value: unknown,
   patterns?: RegExp[]
 ): boolean {
-  if (typeof value !== 'string') {
+  // For non-objects, check if it's a string with sensitive content
+  if (typeof value === 'string') {
+    // Check default patterns
+    if (checkSensitiveContent(value)) {
+      return true;
+    }
+    
+    // Check additional patterns
+    if (patterns) {
+      return patterns.some(pattern => pattern.test(value));
+    }
+    
     return false;
   }
   
-  // Check default patterns
-  if (checkSensitiveContent(value)) {
-    return true;
-  }
-  
-  // Check additional patterns
-  if (patterns) {
-    return patterns.some(pattern => pattern.test(value));
+  // For objects, check all fields recursively
+  if (value && typeof value === 'object') {
+    const stack: Array<{ obj: unknown; key?: string }> = [{ obj: value }];
+    const visited = new WeakSet<object>();
+    
+    while (stack.length > 0) {
+      const item = stack.pop();
+      if (!item) continue;
+      const { obj, key } = item;
+      
+      // Check if the field name itself is sensitive
+      if (key && isSensitiveFieldName(key)) {
+        return true;
+      }
+      
+      // Handle arrays
+      if (Array.isArray(obj)) {
+        for (const item of obj) {
+          if (typeof item === 'string') {
+            if (checkSensitiveContent(item) || (patterns && patterns.some(p => p.test(item)))) {
+              return true;
+            }
+          } else if (item && typeof item === 'object' && !visited.has(item)) {
+            visited.add(item);
+            stack.push({ obj: item });
+          }
+        }
+      }
+      // Handle objects
+      else if (obj && typeof obj === 'object') {
+        for (const [k, v] of Object.entries(obj as Record<string, unknown>)) {
+          // Check field name
+          if (isSensitiveFieldName(k)) {
+            return true;
+          }
+          
+          // Check string values
+          if (typeof v === 'string') {
+            if (checkSensitiveContent(v) || (patterns && patterns.some(p => p.test(v)))) {
+              return true;
+            }
+          }
+          // Recurse into nested objects
+          else if (v && typeof v === 'object' && !visited.has(v)) {
+            visited.add(v);
+            stack.push({ obj: v, key: k });
+          }
+        }
+      }
+    }
   }
   
   return false;

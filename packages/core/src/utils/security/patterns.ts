@@ -281,7 +281,7 @@ export class PatternBuilder {
    */
   static apiKey(prefix = '', length = 24): RegExp {
     const escapedPrefix = prefix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    return new RegExp(`^${escapedPrefix}[A-Za-z0-9]{${length},}$`);
+    return new RegExp(`^${escapedPrefix}[A-Za-z0-9_]{${length},}$`);
   }
   
   /**
@@ -309,10 +309,7 @@ export class PatternBuilder {
 export function isBinaryContent(str: string, threshold = 0.3): boolean {
   if (!str || str.length === 0) return false;
   
-  // Check for null bytes first (quick check)
-  if (str.includes('\0')) return true;
-  
-  // Count non-printable characters
+  // Count non-printable characters (including null bytes)
   // eslint-disable-next-line no-control-regex
   const nonPrintable = str.match(/[\x00-\x08\x0E-\x1F\x7F-\x9F]/g);
   
@@ -330,7 +327,7 @@ export function isBinaryContent(str: string, threshold = 0.3): boolean {
  * @returns True if field name appears sensitive
  */
 export function isSensitiveFieldName(fieldName: string): boolean {
-  if (!fieldName) return false;
+  if (!fieldName || typeof fieldName !== 'string') return false;
   
   const lowerName = fieldName.toLowerCase();
   

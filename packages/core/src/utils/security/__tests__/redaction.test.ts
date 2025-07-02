@@ -13,7 +13,7 @@ import {
   safeStringify,
   containsSensitive,
   mask,
-} from '../redaction.js';
+} from '@utils/security/redaction';
 
 describe('Redaction Utilities', () => {
   describe('redact', () => {
@@ -164,7 +164,7 @@ describe('Redaction Utilities', () => {
           ['user', 'john'],
           ['password', 'secret'],
         ]),
-        set: new Set(['value1', 'sk_test_123']),
+        set: new Set(['value1', 'sk_test_4242424242424242424242424242']),
       };
       
       const result = redact(data);
