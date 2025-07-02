@@ -55,7 +55,6 @@
     "prepublishOnly": "pnpm test && pnpm build",
     "postpublish": "echo 'Published @terroir/core version:' $npm_package_version",
     "test": "vitest run --config vitest.config.ts",
-    "test:batches": "node ../../scripts/test-batches.js",
     "test:coverage": "VITEST_ROOT=$(pwd) vitest run --coverage --config vitest.config.ts",
     "test:type": "tsc --noEmit",
     "test:watch": "vitest watch",
