@@ -43,9 +43,9 @@ import {
   hasProperties,
   and,
   createValidator,
-} from '../index.js';
+} from '@utils/guards';
 
-import { ValidationError } from '../../errors/base-error.js';
+import { ValidationError } from '@utils/errors/base-error';
 
 describe('Guards Integration Tests', () => {
   describe('User Registration Workflow', () => {

@@ -51,7 +51,7 @@ import {
   
   // Custom type guard creation
   createTypeGuard,
-} from '../type-guards.js';
+} from '@utils/guards/type-guards';
 
 describe('Primitive Type Guards', () => {
   describe('isString', () => {

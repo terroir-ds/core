@@ -45,8 +45,8 @@ import {
   // Custom validators
   createValidator,
   validateSchema,
-} from '../validation.js';
-import { ValidationError } from '../../errors/base-error.js';
+} from '@utils/guards/validation';
+import { ValidationError } from '@utils/errors/base-error';
 
 describe('Email Validation', () => {
   describe('isValidEmail', () => {

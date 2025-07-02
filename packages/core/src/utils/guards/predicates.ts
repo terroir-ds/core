@@ -766,7 +766,17 @@ export function not<T>(predicate: Predicate<T>): Predicate<T> {
  */
 export function and<T>(...predicates: Predicate<T>[]): Predicate<T> {
   return (value: T): boolean => {
-    return predicates.every(predicate => predicate(value));
+    // Early exit for empty predicates
+    if (predicates.length === 0) return true;
+    
+    // Manual loop for better short-circuiting performance
+    for (let i = 0; i < predicates.length; i++) {
+      const predicate = predicates[i];
+      if (predicate && !predicate(value)) {
+        return false; // Short-circuit on first failure
+      }
+    }
+    return true;
   };
 }
 
@@ -789,7 +799,17 @@ export function and<T>(...predicates: Predicate<T>[]): Predicate<T> {
  */
 export function or<T>(...predicates: Predicate<T>[]): Predicate<T> {
   return (value: T): boolean => {
-    return predicates.some(predicate => predicate(value));
+    // Early exit for empty predicates
+    if (predicates.length === 0) return false;
+    
+    // Manual loop for better short-circuiting performance
+    for (let i = 0; i < predicates.length; i++) {
+      const predicate = predicates[i];
+      if (predicate && predicate(value)) {
+        return true; // Short-circuit on first success
+      }
+    }
+    return false;
   };
 }
 
@@ -814,7 +834,20 @@ export function or<T>(...predicates: Predicate<T>[]): Predicate<T> {
  */
 export function xor<T>(...predicates: Predicate<T>[]): Predicate<T> {
   return (value: T): boolean => {
-    const trueCount = predicates.filter(predicate => predicate(value)).length;
+    // Early exit for empty predicates
+    if (predicates.length === 0) return false;
+    
+    let trueCount = 0;
+    for (let i = 0; i < predicates.length; i++) {
+      const predicate = predicates[i];
+      if (predicate && predicate(value)) {
+        trueCount++;
+        // Early exit if more than one is true
+        if (trueCount > 1) {
+          return false;
+        }
+      }
+    }
     return trueCount === 1;
   };
 }
