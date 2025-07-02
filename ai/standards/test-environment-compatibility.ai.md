@@ -26,6 +26,7 @@ describe('file operations', () => {
 ```
 
 **Why this fails:**
+
 - Vitest runs tests in worker threads by default
 - `process.chdir()` is not available in worker threads
 - Causes immediate test failure with "not supported in workers"

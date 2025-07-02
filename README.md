@@ -25,24 +25,28 @@ Based on comprehensive research of the current design system landscape, Terroir 
 ### Implementation Phases
 
 **Phase 1 - Core Foundation (v0.1.0)** ✅ Current
+
 - Material Color Utilities integration
 - Design token architecture with Style Dictionary
 - TailwindCSS configuration system
 - Basic build pipeline
 
 **Phase 2 - Component CLI (v0.2.0)** 🚧 Next
+
 - Component installation CLI tool (like shadcn/ui)
 - Basic component templates (Button, Card, Input, Select)
 - Headless UI primitives integration
 - Component registry system
 
 **Phase 3 - AI Integration (v0.3.0)**
+
 - V0 template compatibility
 - AI-friendly component APIs
 - Automated component documentation
 - LLM-optimized code patterns
 
 **Phase 4 - Enterprise Features (v1.0.0)**
+
 - Multi-brand theming system
 - Advanced component variants
 - Performance optimization tools

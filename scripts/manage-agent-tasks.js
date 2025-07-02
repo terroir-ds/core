@@ -1,8 +1,11 @@
 #!/usr/bin/env node
+/* eslint-disable no-console */
 
 /**
  * Manages auto-generated metadata in agent task files
  * Updates "After Completion" and "Next Action" based on task numbering
+ * 
+ * This is a CLI utility that outputs to console
  */
 
 import { readdir, readFile, writeFile } from 'fs/promises';

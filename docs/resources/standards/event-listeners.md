@@ -205,6 +205,7 @@ import { configureTestMaxListeners } from '@utils/shared/event-listeners';
 const cleanup = configureTestMaxListeners();
 // ... in cleanup
 cleanup();
+
 ```
 
 ## Related Standards

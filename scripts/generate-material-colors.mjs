@@ -211,11 +211,13 @@ async function main() {
   } catch (error) {
     logger.error({ error: error.message, stack: error.stack }, 'Failed to generate Material colors');
      
+    // eslint-disable-next-line no-undef
     process.exit(1);
   }
 }
 
 // Run if called directly
+// eslint-disable-next-line no-undef
 if (import.meta.url === `file://${process.argv[1]}`) {
   main();
 }

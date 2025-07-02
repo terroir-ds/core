@@ -284,7 +284,7 @@ describe('truncate', () => {
    /**
     *@standard Use this instead of string.substring() for all truncation
     * @migration grep -r "\.substring(0," --include="*.ts" | update to truncate()
-    * @eslint-rule no-manual-truncation
+    *@eslint-rule no-manual-truncation
     */
 
    ```markdown

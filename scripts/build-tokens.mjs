@@ -78,6 +78,7 @@ const build = async () => {
   } catch (error) {
     logger.error({ error }, 'Style Dictionary build failed');
      
+    // eslint-disable-next-line no-undef
     process.exit(1);
   }
 };
@@ -86,5 +87,6 @@ const build = async () => {
 build().catch(error => {
   logger.error({ error }, 'Unhandled error in build script');
    
+  // eslint-disable-next-line no-undef
   process.exit(1);
 });
