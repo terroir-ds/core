@@ -49,7 +49,7 @@ Then it's ready to ship. You can always iterate later.
 ## Quick Commands
 ```bash
 # Move completed documentation
-mv draft.md .completed/tasks/task-name.md
+mv draft.md .completed/$(date +%Y-%m-%d)/agent-X-task-name.md
 # or
 mv draft.md .completed/patterns/pattern-name.md
 

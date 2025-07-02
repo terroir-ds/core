@@ -6,7 +6,7 @@ A streamlined 2-phase approach for creating AI-optimized documentation that gets
 
 ## When to Use
 
-- Creating new task documentation in `.completed/tasks/`
+- Creating new task documentation in `.completed/YYYY-MM-DD/`
 - Documenting new patterns in `.completed/patterns/`
 - Creating method guides in `/ai/methods/`
 - Backfilling documentation for existing systems
@@ -32,7 +32,7 @@ Quick review to ensure clarity and add any missing examples.
 
 | Type | Location | Purpose |
 |------|----------|---------|
-| Task Documentation | `.completed/tasks/` | Specific task implementations |
+| Task Documentation | `.completed/YYYY-MM-DD/` | Specific task implementations |
 | Pattern Documentation | `.completed/patterns/` | Reusable approaches |
 | Method Guides | `/ai/methods/` | Structured workflows |
 | Agent Prompts | `.agents/prompts/` | Agent-specific context |
@@ -50,7 +50,8 @@ touch methods/new-method/phase-1-plan-write.ai.md
 touch methods/new-method/phase-2-review-polish.ai.md
 
 # For task/pattern documentation
-touch .completed/tasks/task-name.md
+mkdir -p .completed/$(date +%Y-%m-%d)
+touch .completed/$(date +%Y-%m-%d)/agent-X-task-name.md
 # or
 touch .completed/patterns/pattern-name.md
 ```

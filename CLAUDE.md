@@ -419,6 +419,38 @@ MIT - Feel free to use in your own projects!
 
 ## Claude AI Development Workflow
 
+### Critical: Always Check Current Documentation
+
+**Before performing any structural action, ALWAYS check the current documentation:**
+
+```bash
+# Before phase transitions
+cat /ai/methods/multi-pass-development/phase-transitions.ai.md
+
+# Before completing tasks
+cat .completed/index.md
+
+# Before following patterns
+cat /ai/patterns/[pattern-name].ai.md
+
+# Before applying standards
+cat /ai/standards/[standard-name].ai.md
+```
+
+**Why this matters:**
+- The AI knowledge management system is evolving rapidly
+- Cached/remembered patterns may be outdated
+- Documentation is the single source of truth
+- Prevents errors like wrong directory structures
+
+**Key actions requiring documentation check:**
+- ✅ Phase transitions
+- ✅ Task completion
+- ✅ Pattern application
+- ✅ Standard implementation
+- ✅ Directory structure operations
+- ✅ Naming conventions
+
 ### Important: Package Manager
 
 **This project uses pnpm, not npm!**
