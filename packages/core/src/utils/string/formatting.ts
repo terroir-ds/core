@@ -241,8 +241,7 @@ export function formatDuration(ms: number, options: FormatDurationOptions = {}):
     includeMs = false,
     compact = true,
     maxUnits = 3,
-    separator = ' ',
-    locale = 'en-US'
+    separator = ' '
   } = options;
 
   if (!isFinite(ms)) {
@@ -431,7 +430,7 @@ export function formatNumber(value: number, options: FormatNumberOptions = {}): 
     minimumFractionDigits,
     maximumFractionDigits,
     useGrouping,
-    notation: notation as any // Type assertion needed for older TS versions
+    notation: notation as Intl.NumberFormatOptions['notation']
   });
 }
 

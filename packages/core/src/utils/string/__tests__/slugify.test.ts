@@ -170,7 +170,7 @@ describe('Slugify Utilities', () => {
 
   describe('uniqueSlug', () => {
     it('should return original if not exists', () => {
-      const existsCheck = (slug: string) => false;
+      const existsCheck = (_slug: string) => false;
       expect(uniqueSlug('hello world', existsCheck)).toBe('hello-world');
     });
 

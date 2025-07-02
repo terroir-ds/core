@@ -52,6 +52,8 @@ export function splitWords(str: string): string[] {
   
   for (let i = 0; i < processed.length; i++) {
     const char = processed[i];
+    if (!char) continue; // Guard against undefined
+    
     let currentType: typeof prevType;
     
     if (char === ' ') {
@@ -79,7 +81,7 @@ export function splitWords(str: string): string[] {
       (prevType !== 'digit' && currentType === 'digit') ||
       (prevType === 'digit' && currentType !== 'digit') ||
       // Transition from uppercase to lowercase (but keep consecutive uppercase together)
-      (prevType === 'upper' && currentType === 'lower' && i > 1 && /[A-Z]/.test(processed[i - 2]))
+      (prevType === 'upper' && currentType === 'lower' && i > 1 && processed[i - 2] !== undefined && /[A-Z]/.test(processed[i - 2]))
     )) {
       if (currentWord) {
         // Special case: if transitioning from uppercase to lowercase, 
@@ -87,7 +89,7 @@ export function splitWords(str: string): string[] {
         if (prevType === 'upper' && currentType === 'lower' && currentWord.length > 1) {
           const lastChar = currentWord[currentWord.length - 1];
           words.push(currentWord.slice(0, -1));
-          currentWord = lastChar;
+          currentWord = lastChar || '';
         } else {
           words.push(currentWord);
           currentWord = '';

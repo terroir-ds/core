@@ -4,7 +4,7 @@
  * Tests for string formatting utilities.
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
   truncate,
   ellipsis,
@@ -218,14 +218,14 @@ describe('String Formatting Utilities', () => {
       try {
         const result = formatNumber(1234567, { notation: 'compact' });
         expect(typeof result).toBe('string');
-      } catch (e) {
+      } catch {
         // Compact notation not supported, skip test
       }
       
       try {
         const result = formatNumber(0.0000123, { notation: 'scientific' });
         expect(result).toContain('E');
-      } catch (e) {
+      } catch {
         // Scientific notation not supported, skip test
       }
     });

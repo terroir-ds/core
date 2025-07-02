@@ -384,11 +384,11 @@ export function swapCase(str: string): string {
  */
 export function interpolate(
   template: string,
-  values: Record<string, any>,
+  values: Record<string, unknown>,
   fallback = ''
 ): string {
-  return template.replace(/\{\{(\w+)\}\}/g, (match, key) => {
-    return values.hasOwnProperty(key) ? String(values[key]) : fallback;
+  return template.replace(/\{\{(\w+)\}\}/g, (_, key) => {
+    return Object.prototype.hasOwnProperty.call(values, key) ? String(values[key]) : fallback;
   });
 }
 
@@ -410,10 +410,10 @@ export function interpolate(
  */
 export function template(
   template: string,
-  values: Record<string, any>,
+  values: Record<string, unknown>,
   options: {
     delimiter?: [string, string];
-    transform?: (value: any) => string;
+    transform?: (value: unknown) => string;
     fallback?: string;
   } = {}
 ): string {
@@ -429,8 +429,8 @@ export function template(
     'g'
   );
   
-  return template.replace(regex, (match, key) => {
-    if (values.hasOwnProperty(key)) {
+  return template.replace(regex, (_, key) => {
+    if (Object.prototype.hasOwnProperty.call(values, key)) {
       return transform(values[key]);
     }
     return fallback;
