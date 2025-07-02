@@ -12,8 +12,6 @@ describe('markdown fixes output validation', () => {
   });
 
   afterEach(() => {
-    // Reset working directory before cleanup to avoid ENOENT errors
-    process.chdir(__dirname);
     rmSync(tempDir, { recursive: true, force: true });
   });
 
@@ -38,8 +36,7 @@ Next section
       writeFileSync(testFile, input);
 
       // Run fix
-      process.chdir(tempDir);
-      execSync(`node ${join(__dirname, '../../fix-markdown-code-blocks.js')}`, {
+      execSync(`node ${join(__dirname, '../../fix-markdown-code-blocks.js')} "${tempDir}"`, {
         stdio: 'pipe'
       });
 
@@ -68,8 +65,7 @@ console.log("test");
       writeFileSync(testFile, input);
 
       // Run fix
-      process.chdir(tempDir);
-      execSync(`node ${join(__dirname, '../../fix-markdown-code-blocks.js')}`, {
+      execSync(`node ${join(__dirname, '../../fix-markdown-code-blocks.js')} "${tempDir}"`, {
         stdio: 'pipe'
       });
 
@@ -108,8 +104,7 @@ Final text.`;
       writeFileSync(testFile, input);
 
       // Run fix
-      process.chdir(tempDir);
-      execSync(`node ${join(__dirname, '../../fix-markdown-code-blocks.js')}`, {
+      execSync(`node ${join(__dirname, '../../fix-markdown-code-blocks.js')} "${tempDir}"`, {
         stdio: 'pipe'
       });
 
@@ -149,8 +144,7 @@ Final text.`;
         const testFile = join(tempDir, name);
         writeFileSync(testFile, input);
 
-        process.chdir(tempDir);
-        execSync(`node ${join(__dirname, '../../fix-markdown-code-blocks.js')}`, {
+        execSync(`node ${join(__dirname, '../../fix-markdown-code-blocks.js')} "${tempDir}"`, {
           stdio: 'pipe'
         });
 

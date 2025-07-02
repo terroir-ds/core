@@ -12,8 +12,6 @@ describe('markdown-fixes integration', () => {
   });
 
   afterEach(() => {
-    // Reset working directory before cleanup to avoid ENOENT errors
-    process.chdir(__dirname);
     rmSync(tempDir, { recursive: true, force: true });
   });
 
@@ -86,9 +84,8 @@ See [broken link](#non-existent-section)
       const testFile = join(tempDir, 'integration.md');
       writeFileSync(testFile, input);
 
-      // Run the orchestrator
-      process.chdir(tempDir);
-      execSync(`node ${join(__dirname, '../../index.js')}`, {
+      // Run the orchestrator with explicit directory
+      execSync(`node ${join(__dirname, '../../index.js')} "${tempDir}"`, {
         stdio: 'pipe'
       });
 
@@ -160,9 +157,8 @@ Done!
       const testFile = join(tempDir, 'realworld.md');
       writeFileSync(testFile, input);
 
-      // Run fixes
-      process.chdir(tempDir);
-      execSync(`node ${join(__dirname, '../../fix-markdown-code-blocks.js')}`, {
+      // Run fixes with explicit directory
+      execSync(`node ${join(__dirname, '../../fix-markdown-code-blocks.js')} "${tempDir}"`, {
         stdio: 'pipe'
       });
 

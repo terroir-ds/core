@@ -63,14 +63,20 @@ const fixes = [
 /**
  * Run a fix script and capture results
  * @param {FixConfig} fix - Fix configuration object
+ * @param {string} [targetDirectory] - Directory to process
  * @returns {FixResult} Results of running the fix
  */
-function runFix(fix) {
+function runFix(fix, targetDirectory) {
   const scriptPath = join(__dirname, fix.name);
   console.log(`\n🔧 ${fix.description}...`);
   
   try {
-    const output = execSync(`node ${scriptPath}`, { 
+    // Pass target directory as argument if provided
+    const command = targetDirectory 
+      ? `node ${scriptPath} "${targetDirectory}"` 
+      : `node ${scriptPath}`;
+    
+    const output = execSync(command, { 
       encoding: 'utf8',
       stdio: 'pipe'
     });
@@ -96,10 +102,11 @@ function runFix(fix) {
  * Main orchestration function.
  * Runs all markdown fixes in order and reports results.
  * @async
- * @returns {Promise<void>}
+ * @param {string} [targetDirectory] - Directory to process (defaults to current working directory)
+ * @returns {Promise<Object>} Summary of all fixes applied
  * @throws {Error} If any critical errors occur
  */
-async function main() {
+async function main(targetDirectory) {
   console.log('🎯 Running all markdown fixes in order...\n');
   console.log('This ensures fixes are applied correctly without conflicts.');
   
@@ -114,7 +121,7 @@ async function main() {
   
   // Run each fix in order
   for (const fix of sortedFixes) {
-    const result = runFix(fix);
+    const result = runFix(fix, targetDirectory);
     if (result.success) {
       results.successful++;
     } else {
@@ -137,10 +144,20 @@ async function main() {
     console.log('\n⚠️  Some fixes failed. Please check the errors above.');
     process.exit(1);
   }
+  
+  return results;
 }
 
-// Run the script
-main().catch((error) => {
-  console.error('❌ Failed to run markdown fixes:', error);
-  process.exit(1);
-});
+// Export for testing
+export { main as runAllMarkdownFixes };
+
+// Run the script if executed directly
+if (import.meta.url === `file://${process.argv[1]}`) {
+  // Accept directory as command line argument
+  const targetDirectory = process.argv[2];
+  
+  main(targetDirectory).catch((error) => {
+    console.error('❌ Failed to run markdown fixes:', error);
+    process.exit(1);
+  });
+}

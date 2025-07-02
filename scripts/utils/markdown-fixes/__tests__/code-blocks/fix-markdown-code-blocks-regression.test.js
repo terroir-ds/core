@@ -12,8 +12,6 @@ describe('markdown fixes regression tests', () => {
   });
 
   afterEach(() => {
-    // Reset working directory before cleanup to avoid ENOENT errors
-    process.chdir(__dirname);
     rmSync(tempDir, { recursive: true, force: true });
   });
 
@@ -35,8 +33,7 @@ echo "test"
       const testFile = join(tempDir, 'regression1.md');
       writeFileSync(testFile, input);
       
-      process.chdir(tempDir);
-      execSync(`node ${join(__dirname, '../../fix-markdown-code-blocks.js')}`, {
+      execSync(`node ${join(__dirname, '../../fix-markdown-code-blocks.js')} "${tempDir}"`, {
         stdio: 'pipe'
       });
       
@@ -52,8 +49,7 @@ echo "test"
       const testFile = join(tempDir, 'crlf.md');
       writeFileSync(testFile, input);
       
-      process.chdir(tempDir);
-      execSync(`node ${join(__dirname, '../../fix-markdown-code-blocks.js')}`, {
+      execSync(`node ${join(__dirname, '../../fix-markdown-code-blocks.js')} "${tempDir}"`, {
         stdio: 'pipe'
       });
       
@@ -75,8 +71,7 @@ echo "nested"
       const testFile = join(tempDir, 'quadruple.md');
       writeFileSync(testFile, input);
       
-      process.chdir(tempDir);
-      execSync(`node ${join(__dirname, '../../fix-markdown-code-blocks.js')}`, {
+      execSync(`node ${join(__dirname, '../../fix-markdown-code-blocks.js')} "${tempDir}"`, {
         stdio: 'pipe'
       });
       
@@ -102,8 +97,7 @@ real code
       const testFile = join(tempDir, 'comments.md');
       writeFileSync(testFile, input);
       
-      process.chdir(tempDir);
-      execSync(`node ${join(__dirname, '../../fix-markdown-code-blocks.js')}`, {
+      execSync(`node ${join(__dirname, '../../fix-markdown-code-blocks.js')} "${tempDir}"`, {
         stdio: 'pipe'
       });
       
@@ -125,8 +119,7 @@ real code
       const testFile = join(tempDir, 'blockquote.md');
       writeFileSync(testFile, input);
       
-      process.chdir(tempDir);
-      execSync(`node ${join(__dirname, '../../fix-markdown-code-blocks.js')}`, {
+      execSync(`node ${join(__dirname, '../../fix-markdown-code-blocks.js')} "${tempDir}"`, {
         stdio: 'pipe'
       });
       
@@ -150,8 +143,7 @@ Normal text
       const testFile = join(tempDir, 'malformed.md');
       writeFileSync(testFile, input);
       
-      process.chdir(tempDir);
-      execSync(`node ${join(__dirname, '../../fix-markdown-code-blocks.js')}`, {
+      execSync(`node ${join(__dirname, '../../fix-markdown-code-blocks.js')} "${tempDir}"`, {
         stdio: 'pipe'
       });
       
@@ -171,8 +163,7 @@ console.log("Hello 世界 🌍");
       const testFile = join(tempDir, 'unicode.md');
       writeFileSync(testFile, input);
       
-      process.chdir(tempDir);
-      execSync(`node ${join(__dirname, '../../fix-markdown-code-blocks.js')}`, {
+      execSync(`node ${join(__dirname, '../../fix-markdown-code-blocks.js')} "${tempDir}"`, {
         stdio: 'pipe'
       });
       
@@ -193,8 +184,7 @@ ${longLine}
       const testFile = join(tempDir, 'longline.md');
       writeFileSync(testFile, input);
       
-      process.chdir(tempDir);
-      execSync(`node ${join(__dirname, '../../fix-markdown-code-blocks.js')}`, {
+      execSync(`node ${join(__dirname, '../../fix-markdown-code-blocks.js')} "${tempDir}"`, {
         stdio: 'pipe'
       });
       

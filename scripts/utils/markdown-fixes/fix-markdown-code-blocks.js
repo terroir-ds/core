@@ -372,13 +372,14 @@ function fixCodeBlocks(filePath) {
  * Finds all markdown files and applies code block fixes.
  * 
  * @async
- * @returns {Promise<void>}
+ * @param {string} [targetDirectory] - Directory to process (defaults to current working directory)
+ * @returns {Promise<Object>} Summary of fixes applied
  * @throws {Error} If file operations fail
  */
-async function main() {
+async function main(targetDirectory = process.cwd()) {
   console.log('🔧 Fixing all markdown code block issues...\n');
   
-  const files = findMarkdownFiles(process.cwd()); // Use current working directory
+  const files = findMarkdownFiles(targetDirectory);
   const totalFixes = {
     files: 0,
     addedLanguages: 0,
@@ -418,14 +419,19 @@ async function main() {
   console.log(`   Added ${totalFixes.addedBlankAfter} blank lines after code blocks`);
   console.log(`   Removed ${totalFixes.removedBlankInside} blank lines inside code blocks`);
   console.log(`   Checked ${files.length} total files`);
+  
+  return totalFixes;
 }
 
 // Export functions for testing
-export { detectLanguage, processCodeBlock };
+export { detectLanguage, processCodeBlock, main as fixMarkdownCodeBlocks };
 
 // Run the script if executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {
-  main().catch((error) => {
+  // Accept directory as command line argument
+  const targetDirectory = process.argv[2];
+  
+  main(targetDirectory).catch((error) => {
     console.error('❌ Failed to fix code blocks:', error);
     process.exit(1);
   });

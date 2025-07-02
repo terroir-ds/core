@@ -140,47 +140,45 @@ function fixLinkFragments(filePath) {
   return fixedCount;
 }
 
-// Export functions for testing
-export { headingToFragment, fixLinkFragments };
-
-// Run the script if executed directly
-if (import.meta.url === `file://${process.argv[1]}`) {
-  // Get files from command line or process all markdown files
-  const args = process.argv.slice(2);
-  let files = [];
+/**
+ * Find all markdown files recursively.
+ * @param {string} dir - Directory to search
+ * @returns {string[]} Array of markdown file paths
+ */
+function findMarkdownFiles(dir) {
+  const results = [];
+  const items = readdirSync(dir);
   
-  if (args.length > 0) {
-    // Process specific files passed as arguments
-    files = args;
-  } else {
-    /**
-     * Find all markdown files recursively.
-     * @param {string} dir - Directory to search
-     * @returns {string[]} Array of markdown file paths
-     */
-    function findMarkdownFiles(dir) {
-      const results = [];
-      const items = readdirSync(dir);
-      
-      for (const item of items) {
-        if (item.startsWith('.') || item === 'node_modules') continue;
-        
-        const fullPath = join(dir, item);
-        const stat = statSync(fullPath);
-        
-        if (stat.isDirectory()) {
-          results.push(...findMarkdownFiles(fullPath));
-        } else if (stat.isFile() && extname(fullPath) === '.md') {
-          results.push(fullPath);
-        }
-      }
-      
-      return results;
-    }
+  for (const item of items) {
+    if (item.startsWith('.') || item === 'node_modules') continue;
     
-    files = findMarkdownFiles(process.cwd());
+    const fullPath = join(dir, item);
+    const stat = statSync(fullPath);
+    
+    if (stat.isDirectory()) {
+      results.push(...findMarkdownFiles(fullPath));
+    } else if (stat.isFile() && extname(fullPath) === '.md') {
+      results.push(fullPath);
+    }
   }
+  
+  return results;
+}
 
+/**
+ * Main execution function.
+ * Finds all markdown files and fixes link fragments.
+ * 
+ * @async
+ * @param {string} [targetDirectory] - Directory to process (defaults to current working directory)
+ * @returns {Promise<Object>} Summary of fixes applied
+ * @throws {Error} If file operations fail
+ */
+async function main(targetDirectory = process.cwd()) {
+  console.log('🔗 Fixing markdown link fragments...\n');
+  
+  const files = findMarkdownFiles(targetDirectory);
+  
   let totalFixed = 0;
   let hasErrors = false;
   
@@ -212,4 +210,20 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   if (hasErrors) {
     process.exit(1);
   }
+  
+  return { totalFixed, hasErrors };
+}
+
+// Export functions for testing
+export { headingToFragment, fixLinkFragments, main as fixMarkdownLinks };
+
+// Run the script if executed directly
+if (import.meta.url === `file://${process.argv[1]}`) {
+  // Accept directory as command line argument
+  const targetDirectory = process.argv[2];
+  
+  main(targetDirectory).catch((error) => {
+    console.error('❌ Failed to fix link fragments:', error);
+    process.exit(1);
+  });
 }

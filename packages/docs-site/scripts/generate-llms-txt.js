@@ -8,7 +8,7 @@
  * 
  * Collects:
  * - All .ai.md files from packages
- * - AI documentation from /docs/ai/
+ * - AI documentation from /ai/
  * - Package metadata
  * - Generates a structured index for AI assistants
  */
@@ -81,7 +81,7 @@ async function generatePackageSection() {
  * Generate AI docs section
  */
 async function generateAiDocsSection() {
-  const aiDocsDir = path.join(rootDir, 'docs/ai');
+  const aiDocsDir = path.join(rootDir, 'ai');
   const files = await glob('*.md', { cwd: aiDocsDir });
   
   const sections = [];
@@ -92,7 +92,7 @@ async function generateAiDocsSection() {
     
     sections.push({
       title,
-      path: `/docs/ai/${file}`,
+      path: `/ai/${file}`,
       description: metadata.description || ''
     });
   }
@@ -154,7 +154,7 @@ For detailed task-oriented documentation, see the package-specific .ai.md files 
 
 ## Contributing
 
-See [AI Contributing Guide](/docs/ai/contributing.md) for agent-specific contribution guidelines.
+See [AI Contributing Guide](/ai/contributing.md) for agent-specific contribution guidelines.
 
 ---
 Generated: ${new Date().toISOString()}

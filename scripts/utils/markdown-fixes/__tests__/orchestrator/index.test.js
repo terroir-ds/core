@@ -12,8 +12,6 @@ describe('markdown fixes orchestrator', () => {
   });
 
   afterEach(() => {
-    // Reset working directory before cleanup to avoid ENOENT errors
-    process.chdir(__dirname);
     rmSync(tempDir, { recursive: true, force: true });
   });
 
@@ -88,8 +86,7 @@ console.log("next");
       writeFileSync(testFile, input);
 
       // Run the orchestrator
-      process.chdir(tempDir);
-      const output = execSync(`node ${join(__dirname, '../../index.js')}`, {
+      const output = execSync(`node ${join(__dirname, '../../index.js')} "${tempDir}"`, {
         encoding: 'utf8'
       });
 
@@ -107,9 +104,7 @@ console.log("next");
       // Test with non-existent directory
       // const badDir = join(tempDir, 'non-existent');
       
-      process.chdir(tempDir);
-      
-      // The scripts run on the current directory, not a bad one
+      // The scripts run on the specified directory
       const output = execSync(`node ${join(__dirname, '../../index.js')}`, {
         encoding: 'utf8'
       });
@@ -137,8 +132,7 @@ code without language
 [Broken](#broken)
 `);
 
-      process.chdir(tempDir);
-      const output = execSync(`node ${join(__dirname, '../../index.js')}`, {
+      const output = execSync(`node ${join(__dirname, '../../index.js')} "${tempDir}"`, {
         encoding: 'utf8'
       });
 
@@ -166,8 +160,7 @@ some code
       const testFile = join(tempDir, 'order-test.md');
       writeFileSync(testFile, input);
 
-      process.chdir(tempDir);
-      execSync(`node ${join(__dirname, '../../index.js')}`, {
+      execSync(`node ${join(__dirname, '../../index.js')} "${tempDir}"`, {
         encoding: 'utf8'
       });
 
@@ -195,8 +188,7 @@ code
       writeFileSync(testFile, input);
 
       // Run only code block fixes
-      process.chdir(tempDir);
-      execSync(`node ${join(__dirname, '../../fix-markdown-code-blocks.js')}`, {
+      execSync(`node ${join(__dirname, '../../fix-markdown-code-blocks.js')} "${tempDir}"`, {
         encoding: 'utf8'
       });
 
