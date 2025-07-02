@@ -52,7 +52,8 @@ const originalRejectionHandled = process.listeners('rejectionHandled');
 // Note: We set this directly here rather than importing from shared utilities
 // to avoid circular dependencies during test setup
 const originalMaxListeners = process.getMaxListeners();
-process.setMaxListeners(100);
+// Set to 200 to handle async tests with many AbortControllers and event listeners
+process.setMaxListeners(200);
 
 // Track unhandled rejections for cleanup
 const unhandledRejections = new Map<Promise<unknown>, { reason: unknown; promise: Promise<unknown> }>();
@@ -126,17 +127,12 @@ afterEach(async () => {
   // Clear tracked unhandled rejections
   unhandledRejections.clear();
   
-  // Clean up error handling
-  try {
-    const { globalErrorCleanup } = await import('@test/helpers/error-handling.js');
-    globalErrorCleanup();
-  } catch {
-    // Ignore if error handling helper not available
-  }
+  // Clean up error handling - no longer needed as the function is deprecated
+  // The global test setup handles cleanup automatically
   
   // Clean up logger if it was imported
   try {
-    const loggerModule = await vi.importActual('@utils/logger/index.js') as { cleanupLogger?: () => void };
+    const loggerModule = await vi.importActual('@utils/logger/index') as { cleanupLogger?: () => void };
     if (loggerModule.cleanupLogger) {
       loggerModule.cleanupLogger();
     }
