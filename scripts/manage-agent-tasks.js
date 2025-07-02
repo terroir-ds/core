@@ -98,7 +98,7 @@ ${autoEnd}`;
       return lines.join('\n');
     }
     // Fallback: add at beginning
-    return newSection + '\n\n' + content;
+    return `${newSection  }\n\n${  content}`;
   }
 }
 
