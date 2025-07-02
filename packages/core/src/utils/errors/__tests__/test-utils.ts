@@ -15,7 +15,7 @@ export {
   suppressConsoleErrors,
   createDelayedRejection,
   createDelayedResolution
-} from '@test/helpers/error-handling.js';
+} from '@test/helpers/error-handling';
 
 /**
  * @deprecated Use expectErrors() from '@test/helpers/error-handling.js' instead
