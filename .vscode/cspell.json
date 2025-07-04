@@ -201,7 +201,31 @@
     "München",
     "français",
     "francais",
-    "Kraków"
+    "Kraków",
+    
+    // Security and cryptography terms
+    "TOCTOU",
+    "vfzu",
+    "keygen",
+    
+    // Shell scripting terms
+    "nullglob",
+    "metacharacters",
+    "esac",
+    "mktemp",
+    
+    // Git and development terms
+    "worktree",
+    "worktrees",
+    
+    // Network and system terms
+    "hostnames",
+    "localdomain",
+    
+    // Field names and identifiers
+    "displayname",
+    "realname",
+    "emailaddress"
   ],
   "ignoreWords": [
     "foobarwoo",
