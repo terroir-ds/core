@@ -69,3 +69,11 @@ All utility scripts should:
 - Follow the project's security guidelines
 - Include inline documentation
 - Support both automated and manual usage
+
+## Security Documentation
+
+### setup-git-ssh.sh Security
+
+- [Security Hardening v3.5.0](./security-hardening-v3.5.0.md) - Latest security enhancements (rate limiting, enhanced validation)
+- [Security Hardening v3.4.0](./security-hardening-v3.4.0.md) - Initial comprehensive security implementation
+- [Security Recommendations](./setup-git-ssh-security-recommendations.md) - Future security improvements and research
