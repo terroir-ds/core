@@ -24,7 +24,8 @@ log "Starting post-create setup..."
 # 1. Run git/SSH setup
 log "Setting up Git and SSH..."
 if [ -f "$SCRIPT_DIR/setup-git-ssh.sh" ]; then
-    bash "$SCRIPT_DIR/setup-git-ssh.sh" || {
+    # Disable progress bars in post-create context for cleaner logs
+    NO_PROGRESS=1 bash "$SCRIPT_DIR/setup-git-ssh.sh" || {
         log "Warning: Git/SSH setup failed, but continuing..."
     }
 else

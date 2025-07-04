@@ -6,7 +6,7 @@ set -euo pipefail
 # shellcheck disable=SC2086  # Double quote to prevent globbing (used intentionally)
 
 # Secure Post-Create Script for Devcontainer
-# Version: 3.4.1
+# Version: 3.4.3
 # 
 # Purpose: Configure developer environment (Git, SSH, 1Password)
 # Language-specific setup should be handled in devcontainer.json
@@ -20,6 +20,7 @@ set -euo pipefail
 #   GIT_CONFIG_ITEM         - Name of 1Password item with Git config (optional)
 #   GIT_SIGNING_KEY_ITEM    - Name of 1Password item with signing key (optional)
 #   LOG_LEVEL               - Logging verbosity: 0=ERROR, 1=WARN, 2=INFO, 3=DEBUG
+#   NO_PROGRESS             - Set to 1 to disable progress bars (useful in CI/scripts)
 #
 # The script searches for .env files in multiple locations (see load_env_file docs)
 # and can be used standalone or as part of a DevContainer setup
@@ -31,6 +32,16 @@ set -euo pipefail
 # - Comprehensive error handling
 # - Detailed logging
 # - Health checks
+# 
+# Version 3.4.3 improvements:
+# - Enhanced progress bar detection for DevContainer environments
+# - Added NO_PROGRESS environment variable support
+# - Check for REMOTE_CONTAINERS_IPC to detect DevContainer context
+# 
+# Version 3.4.2 improvements:
+# - Fixed progress bar formatting issues with log output
+# - Progress bars now only shown in interactive terminals
+# - Progress bars disabled when DEBUG logging is active
 # 
 # Version 3.4.1 improvements:
 # - Fixed indirect variable expansion bug with set -u (nounset)
@@ -103,7 +114,7 @@ set -euo pipefail
 #    - SSH key count limits
 #    - Disk space checks before operations
 
-readonly SCRIPT_VERSION="3.4.1"
+readonly SCRIPT_VERSION="3.4.3"
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly SCRIPT_NAME="$(basename "${BASH_SOURCE[0]}")"
 
@@ -434,6 +445,21 @@ show_progress() {
     local message="$1"
     local current="${2:-0}"
     local total="${3:-100}"
+    
+    # Skip progress bar if:
+    # - Not in a terminal
+    # - In CI environment
+    # - In a devcontainer post-create/start command
+    # - DEBUG logging is active
+    # - NO_PROGRESS environment variable is set
+    if [ ! -t 2 ] || \
+       [ -n "${CI:-}" ] || \
+       [ -n "${CODESPACES:-}" ] || \
+       [ -n "${REMOTE_CONTAINERS_IPC:-}" ] || \
+       [ -n "${NO_PROGRESS:-}" ] || \
+       [ "$LOG_LEVEL" -ge "$LOG_DEBUG" ]; then
+        return 0
+    fi
     
     if [ "$total" -gt 0 ]; then
         local percent=$((current * 100 / total))
