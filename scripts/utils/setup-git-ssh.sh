@@ -6,7 +6,7 @@ set -euo pipefail
 # shellcheck disable=SC2086  # Double quote to prevent globbing (used intentionally)
 
 # Secure Post-Create Script for Devcontainer
-# Version: 3.4.0
+# Version: 3.4.1
 # 
 # Purpose: Configure developer environment (Git, SSH, 1Password)
 # Language-specific setup should be handled in devcontainer.json
@@ -31,6 +31,10 @@ set -euo pipefail
 # - Comprehensive error handling
 # - Detailed logging
 # - Health checks
+# 
+# Version 3.4.1 improvements:
+# - Fixed indirect variable expansion bug with set -u (nounset)
+# - Use eval with default expansion to safely check variables
 # 
 # Version 3.4.0 improvements:
 # - Signal handling and masking during critical operations
@@ -99,7 +103,7 @@ set -euo pipefail
 #    - SSH key count limits
 #    - Disk space checks before operations
 
-readonly SCRIPT_VERSION="3.4.0"
+readonly SCRIPT_VERSION="3.4.1"
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly SCRIPT_NAME="$(basename "${BASH_SOURCE[0]}")"
 
@@ -1141,7 +1145,10 @@ load_env_file() {
                                 fi
                                 
                                 # Only set if not already set (first file wins)
-                                if [ -z "${!key}" ]; then
+                                # Use eval to safely check if variable is set (works with set -u)
+                                local current_value=""
+                                eval "current_value=\"\${${key}:-}\""
+                                if [ -z "$current_value" ]; then
                                     export "$key=$value"
                                     log_debug "Set $key from $abs_path"
                                     vars_set+=("$key")
