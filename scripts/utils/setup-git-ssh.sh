@@ -6,7 +6,7 @@ set -euo pipefail
 # shellcheck disable=SC2086  # Double quote to prevent globbing (used intentionally)
 
 # Secure Post-Create Script for Devcontainer
-# Version: 3.5.0
+# Version: 3.5.1
 # 
 # Purpose: Configure developer environment (Git, SSH, 1Password)
 # Language-specific setup should be handled in devcontainer.json
@@ -32,6 +32,12 @@ set -euo pipefail
 # - Comprehensive error handling
 # - Detailed logging
 # - Health checks
+# 
+# Version 3.5.1 bug fixes:
+# - Fixed ssh-add exit code check logic in SSH agent verification
+# - Added VS Code SSH auth socket pattern to validation whitelist
+# - Added exception for world-writable /tmp when used by VS Code
+# - Resolved false negative SSH agent startup failures in DevContainers
 # 
 # Version 3.5.0 improvements:
 # - Enhanced SSH socket path validation with whitelist patterns
@@ -126,7 +132,7 @@ set -euo pipefail
 #    - SSH key count limits
 #    - Disk space checks before operations
 
-readonly SCRIPT_VERSION="3.4.3"
+readonly SCRIPT_VERSION="3.5.1"
 readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly SCRIPT_NAME="$(basename "${BASH_SOURCE[0]}")"
 
@@ -1641,6 +1647,10 @@ validate_ssh_agent_socket() {
             # Valid systemd-style path
             valid_pattern=1
             ;;
+        /tmp/vscode-ssh-auth-*.sock)
+            # Valid VS Code SSH auth socket
+            valid_pattern=1
+            ;;
         /var/run/ssh-agent.pid-*)
             # Valid system agent path
             valid_pattern=1
@@ -1678,10 +1688,16 @@ validate_ssh_agent_socket() {
     fi
     
     # Check that parent directory is not world-writable
+    # Exception: /tmp is allowed for VS Code SSH auth sockets
     local parent_perms=$(stat -c '%a' "$parent_dir" 2>/dev/null || stat -f '%A' "$parent_dir" 2>/dev/null)
     if [[ "$parent_perms" =~ [2367]$ ]]; then
-        log_error "Parent directory is world-writable: $parent_dir"
-        return 1
+        # Allow world-writable /tmp for VS Code sockets
+        if [[ "$parent_dir" = "/tmp" && "$socket_path" =~ ^/tmp/vscode-ssh-auth-.*\.sock$ ]]; then
+            log_debug "Allowing world-writable /tmp for VS Code SSH auth socket"
+        else
+            log_error "Parent directory is world-writable: $parent_dir"
+            return 1
+        fi
     fi
     
     # Check if path exists and is a socket
@@ -1875,8 +1891,10 @@ setup_ssh_agent() {
     export SSH_AUTH_SOCK SSH_AGENT_PID
     
     # Verify agent is working
-    if ! ssh-add -l &>/dev/null && [ $? -ne 1 ]; then
-        log_error "SSH agent started but not responding"
+    ssh-add -l &>/dev/null
+    local ssh_add_exit_code=$?
+    if [ $ssh_add_exit_code -ne 0 ] && [ $ssh_add_exit_code -ne 1 ]; then
+        log_error "SSH agent started but not responding (exit code: $ssh_add_exit_code)"
         return 1
     fi
     

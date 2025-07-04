@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- setup-git-ssh.sh v3.5.1: Fixed SSH agent validation issues in DevContainer environments
+  - Corrected ssh-add exit code check logic that was causing false negatives
+  - Added VS Code SSH auth socket pattern (/tmp/vscode-ssh-auth-\*.sock) to validation whitelist
+  - Added exception for world-writable /tmp directory when used by VS Code SSH sockets
+
 ### Added
 
 - Initial monorepo setup with pnpm workspaces
